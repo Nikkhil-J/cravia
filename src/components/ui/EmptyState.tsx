@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { Button } from './Button'
+import { Button } from './button'
 
 interface EmptyStateProps {
   icon?: ReactNode
@@ -16,7 +16,7 @@ export function EmptyState({ icon, title, description, ctaLabel, onCta }: EmptyS
       <h3 className="text-base font-semibold text-gray-700">{title}</h3>
       {description && <p className="max-w-xs text-sm text-gray-400">{description}</p>}
       {ctaLabel && onCta && (
-        <Button variant="primary" size="sm" onClick={onCta} className="mt-2">
+        <Button variant="default" size="sm" onClick={onCta} className="mt-2">
           {ctaLabel}
         </Button>
       )}

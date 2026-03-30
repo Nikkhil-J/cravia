@@ -19,7 +19,7 @@ import {
 } from 'firebase/firestore'
 import { db, COLLECTIONS } from './config'
 import type { Review, User, ReviewFormData, PaginatedResult } from '../types'
-import { computeOverall, computeTopTags, canEditReview } from '../utils'
+import { computeOverall, computeTopTags, canEditReview } from '../utils/index'
 import { REVIEWS_PER_PAGE, computeLevel, computeEarnedBadges } from '../constants'
 
 /** Returns paginated reviews for a dish, ordered by createdAt descending. */

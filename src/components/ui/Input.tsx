@@ -1,57 +1,20 @@
-'use client'
+import * as React from "react"
+import { Input as InputPrimitive } from "@base-ui/react/input"
 
-import { type InputHTMLAttributes, type TextareaHTMLAttributes } from 'react'
+import { cn } from "@/lib/utils"
 
-interface BaseProps {
-  label?: string
-  error?: string
-  helperText?: string
-}
-
-interface InputProps extends BaseProps, InputHTMLAttributes<HTMLInputElement> {
-  as?: 'input'
-}
-
-interface TextareaProps extends BaseProps, TextareaHTMLAttributes<HTMLTextAreaElement> {
-  as: 'textarea'
-}
-
-type Props = InputProps | TextareaProps
-
-const baseFieldClasses =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 disabled:bg-gray-50 disabled:cursor-not-allowed'
-
-const errorFieldClasses =
-  'border-red-400 focus:ring-red-400 focus:border-red-400'
-
-export function Input(props: Props) {
-  const { label, error, helperText } = props
-  const hasError = Boolean(error)
-  const fieldClasses = [baseFieldClasses, hasError ? errorFieldClasses : ''].join(' ')
-
+function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
-    <div className="flex flex-col gap-1">
-      {label && (
-        <label className="text-sm font-medium text-gray-700">
-          {label}
-        </label>
+    <InputPrimitive
+      type={type}
+      data-slot="input"
+      className={cn(
+        "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        className
       )}
-
-      {props.as === 'textarea' ? (
-        <textarea
-          rows={4}
-          className={fieldClasses}
-          {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
-        />
-      ) : (
-        <input
-          className={fieldClasses}
-          {...(props as InputHTMLAttributes<HTMLInputElement>)}
-        />
-      )}
-
-      {error && <p className="text-xs text-red-500">{error}</p>}
-      {!error && helperText && <p className="text-xs text-gray-400">{helperText}</p>}
-    </div>
+      {...props}
+    />
   )
 }
+
+export { Input }

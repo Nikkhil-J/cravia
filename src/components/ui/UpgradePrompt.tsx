@@ -1,4 +1,4 @@
-import { Button } from './Button'
+import { Button } from './button'
 
 interface UpgradePromptProps {
   onUpgrade?: () => void
@@ -29,7 +29,7 @@ export function UpgradePrompt({ onUpgrade }: UpgradePromptProps) {
           </li>
         ))}
       </ul>
-      <Button variant="primary" size="md" onClick={onUpgrade} className="w-full bg-amber-500 hover:bg-amber-600 focus:ring-amber-400">
+      <Button variant="default" size="lg" onClick={onUpgrade} className="w-full bg-amber-500 hover:bg-amber-600">
         Upgrade to Premium
       </Button>
     </div>
