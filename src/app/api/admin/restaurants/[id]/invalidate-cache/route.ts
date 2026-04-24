@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { assertAdmin, AdminAuthError } from '@/lib/auth/assert-admin'
 import { invalidateAnalyticsCache } from '@/lib/services/analytics-cache'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -13,7 +14,7 @@ export async function POST(req: Request, context: RouteContext) {
     if (error instanceof AdminAuthError) {
       return NextResponse.json({ message: error.message }, { status: error.status })
     }
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ message: API_ERRORS.UNAUTHORIZED }, { status: 401 })
   }
 
   const { id: restaurantId } = await context.params

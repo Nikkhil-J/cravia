@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { SubRatingBar } from '@/components/ui/SubRatingBar'
 import { formatRating } from '@/lib/utils/index'
 import type { DishSentiment } from '@/lib/services/restaurant-analytics'
+import { ROUTES } from '@/lib/constants/routes'
+import { SUB_RATING_LABELS } from '@/lib/constants'
 
 interface DishSentimentCardProps {
   dish: DishSentiment
@@ -22,8 +24,8 @@ export function DishSentimentCard({ dish }: DishSentimentCardProps) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <Link
-            href={`/dish/${dish.dishId}`}
-            className="font-display font-semibold text-bg-dark hover:text-primary"
+            href={ROUTES.dish(dish.dishId)}
+            className="font-display font-semibold text-heading hover:text-primary"
           >
             {dish.dishName}
           </Link>
@@ -35,9 +37,9 @@ export function DishSentimentCard({ dish }: DishSentimentCardProps) {
       </div>
 
       <div className="mt-4 space-y-2">
-        <SubRatingBar label="Taste" value={dish.avgTaste} />
-        <SubRatingBar label="Portion" value={dish.avgPortion} />
-        <SubRatingBar label="Value" value={dish.avgValue} />
+        <SubRatingBar label={SUB_RATING_LABELS[0]} value={dish.avgTaste} />
+        <SubRatingBar label={SUB_RATING_LABELS[1]} value={dish.avgPortion} />
+        <SubRatingBar label={SUB_RATING_LABELS[2]} value={dish.avgValue} />
       </div>
 
       {sortedTags.length > 0 && (

@@ -18,7 +18,7 @@ import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { describe, beforeAll, afterAll, beforeEach, it } from 'vitest'
 
-const PROJECT_ID = 'demo-dishcheck-test'
+const PROJECT_ID = 'demo-cravia-test'
 
 let testEnv: RulesTestEnvironment
 

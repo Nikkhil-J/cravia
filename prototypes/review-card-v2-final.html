@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReviewCard v2 — Banner Grid (Final Direction)</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #181a22;
+    --card-hover: #1e2029;
+    --border: #2a2d38;
+    --border-hover: #3d4050;
+    --text-primary: #e8e8ed;
+    --text-secondary: #b0b3c0;
+    --text-muted: #6b6f80;
+    --heading: #f2f2f5;
+    --primary: #e05545;
+    --brand-orange: #f09030;
+    --brand-gold: #f0b040;
+    --success: #34c759;
+    --surface-2: #22242e;
+    --surface-3: #2a2d38;
+    --destructive: #e05545;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    padding: 32px 24px 80px;
+    line-height: 1.5;
+  }
+
+  .page-header {
+    max-width: 720px;
+    margin: 0 auto 32px;
+  }
+  .page-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--heading);
+  }
+  .page-subtitle {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+
+  /* ── Section titles ─────────────────────────────── */
+  .section-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--brand-orange);
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+  }
+  .section-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .variant-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    margin-top: 28px;
+  }
+
+  /* ── Card grid ──────────────────────────────────── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .card-grid.single {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+  }
+  @media (max-width: 640px) {
+    .card-grid { grid-template-columns: 1fr; }
+  }
+
+  .section-wrapper {
+    max-width: 720px;
+    margin: 0 auto 48px;
+  }
+
+  /* ── Card ────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  }
+  .card:hover {
+    border-color: var(--border-hover);
+    background: var(--card-hover);
+  }
+
+  .card-body { padding: 12px 14px 14px; }
+
+  /* ── Photo banner with morph expand ─────────────── */
+  .photo-banner {
+    width: 100%;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    height: 130px;
+    transition: height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .photo-banner.expanded {
+    height: 320px;
+  }
+  .photo-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: object-fit 0.4s, transform 0.3s;
+  }
+  .photo-banner.expanded img {
+    object-fit: contain;
+    background: #0a0b0f;
+  }
+  .photo-banner .expand-hint {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    color: rgba(255,255,255,0.85);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+  }
+  .photo-banner:hover .expand-hint { transform: translateY(-1px); }
+  .photo-banner.expanded .expand-hint span:first-child { display: none; }
+  .photo-banner.expanded .expand-hint::before { content: '↕ Click to collapse'; }
+  .photo-banner:not(.expanded) .expand-hint::before { content: ''; }
+
+  /* Score overlaid on banner */
+  .score-overlay {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    z-index: 2;
+  }
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: linear-gradient(135deg, var(--primary), var(--brand-orange));
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 6px;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .score-badge .out-of {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  /* ── Dish header (name + score on same row) ──────── */
+  .dish-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .dish-header .dish-info { flex: 1; min-width: 0; }
+  .dish-header .score-badge { flex-shrink: 0; margin-top: 2px; }
+  .dish-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--heading);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+  .restaurant-name {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .restaurant-name span {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  /* ── User row (dish page variant) ───────────────── */
+  .user-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+  .user-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .level-badge {
+    font-size: 9px;
+    font-weight: 700;
+    background: var(--surface-3);
+    color: var(--text-secondary);
+    padding: 2px 7px;
+    border-radius: 99px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Review text ────────────────────────────────── */
+  .review-text {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-top: 8px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .review-text.clamped { -webkit-line-clamp: 2; }
+  .review-text.full { -webkit-line-clamp: unset; }
+  .see-more-btn {
+    background: none;
+    border: none;
+    color: var(--brand-orange);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 2px;
+  }
+  .see-more-btn:hover { text-decoration: underline; }
+
+  /* ── Sub-ratings compact (always-visible pills) ──── */
+  .sub-ratings-compact {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .sub-pill {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 8px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .sub-pill .val {
+    font-weight: 700;
+    color: var(--brand-orange);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Tags ────────────────────────────────────────── */
+  .tags-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 2px 8px;
+    white-space: nowrap;
+  }
+  .tag-overflow {
+    font-size: 10px;
+    color: var(--brand-orange);
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+
+  /* ── Sub-ratings (expanded bars) ────────────────── */
+  .sub-ratings-section {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+  }
+  .sub-ratings-section.open {
+    grid-template-rows: 1fr;
+  }
+  .sub-ratings-section > div { overflow: hidden; }
+  .sub-ratings-inner {
+    padding-top: 8px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .sub-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sub-bar-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    width: 42px;
+    flex-shrink: 0;
+  }
+  .sub-bar-track {
+    flex: 1;
+    height: 5px;
+    background: var(--surface-2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .sub-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--brand-orange));
+    transition: width 0.5s ease 0.1s;
+  }
+  .sub-bar-val {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--brand-orange);
+    width: 22px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Meta row ───────────────────────────────────── */
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .timestamp {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .helpful-btn {
+    font-size: 10px;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .helpful-btn:hover {
+    color: var(--text-secondary);
+    background: var(--surface-2);
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+  }
+  .action-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .action-btn.edit { color: var(--primary); }
+  .action-btn.edit:hover { background: rgba(224,85,69,0.1); }
+  .action-btn.delete { color: var(--destructive); }
+  .action-btn.delete:hover { background: rgba(224,85,69,0.1); }
+
+  .edit-closed {
+    font-size: 10px;
+    color: var(--text-muted);
+    cursor: help;
+    position: relative;
+  }
+  .edit-closed .tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    right: 0;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .edit-closed .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    border: 5px solid transparent;
+    border-top-color: var(--surface-3);
+  }
+  .edit-closed:hover .tooltip { display: block; }
+
+  /* ── No-photo fallback ──────────────────────────── */
+  .no-photo-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .no-photo-header .header-text { flex: 1; min-width: 0; }
+
+  /* ── Divider ────────────────────────────────────── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px auto;
+    max-width: 720px;
+  }
+
+  /* ── Comparison note ────────────────────────────── */
+  .note-box {
+    max-width: 720px;
+    margin: 0 auto 24px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .note-box strong { color: var(--brand-orange); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-title">Prototype B — Final Direction</div>
+  <div class="page-subtitle">Photo-top banner card in a 2-column grid. Click a photo to morph-expand it in place.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: My Profile — 2-column grid                     -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-wrapper">
+  <div class="section-label">My Profile — 2-Column Grid</div>
+  <div class="section-desc">No avatar row. Dish name + restaurant anchor the card. Photo morphs in-place on click.</div>
+
+  <div class="card-grid">
+
+    <!-- Card 1: with photo, editable -->
+    <div class="card">
+      <div class="photo-banner" onclick="toggleBanner(this)">
+        <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&q=80" alt="Gulkand Ki Kheer" />
+        <div class="expand-hint"><span>↕ Click to expand</span></div>
+      </div>
+      <div class="card-body">
+        <div class="dish-header">
+          <div class="dish-info">
+            <div class="dish-name">Gulkand Ki Kheer</div>
+            <div class="restaurant-name">at <span>Indian Grill Room</span></div>
+          </div>
+          <div class="score-badge">3.0 <span class="out-of">/5</span></div>
+        </div>
+
+        <div class="sub-ratings-compact">
+          <span class="sub-pill">Taste <span class="val">3.0</span></span>
+          <span class="sub-pill">Portion <span class="val">4.0</span></span>
+          <span class="sub-pill">Value <span class="val">2.0</span></span>
+        </div>
+
+        <div class="review-text clamped" id="p1-text">
+          Good overall dessert but could have been slightly less sweet. The rose petal garnish was a nice touch and presentation was beautiful. Would order again for special occasions though.
+        </div>
+        <button class="see-more-btn" onclick="toggleText('p1-text', this)">See more</button>
+
+        <div class="tags-row">
+          <span class="tag">Generous portion</span>
+          <span class="tag">Mild</span>
+          <span class="tag">Fair price</span>
+          <span class="tag-overflow" onclick="showHiddenTags(this)">+1</span>
+          <span class="tag" style="display:none">Oily</span>
+        </div>
+
+        <div class="meta-row">
+          <span class="timestamp">2 days ago</span>
+          <button class="helpful-btn">👍 Helpful · 0</button>
+          <div class="actions">
+            <button class="action-btn edit" title="Edit review">
+              <svg style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="action-btn delete" title="Delete review">
+              <svg style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: with photo, edit closed -->
+    <div class="card">
+      <div class="photo-banner" onclick="toggleBanner(this)">
+        <img src="https://images.unsplash.com/photo-1567337710282-00832b415979?w=600&q=80" alt="Wings" />
+        <div class="expand-hint"><span>↕ Click to expand</span></div>
+      </div>
+      <div class="card-body">
+        <div class="dish-header">
+          <div class="dish-info">
+            <div class="dish-name">House of Wings — One Dozen</div>
+            <div class="restaurant-name">at <span>Plan B — House of Wings</span></div>
+          </div>
+          <div class="score-badge">2.7 <span class="out-of">/5</span></div>
+        </div>
+
+        <div class="sub-ratings-compact">
+          <span class="sub-pill">Taste <span class="val">3.0</span></span>
+          <span class="sub-pill">Portion <span class="val">3.0</span></span>
+          <span class="sub-pill">Value <span class="val">2.0</span></span>
+        </div>
+
+        <div class="review-text clamped" id="p2-text">
+          Honestly pretty disappointing. The wings were overcooked and the sauce was way too sweet. Small portion for the price they charge. Spice level was fine but everything else let me down.
+        </div>
+        <button class="see-more-btn" onclick="toggleText('p2-text', this)">See more</button>
+
+        <div class="tags-row">
+          <span class="tag">Spicy</span>
+          <span class="tag">Small portion</span>
+          <span class="tag">Overpriced</span>
+          <span class="tag-overflow" onclick="showHiddenTags(this)">+1</span>
+          <span class="tag" style="display:none">Overcooked</span>
+        </div>
+
+        <div class="meta-row">
+          <span class="timestamp">5 days ago</span>
+          <button class="helpful-btn">👍 Helpful · 0</button>
+          <div class="actions">
+            <div class="edit-closed">
+              Edit closed
+              <div class="tooltip">Reviews can only be edited within 24 hours</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: no photo -->
+    <div class="card">
+      <div class="card-body">
+        <div class="dish-header">
+          <div class="dish-info">
+            <div class="dish-name">Butter Chicken</div>
+            <div class="restaurant-name">at <span>Punjab Grill</span></div>
+          </div>
+          <div class="score-badge">4.3 <span class="out-of">/5</span></div>
+        </div>
+
+        <div class="sub-ratings-compact">
+          <span class="sub-pill">Taste <span class="val">4.5</span></span>
+          <span class="sub-pill">Portion <span class="val">4.0</span></span>
+          <span class="sub-pill">Value <span class="val">4.5</span></span>
+        </div>
+
+        <div class="review-text full" id="p3-text">
+          Absolutely phenomenal butter chicken. Creamy, rich, perfect spice level. Best I've had in Bengaluru.
+        </div>
+
+        <div class="tags-row">
+          <span class="tag">Recommended</span>
+          <span class="tag">Authentic</span>
+          <span class="tag">Comfort food</span>
+        </div>
+
+        <div class="meta-row">
+          <span class="timestamp">1 week ago</span>
+          <button class="helpful-btn">👍 Helpful · 3</button>
+          <div class="actions">
+            <div class="edit-closed">
+              Edit closed
+              <div class="tooltip">Reviews can only be edited within 24 hours</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: with photo, high score, short text -->
+    <div class="card">
+      <div class="photo-banner" onclick="toggleBanner(this)">
+        <img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80" alt="Biryani" />
+        <div class="expand-hint"><span>↕ Click to expand</span></div>
+      </div>
+      <div class="card-body">
+        <div class="dish-header">
+          <div class="dish-info">
+            <div class="dish-name">Hyderabadi Dum Biryani</div>
+            <div class="restaurant-name">at <span>Paradise Biryani</span></div>
+          </div>
+          <div class="score-badge">4.7 <span class="out-of">/5</span></div>
+        </div>
+
+        <div class="sub-ratings-compact">
+          <span class="sub-pill">Taste <span class="val">5.0</span></span>
+          <span class="sub-pill">Portion <span class="val">4.5</span></span>
+          <span class="sub-pill">Value <span class="val">4.5</span></span>
+        </div>
+
+        <div class="review-text full" id="p4-text">
+          The GOAT biryani. Perfectly layered rice, melt-in-mouth meat, just the right amount of spice.
+        </div>
+
+        <div class="tags-row">
+          <span class="tag">Authentic</span>
+          <span class="tag">Generous portion</span>
+          <span class="tag">Recommended</span>
+        </div>
+
+        <div class="meta-row">
+          <span class="timestamp">3 days ago</span>
+          <button class="helpful-btn">👍 Helpful · 7</button>
+          <div class="actions">
+            <button class="action-btn edit" title="Edit review">
+              <svg style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="action-btn delete" title="Delete review">
+              <svg style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: Dish Page — single column                      -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-wrapper">
+  <div class="section-label">Dish Page — Single Column with Avatar Row</div>
+  <div class="section-desc">Same card, different variant. Avatar + name + level badge added at top. No dish context needed (you're already on the dish page). Two cards side by side here too.</div>
+
+  <div class="card-grid">
+
+    <!-- Dish page card 1 -->
+    <div class="card">
+      <div class="photo-banner" onclick="toggleBanner(this)">
+        <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&q=80" alt="Gulkand Ki Kheer" />
+        <div class="expand-hint"><span>↕ Click to expand</span></div>
+      </div>
+      <div class="card-body">
+        <div class="user-row">
+          <div class="avatar">TU</div>
+          <span class="user-name">Test User</span>
+          <span class="level-badge">Newbie</span>
+          <div class="score-badge" style="margin-left:auto;font-size:12px;padding:2px 8px;">3.0 <span class="out-of">/5</span></div>
+        </div>
+
+        <div class="sub-ratings-compact" style="margin-top:0;padding-top:0;border-top:none;">
+          <span class="sub-pill">Taste <span class="val">3.0</span></span>
+          <span class="sub-pill">Portion <span class="val">4.0</span></span>
+          <span class="sub-pill">Value <span class="val">2.0</span></span>
+        </div>
+
+        <div class="review-text clamped" id="d1-text">
+          Good overall dessert but could have been slightly less sweet. The rose petal garnish was a nice touch and presentation was beautiful. Would order again for special occasions.
+        </div>
+        <button class="see-more-btn" onclick="toggleText('d1-text', this)">See more</button>
+
+        <div class="tags-row">
+          <span class="tag">Generous portion</span>
+          <span class="tag">Mild</span>
+          <span class="tag">Fair price</span>
+          <span class="tag">Oily</span>
+        </div>
+
+        <div class="meta-row">
+          <span class="timestamp">2 days ago</span>
+          <button class="helpful-btn">👍 Helpful · 0</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dish page card 2 -->
+    <div class="card">
+      <div class="photo-banner" onclick="toggleBanner(this)">
+        <img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80" alt="Biryani" />
+        <div class="expand-hint"><span>↕ Click to expand</span></div>
+      </div>
+      <div class="card-body">
+        <div class="user-row">
+          <div class="avatar" style="background:linear-gradient(135deg,#e05545,#f09030);color:white;">SK</div>
+          <span class="user-name">Sanya Kapoor</span>
+          <span class="level-badge" style="background:rgba(240,176,64,0.15);color:var(--brand-gold);">Foodie</span>
+          <div class="score-badge" style="margin-left:auto;font-size:12px;padding:2px 8px;">4.7 <span class="out-of">/5</span></div>
+        </div>
+
+        <div class="sub-ratings-compact" style="margin-top:0;padding-top:0;border-top:none;">
+          <span class="sub-pill">Taste <span class="val">5.0</span></span>
+          <span class="sub-pill">Portion <span class="val">4.5</span></span>
+          <span class="sub-pill">Value <span class="val">4.5</span></span>
+        </div>
+
+        <div class="review-text full" id="d2-text">
+          The GOAT biryani. Perfectly layered rice, melt-in-mouth meat, just the right amount of spice.
+        </div>
+
+        <div class="tags-row">
+          <span class="tag">Authentic</span>
+          <span class="tag">Generous portion</span>
+          <span class="tag">Recommended</span>
+        </div>
+
+        <div class="meta-row">
+          <span class="timestamp">3 days ago</span>
+          <button class="helpful-btn">👍 Helpful · 7</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: Edge cases                                     -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="section-wrapper">
+  <div class="section-label">Edge Cases</div>
+  <div class="section-desc">No photo, long dish names, many tags, short text — everything should handle gracefully.</div>
+
+  <div class="card-grid">
+    <!-- No photo, long name -->
+    <div class="card">
+      <div class="card-body">
+        <div class="dish-header">
+          <div class="dish-info">
+            <div class="dish-name">Paneer Tikka Masala with Extra Gravy and Butter Naan Combo</div>
+            <div class="restaurant-name">at <span>The Great Indian Kitchen — Koramangala 5th Block</span></div>
+          </div>
+          <div class="score-badge">3.7 <span class="out-of">/5</span></div>
+        </div>
+
+        <div class="sub-ratings-compact">
+          <span class="sub-pill">Taste <span class="val">4.0</span></span>
+          <span class="sub-pill">Portion <span class="val">4.0</span></span>
+          <span class="sub-pill">Value <span class="val">3.0</span></span>
+        </div>
+
+        <div class="review-text full">
+          Solid paneer tikka masala. Generous gravy, good heat. Naan was fresh.
+        </div>
+
+        <div class="tags-row">
+          <span class="tag">Generous portion</span>
+          <span class="tag">Spicy</span>
+          <span class="tag">Authentic</span>
+          <span class="tag">Great value</span>
+          <span class="tag">Comfort food</span>
+        </div>
+
+        <div class="meta-row">
+          <span class="timestamp">2 weeks ago</span>
+          <button class="helpful-btn">👍 Helpful · 1</button>
+          <div class="actions">
+            <div class="edit-closed">
+              Edit closed
+              <div class="tooltip">Reviews can only be edited within 24 hours</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No photo, no text (just ratings + tags) -->
+    <div class="card">
+      <div class="card-body">
+        <div class="dish-header">
+          <div class="dish-info">
+            <div class="dish-name">Cold Coffee</div>
+            <div class="restaurant-name">at <span>Third Wave Coffee</span></div>
+          </div>
+          <div class="score-badge">2.0 <span class="out-of">/5</span></div>
+        </div>
+
+        <div class="sub-ratings-compact">
+          <span class="sub-pill">Taste <span class="val">2.5</span></span>
+          <span class="sub-pill">Portion <span class="val">1.5</span></span>
+          <span class="sub-pill">Value <span class="val">2.0</span></span>
+        </div>
+
+        <div class="tags-row">
+          <span class="tag">Overpriced</span>
+          <span class="tag">Small portion</span>
+        </div>
+
+        <div class="meta-row">
+          <span class="timestamp">3 weeks ago</span>
+          <button class="helpful-btn">👍 Helpful · 0</button>
+          <div class="actions">
+            <div class="edit-closed">
+              Edit closed
+              <div class="tooltip">Reviews can only be edited within 24 hours</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="note-box">
+  <strong>Interaction summary:</strong> Click any photo banner to morph-expand it in place (no overlay, no context switch). The banner smoothly grows from 130px → 320px, switching from cropped cover to full contained view. Click again to collapse. "See more" expands text + reveals sub-rating bars. Hover "Edit closed" for tooltip.
+</div>
+
+<script>
+  function toggleBanner(el) {
+    el.classList.toggle('expanded');
+  }
+
+  function toggleText(id, btn) {
+    const el = document.getElementById(id);
+    if (el.classList.contains('clamped')) {
+      el.classList.remove('clamped');
+      el.classList.add('full');
+      btn.textContent = 'See less';
+    } else {
+      el.classList.remove('full');
+      el.classList.add('clamped');
+      btn.textContent = 'See more';
+    }
+  }
+
+  function toggleTextWithRatings(textId, ratingsId, btn) {
+    toggleText(textId, btn);
+    const ratings = document.getElementById(ratingsId);
+    if (ratings) ratings.classList.toggle('open');
+  }
+
+  function showHiddenTags(btn) {
+    let sibling = btn.nextElementSibling;
+    while (sibling) {
+      if (sibling.classList.contains('tag')) sibling.style.display = 'inline';
+      sibling = sibling.nextElementSibling;
+    }
+    btn.style.display = 'none';
+  }
+</script>
+
+</body>
+</html>

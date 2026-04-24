@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
-import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { Search, Bell, User, Heart, Settings, LogOut, MapPin, ChevronDown } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '@/lib/utils'
@@ -16,8 +16,9 @@ import { UserAvatar } from '@/components/ui/Avatar'
 import { Logo } from '@/components/ui/Logo'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { SearchBar } from '@/components/features/SearchBar'
+import { ROUTES } from '@/lib/constants/routes'
+import { NotificationPopover } from '@/components/features/NotificationPopover'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -97,42 +98,9 @@ function CitySelector() {
 export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
-  const showSearch = pathname !== '/'
+  const showSearch = pathname !== ROUTES.HOME
   const [scrolled, setScrolled] = useState(false)
-  const [unreadCount, setUnreadCount] = useState(0)
   const { user, isAuthenticated, isLoading } = useAuth()
-  const authUser = useAuthStore((s) => s.authUser)
-
-  const fetchUnreadCount = useCallback(async () => {
-    if (!authUser) return
-    try {
-      const token = await authUser.getIdToken()
-      const res = await fetch('/api/notifications/unread-count', {
-        headers: { authorization: `Bearer ${token}` },
-      })
-      if (res.ok) {
-        const data = await res.json()
-        setUnreadCount(data.count ?? 0)
-      }
-    } catch { /* ignore */ }
-  }, [authUser])
-
-  useEffect(() => {
-    if (!isAuthenticated || !authUser) return
-    const initialTimer = setTimeout(fetchUnreadCount, 0)
-    const interval = setInterval(fetchUnreadCount, 120_000)
-
-    function handleVisibilityChange() {
-      if (document.visibilityState === 'visible') fetchUnreadCount()
-    }
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-
-    return () => {
-      clearTimeout(initialTimer)
-      clearInterval(interval)
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-    }
-  }, [isAuthenticated, authUser, fetchUnreadCount])
 
   useEffect(() => {
     function onScroll() { setScrolled(window.scrollY > 10) }
@@ -147,12 +115,12 @@ export function Navbar() {
         scrolled ? 'border-border shadow-sm' : 'border-transparent'
       )}
     >
-      <div className="mx-auto flex h-[68px] max-w-[1200px] items-center gap-5 px-6">
-        <Link href="/" className="shrink-0">
-          <Logo size="md" />
+      <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-2 px-3 sm:h-[68px] sm:gap-5 sm:px-6">
+        <Link href={ROUTES.HOME} className="shrink-0">
+          <Logo size="md" wordmarkClassName="hidden sm:inline" />
         </Link>
 
-        <div className="mx-auto flex-1">
+        <div className="mx-auto hidden min-w-0 flex-1 md:block">
           <AnimatePresence>
             {showSearch && (
               <motion.div
@@ -163,7 +131,7 @@ export function Navbar() {
                 transition={{ duration: 0.25, ease: 'easeOut' }}
                 className="flex justify-center"
               >
-                <Suspense fallback={<div className="w-[400px]" />}>
+                <Suspense fallback={<div className="w-full max-w-[400px]" />}>
                   <SearchBar variant="navbar" />
                 </Suspense>
               </motion.div>
@@ -171,7 +139,7 @@ export function Navbar() {
           </AnimatePresence>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2.5">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2.5">
           <CitySelector />
 
           {showSearch && (
@@ -179,7 +147,7 @@ export function Navbar() {
               variant="ghost"
               size="icon"
               className="rounded-full md:hidden"
-              onClick={() => router.push('/explore')}
+              onClick={() => router.push(ROUTES.EXPLORE)}
               aria-label="Search"
             >
               <Search className="h-5 w-5 text-text-secondary" />
@@ -193,17 +161,26 @@ export function Navbar() {
               <Button
                 variant="outline"
                 size="lg"
-                className="rounded-pill border-2 px-5 font-semibold inline-flex"
-                render={<Link href="/login" />}
+                className="hidden rounded-pill border-2 px-5 font-semibold sm:inline-flex"
+                render={<Link href={ROUTES.LOGIN} />}
               >
                 Sign in
               </Button>
               <Button
                 size="lg"
-                className="rounded-pill px-5 font-semibold hover:-translate-y-0.5 hover:shadow-glow"
-                render={<Link href="/signup" />}
+                className="hidden rounded-pill px-5 font-semibold hover:-translate-y-0.5 active:translate-y-0 hover:shadow-glow sm:inline-flex"
+                render={<Link href={ROUTES.SIGNUP} />}
               >
                 Sign up
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="rounded-full sm:hidden"
+                render={<Link href={ROUTES.LOGIN} />}
+                aria-label="Sign in"
+              >
+                <User className="h-5 w-5" />
               </Button>
             </>
           )}
@@ -211,27 +188,16 @@ export function Navbar() {
           {!isLoading && isAuthenticated && user && (
             <>
 
-              <Link
-                href="/notifications"
-                className="relative flex h-[42px] w-[42px] items-center justify-center rounded-full border border-border bg-bg-cream text-text-secondary transition-colors hover:border-primary hover:text-primary"
-                aria-label="Notifications"
-              >
-                <Bell className="h-5 w-5" />
-                {unreadCount > 0 && (
-                  <Badge className="absolute -right-0.5 -top-0.5 h-[18px] min-w-[18px] rounded-full px-1 text-[10px] font-bold">
-                    {unreadCount > 99 ? '99+' : unreadCount}
-                  </Badge>
-                )}
-              </Link>
+              <NotificationPopover />
 
               <DropdownMenu>
                 <DropdownMenuTrigger
-                  className="flex h-[38px] w-[38px] cursor-pointer items-center justify-center rounded-full border-2 border-background bg-gradient-to-br from-primary to-secondary shadow-sm outline-none"
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-2 border-background bg-gradient-to-br from-primary to-brand-orange shadow-sm outline-none sm:h-[38px] sm:w-[38px]"
                 >
                   {user.avatarUrl ? (
                     <UserAvatar src={user.avatarUrl} name={user.displayName} size="sm" />
                   ) : (
-                    <span className="text-sm font-bold text-white">
+                    <span className="text-xs font-bold text-white sm:text-sm">
                       {user.displayName?.charAt(0).toUpperCase() ?? 'U'}
                     </span>
                   )}
@@ -246,28 +212,28 @@ export function Navbar() {
                   </div>
                   <DropdownMenuItem
                     className="gap-2 px-3 py-2"
-                    render={<Link href="/my-profile" />}
+                    render={<Link href={ROUTES.MY_PROFILE} />}
                   >
                     <User className="h-4 w-4" />
                     My Profile
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="gap-2 px-3 py-2"
-                    render={<Link href="/wishlist" />}
+                    render={<Link href={ROUTES.WISHLIST} />}
                   >
                     <Heart className="h-4 w-4" />
                     Wishlist
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="gap-2 px-3 py-2"
-                    render={<Link href="/notifications" />}
+                    render={<Link href={ROUTES.NOTIFICATIONS} />}
                   >
                     <Bell className="h-4 w-4" />
                     Notifications
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="gap-2 px-3 py-2"
-                    render={<Link href="/settings" />}
+                    render={<Link href={ROUTES.SETTINGS} />}
                   >
                     <Settings className="h-4 w-4" />
                     Settings

@@ -5,6 +5,7 @@ import {
 } from '@/lib/auth/assert-restaurant-owner'
 import { getRestaurantAnalytics } from '@/lib/services/restaurant-analytics'
 import { captureError } from '@/lib/monitoring/sentry'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -20,12 +21,12 @@ export async function GET(req: Request, context: RouteContext) {
       return NextResponse.json({ message: error.message }, { status: error.status })
     }
     captureError(error, { route: '/api/restaurants/[id]/analytics' })
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ message: API_ERRORS.UNAUTHORIZED }, { status: 401 })
   }
 
   const analytics = await getRestaurantAnalytics(restaurantId)
   if (!analytics) {
-    return NextResponse.json({ message: 'Restaurant not found' }, { status: 404 })
+    return NextResponse.json({ message: API_ERRORS.RESTAURANT_NOT_FOUND }, { status: 404 })
   }
 
   return NextResponse.json(analytics)

@@ -13,13 +13,6 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // True only for requests made with a service-account / admin token.
-    // Admin SDK calls have request.auth.token.firebase.sign_in_provider == null
-    // or request.auth.uid set but no sign_in_provider. We rely on the fact that
-    // Firestore rules cannot distinguish admin SDK from client SDK — the real
-    // protection is field-level: client writes to sensitive fields are blocked.
-    // Server (admin SDK) bypasses rules entirely.
-
     // Fields a user may set on their own profile via client SDK.
     function isProfileUpdate() {
       let allowed = ['displayName', 'avatarUrl', 'city', 'area', 'favoriteCuisines'].toSet();
@@ -37,7 +30,8 @@ service cloud.firestore {
 
       // Owner can update ONLY safe profile fields.
       // isAdmin, isPremium, premiumSince, level, badges, reviewCount,
-      // helpfulVotesReceived are server-write-only (admin SDK bypasses rules).
+      // helpfulVotesReceived, dishPointsBalance, totalPointsEarned,
+      // totalPointsRedeemed are server-write-only (admin SDK bypasses rules).
       allow update: if isOwner(userId) && isProfileUpdate();
 
       // Users cannot delete their own doc from client.
@@ -133,7 +127,8 @@ service cloud.firestore {
       allow read: if isSignedIn()
                   && resource.data.userId == request.auth.uid;
 
-      // Authenticated user can create a claim with their own userId.
+      // Claims are now created via API routes (admin SDK bypasses rules).
+      // Client-side create kept as fallback with ownership check.
       allow create: if isSignedIn()
                     && request.resource.data.userId == request.auth.uid;
 
@@ -149,7 +144,8 @@ service cloud.firestore {
       allow read: if isSignedIn()
                   && resource.data.userId == request.auth.uid;
 
-      // Client can only mark notifications as read (update isRead field).
+      // Mark-as-read now goes through API routes (admin SDK),
+      // but client-side rule kept as defense-in-depth for isRead updates only.
       allow update: if isSignedIn()
                     && resource.data.userId == request.auth.uid
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isRead'].toSet());
@@ -157,6 +153,19 @@ service cloud.firestore {
       // Notifications are created server-side only.
       allow create: if false;
       allow delete: if false;
+    }
+
+    // ── Billing Events ────────────────────────────────────────
+    // Payment records — server-only via admin SDK.
+
+    match /billingEvents/{eventId} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // ── Catch-all: deny everything not explicitly matched ─────
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

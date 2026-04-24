@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatRelativeTime } from '@/lib/utils/index'
 import type { RestaurantClaim } from '@/lib/types'
+import { API_ENDPOINTS } from '@/lib/constants/api'
+import { HTTP_HEADERS } from '@/lib/constants'
 
 export default function AdminRestaurantClaimsPage() {
   const { authUser } = useAuth()
@@ -19,7 +21,7 @@ export default function AdminRestaurantClaimsPage() {
     if (!authUser) return
     async function load() {
       const token = await authUser!.getIdToken()
-      const res = await fetch('/api/admin/restaurant-claims', {
+      const res = await fetch(API_ENDPOINTS.ADMIN_RESTAURANT_CLAIMS, {
         headers: { authorization: `Bearer ${token}` },
       })
       if (res.ok) {
@@ -34,11 +36,11 @@ export default function AdminRestaurantClaimsPage() {
   async function handleAction(claimId: string, action: 'approve' | 'reject') {
     if (!authUser) return
     const token = await authUser.getIdToken()
-    const res = await fetch('/api/admin/restaurant-claims', {
+    const res = await fetch(API_ENDPOINTS.ADMIN_RESTAURANT_CLAIMS, {
       method: 'PATCH',
       headers: {
         authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
+        [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
       },
       body: JSON.stringify({
         claimId,
@@ -55,7 +57,7 @@ export default function AdminRestaurantClaimsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-xl font-bold text-bg-dark">Restaurant Claims</h1>
+      <h1 className="font-display text-xl font-bold text-heading">Restaurant Claims</h1>
       <p className="mt-1 text-sm text-text-muted">{claims.length} pending</p>
 
       {claims.length === 0 ? (
@@ -68,7 +70,7 @@ export default function AdminRestaurantClaimsPage() {
             <div key={claim.id} className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-bg-dark">{claim.restaurantName}</p>
+                  <p className="font-semibold text-heading">{claim.restaurantName}</p>
                   <p className="mt-0.5 text-sm text-text-secondary">
                     Claimed by <strong>{claim.userName}</strong> ({claim.userEmail})
                   </p>

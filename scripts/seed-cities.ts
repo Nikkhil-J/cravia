@@ -232,7 +232,7 @@ async function seedCity(cityName: string) {
 }
 
 async function main() {
-  console.log(`DishCheck seed script starting...${DRY_RUN ? ' (DRY RUN)' : ''}`)
+  console.log(`Cravia seed script starting...${DRY_RUN ? ' (DRY RUN)' : ''}`)
   await seedCity('Bengaluru')
   await seedCity('Gurugram')
   console.log(`\n✅ ${DRY_RUN ? 'Dry run' : 'Seeding'} complete!`)

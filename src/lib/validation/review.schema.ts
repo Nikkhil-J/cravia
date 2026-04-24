@@ -1,7 +1,7 @@
 import { z } from 'zod'
-import { TAG_LIST } from '@/lib/constants'
+import { TAG_LIST, MAX_RATING } from '@/lib/constants'
 
-const ratingField = z.number().min(1).max(5)
+const ratingField = z.number().min(1).max(MAX_RATING)
 
 export const createReviewSchema = z.object({
   dishId: z.string().min(1),

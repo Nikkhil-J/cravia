@@ -1,0 +1,17 @@
+---
+description: When the user says "keep this for v2" or similar, append the task to docs/V2.md
+alwaysApply: true
+---
+
+# V2 Backlog Tracking
+
+When the user says "let's keep this for v2", "defer to v2", "save for v2", or any
+similar phrasing, append a new checkbox item to the **## Tasks** section in `docs/V2.md`.
+
+Format each entry as:
+
+```
+- [ ] Short description of the deferred task
+```
+
+Do not remove existing items. Always append at the bottom.

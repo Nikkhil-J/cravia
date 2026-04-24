@@ -17,9 +17,11 @@ import { TagPill } from '@/components/ui/TagPill'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { TAG_LIST } from '@/lib/constants'
+import { TAG_GROUPS, RATING_LABELS, SUB_RATING_LABELS, HTTP_HEADERS } from '@/lib/constants'
 import type { Dish } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { ROUTES } from '@/lib/constants/routes'
+import { API_ENDPOINTS } from '@/lib/constants/api'
 
 function WriteReviewContent() {
   const router = useRouter()
@@ -27,6 +29,8 @@ function WriteReviewContent() {
   const dishId = searchParams.get('dishId') ?? ''
   const restaurantId = searchParams.get('restaurantId') ?? ''
   const editReviewId = searchParams.get('editReviewId') ?? ''
+  const dishNameParam = searchParams.get('dishName') ?? ''
+  const restaurantNameParam = searchParams.get('restaurantName') ?? ''
 
   const { user, authUser } = useAuth()
   const { data, currentStep, setStep, updateField, reset } = useReviewFormStore()
@@ -46,6 +50,8 @@ function WriteReviewContent() {
   }, [hasUnsavedChanges])
 
   const [dish, setDish] = useState<Dish | null>(null)
+  const displayName = dishNameParam || dish?.name || ''
+  const displayRestaurant = restaurantNameParam || dish?.restaurantName || ''
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [photoError, setPhotoError] = useState<string | null>(null)
@@ -54,6 +60,12 @@ function WriteReviewContent() {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const prevDishIdRef = useRef(dishId)
+  const mountResetRef = useRef(false)
+  if (!mountResetRef.current && dishId && data.dishId && data.dishId !== dishId) {
+    reset()
+    mountResetRef.current = true
+  }
+
   useEffect(() => {
     if (!dishId) return
     if (prevDishIdRef.current !== dishId) {
@@ -66,6 +78,12 @@ function WriteReviewContent() {
     }
     getDish(dishId).then(setDish)
   }, [dishId, restaurantId, data.dishId, updateField, reset])
+
+  const resetRef = useRef(reset)
+  resetRef.current = reset
+  useEffect(() => {
+    return () => { resetRef.current() }
+  }, [])
 
   useEffect(() => {
     if (!editReviewId) return
@@ -105,10 +123,10 @@ function WriteReviewContent() {
       setSubmitting(true)
       setSubmitError(null)
       try {
-        const res = await fetch(`/api/reviews/${encodeURIComponent(editReviewId)}`, {
+        const res = await fetch(API_ENDPOINTS.review(encodeURIComponent(editReviewId)), {
           method: 'PATCH',
           headers: {
-            'content-type': 'application/json',
+            [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
             authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -128,7 +146,7 @@ function WriteReviewContent() {
           return
         }
         reset()
-        router.push(`/dish/${dishId}`)
+        router.push(ROUTES.dish(dishId))
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : 'Update failed. Please try again.'
         setSubmitError(msg)
@@ -144,10 +162,10 @@ function WriteReviewContent() {
     setSubmitError(null)
     try {
       const photoUrl = await uploadDishPhoto(data.photoFile, dishId)
-      const res = await fetch('/api/reviews', {
+      const res = await fetch(API_ENDPOINTS.REVIEWS, {
         method: 'POST',
         headers: {
-          'content-type': 'application/json',
+          [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
           authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
@@ -185,8 +203,8 @@ function WriteReviewContent() {
       )
       sessionStorage.setItem('reviewSuccess', JSON.stringify({
         dishId,
-        dishName: dish?.name,
-        restaurantName: dish?.restaurantName,
+        dishName: displayName,
+        restaurantName: displayRestaurant,
         newBadges,
         newReviewCount: user.reviewCount + 1,
         pointsAwarded: payload.pointsAwarded ?? 0,
@@ -194,7 +212,7 @@ function WriteReviewContent() {
         isFullReview: payload.isFullReview ?? false,
       }))
       reset()
-      router.push('/review-success')
+      router.push(ROUTES.REVIEW_SUCCESS)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Submission failed. Please try again.'
       setSubmitError(msg)
@@ -208,12 +226,12 @@ function WriteReviewContent() {
 
   if (!dishId) {
     return (
-      <div className="mx-auto max-w-xl px-6 py-16 text-center">
+      <div className="mx-auto max-w-xl px-4 py-16 text-center sm:px-6">
         <span className="text-5xl">🍽️</span>
-        <h1 className="mt-4 font-display text-xl font-bold text-bg-dark">Which dish are you reviewing?</h1>
+        <h1 className="mt-4 font-display text-xl font-bold text-heading">Which dish are you reviewing?</h1>
         <p className="mt-2 text-sm text-text-secondary">Find a dish first, then tap &quot;Write a Review&quot; from its page.</p>
         <Button
-          render={<Link href="/explore" />}
+          render={<Link href={ROUTES.EXPLORE} />}
           className="mt-6 h-auto rounded-pill px-6 py-3 text-sm font-semibold hover:bg-primary-dark"
         >
           Explore Dishes
@@ -223,51 +241,60 @@ function WriteReviewContent() {
   }
 
   return (
-    <div className="mx-auto max-w-xl px-6 py-8">
-      {/* Dish context */}
-      {dish && (
-        <div className="mb-6 flex items-center gap-3">
-          {dish.coverImage && (
-            <Image src={dish.coverImage} alt={dish.name} width={48} height={48} className="h-12 w-12 rounded-md object-cover" />
-          )}
+    <div className="mx-auto max-w-xl px-4 py-8 sm:px-6">
+      {/* Dish context — name from URL params (instant), cover image from background fetch */}
+      <div className="mb-6 flex items-center gap-3">
+        {dish?.coverImage ? (
+          <Image src={dish.coverImage} alt={displayName} width={48} height={48} className="h-12 w-12 rounded-md object-cover" />
+        ) : dishNameParam ? (
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-surface-2 text-xl">🍽️</div>
+        ) : (
+          <div className="h-12 w-12 shrink-0 animate-pulse rounded-md bg-border" />
+        )}
+        {displayName ? (
           <div>
-            <h1 className="font-display text-lg font-bold text-bg-dark">
-              {isEditMode ? `Editing review: ${dish.name}` : dish.name}
+            <h1 className="font-display text-lg font-bold text-heading">
+              {isEditMode ? `Editing review: ${displayName}` : displayName}
             </h1>
-            <p className="text-xs text-text-muted">{dish.restaurantName}</p>
+            <p className="text-xs text-text-muted">{displayRestaurant}</p>
           </div>
-        </div>
-      )}
+        ) : (
+          <div>
+            <div className="h-5 w-40 animate-pulse rounded bg-border" />
+            <div className="mt-1.5 h-3 w-24 animate-pulse rounded bg-border" />
+          </div>
+        )}
+      </div>
       {isEditMode && existingPhotoUrl && (
         <div className="mb-6 overflow-hidden rounded-xl">
           <Image src={existingPhotoUrl} alt="Your review photo" width={600} height={200} className="h-40 w-full object-cover" />
         </div>
       )}
 
-      {/* Progress indicator */}
-      <div className="mb-8 flex items-center gap-1">
+      {/* Progress bar */}
+      <div className="mb-2">
+        <div className="h-[3px] rounded-full bg-border overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-primary to-brand-orange transition-all duration-500 ease-out"
+            style={{ width: `${((currentStep - (isEditMode ? 2 : 1)) / steps.length) * 100 + (100 / steps.length)}%` }}
+          />
+        </div>
+      </div>
+      <div className="mb-8 flex justify-between px-1">
         {steps.map((label, i) => {
           const stepNum = isEditMode ? i + 2 : i + 1
           const isActive = currentStep === stepNum
           const isDone = currentStep > stepNum
           return (
-            <div key={label} className="flex flex-1 flex-col items-center gap-1.5">
-              <div className="flex w-full items-center">
-                <div
-                  className={cn(
-                    'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-all',
-                    isActive ? 'bg-primary text-white shadow-glow' :
-                    isDone ? 'bg-primary text-white' : 'bg-border text-text-muted'
-                  )}
-                >
-                  {isDone ? '✓' : stepNum}
-                </div>
-                {i < steps.length - 1 && (
-                  <div className={cn('mx-1 h-0.5 flex-1 rounded-full transition-colors', isDone ? 'bg-primary' : 'bg-border')} />
-                )}
-              </div>
-              <span className={cn('text-[11px] font-medium', isActive ? 'text-primary' : 'text-text-muted')}>{label}</span>
-            </div>
+            <span
+              key={label}
+              className={cn(
+                'text-[11px] font-semibold uppercase tracking-wide transition-colors duration-300',
+                isDone ? 'text-success' : isActive ? 'text-primary' : 'text-text-muted'
+              )}
+            >
+              {label}
+            </span>
           )
         })}
       </div>
@@ -275,7 +302,7 @@ function WriteReviewContent() {
       {/* Step 1 — Photo (skip in edit mode) */}
       {currentStep === 1 && !isEditMode && (
         <div className="space-y-4">
-          <h2 className="font-display text-xl font-bold text-bg-dark">Upload a photo</h2>
+          <h2 className="font-display text-xl font-bold text-heading">Upload a photo</h2>
           <div
             onClick={() => fileRef.current?.click()}
             className="flex h-56 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-bg-cream transition-all hover:border-primary"
@@ -295,7 +322,7 @@ function WriteReviewContent() {
             <Button
               variant="ghost"
               onClick={() => { updateField('photoFile', null); updateField('photoPreviewUrl', null) }}
-              className="h-auto p-0 text-xs font-medium text-text-muted hover:bg-transparent hover:text-destructive"
+              className="h-auto p-0 text-xs font-medium text-text-muted hover:bg-transparent hover:text-destructive dark:hover:bg-transparent"
             >
               Remove photo
             </Button>
@@ -306,7 +333,7 @@ function WriteReviewContent() {
             disabled={!data.photoFile}
             className="w-full h-auto rounded-pill py-3 text-sm font-semibold hover:bg-primary-dark hover:shadow-glow"
           >
-            Next: Rate & Tag
+            Rate & Tag
           </Button>
         </div>
       )}
@@ -314,42 +341,104 @@ function WriteReviewContent() {
       {/* Step 2 — Ratings + Tags */}
       {currentStep === 2 && (
         <div className="space-y-6">
-          <h2 className="font-display text-xl font-bold text-bg-dark">{isEditMode ? 'Edit your ratings' : 'Rate this dish'}</h2>
-          {[
-            { label: 'Taste', field: 'tasteRating' as const, emoji: '😋' },
-            { label: 'Portion', field: 'portionRating' as const, emoji: '📏' },
-            { label: 'Value', field: 'valueRating' as const, emoji: '💰' },
-          ].map(({ label, field, emoji }) => (
-            <div key={label}>
-              <Label className="mb-2 text-sm font-semibold text-text-primary">
-                <span>{emoji}</span> {label}
-              </Label>
-              <StarRating
-                value={data[field] ?? 0}
-                onChange={(v) => updateField(field, v)}
-                size="lg"
-              />
+          {/* Ratings section */}
+          <div>
+            <h2 className="font-display text-xl font-bold text-heading">
+              {isEditMode ? 'Edit your ratings' : 'Rate this dish'}
+            </h2>
+            <p className="mt-1 text-sm text-text-secondary">Tap the stars — be honest, it helps everyone.</p>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            {([
+              { label: SUB_RATING_LABELS[0], field: 'tasteRating' as const, emoji: '😋' },
+              { label: SUB_RATING_LABELS[1], field: 'portionRating' as const, emoji: '📏' },
+              { label: SUB_RATING_LABELS[2], field: 'valueRating' as const, emoji: '💰' },
+            ] as const).map(({ label, field, emoji }) => {
+              const value = data[field] ?? 0
+              const isRated = value > 0
+              return (
+                <div
+                  key={label}
+                  className={cn(
+                    'rounded-xl border-[1.5px] p-4 transition-all duration-300',
+                    isRated
+                      ? 'border-primary/30 bg-primary/[0.04]'
+                      : 'border-border bg-card'
+                  )}
+                >
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-lg text-lg transition-transform duration-300',
+                        isRated ? 'scale-110 bg-surface' : 'bg-surface'
+                      )}>
+                        {emoji}
+                      </div>
+                      <Label className="font-display text-base font-bold text-text-primary">
+                        {label}
+                      </Label>
+                    </div>
+                    <span className={cn(
+                      'rounded-pill px-2.5 py-0.5 text-xs font-bold transition-colors duration-300',
+                      isRated
+                        ? 'bg-brand-gold/15 text-brand-gold'
+                        : 'bg-surface text-text-muted'
+                    )}>
+                      {RATING_LABELS[value]}
+                    </span>
+                  </div>
+                  <StarRating
+                    value={value}
+                    onChange={(v) => updateField(field, v)}
+                    size="lg"
+                  />
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Divider */}
+          <div className="h-px bg-border" />
+
+          {/* Tags section */}
+          <div>
+            <h2 className="font-display text-xl font-bold text-heading">Tag it</h2>
+            <p className="mt-1 text-sm text-text-secondary">Help others know what to expect.</p>
+          </div>
+
+          {TAG_GROUPS.map(({ label: groupLabel, tags }) => (
+            <div key={groupLabel}>
+              <div className="mb-2.5 flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-text-muted">
+                  {groupLabel}
+                </span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <TagPill
+                    key={tag}
+                    label={tag}
+                    selected={data.tags.includes(tag)}
+                    onClick={() => {
+                      const next = data.tags.includes(tag)
+                        ? data.tags.filter((t) => t !== tag)
+                        : [...data.tags, tag]
+                      updateField('tags', next)
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           ))}
 
-          <div>
-            <Label className="mb-3 text-sm font-semibold text-text-primary">Tags (select at least 1)</Label>
-            <div className="flex flex-wrap gap-2">
-              {TAG_LIST.map((tag) => (
-                <TagPill
-                  key={tag}
-                  label={tag}
-                  selected={data.tags.includes(tag)}
-                  onClick={() => {
-                    const next = data.tags.includes(tag)
-                      ? data.tags.filter((t) => t !== tag)
-                      : [...data.tags, tag]
-                    updateField('tags', next)
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+          <p className={cn(
+            'text-xs font-medium',
+            data.tags.length >= 1 ? 'text-success' : 'text-text-muted'
+          )}>
+            <span className="font-bold">{data.tags.length}</span> / 1 minimum selected
+          </p>
 
           <div className="flex gap-3">
             {!isEditMode && (
@@ -366,7 +455,7 @@ function WriteReviewContent() {
               disabled={!data.tasteRating || !data.portionRating || !data.valueRating || data.tags.length === 0}
               className="flex-1 h-auto rounded-pill py-3 text-sm font-semibold hover:bg-primary-dark hover:shadow-glow"
             >
-              Next: Write Review
+              Continue
             </Button>
           </div>
         </div>
@@ -375,23 +464,23 @@ function WriteReviewContent() {
       {/* Step 3 — Text + Submit */}
       {currentStep === 3 && (
         <div className="space-y-4">
-          <h2 className="font-display text-xl font-bold text-bg-dark">Write your review</h2>
+          <h2 className="font-display text-xl font-bold text-heading">Write your review</h2>
           <textarea
             value={data.text}
             onChange={(e) => updateField('text', e.target.value)}
             rows={5}
             placeholder="Tell others what made this dish memorable..."
-            className="w-full rounded-xl border-2 border-border bg-bg-cream px-4 py-3 text-sm outline-none transition-colors placeholder:text-text-muted focus:border-primary"
+            className="w-full rounded-xl border-2 border-border bg-bg-cream px-4 py-3 text-base outline-none transition-colors placeholder:text-text-muted focus:border-primary"
           />
           <div className="flex items-center justify-between text-xs">
             <span className={cn(
               'font-medium',
-              data.text.length >= 30 ? 'text-[var(--color-success)]' : 'text-text-muted'
+              data.text.length >= 30 ? 'text-success' : 'text-text-muted'
             )}>
               {data.text.length}/{30} minimum
             </span>
             {data.text.length > 0 && data.text.length < 30 && (
-              <span className="font-medium text-accent">{30 - data.text.length} more characters needed</span>
+              <span className="font-medium text-brand-gold">{30 - data.text.length} more characters needed</span>
             )}
           </div>
           {submitError && <p className="text-xs font-medium text-destructive">{submitError}</p>}
@@ -408,7 +497,7 @@ function WriteReviewContent() {
               disabled={submitting || !data.text || data.text.length < 30}
               className="flex-1 h-auto rounded-pill py-3 text-sm font-semibold hover:bg-primary-dark hover:shadow-glow"
             >
-              {submitting ? <LoadingSpinner size="sm" /> : isEditMode ? 'Update Review' : 'Submit Review'}
+              {submitting ? <LoadingSpinner size="md" /> : isEditMode ? 'Update Review' : 'Submit Review'}
             </Button>
           </div>
         </div>

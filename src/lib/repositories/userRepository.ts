@@ -6,6 +6,4 @@ export interface UserRepository {
   update(id: string, updates: UserProfileUpdate): Promise<boolean>
   getReviewCount(id: string): Promise<number>
   list(limit?: number): Promise<User[]>
-  toggleAdmin(userId: string, isAdmin: boolean): Promise<boolean>
-  togglePremium(userId: string, isPremium: boolean): Promise<boolean>
 }

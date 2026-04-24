@@ -16,13 +16,14 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "DishCheck — Discover the best dishes in your city",
+  title: "Cravia — Discover the best dishes in your city",
   description:
     "Honest dish-level reviews from real food lovers. Find your next favourite dish — not just the restaurant.",
 };
 
 export const viewport: Viewport = {
   themeColor: [
+    // APPROVED HARDCODED COLOR — HTML meta viewport theme-color requires hex
     { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
     { media: "(prefers-color-scheme: dark)", color: "#1C1C2B" },
   ],

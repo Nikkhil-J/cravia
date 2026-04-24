@@ -4,16 +4,17 @@ interface SkeletonCardProps {
   className?: string
 }
 
-const shimmerBg = 'bg-[length:400%_100%] bg-[linear-gradient(90deg,var(--shimmer-from)_25%,var(--shimmer-via)_50%,var(--shimmer-to)_75%)] animate-shimmer'
-
 export function SkeletonCard({ className }: SkeletonCardProps) {
   return (
-    <div className={cn('overflow-hidden rounded-lg border border-border bg-card', className)}>
-      <div className={cn('h-36 w-full', shimmerBg)} />
-      <div className="p-3.5 space-y-2.5">
-        <div className={cn('h-4 w-3/4 rounded-md', shimmerBg)} />
-        <div className={cn('h-3 w-1/2 rounded-md', shimmerBg)} />
-        <div className={cn('h-3 w-1/3 rounded-md', shimmerBg)} />
+    <div className={cn('flex flex-col overflow-hidden rounded-lg border border-border bg-card', className)}>
+      <div className="h-36 w-full animate-pulse bg-surface-3" />
+      <div className="flex flex-1 flex-col p-3.5">
+        <div className="h-4 w-3/4 animate-pulse rounded-md bg-surface-3" />
+        <div className="mt-0.5 h-3 w-1/2 animate-pulse rounded-md bg-surface-3" />
+        <div className="mt-auto flex items-center justify-between pt-2">
+          <div className="h-3 w-16 animate-pulse rounded-md bg-surface-3" />
+          <div className="h-3.5 w-10 animate-pulse rounded-md bg-surface-3" />
+        </div>
       </div>
     </div>
   )

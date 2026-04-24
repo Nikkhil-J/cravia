@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cravia — Landing Stats Fix (Prototype)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #1C1C2B;
+      --card: #252538;
+      --surface: #2D2D45;
+      --primary: #E23744;
+      --primary-dark: #C62D39;
+      --secondary: #FF6B35;
+      --accent: #FFB800;
+      --success: #4ADE80;
+      --text-primary: #F2F2F7;
+      --text-secondary: #A8A8B8;
+      --text-muted: #6B6B80;
+      --border: #3A3A52;
+      --font-display: 'Bricolage Grotesque', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      padding: 40px 24px 60px;
+    }
+
+    .prototype-badge {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      background: var(--primary);
+      color: white;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      z-index: 100;
+      opacity: 0.85;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* ── Issue callout ── */
+    .issue-callout {
+      background: color-mix(in srgb, var(--accent) 8%, var(--card));
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 48px;
+      animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .issue-callout h2 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .issue-callout p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .issue-callout strong { color: var(--text-primary); }
+    .issue-callout code {
+      background: var(--surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--primary);
+    }
+
+    /* ── Variant sections ── */
+    .variant {
+      margin-bottom: 56px;
+      animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .variant:nth-child(2) { animation-delay: 0.1s; }
+    .variant:nth-child(3) { animation-delay: 0.2s; }
+    .variant:nth-child(4) { animation-delay: 0.3s; }
+
+    .variant-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .variant-num {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary);
+      background: color-mix(in srgb, var(--primary) 12%, transparent);
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .variant-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .variant-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      margin-left: 40px;
+      line-height: 1.5;
+    }
+    .variant-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-current {
+      background: var(--surface);
+      color: var(--text-muted);
+    }
+    .badge-recommended {
+      background: color-mix(in srgb, var(--success) 15%, transparent);
+      color: var(--success);
+    }
+
+    /* ── Stats bar (shared) ── */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stats-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .stats-bar:hover::before {
+      opacity: 1;
+    }
+    .stat-item {
+      text-align: center;
+      flex: 1;
+      position: relative;
+    }
+    .stat-item + .stat-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 40px;
+      background: var(--border);
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ── Problem overlay for current ── */
+    .problem-stat .stat-num {
+      background: none;
+      -webkit-text-fill-color: var(--text-muted);
+      text-decoration: line-through;
+      text-decoration-color: var(--primary);
+      text-decoration-thickness: 2px;
+    }
+
+    /* ── Variant B: animated count-up ── */
+    .stat-num.animate {
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ── Variant C: icon stats ── */
+    .stat-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    /* ── Variant D: grid layout ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .stats-grid .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .stats-grid .stat-card:hover {
+      border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+      transform: translateY(-2px);
+    }
+    .stats-grid .stat-num {
+      font-size: 36px;
+    }
+    .stats-grid .stat-label {
+      font-size: 11px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="prototype-badge">Prototype</div>
+
+  <div class="container">
+
+    <!-- Issue callout -->
+    <div class="issue-callout">
+      <h2>⚠️ What's wrong with the numbers</h2>
+      <p>
+        Your <code>getDishCount()</code> returns <strong>all dish documents</strong> in Firestore (menu items), not dishes that have reviews.
+        Showing <strong>"131+ Dishes reviewed"</strong> next to <strong>"2 Restaurants"</strong> creates a credibility mismatch — readers think
+        "there's no way 131 unique dishes were reviewed at only 2 restaurants." The number is technically right (you catalogued 131 menu items),
+        but the label <em>"reviewed"</em> is misleading. Below are three redesign options, each solving this differently.
+      </p>
+    </div>
+
+    <!-- ──────── CURRENT (broken) ──────── -->
+    <div class="variant">
+      <div class="variant-header">
+        <div class="variant-num">A</div>
+        <h3 class="variant-title">Current <span class="variant-badge badge-current">Broken</span></h3>
+      </div>
+      <p class="variant-desc">
+        Raw counts with misleading labels. "131+" feels inflated next to "2".
+      </p>
+      <div class="stats-bar">
+        <div class="stat-item problem-stat">
+          <div class="stat-num">131+</div>
+          <div class="stat-label">Dishes reviewed</div>
+        </div>
+        <div class="stat-item problem-stat">
+          <div class="stat-num">2</div>
+          <div class="stat-label">Restaurants</div>
+        </div>
+        <div class="stat-item problem-stat">
+          <div class="stat-num">2</div>
+          <div class="stat-label">Cities</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────── OPTION B: Relabel + recount ──────── -->
+    <div class="variant">
+      <div class="variant-header">
+        <div class="variant-num">B</div>
+        <h3 class="variant-title">Relabel + honest counts <span class="variant-badge badge-recommended">Recommended</span></h3>
+      </div>
+      <p class="variant-desc">
+        Change the stat from "dishes reviewed" to "dishes listed" (honest) or show total <strong>review count</strong> instead.
+        Add a fourth stat (community size) so "2 cities" doesn't feel lonely.
+        The "+" suffix should only appear on numbers that feel meaningful at scale (e.g. 100+).
+        Small numbers like 2 should display without "+".
+      </p>
+      <div class="stats-grid" id="statsGridB">
+        <div class="stat-card">
+          <span class="stat-icon">🍽️</span>
+          <div class="stat-num" data-target="48">0</div>
+          <div class="stat-label">Reviews written</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📋</span>
+          <div class="stat-num" data-target="131">0</div>
+          <div class="stat-label">Dishes listed</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🏪</span>
+          <div class="stat-num" data-target="2">0</div>
+          <div class="stat-label">Restaurants</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📍</span>
+          <div class="stat-num" data-target="2">0</div>
+          <div class="stat-label">Cities</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────── OPTION C: Social proof reframe ──────── -->
+    <div class="variant">
+      <div class="variant-header">
+        <div class="variant-num">C</div>
+        <h3 class="variant-title">Social proof reframe</h3>
+      </div>
+      <p class="variant-desc">
+        Flip the narrative from inventory counts to community activity. Show <strong>reviews, foodies, and photos</strong>
+        — metrics that grow faster and feel more vibrant at small scale. Hide "cities" until you're in 3+.
+      </p>
+      <div class="stats-bar" id="statsBarC">
+        <div class="stat-item">
+          <div class="stat-num" data-target="48">0</div>
+          <div class="stat-label">Reviews</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-target="23">0</div>
+          <div class="stat-label">Food lovers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-target="48">0</div>
+          <div class="stat-label">Dish photos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────── OPTION D: Early stage — no raw numbers ──────── -->
+    <div class="variant">
+      <div class="variant-header">
+        <div class="variant-num">D</div>
+        <h3 class="variant-title">Early stage — ditch the numbers</h3>
+      </div>
+      <p class="variant-desc">
+        At this scale, raw numbers can work against you. Replace the stats bar with
+        a <strong>trust signal</strong> strip instead — real quotes, feature highlights, or a "growing community" note.
+        Bring stats back once you hit meaningful thresholds (50+ reviews, 5+ restaurants).
+      </p>
+      <div class="stats-bar" style="justify-content: center; gap: 16px; padding: 24px 32px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex: 1; max-width: 700px;">
+          <div style="font-size: 32px; flex-shrink: 0;">✨</div>
+          <div>
+            <div style="font-family: var(--font-display); font-size: 17px; font-weight: 700; margin-bottom: 4px;">
+              A growing community of honest food lovers
+            </div>
+            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+              Real dish-level reviews with photos, sub-ratings, and tags — now live in Bengaluru &amp; Gurugram.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function animateCountUp(el, target, duration = 1200) {
+      const start = performance.now();
+      const suffix = target >= 100 ? '+' : '';
+
+      function tick(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(eased * target);
+        el.textContent = current + (progress >= 1 ? suffix : '');
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const nums = entry.target.querySelectorAll('[data-target]');
+        nums.forEach((el, i) => {
+          setTimeout(() => {
+            animateCountUp(el, parseInt(el.dataset.target), 1000 + i * 200);
+          }, i * 100);
+        });
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('#statsGridB, #statsBarC').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

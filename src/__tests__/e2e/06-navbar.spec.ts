@@ -22,7 +22,7 @@ test.describe('Navbar — logged out', () => {
 
   test('shows logo linking to home', async ({ page }) => {
     await page.goto('/explore')
-    const logo = page.getByRole('link', { name: /dishcheck/i }).first()
+    const logo = page.getByRole('link', { name: /cravia/i }).first()
     await logo.click()
     await expect(page).toHaveURL('/', { timeout: 5000 })
   })

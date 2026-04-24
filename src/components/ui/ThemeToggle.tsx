@@ -12,7 +12,7 @@ export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme()
   const mounted = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot)
 
-  if (!mounted) return <div className="h-[42px] w-[42px]" />
+  if (!mounted) return <div className="h-[44px] w-[44px]" />
 
   function handleToggle() {
     document.documentElement.classList.add('theme-transitioning')
@@ -29,7 +29,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={handleToggle}
-      className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-border bg-bg-cream text-text-secondary transition-colors duration-200 hover:border-primary hover:text-primary"
+      className="flex h-[44px] w-[44px] items-center justify-center rounded-full border border-border bg-bg-cream text-text-secondary transition-colors duration-200 hover:border-primary hover:text-primary"
       aria-label="Toggle theme"
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >

@@ -1,0 +1,1869 @@
+{
+  "generatedAt": "2026-04-08",
+  "summary": {
+    "totalPages": 29,
+    "publicPages": 6,
+    "protectedPages": 14,
+    "adminPages": 6,
+    "authPages": 3,
+    "totalApiRoutes": 39
+  },
+  "pages": [
+    {
+      "name": "Landing Page",
+      "route": "/",
+      "file": "src/app/(public)/page.tsx",
+      "type": "server",
+      "auth": "public",
+      "onMount": [
+        {
+          "description": "Fetch top-rated dishes (up to 6)",
+          "function": "getTopDishes(6, selectedCity)",
+          "file": "src/lib/services/dishes.ts",
+          "dataSource": "Firestore — dishes collection (via service layer)",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600 (1 hour)",
+          "loadingState": "None (server component — full page streams)"
+        },
+        {
+          "description": "Fetch featured restaurants (up to 4)",
+          "function": "listRestaurants({ city, limit: 4 })",
+          "file": "src/lib/services/catalog.ts",
+          "dataSource": "Firestore — restaurants collection",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "None"
+        },
+        {
+          "description": "Fetch dish count",
+          "function": "getDishCount()",
+          "file": "src/lib/services/dishes.ts",
+          "dataSource": "Firestore — dishes collection (count aggregation)",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "None"
+        },
+        {
+          "description": "Fetch restaurant count",
+          "function": "getRestaurantCount(selectedCity)",
+          "file": "src/lib/services/restaurants.ts",
+          "dataSource": "Firestore — restaurants collection (count aggregation)",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "None"
+        },
+        {
+          "description": "Fetch review count",
+          "function": "getReviewCount()",
+          "file": "src/lib/services/reviews.ts",
+          "dataSource": "Firestore — reviews collection (count aggregation)",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "None"
+        },
+        {
+          "description": "Get selected city from cookie",
+          "function": "getCityFromCookie()",
+          "file": "src/lib/utils/get-city-from-cookie.ts",
+          "dataSource": "Server cookie",
+          "fetchType": "server-side",
+          "caching": "None",
+          "loadingState": "None"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "'See all' link next to Top rated dishes",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/explore",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "DishCard click",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/dish/[id]",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Cuisine pill click (Browse by cuisine)",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/explore?cuisine={cuisine}",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "RestaurantCard click",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/restaurant/[id]",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "CityPills selection",
+          "function": "CityPills component",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Triggers page refresh with updated city cookie"
+        },
+        {
+          "trigger": "LandingCTA section button",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/signup",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["(any page via Navbar logo)", "/review-success"],
+      "navigationOut": ["/explore", "/dish/[id]", "/restaurant/[id]", "/explore?cuisine={cuisine}", "/signup"]
+    },
+    {
+      "name": "Dish Page",
+      "route": "/dish/[id]",
+      "file": "src/app/(public)/dish/[id]/page.tsx",
+      "type": "server",
+      "auth": "public",
+      "onMount": [
+        {
+          "description": "Fetch dish details by ID",
+          "function": "getDish(id)",
+          "file": "src/lib/services/dishes.ts",
+          "dataSource": "Firestore — dishes collection",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "DishLoading skeleton (src/app/(public)/dish/[id]/loading.tsx)"
+        },
+        {
+          "description": "Fetch related dishes from same restaurant",
+          "function": "getRelatedDishes(dish.restaurantId, dish.id, 4)",
+          "file": "src/lib/services/dishes.ts",
+          "dataSource": "Firestore — dishes collection",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "None (rendered after main content)"
+        },
+        {
+          "description": "Fetch dish reviews for photo grid and initial review list",
+          "function": "listDishReviews(dish.id)",
+          "file": "src/lib/services/catalog.ts",
+          "dataSource": "Firestore — reviews collection (filtered by dishId)",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "Suspense with SkeletonCard array"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Write a Review button",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/write-review?dishId={id}&restaurantId={id}&dishName={name}&restaurantName={name}&from=/dish/{id}",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "WishlistButton (heart icon)",
+          "function": "WishlistButton component (toggles wishlist)",
+          "apiCall": "POST /api/users/{userId}/wishlist/{dishId} or DELETE /api/users/{userId}/wishlist/{dishId}",
+          "navigatesTo": null,
+          "outcome": "Optimistic UI toggle + toast on error"
+        },
+        {
+          "trigger": "Restaurant name link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/restaurant/[restaurantId]",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Restaurant mini-card in sidebar",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/restaurant/[restaurantId]",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Load More Reviews button",
+          "function": "LoadMoreReviews component — fetches next page",
+          "apiCall": "GET /api/dishes/{dishId}/reviews?cursor={cursorId}",
+          "navigatesTo": null,
+          "outcome": "Appends reviews to list"
+        },
+        {
+          "trigger": "ReviewCard — Helpful vote",
+          "function": "handleVote()",
+          "apiCall": "POST /api/reviews/{id}/helpful",
+          "navigatesTo": null,
+          "outcome": "Optimistic count increment + toast on error"
+        },
+        {
+          "trigger": "ReviewCard — Report/Flag",
+          "function": "handleFlag()",
+          "apiCall": "POST /api/reviews/{id}/flag",
+          "navigatesTo": null,
+          "outcome": "Optimistic flag state + toast"
+        },
+        {
+          "trigger": "Related DishCard click",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/dish/[id]",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Breadcrumb links",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/ or /explore",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["/", "/explore", "/restaurant/[id]", "/cuisine/[slug]", "/review-success", "/wishlist", "/my-profile"],
+      "navigationOut": ["/write-review", "/restaurant/[id]", "/dish/[id]", "/", "/explore"]
+    },
+    {
+      "name": "Restaurant Page",
+      "route": "/restaurant/[id]",
+      "file": "src/app/(public)/restaurant/[id]/page.tsx",
+      "type": "server",
+      "auth": "public",
+      "onMount": [
+        {
+          "description": "Fetch restaurant details",
+          "function": "getRestaurantDetails(id)",
+          "file": "src/lib/services/catalog.ts",
+          "dataSource": "Firestore — restaurants collection",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "RestaurantLoading skeleton (src/app/(public)/restaurant/[id]/loading.tsx)"
+        },
+        {
+          "description": "Fetch restaurant dishes",
+          "function": "listRestaurantDishes(id)",
+          "file": "src/lib/services/catalog.ts",
+          "dataSource": "Firestore — dishes collection (filtered by restaurantId)",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "Part of RestaurantLoading skeleton"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Review a Dish button",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/write-review?dishId={firstDishId}&restaurantId={id}&dishName={name}&restaurantName={name}",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "DishCard click",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/dish/[id]",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Claim this restaurant link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/claim-restaurant/[id]",
+          "outcome": "Navigation (only shown if restaurant has no ownerId)"
+        },
+        {
+          "trigger": "Google Maps link",
+          "function": "External link",
+          "apiCall": null,
+          "navigatesTo": "External: Google Maps URL",
+          "outcome": "Opens in new tab"
+        },
+        {
+          "trigger": "Phone number link",
+          "function": "tel: link",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Initiates phone call"
+        },
+        {
+          "trigger": "Website link",
+          "function": "External link",
+          "apiCall": null,
+          "navigatesTo": "External: restaurant website",
+          "outcome": "Opens in new tab"
+        }
+      ],
+      "navigationIn": ["/dish/[id]", "/", "/explore", "/claim-restaurant/[id]", "/restaurant-dashboard/[id]"],
+      "navigationOut": ["/write-review", "/dish/[id]", "/claim-restaurant/[id]"]
+    },
+    {
+      "name": "Review Page",
+      "route": "/review/[id]",
+      "file": "src/app/(public)/review/[id]/page.tsx",
+      "type": "server",
+      "auth": "public",
+      "onMount": [
+        {
+          "description": "Fetch review by ID",
+          "function": "getReview(id)",
+          "file": "src/lib/services/reviews.ts",
+          "dataSource": "Firestore — reviews collection",
+          "fetchType": "server-side",
+          "caching": "None (no revalidate set — uses default)",
+          "loadingState": "None (server component)"
+        },
+        {
+          "description": "Fetch associated dish",
+          "function": "getDish(review.dishId)",
+          "file": "src/lib/services/dishes.ts",
+          "dataSource": "Firestore — dishes collection",
+          "fetchType": "server-side",
+          "caching": "None",
+          "loadingState": "None"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "ReviewCard — Helpful vote",
+          "function": "handleVote()",
+          "apiCall": "POST /api/reviews/{id}/helpful",
+          "navigatesTo": null,
+          "outcome": "Optimistic count increment"
+        },
+        {
+          "trigger": "ReviewCard — Report/Flag",
+          "function": "handleFlag()",
+          "apiCall": "POST /api/reviews/{id}/flag",
+          "navigatesTo": null,
+          "outcome": "Optimistic flag state + toast"
+        }
+      ],
+      "navigationIn": ["/notifications (via linkUrl)"],
+      "navigationOut": []
+    },
+    {
+      "name": "Cuisine Page",
+      "route": "/cuisine/[slug]",
+      "file": "src/app/(public)/cuisine/[slug]/page.tsx",
+      "type": "server",
+      "auth": "public",
+      "onMount": [
+        {
+          "description": "Search dishes filtered by cuisine type",
+          "function": "searchDishes('', { cuisine: cuisineName, sortBy: 'highest-rated' })",
+          "file": "src/lib/services/dishes.ts",
+          "dataSource": "Firestore — dishes collection (or Typesense if configured)",
+          "fetchType": "server-side",
+          "caching": "Next.js revalidate = 3600",
+          "loadingState": "None (server component)"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "DishCard click",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/dish/[id]",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Empty state CTA — Explore all dishes",
+          "function": "Link component (via EmptyState ctaHref)",
+          "apiCall": null,
+          "navigatesTo": "/explore",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["/explore?cuisine={cuisine}", "/ (Browse by cuisine section)"],
+      "navigationOut": ["/dish/[id]", "/explore"]
+    },
+    {
+      "name": "Explore Page",
+      "route": "/explore",
+      "file": "src/app/(public)/explore/page.tsx",
+      "type": "server",
+      "auth": "public",
+      "note": "Server component with client-side ExploreFilters child. Filters update URL params which trigger server re-fetch via Suspense key.",
+      "onMount": [
+        {
+          "description": "List dishes with applied filters",
+          "function": "listDishes({ query, city, area, cuisine, dietary, priceRange, sortBy })",
+          "file": "src/lib/services/catalog.ts",
+          "dataSource": "Firestore — dishes collection (or Typesense if configured)",
+          "fetchType": "server-side (via async server component inside Suspense)",
+          "caching": "None (dynamic based on search params)",
+          "loadingState": "ResultsSkeleton (6 SkeletonCard components)"
+        },
+        {
+          "description": "Resolve city from cookie and list city areas",
+          "function": "getCityFromCookie(), resolveCity(), listCityAreas()",
+          "file": "src/lib/utils/get-city-from-cookie.ts, src/lib/services/city.ts",
+          "dataSource": "Cookie + constants",
+          "fetchType": "server-side",
+          "caching": "None",
+          "loadingState": "None"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "ExploreFilters — Cuisine chip toggle",
+          "function": "toggleFilter('cuisine', value) → router.push()",
+          "apiCall": null,
+          "navigatesTo": "/explore?cuisine={value}",
+          "outcome": "URL update triggers server re-fetch via Suspense"
+        },
+        {
+          "trigger": "ExploreFilters — Dietary chip toggle",
+          "function": "toggleFilter('dietary', value) → router.push()",
+          "apiCall": null,
+          "navigatesTo": "/explore?dietary={value}",
+          "outcome": "URL update triggers server re-fetch"
+        },
+        {
+          "trigger": "ExploreFilters — Price chip toggle",
+          "function": "toggleFilter('priceRange', value) → router.push()",
+          "apiCall": null,
+          "navigatesTo": "/explore?priceRange={value}",
+          "outcome": "URL update triggers server re-fetch"
+        },
+        {
+          "trigger": "ExploreFilters — Area chip toggle",
+          "function": "toggleFilter('area', value) → router.push()",
+          "apiCall": null,
+          "navigatesTo": "/explore?area={value}",
+          "outcome": "URL update triggers server re-fetch"
+        },
+        {
+          "trigger": "ExploreFilters — Sort option change",
+          "function": "handleSort(value) → router.push()",
+          "apiCall": null,
+          "navigatesTo": "/explore?sortBy={value}",
+          "outcome": "URL update triggers server re-fetch"
+        },
+        {
+          "trigger": "ExploreFilters — Clear all button",
+          "function": "router.push('/explore') with all filter params removed",
+          "apiCall": null,
+          "navigatesTo": "/explore",
+          "outcome": "Resets all filters"
+        },
+        {
+          "trigger": "DishCard click (in results)",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/dish/[id]",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Load More button",
+          "function": "LoadMoreDishes component — client-side fetch",
+          "apiCall": "GET /api/dishes?q={query}&cursor={cursorId}&...",
+          "navigatesTo": null,
+          "outcome": "Appends more dishes to the grid"
+        }
+      ],
+      "navigationIn": ["/", "/dish/[id] (breadcrumb)", "/cuisine/[slug]", "Navbar search", "MobileBottomNav"],
+      "navigationOut": ["/dish/[id]"]
+    },
+    {
+      "name": "Login Page",
+      "route": "/login",
+      "file": "src/app/(auth)/login/page.tsx",
+      "type": "client",
+      "auth": "public",
+      "onMount": [],
+      "userActions": [
+        {
+          "trigger": "Sign in with Google button",
+          "function": "handleGoogle() → signInWithGoogle()",
+          "apiCall": "Firebase Auth — Google sign-in (client SDK)",
+          "navigatesTo": "redirect param or /",
+          "outcome": "Authentication + navigation"
+        },
+        {
+          "trigger": "Sign in form submit",
+          "function": "handleSubmit() → signInWithEmail(email, password)",
+          "apiCall": "Firebase Auth — email/password sign-in (client SDK)",
+          "navigatesTo": "redirect param or /",
+          "outcome": "Authentication + navigation, or error message"
+        },
+        {
+          "trigger": "Forgot password link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/forgot-password",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Sign up link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/signup (preserves redirect param)",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["middleware redirect (protected routes)", "/signup", "/forgot-password", "Navbar Sign in button"],
+      "navigationOut": ["/ or redirect URL", "/signup", "/forgot-password"]
+    },
+    {
+      "name": "Signup Page",
+      "route": "/signup",
+      "file": "src/app/(auth)/signup/page.tsx",
+      "type": "client",
+      "auth": "public",
+      "onMount": [],
+      "userActions": [
+        {
+          "trigger": "Sign up with Google button",
+          "function": "handleGoogle() → signInWithGoogle()",
+          "apiCall": "Firebase Auth — Google sign-in (client SDK)",
+          "navigatesTo": "/onboarding (or /onboarding?redirect={redirect})",
+          "outcome": "Authentication + navigation to onboarding"
+        },
+        {
+          "trigger": "Create account form submit",
+          "function": "handleSubmit() → signUpWithEmail(email, password, name)",
+          "apiCall": "Firebase Auth — email/password sign-up (client SDK)",
+          "navigatesTo": "/onboarding (or /onboarding?redirect={redirect})",
+          "outcome": "Account creation + navigation to onboarding"
+        },
+        {
+          "trigger": "Sign in link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/login (preserves redirect param)",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["/login", "Navbar Sign up button", "/ (LandingCTA)"],
+      "navigationOut": ["/onboarding", "/login"]
+    },
+    {
+      "name": "Forgot Password Page",
+      "route": "/forgot-password",
+      "file": "src/app/(auth)/forgot-password/page.tsx",
+      "type": "client",
+      "auth": "public",
+      "onMount": [],
+      "userActions": [
+        {
+          "trigger": "Send reset link form submit",
+          "function": "handleSubmit() → sendPasswordReset(email)",
+          "apiCall": "Firebase Auth — sendPasswordResetEmail (client SDK)",
+          "navigatesTo": null,
+          "outcome": "Shows success message with email confirmation"
+        },
+        {
+          "trigger": "Back to login link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/login",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["/login"],
+      "navigationOut": ["/login"]
+    },
+    {
+      "name": "Write Review Page",
+      "route": "/write-review",
+      "file": "src/app/(protected)/write-review/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "note": "Multi-step form (Photo → Rate & Tag → Write). Also handles edit mode when editReviewId is in URL params. Uses Zustand store (reviewFormStore) for form state.",
+      "onMount": [
+        {
+          "description": "Fetch dish details for context display",
+          "function": "getDish(dishId)",
+          "file": "src/lib/services/dishes.ts",
+          "dataSource": "Firestore — dishes collection (via client-side service)",
+          "fetchType": "client-side (useEffect)",
+          "caching": "None",
+          "loadingState": "Skeleton placeholders for dish name and image"
+        },
+        {
+          "description": "If editing: fetch existing review to pre-fill form",
+          "function": "getReview(editReviewId)",
+          "file": "src/lib/services/reviews.ts",
+          "dataSource": "Firestore — reviews collection",
+          "fetchType": "client-side (useEffect)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Photo upload (Step 1)",
+          "function": "handleFileChange() → validates file, creates preview URL",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Photo stored in Zustand form store, preview shown"
+        },
+        {
+          "trigger": "Star ratings (Step 2 — Taste, Portion, Value)",
+          "function": "updateField('tasteRating' | 'portionRating' | 'valueRating', value)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Form state updated in Zustand"
+        },
+        {
+          "trigger": "Tag pills (Step 2)",
+          "function": "updateField('tags', toggledArray)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Tags toggled in form state"
+        },
+        {
+          "trigger": "Submit Review button (Step 3 — new review)",
+          "function": "handleSubmit()",
+          "apiCall": "uploadDishPhoto (Cloudinary) then POST /api/reviews",
+          "navigatesTo": "/review-success",
+          "outcome": "Photo uploaded to Cloudinary, review created via API, success data saved to sessionStorage, navigation to success page"
+        },
+        {
+          "trigger": "Update Review button (Step 3 — edit mode)",
+          "function": "handleSubmit()",
+          "apiCall": "PATCH /api/reviews/{editReviewId}",
+          "navigatesTo": "/dish/{dishId}",
+          "outcome": "Review updated via API, navigation to dish page"
+        },
+        {
+          "trigger": "Back button (between steps)",
+          "function": "setStep(previousStep)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Returns to previous form step"
+        },
+        {
+          "trigger": "Explore Dishes button (shown when no dishId)",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/explore",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["/dish/[id]", "/restaurant/[id]", "/my-profile (edit)", "MobileBottomNav"],
+      "navigationOut": ["/review-success", "/dish/[id]", "/explore"]
+    },
+    {
+      "name": "My Profile Page",
+      "route": "/my-profile",
+      "file": "src/app/(protected)/my-profile/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "onMount": [
+        {
+          "description": "Fetch current user's reviews",
+          "function": "useMyReviews()",
+          "file": "src/lib/hooks/useMyReviews.ts",
+          "dataSource": "Firestore — reviews collection (filtered by userId, via React Query)",
+          "fetchType": "client-side (React Query / TanStack Query)",
+          "caching": "React Query cache with queryKey ['my-reviews']",
+          "loadingState": "LoadingSpinner"
+        },
+        {
+          "description": "Fetch dish contexts (names) for each review",
+          "function": "useReviewDishContexts(reviews)",
+          "file": "src/lib/hooks/useReviewDishContexts.ts",
+          "dataSource": "Firestore — dishes collection",
+          "fetchType": "client-side (batch fetch per dishId)",
+          "caching": "Local state cache in hook",
+          "loadingState": "None (progressive — shows as loaded)"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Edit Profile button",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/settings",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "ReviewCard — Edit button",
+          "function": "handleEdit(review) → router.push(/write-review?editReviewId=...)",
+          "apiCall": null,
+          "navigatesTo": "/write-review?dishId={id}&restaurantId={id}&editReviewId={id}&dishName={name}&restaurantName={name}",
+          "outcome": "Navigation to write-review in edit mode"
+        },
+        {
+          "trigger": "ReviewCard — Delete button",
+          "function": "handleDelete(review)",
+          "apiCall": "DELETE /api/reviews/{id}?dishId={dishId}",
+          "navigatesTo": null,
+          "outcome": "Confirmation dialog → API delete → React Query invalidation"
+        },
+        {
+          "trigger": "ReviewCard — Helpful vote",
+          "function": "handleVote()",
+          "apiCall": "POST /api/reviews/{id}/helpful",
+          "navigatesTo": null,
+          "outcome": "Optimistic count increment"
+        },
+        {
+          "trigger": "Empty state CTA — Explore dishes",
+          "function": "Link component (via EmptyState ctaHref)",
+          "apiCall": null,
+          "navigatesTo": "/explore",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["Navbar dropdown", "MobileBottomNav"],
+      "navigationOut": ["/settings", "/write-review (edit mode)", "/explore"]
+    },
+    {
+      "name": "Review Success Page",
+      "route": "/review-success",
+      "file": "src/app/(protected)/review-success/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "onMount": [
+        {
+          "description": "Read review success data from sessionStorage",
+          "function": "readSuccessData()",
+          "file": "src/app/(protected)/review-success/page.tsx (inline)",
+          "dataSource": "sessionStorage key 'reviewSuccess'",
+          "fetchType": "client-side (sessionStorage read)",
+          "caching": "sessionStorage (one-time read, then removed)",
+          "loadingState": "LoadingSpinner (shown if no data, then redirects to /)"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "View dish page button",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/dish/{dishId}",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Review another dish button",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/explore",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["/write-review (after successful submit)"],
+      "navigationOut": ["/dish/[id]", "/explore", "/ (redirect if no sessionStorage data)"]
+    },
+    {
+      "name": "User Profile Page",
+      "route": "/profile/[userId]",
+      "file": "src/app/(protected)/profile/[userId]/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "onMount": [
+        {
+          "description": "Fetch user profile and their reviews",
+          "function": "getUser(userId), getReviewsByUser(userId)",
+          "file": "src/lib/services/users.ts, src/lib/services/reviews.ts",
+          "dataSource": "Firestore — users collection, reviews collection",
+          "fetchType": "client-side (useEffect with Promise.all)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        },
+        {
+          "description": "Fetch dish contexts for reviews",
+          "function": "useReviewDishContexts(reviews)",
+          "file": "src/lib/hooks/useReviewDishContexts.ts",
+          "dataSource": "Firestore — dishes collection",
+          "fetchType": "client-side",
+          "caching": "Local state cache in hook",
+          "loadingState": "None"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "ReviewCard — Helpful vote",
+          "function": "handleVote()",
+          "apiCall": "POST /api/reviews/{id}/helpful",
+          "navigatesTo": null,
+          "outcome": "Optimistic count increment"
+        },
+        {
+          "trigger": "ReviewCard — Report/Flag",
+          "function": "handleFlag()",
+          "apiCall": "POST /api/reviews/{id}/flag",
+          "navigatesTo": null,
+          "outcome": "Optimistic flag state + toast"
+        }
+      ],
+      "navigationIn": ["ReviewCard links (via userName)", "/notifications"],
+      "navigationOut": []
+    },
+    {
+      "name": "Compare Page",
+      "route": "/compare",
+      "file": "src/app/(protected)/compare/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "note": "Premium-only feature. Shows UpgradePrompt if user.isPremium is false.",
+      "onMount": [],
+      "userActions": [
+        {
+          "trigger": "DishPicker search input (Dish 1 or Dish 2)",
+          "function": "search(q, slot) → searchDishes(q)",
+          "apiCall": "searchDishes() — client-side service call (Firestore or Typesense)",
+          "navigatesTo": null,
+          "outcome": "Displays dropdown of matching dishes"
+        },
+        {
+          "trigger": "Select dish from dropdown",
+          "function": "onSelect(dish)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Dish selected, dropdown closed"
+        },
+        {
+          "trigger": "Compare button",
+          "function": "compare() → getDishComparison(dish1.id, dish2.id)",
+          "apiCall": "getDishComparison() — client-side service call (Firestore)",
+          "navigatesTo": null,
+          "outcome": "Shows side-by-side comparison table"
+        },
+        {
+          "trigger": "Clear button on selected dish",
+          "function": "onSelect(null)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Clears selection, shows search input again"
+        }
+      ],
+      "navigationIn": ["Navbar or direct URL"],
+      "navigationOut": ["/upgrade (via UpgradePrompt if not premium)"]
+    },
+    {
+      "name": "Rewards Page",
+      "route": "/rewards",
+      "file": "src/app/(protected)/rewards/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "onMount": [
+        {
+          "description": "Fetch DishPoints balance",
+          "function": "fetch('/api/rewards/balance')",
+          "file": "src/app/(protected)/rewards/page.tsx (inline fetch)",
+          "dataSource": "API route → Firestore — users collection",
+          "fetchType": "client-side (useEffect with fetch)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        },
+        {
+          "description": "Fetch available coupons",
+          "function": "fetch('/api/rewards/coupons')",
+          "file": "src/app/(protected)/rewards/page.tsx (inline fetch)",
+          "dataSource": "API route → Firestore — coupons collection",
+          "fetchType": "client-side (useEffect with fetch)",
+          "caching": "None",
+          "loadingState": "Part of global LoadingSpinner"
+        },
+        {
+          "description": "Fetch user's claimed coupons",
+          "function": "fetch('/api/rewards/claims')",
+          "file": "src/app/(protected)/rewards/page.tsx (inline fetch)",
+          "dataSource": "API route → Firestore — coupon_claims collection",
+          "fetchType": "client-side (useEffect with fetch)",
+          "caching": "None",
+          "loadingState": "Part of global LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Redeem coupon button",
+          "function": "handleRedeem(couponId)",
+          "apiCall": "POST /api/rewards/redeem",
+          "navigatesTo": null,
+          "outcome": "Coupon claimed → success toast with code → switches to My Coupons tab → re-fetches all data"
+        },
+        {
+          "trigger": "Tab switch (Available Coupons / My Coupons)",
+          "function": "setTab(tab)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Switches displayed content"
+        }
+      ],
+      "navigationIn": ["Navbar or direct URL", "/review-success (link)"],
+      "navigationOut": []
+    },
+    {
+      "name": "Wishlist Page",
+      "route": "/wishlist",
+      "file": "src/app/(protected)/wishlist/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "onMount": [
+        {
+          "description": "Fetch user's wishlist items",
+          "function": "useWishlist()",
+          "file": "src/lib/hooks/useWishlist.ts",
+          "dataSource": "API route GET /api/users/{userId}/wishlist → Firestore — users/{userId}/wishlist subcollection",
+          "fetchType": "client-side (React Query / TanStack Query)",
+          "caching": "React Query cache with queryKey ['wishlist']",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Heart button (remove from wishlist)",
+          "function": "handleRemove(dishId)",
+          "apiCall": "DELETE /api/users/{userId}/wishlist/{dishId}",
+          "navigatesTo": null,
+          "outcome": "API delete → React Query invalidation"
+        },
+        {
+          "trigger": "Dish name link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/dish/{dishId}",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "Empty state CTA — Explore Dishes",
+          "function": "Link component (via EmptyState ctaHref)",
+          "apiCall": null,
+          "navigatesTo": "/explore",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["Navbar dropdown", "MobileBottomNav"],
+      "navigationOut": ["/dish/[id]", "/explore"]
+    },
+    {
+      "name": "Claim Restaurant Page",
+      "route": "/claim-restaurant/[id]",
+      "file": "src/app/(protected)/claim-restaurant/[id]/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "onMount": [
+        {
+          "description": "Fetch restaurant details to display context",
+          "function": "getRestaurantDetails(params.id)",
+          "file": "src/lib/services/catalog.ts",
+          "dataSource": "Firestore — restaurants collection (via client-side service)",
+          "fetchType": "client-side (useEffect)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Submit claim form",
+          "function": "handleSubmit(e)",
+          "apiCall": "POST /api/restaurants/{id}/claim",
+          "navigatesTo": null,
+          "outcome": "Shows success message with estimated review time (1–3 business days)"
+        },
+        {
+          "trigger": "Back to restaurant button (after submission)",
+          "function": "router.push(/restaurant/{id})",
+          "apiCall": null,
+          "navigatesTo": "/restaurant/{id}",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["/restaurant/[id]"],
+      "navigationOut": ["/restaurant/[id]"]
+    },
+    {
+      "name": "Onboarding Page",
+      "route": "/onboarding",
+      "file": "src/app/(protected)/onboarding/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "note": "3-step flow: Cuisine preferences → City/Area → Complete. Can be skipped.",
+      "onMount": [],
+      "userActions": [
+        {
+          "trigger": "Cuisine selection buttons (Step 1)",
+          "function": "toggleCuisine(c)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Toggles cuisine in local state"
+        },
+        {
+          "trigger": "City selection buttons (Step 2)",
+          "function": "setSelectedCity(city)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Sets city, populates area options"
+        },
+        {
+          "trigger": "Area selection buttons (Step 2)",
+          "function": "setSelectedArea(area)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Sets area in local state"
+        },
+        {
+          "trigger": "Start Exploring button (Step 3)",
+          "function": "handleComplete()",
+          "apiCall": "updateUser(user.id, updates) — client-side service (Firestore write)",
+          "navigatesTo": "redirect param or /",
+          "outcome": "User preferences saved to Firestore, auth store updated, navigation"
+        },
+        {
+          "trigger": "Skip for now link",
+          "function": "router.push(redirectTo)",
+          "apiCall": null,
+          "navigatesTo": "redirect param or /",
+          "outcome": "Navigation (skips onboarding without saving)"
+        }
+      ],
+      "navigationIn": ["/signup (after account creation)"],
+      "navigationOut": ["/ or redirect param"]
+    },
+    {
+      "name": "Settings Page",
+      "route": "/settings",
+      "file": "src/app/(protected)/settings/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "onMount": [],
+      "userActions": [
+        {
+          "trigger": "Save changes form submit",
+          "function": "handleSave(e)",
+          "apiCall": "updateUser(user.id, updates) — client-side service (Firestore), uploadAvatarPhoto (Cloudinary if avatar changed)",
+          "navigatesTo": null,
+          "outcome": "Profile updated + auth store updated + toast + router.refresh()"
+        },
+        {
+          "trigger": "Avatar photo upload",
+          "function": "avatarInputRef file change handler",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Local preview shown, file stored for upload on save"
+        },
+        {
+          "trigger": "Update Password form submit",
+          "function": "reauthenticateWithCredential + updatePassword",
+          "apiCall": "Firebase Auth — reauthenticateWithCredential, updatePassword (client SDK)",
+          "navigatesTo": null,
+          "outcome": "Password changed + success toast, or error toast"
+        }
+      ],
+      "navigationIn": ["/my-profile", "Navbar dropdown"],
+      "navigationOut": []
+    },
+    {
+      "name": "Upgrade Page",
+      "route": "/upgrade",
+      "file": "src/app/(protected)/upgrade/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "note": "Razorpay payment integration. Shows success state if already premium.",
+      "onMount": [],
+      "userActions": [
+        {
+          "trigger": "Plan selection (Monthly / Yearly)",
+          "function": "setSelectedPlan(plan)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Highlights selected plan"
+        },
+        {
+          "trigger": "Subscribe button",
+          "function": "handlePayment()",
+          "apiCall": "POST /api/billing/create-order → Razorpay SDK opens checkout → POST /api/billing/verify on success",
+          "navigatesTo": null,
+          "outcome": "Razorpay checkout modal opens → on payment success: verify API called → premium activated → success UI shown"
+        },
+        {
+          "trigger": "Go home button (after success or if already premium)",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["/compare (UpgradePrompt)", "Navbar or direct URL"],
+      "navigationOut": ["/"]
+    },
+    {
+      "name": "Notifications Page",
+      "route": "/notifications",
+      "file": "src/app/(protected)/notifications/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "onMount": [
+        {
+          "description": "Fetch user notifications",
+          "function": "getNotifications(user.id)",
+          "file": "src/lib/services/notifications.ts",
+          "dataSource": "Firestore — notifications collection (filtered by userId)",
+          "fetchType": "client-side (useEffect)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Mark all read button",
+          "function": "handleMarkAllRead()",
+          "apiCall": "POST /api/notifications/read-all",
+          "navigatesTo": null,
+          "outcome": "All notifications marked as read (optimistic local state update)"
+        },
+        {
+          "trigger": "Notification item click (if linkUrl exists)",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "notification.linkUrl (e.g. /review/[id], /dish/[id], /rewards)",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["Navbar bell icon", "Navbar dropdown", "MobileBottomNav (not shown but via direct URL)"],
+      "navigationOut": ["Various (per notification linkUrl)"]
+    },
+    {
+      "name": "Restaurant Dashboard",
+      "route": "/restaurant-dashboard/[restaurantId]",
+      "file": "src/app/(protected)/restaurant-dashboard/[restaurantId]/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "note": "Requires restaurant ownership. Redirects to /claim-restaurant if 403.",
+      "onMount": [
+        {
+          "description": "Fetch restaurant analytics",
+          "function": "fetch(/api/restaurants/{restaurantId}/analytics)",
+          "file": "src/app/(protected)/restaurant-dashboard/[restaurantId]/page.tsx (inline fetch)",
+          "dataSource": "API route → Firestore — restaurants, dishes, reviews collections",
+          "fetchType": "client-side (useEffect with fetch)",
+          "caching": "Server-side analytics cache (invalidated on review submit)",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Per-dish breakdown link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/restaurant-dashboard/{restaurantId}/dishes",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["Direct URL (restaurant owners only)"],
+      "navigationOut": ["/restaurant-dashboard/{restaurantId}/dishes", "/claim-restaurant/{restaurantId} (if 403)"]
+    },
+    {
+      "name": "Restaurant Dashboard — Dishes",
+      "route": "/restaurant-dashboard/[restaurantId]/dishes",
+      "file": "src/app/(protected)/restaurant-dashboard/[restaurantId]/dishes/page.tsx",
+      "type": "client",
+      "auth": "protected",
+      "note": "Requires restaurant ownership. Shows per-dish sentiment analysis.",
+      "onMount": [
+        {
+          "description": "Fetch restaurant analytics (same endpoint, includes per-dish data)",
+          "function": "fetch(/api/restaurants/{restaurantId}/analytics)",
+          "file": "src/app/(protected)/restaurant-dashboard/[restaurantId]/dishes/page.tsx (inline fetch)",
+          "dataSource": "API route → Firestore — restaurants, dishes, reviews collections",
+          "fetchType": "client-side (useEffect with fetch)",
+          "caching": "Server-side analytics cache",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Sort dropdown (by rating / by review count)",
+          "function": "setSortBy(value)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Re-sorts dish list locally"
+        },
+        {
+          "trigger": "Back to overview link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/restaurant-dashboard/{restaurantId}",
+          "outcome": "Navigation"
+        },
+        {
+          "trigger": "DishSentimentCard — dish name link",
+          "function": "Link component",
+          "apiCall": null,
+          "navigatesTo": "/dish/{dishId}",
+          "outcome": "Navigation"
+        }
+      ],
+      "navigationIn": ["/restaurant-dashboard/{restaurantId}"],
+      "navigationOut": ["/restaurant-dashboard/{restaurantId}", "/dish/[id]"]
+    },
+    {
+      "name": "Admin Dashboard",
+      "route": "/admin",
+      "file": "src/app/(admin)/admin/page.tsx",
+      "type": "client",
+      "auth": "admin",
+      "onMount": [
+        {
+          "description": "Fetch admin stats (counts of restaurants, dishes, reviews, users, pending requests, flagged reviews)",
+          "function": "getAdminStats()",
+          "file": "src/lib/services/admin.ts",
+          "dataSource": "Firestore — various collections (aggregation)",
+          "fetchType": "client-side (useEffect)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [],
+      "navigationIn": ["AdminShell sidebar"],
+      "navigationOut": []
+    },
+    {
+      "name": "Admin Users",
+      "route": "/admin/users",
+      "file": "src/app/(admin)/admin/users/page.tsx",
+      "type": "client",
+      "auth": "admin",
+      "onMount": [
+        {
+          "description": "Fetch all users",
+          "function": "getUsers()",
+          "file": "src/lib/services/admin.ts",
+          "dataSource": "Firestore — users collection",
+          "fetchType": "client-side (useEffect)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Make admin / Revoke admin link",
+          "function": "handleToggleAdmin(user)",
+          "apiCall": "PATCH /api/admin/users/{userId}/role (via toggleAdmin service)",
+          "navigatesTo": null,
+          "outcome": "Optimistic local state update"
+        },
+        {
+          "trigger": "Grant premium / Revoke premium link",
+          "function": "handleTogglePremium(user)",
+          "apiCall": "PATCH /api/admin/users/{userId}/premium (via togglePremium service)",
+          "navigatesTo": null,
+          "outcome": "Optimistic local state update"
+        }
+      ],
+      "navigationIn": ["AdminShell sidebar"],
+      "navigationOut": []
+    },
+    {
+      "name": "Admin Restaurant Claims",
+      "route": "/admin/restaurant-claims",
+      "file": "src/app/(admin)/admin/restaurant-claims/page.tsx",
+      "type": "client",
+      "auth": "admin",
+      "onMount": [
+        {
+          "description": "Fetch pending restaurant claims",
+          "function": "fetch('/api/admin/restaurant-claims')",
+          "file": "src/app/(admin)/admin/restaurant-claims/page.tsx (inline fetch)",
+          "dataSource": "API route → Firestore — restaurant_claims collection (status=pending)",
+          "fetchType": "client-side (useEffect with fetch)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Approve button",
+          "function": "handleAction(claimId, 'approve')",
+          "apiCall": "PATCH /api/admin/restaurant-claims",
+          "navigatesTo": null,
+          "outcome": "Claim approved (sets restaurant ownerId) → claim removed from list"
+        },
+        {
+          "trigger": "Reject button",
+          "function": "handleAction(claimId, 'reject')",
+          "apiCall": "PATCH /api/admin/restaurant-claims",
+          "navigatesTo": null,
+          "outcome": "Claim rejected → claim removed from list"
+        },
+        {
+          "trigger": "View proof document link",
+          "function": "External link",
+          "apiCall": null,
+          "navigatesTo": "External: proofDocumentUrl",
+          "outcome": "Opens in new tab"
+        }
+      ],
+      "navigationIn": ["AdminShell sidebar"],
+      "navigationOut": []
+    },
+    {
+      "name": "Admin Dish Requests",
+      "route": "/admin/requests",
+      "file": "src/app/(admin)/admin/requests/page.tsx",
+      "type": "client",
+      "auth": "admin",
+      "onMount": [
+        {
+          "description": "Fetch pending dish requests",
+          "function": "getPendingRequests()",
+          "file": "src/lib/services/dish-requests.ts",
+          "dataSource": "Firestore — dish_requests collection (status=pending)",
+          "fetchType": "client-side (useEffect)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Approve button",
+          "function": "handleApprove(id)",
+          "apiCall": "PATCH /api/admin/dish-requests/{id} (action: 'approve')",
+          "navigatesTo": null,
+          "outcome": "New dish created in Firestore → request removed from list → notification sent to requester"
+        },
+        {
+          "trigger": "Reject button",
+          "function": "handleReject(id)",
+          "apiCall": "PATCH /api/admin/dish-requests/{id} (action: 'reject')",
+          "navigatesTo": null,
+          "outcome": "Request rejected → removed from list → notification sent to requester"
+        }
+      ],
+      "navigationIn": ["AdminShell sidebar"],
+      "navigationOut": []
+    },
+    {
+      "name": "Admin Coupons",
+      "route": "/admin/coupons",
+      "file": "src/app/(admin)/admin/coupons/page.tsx",
+      "type": "client",
+      "auth": "admin",
+      "onMount": [
+        {
+          "description": "Fetch active coupons",
+          "function": "fetch('/api/admin/coupons')",
+          "file": "src/app/(admin)/admin/coupons/page.tsx (inline fetch)",
+          "dataSource": "API route → Firestore — coupons collection (isActive=true)",
+          "fetchType": "client-side (useEffect with fetch)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Add Coupon button (toggles form)",
+          "function": "setShowForm(!showForm)",
+          "apiCall": null,
+          "navigatesTo": null,
+          "outcome": "Shows/hides coupon creation form"
+        },
+        {
+          "trigger": "Create Coupon form submit",
+          "function": "handleCreate()",
+          "apiCall": "POST /api/admin/coupons",
+          "navigatesTo": null,
+          "outcome": "Coupon created → added to list → form closed"
+        },
+        {
+          "trigger": "Deactivate button",
+          "function": "handleDeactivate(couponId)",
+          "apiCall": "DELETE /api/admin/coupons/{id}",
+          "navigatesTo": null,
+          "outcome": "Coupon deactivated → removed from list"
+        }
+      ],
+      "navigationIn": ["AdminShell sidebar"],
+      "navigationOut": []
+    },
+    {
+      "name": "Admin Flagged Reviews",
+      "route": "/admin/reviews",
+      "file": "src/app/(admin)/admin/reviews/page.tsx",
+      "type": "client",
+      "auth": "admin",
+      "onMount": [
+        {
+          "description": "Fetch flagged reviews",
+          "function": "getFlaggedReviews()",
+          "file": "src/lib/services/admin.ts",
+          "dataSource": "Firestore — reviews collection (isFlagged=true)",
+          "fetchType": "client-side (useEffect)",
+          "caching": "None",
+          "loadingState": "LoadingSpinner"
+        }
+      ],
+      "userActions": [
+        {
+          "trigger": "Keep (unflag) button",
+          "function": "handleApprove(id) → unflagReview(id, token)",
+          "apiCall": "PATCH /api/admin/reviews/{id} (via unflagReview service)",
+          "navigatesTo": null,
+          "outcome": "Review unflagged → removed from list"
+        },
+        {
+          "trigger": "Delete button",
+          "function": "handleDelete(review)",
+          "apiCall": "DELETE /api/admin/reviews/{id}",
+          "navigatesTo": null,
+          "outcome": "Confirmation dialog → review deleted (with dish stats recalculation, user stats adjustment) → removed from list"
+        }
+      ],
+      "navigationIn": ["AdminShell sidebar"],
+      "navigationOut": []
+    }
+  ],
+  "apiRoutes": [
+    {
+      "route": "/api/reviews",
+      "method": "POST",
+      "description": "Create a new review for a dish",
+      "firestoreCollections": ["reviews", "dishes", "users", "points_transactions"],
+      "validation": "Zod schema (createReviewSchema) — requires dishId, restaurantId, tasteRating, portionRating, valueRating, tags[], text, optional photoUrl",
+      "auth": "Required (Bearer token → getRequestAuth)",
+      "rateLimit": "REVIEW_CREATE",
+      "returns": "{ item: Review, pointsAwarded: number, newBalance: number, isFullReview: boolean }",
+      "sideEffects": [
+        "Awards DishPoints via rewardPointsForReview()",
+        "Auto-sets dish cover image if none exists and review has photo",
+        "Syncs dish to Typesense if configured",
+        "Invalidates restaurant analytics cache"
+      ]
+    },
+    {
+      "route": "/api/reviews/[id]",
+      "method": "PATCH",
+      "description": "Update an existing review (within 24-hour edit window)",
+      "firestoreCollections": ["reviews", "dishes"],
+      "validation": "Zod schema (updateReviewSchema) — tasteRating, portionRating, valueRating, tags[], text",
+      "auth": "Required (must be review author)",
+      "rateLimit": "REVIEW_EDIT",
+      "returns": "{ item: Review }"
+    },
+    {
+      "route": "/api/reviews/[id]",
+      "method": "DELETE",
+      "description": "Delete a review (by author or admin)",
+      "firestoreCollections": ["reviews", "dishes", "users"],
+      "validation": "Requires dishId query parameter",
+      "auth": "Required (review author or admin)",
+      "rateLimit": null,
+      "returns": "{ success: true }",
+      "sideEffects": ["Recalculates dish averages", "Decrements user reviewCount"]
+    },
+    {
+      "route": "/api/reviews/[id]/flag",
+      "method": "POST",
+      "description": "Flag a review for admin review",
+      "firestoreCollections": ["reviews"],
+      "validation": "None beyond auth",
+      "auth": "Required",
+      "rateLimit": "GENERAL",
+      "returns": "{ success: true }"
+    },
+    {
+      "route": "/api/reviews/[id]/helpful",
+      "method": "POST",
+      "description": "Vote a review as helpful",
+      "firestoreCollections": ["reviews", "users", "notifications"],
+      "validation": "None beyond auth",
+      "auth": "Required",
+      "rateLimit": "GENERAL",
+      "returns": "{ success: true }",
+      "sideEffects": ["Creates notification for review author"]
+    },
+    {
+      "route": "/api/billing/create-order",
+      "method": "POST",
+      "description": "Create a Razorpay order for premium subscription",
+      "firestoreCollections": [],
+      "validation": "Zod schema (createOrderSchema) — requires plan ('monthly' | 'yearly')",
+      "auth": "Required",
+      "rateLimit": "GENERAL",
+      "returns": "{ orderId, amount, currency, keyId }"
+    },
+    {
+      "route": "/api/billing/verify",
+      "method": "POST",
+      "description": "Verify Razorpay payment and activate premium",
+      "firestoreCollections": ["users", "billing_events", "notifications"],
+      "validation": "Zod schema (verifyPaymentSchema) — requires razorpay_payment_id, razorpay_order_id, razorpay_signature",
+      "auth": "Required",
+      "rateLimit": "GENERAL",
+      "returns": "{ success: true }",
+      "sideEffects": ["Sets user.isPremium = true", "Creates welcome notification"]
+    },
+    {
+      "route": "/api/billing/webhook",
+      "method": "POST",
+      "description": "Handle Razorpay webhooks (subscription cancelled/expired)",
+      "firestoreCollections": ["users", "billing_events"],
+      "validation": "HMAC signature verification (x-razorpay-signature header)",
+      "auth": "Webhook signature (not user auth)",
+      "rateLimit": null,
+      "returns": "{ received: true }",
+      "sideEffects": ["Deactivates premium on subscription cancellation/expiry", "Deduplication via billing_events collection"]
+    },
+    {
+      "route": "/api/restaurants",
+      "method": "GET",
+      "description": "List restaurants, optionally filtered by city/area",
+      "firestoreCollections": ["restaurants"],
+      "validation": "Query params: city, area, limit",
+      "auth": "Optional (uses auth for userCity fallback)",
+      "rateLimit": null,
+      "returns": "{ city, areas, items: Restaurant[] }"
+    },
+    {
+      "route": "/api/restaurants/[id]",
+      "method": "GET",
+      "description": "Get restaurant details by ID",
+      "firestoreCollections": ["restaurants"],
+      "validation": "None",
+      "auth": "None",
+      "rateLimit": null,
+      "returns": "{ item: Restaurant }"
+    },
+    {
+      "route": "/api/restaurants/[id]/analytics",
+      "method": "GET",
+      "description": "Get restaurant analytics (owner-only dashboard data)",
+      "firestoreCollections": ["restaurants", "dishes", "reviews"],
+      "validation": "assertRestaurantOwner — verifies caller owns the restaurant",
+      "auth": "Required (must be restaurant owner or admin)",
+      "rateLimit": null,
+      "returns": "RestaurantAnalytics object"
+    },
+    {
+      "route": "/api/restaurants/[id]/dishes",
+      "method": "GET",
+      "description": "List all dishes for a restaurant",
+      "firestoreCollections": ["dishes"],
+      "validation": "None",
+      "auth": "None",
+      "rateLimit": null,
+      "returns": "{ items: Dish[] }"
+    },
+    {
+      "route": "/api/restaurants/[id]/claim",
+      "method": "POST",
+      "description": "Submit a restaurant ownership claim",
+      "firestoreCollections": ["restaurants", "restaurant_claims", "users"],
+      "validation": "Zod schema (submitClaimSchema) — requires phone, role ('owner' | 'manager'), optional proofDocumentUrl",
+      "auth": "Required",
+      "rateLimit": "GENERAL",
+      "returns": "{ success: true, claimId: string }",
+      "sideEffects": ["Checks no existing owner", "Checks no pending claim exists"]
+    },
+    {
+      "route": "/api/dishes",
+      "method": "GET",
+      "description": "Search and list dishes with filters",
+      "firestoreCollections": ["dishes"],
+      "validation": "Zod schema (dishSearchParamsSchema) — q, city, area, cuisine, dietary, priceRange, sortBy, cursor",
+      "auth": "Optional (uses auth for userCity fallback)",
+      "rateLimit": null,
+      "returns": "{ items: Dish[], hasMore: boolean, nextCursorId?: string }",
+      "note": "Uses Typesense for search if configured, falls back to Firestore"
+    },
+    {
+      "route": "/api/dishes/[id]/reviews",
+      "method": "GET",
+      "description": "List reviews for a specific dish (paginated)",
+      "firestoreCollections": ["reviews"],
+      "validation": "Query params: cursor (optional)",
+      "auth": "None",
+      "rateLimit": null,
+      "returns": "{ items: Review[], hasMore: boolean, nextCursorId?: string }"
+    },
+    {
+      "route": "/api/notifications/[id]/read",
+      "method": "POST",
+      "description": "Mark a single notification as read",
+      "firestoreCollections": ["notifications"],
+      "validation": "Ownership check (notification.userId === auth.userId)",
+      "auth": "Required",
+      "rateLimit": null,
+      "returns": "{ success: true }"
+    },
+    {
+      "route": "/api/notifications/unread-count",
+      "method": "GET",
+      "description": "Get count of unread notifications",
+      "firestoreCollections": ["notifications"],
+      "validation": "None beyond auth",
+      "auth": "Required",
+      "rateLimit": null,
+      "returns": "{ count: number }"
+    },
+    {
+      "route": "/api/notifications/read-all",
+      "method": "POST",
+      "description": "Mark all notifications as read for current user",
+      "firestoreCollections": ["notifications"],
+      "validation": "None beyond auth",
+      "auth": "Required",
+      "rateLimit": null,
+      "returns": "{ success: true }"
+    },
+    {
+      "route": "/api/admin/restaurant-claims",
+      "method": "GET",
+      "description": "List all pending restaurant claims",
+      "firestoreCollections": ["restaurant_claims"],
+      "validation": "assertAdmin — verifies caller is admin",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ claims: RestaurantClaim[] }"
+    },
+    {
+      "route": "/api/admin/restaurant-claims",
+      "method": "PATCH",
+      "description": "Approve or reject a restaurant claim",
+      "firestoreCollections": ["restaurant_claims", "restaurants"],
+      "validation": "Zod schema (reviewClaimSchema) — requires claimId, action ('approve' | 'reject'), optional note",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ success: true, action: 'approved' | 'rejected' }",
+      "sideEffects": ["On approve: sets restaurant.ownerId and isVerified in transaction"]
+    },
+    {
+      "route": "/api/admin/reviews/[id]",
+      "method": "PATCH",
+      "description": "Unflag/approve a flagged review",
+      "firestoreCollections": ["reviews"],
+      "validation": "assertAdmin",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ success: true }"
+    },
+    {
+      "route": "/api/admin/reviews/[id]",
+      "method": "DELETE",
+      "description": "Admin delete a review with full cascading updates",
+      "firestoreCollections": ["reviews", "dishes", "users"],
+      "validation": "assertAdmin",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ success: true }",
+      "sideEffects": [
+        "Recalculates dish averages in transaction",
+        "Decrements author reviewCount",
+        "Recomputes author level and badges",
+        "Recomputes dish topTags"
+      ]
+    },
+    {
+      "route": "/api/admin/dish-requests/[id]",
+      "method": "PATCH",
+      "description": "Approve or reject a dish request",
+      "firestoreCollections": ["dish_requests", "dishes", "restaurants", "notifications"],
+      "validation": "Zod schema (dishRequestActionSchema) — action ('approve' | 'reject'), optional note, optional category, optional dietary",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ success: true, dishId?: string }",
+      "sideEffects": ["On approve: creates new dish document", "Sends notification to requester"]
+    },
+    {
+      "route": "/api/admin/coupons",
+      "method": "GET",
+      "description": "List all active coupons",
+      "firestoreCollections": ["coupons"],
+      "validation": "assertAdmin",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ items: Coupon[] }"
+    },
+    {
+      "route": "/api/admin/coupons",
+      "method": "POST",
+      "description": "Create a new coupon",
+      "firestoreCollections": ["coupons", "coupon_codes"],
+      "validation": "Zod schema (createCouponSchema) — title, restaurantId, restaurantName, discountValue, discountType, pointsCost, totalStock, expiresAt, codes[]",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ item: Coupon }"
+    },
+    {
+      "route": "/api/admin/coupons/[id]",
+      "method": "DELETE",
+      "description": "Deactivate a coupon",
+      "firestoreCollections": ["coupons"],
+      "validation": "assertAdmin",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ success: true }"
+    },
+    {
+      "route": "/api/admin/users/[userId]/premium",
+      "method": "PATCH",
+      "description": "Toggle premium status for a user",
+      "firestoreCollections": ["users"],
+      "validation": "Zod schema (togglePremiumSchema) — requires isPremium boolean",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ success: true }"
+    },
+    {
+      "route": "/api/admin/users/[userId]/role",
+      "method": "PATCH",
+      "description": "Toggle admin role for a user",
+      "firestoreCollections": ["users"],
+      "validation": "Zod schema (toggleAdminSchema) — requires isAdmin boolean",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ success: true }"
+    },
+    {
+      "route": "/api/admin/restaurants/[id]/invalidate-cache",
+      "method": "POST",
+      "description": "Invalidate analytics cache for a restaurant",
+      "firestoreCollections": [],
+      "validation": "assertAdmin",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ success: true, restaurantId: string }",
+      "note": "Clears server-side analytics cache (used for restaurant dashboard)"
+    },
+    {
+      "route": "/api/admin/sync-typesense",
+      "method": "POST",
+      "description": "Sync all dishes from Firestore to Typesense search index",
+      "firestoreCollections": ["dishes"],
+      "validation": "assertAdmin + checks Typesense is configured",
+      "auth": "Required (admin only)",
+      "rateLimit": null,
+      "returns": "{ synced: number, failed: number, total: number }"
+    },
+    {
+      "route": "/api/rewards/balance",
+      "method": "GET",
+      "description": "Get user's DishPoints balance",
+      "firestoreCollections": ["users"],
+      "validation": "None beyond auth",
+      "auth": "Required",
+      "rateLimit": null,
+      "returns": "PointsBalance { balance, totalEarned, totalRedeemed }"
+    },
+    {
+      "route": "/api/rewards/coupons",
+      "method": "GET",
+      "description": "Get available coupons catalogue for redemption",
+      "firestoreCollections": ["coupons"],
+      "validation": "None beyond auth",
+      "auth": "Required",
+      "rateLimit": null,
+      "returns": "{ items: Coupon[] }"
+    },
+    {
+      "route": "/api/rewards/claims",
+      "method": "GET",
+      "description": "Get user's claimed/redeemed coupons",
+      "firestoreCollections": ["coupon_claims"],
+      "validation": "None beyond auth",
+      "auth": "Required",
+      "rateLimit": null,
+      "returns": "{ items: CouponClaim[] }"
+    },
+    {
+      "route": "/api/rewards/transactions",
+      "method": "GET",
+      "description": "Get user's points transaction history",
+      "firestoreCollections": ["points_transactions"],
+      "validation": "Query params: limit (max 50), cursor",
+      "auth": "Required",
+      "rateLimit": null,
+      "returns": "{ items: PointsTransaction[], hasMore: boolean, nextCursor?: string }"
+    },
+    {
+      "route": "/api/rewards/redeem",
+      "method": "POST",
+      "description": "Redeem DishPoints for a coupon",
+      "firestoreCollections": ["coupons", "coupon_codes", "coupon_claims", "users", "points_transactions", "notifications"],
+      "validation": "Zod schema (redeemCouponSchema) — requires couponId",
+      "auth": "Required",
+      "rateLimit": "REDEEM",
+      "returns": "{ claim: CouponClaim }",
+      "sideEffects": [
+        "Deducts points from user balance",
+        "Creates coupon claim record",
+        "Increments coupon claimedCount",
+        "Creates notification",
+        "Sends coupon claimed email"
+      ]
+    },
+    {
+      "route": "/api/users/[userId]/wishlist",
+      "method": "GET",
+      "description": "Get user's wishlist items",
+      "firestoreCollections": ["users/{userId}/wishlist"],
+      "validation": "Ownership check (auth.userId === params.userId)",
+      "auth": "Required (must be own user)",
+      "rateLimit": null,
+      "returns": "{ items: WishlistItem[] }"
+    },
+    {
+      "route": "/api/users/[userId]/wishlist/[dishId]",
+      "method": "POST",
+      "description": "Add a dish to user's wishlist",
+      "firestoreCollections": ["users/{userId}/wishlist", "dishes"],
+      "validation": "Ownership check + dish existence check",
+      "auth": "Required (must be own user)",
+      "rateLimit": null,
+      "returns": "{ success: true }"
+    },
+    {
+      "route": "/api/users/[userId]/wishlist/[dishId]",
+      "method": "DELETE",
+      "description": "Remove a dish from user's wishlist",
+      "firestoreCollections": ["users/{userId}/wishlist"],
+      "validation": "Ownership check",
+      "auth": "Required (must be own user)",
+      "rateLimit": null,
+      "returns": "{ success: true }"
+    },
+    {
+      "route": "/api/cities",
+      "method": "GET",
+      "description": "Get supported cities and their areas",
+      "firestoreCollections": [],
+      "validation": "None",
+      "auth": "None",
+      "rateLimit": null,
+      "returns": "{ items: Array<{ city: string, areas: string[] }> }",
+      "note": "Reads from constants (SUPPORTED_CITIES, CITY_AREAS) — no Firestore call"
+    }
+  ],
+  "layouts": [
+    {
+      "name": "Public Layout",
+      "file": "src/app/(public)/layout.tsx",
+      "wraps": "All public routes (/, /dish/[id], /restaurant/[id], /review/[id], /cuisine/[slug], /explore)",
+      "provides": "PageShell (Navbar + Footer + MobileBottomNav)"
+    },
+    {
+      "name": "Protected Layout",
+      "file": "src/app/(protected)/layout.tsx",
+      "wraps": "All protected routes",
+      "provides": "AuthGate (redirects to /login if not authenticated) + PageShell",
+      "authBehavior": "Client-side auth check via useAuth(). Redirects to /login?redirect={currentUrl} if not authenticated. Also sets noindex meta tag."
+    },
+    {
+      "name": "Admin Layout",
+      "file": "src/app/(admin)/layout.tsx",
+      "wraps": "All /admin/* routes",
+      "provides": "Admin auth gate (redirects to / if not admin) + AdminShell sidebar",
+      "authBehavior": "Client-side check via useAuth(). Requires user.isAdmin === true."
+    },
+    {
+      "name": "Auth Layout",
+      "file": "src/app/(auth)/layout.tsx",
+      "wraps": "/login, /signup, /forgot-password",
+      "provides": "Pass-through (no wrapper — auth pages use AuthShell component directly)"
+    },
+    {
+      "name": "Root Layout",
+      "file": "src/app/layout.tsx",
+      "wraps": "All routes",
+      "provides": "HTML skeleton, fonts, providers (QueryClientProvider, AuthProvider, Sonner toaster, CityProvider, ThemeProvider)"
+    }
+  ],
+  "middleware": {
+    "file": "src/middleware.ts",
+    "description": "UX guard (not a security boundary). Checks for presence of auth token cookie or header on protected paths. Redirects to /login if missing.",
+    "protectedPaths": ["/write-review", "/my-profile", "/settings", "/compare", "/upgrade", "/wishlist", "/notifications", "/rewards", "/claim-restaurant", "/restaurant-dashboard", "/onboarding", "/review-success", "/profile"],
+    "note": "Edge middleware cannot verify Firebase ID tokens. Actual security is enforced in API routes (getRequestAuth) and client-side (useAuth)."
+  }
+}

@@ -5,15 +5,16 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { LoadMoreDishes } from '@/components/features/LoadMoreDishes'
 import { ExploreResultsWrapper } from '@/components/features/ExploreResultsWrapper'
 import { ExploreEntranceWrapper } from '@/components/features/ExploreEntranceWrapper'
-import { CUISINE_TYPES } from '@/lib/constants'
+import { CUISINE_TYPES, SORT_OPTIONS } from '@/lib/constants'
 import { listCityAreas, resolveCity } from '@/lib/services/city'
 import { getCityFromCookie } from '@/lib/utils/get-city-from-cookie'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import type { DietaryType, PriceRange } from '@/lib/types'
+import { ROUTES } from '@/lib/constants/routes'
 import { ExploreFilters } from './explore-filters'
 
 export const metadata: Metadata = {
-  title: 'Explore Dishes — DishCheck',
+  title: 'Explore Dishes — Cravia',
   description: 'Explore dishes from restaurants across Bengaluru and Gurugram.',
 }
 
@@ -34,7 +35,7 @@ function ResultsSkeleton() {
   return (
     <div className="mt-6">
       <div className="mb-4 h-4 w-32 animate-pulse rounded bg-border" />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}
@@ -77,7 +78,7 @@ async function ExploreResults({
           title={query ? `No dishes found for "${query}"` : 'No dishes found'}
           description="Try adjusting your filters or search term."
           ctaLabel="Clear filters"
-          ctaHref="/explore"
+          ctaHref={ROUTES.EXPLORE}
         />
       ) : (
         <LoadMoreDishes
@@ -100,9 +101,9 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const area = params.area ?? null
   const dietary = (params.dietary as DietaryType) || null
   const priceRange = (params.priceRange as PriceRange) || null
-  const sortBy = (['highest-rated', 'newest', 'most-helpful'].includes(params.sortBy ?? '')
+  const sortBy = (([SORT_OPTIONS.HIGHEST_RATED, SORT_OPTIONS.NEWEST, SORT_OPTIONS.MOST_HELPFUL] as string[]).includes(params.sortBy ?? '')
     ? params.sortBy as SortOption
-    : 'highest-rated') as SortOption
+    : SORT_OPTIONS.HIGHEST_RATED) as SortOption
 
   const resolvedCity = resolveCity({ requestedCity: city })
   const areas = listCityAreas(resolvedCity)
@@ -110,7 +111,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
 
   return (
     <ExploreEntranceWrapper>
-      <div className="mx-auto max-w-[1200px] px-6 py-8">
+      <div className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
         <ExploreFilters
           query={query}
           selectedCuisine={cuisine}

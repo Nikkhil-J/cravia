@@ -21,7 +21,7 @@ export function TagCloud({ tags, maxVisible = 5 }: TagCloudProps) {
       {!expanded && hidden > 0 && (
         <button
           onClick={() => setExpanded(true)}
-          className="rounded-pill border border-border bg-bg-cream px-3 py-1.5 text-xs font-medium text-text-muted hover:text-text-secondary"
+          className="inline-flex min-h-[44px] items-center rounded-pill border border-border bg-bg-cream px-3 text-xs font-medium text-text-muted hover:text-text-secondary"
         >
           +{hidden} more
         </button>

@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { FirebaseAuthProvider } from '@/lib/auth/firebase-auth-provider'
 import { userRepository } from '@/lib/repositories'
 
@@ -8,6 +9,10 @@ export interface RequestAuthContext {
 }
 
 const authProvider = new FirebaseAuthProvider()
+
+const getCachedUser = cache(async (userId: string) => {
+  return userRepository.getById(userId)
+})
 
 function getBearerToken(req: Request): string | null {
   const raw = req.headers.get('authorization')
@@ -28,7 +33,7 @@ export async function getRequestAuth(req: Request): Promise<RequestAuthContext |
     return null
   }
 
-  const user = await userRepository.getById(verified.userId)
+  const user = await getCachedUser(verified.userId)
   if (!user) return null
 
   return {

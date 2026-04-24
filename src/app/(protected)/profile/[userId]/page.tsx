@@ -6,7 +6,8 @@ import Image from 'next/image'
 import { getUser } from '@/lib/services/users'
 import { getReviewsByUser } from '@/lib/services/reviews'
 import { BADGE_DEFINITIONS } from '@/lib/constants'
-import { ReviewCard } from '@/components/features/ReviewCard'
+import { ReviewCardV2 } from '@/components/features/ReviewCardV2'
+import { useReviewDishContexts } from '@/lib/hooks/useReviewDishContexts'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -18,6 +19,7 @@ export default function UserProfilePage() {
   const [profile, setProfile] = useState<User | null>(null)
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
+  const dishContexts = useReviewDishContexts(reviews)
 
   useEffect(() => {
     if (!userId) return
@@ -34,17 +36,17 @@ export default function UserProfilePage() {
   const earnedBadges = BADGE_DEFINITIONS.filter((b) => profile.badges.includes(b.id))
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
-      <div className="flex items-center gap-4">
+    <div className="mx-auto max-w-2xl px-4 py-6 sm:py-10">
+      <div className="flex items-center gap-3 sm:gap-4">
         {profile.avatarUrl ? (
-          <Image src={profile.avatarUrl} alt={profile.displayName} width={72} height={72} className="rounded-full object-cover" />
+          <Image src={profile.avatarUrl} alt={profile.displayName} width={72} height={72} className="h-14 w-14 rounded-full object-cover sm:h-[72px] sm:w-[72px]" />
         ) : (
-          <div className="flex h-18 w-18 items-center justify-center rounded-full bg-primary-light text-2xl font-bold text-primary">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-light text-xl font-bold text-primary sm:h-[72px] sm:w-[72px] sm:text-2xl">
             {profile.displayName[0]?.toUpperCase()}
           </div>
         )}
         <div>
-          <h1 className="font-display text-xl font-bold text-bg-dark">{profile.displayName}</h1>
+          <h1 className="font-display text-lg font-bold text-heading sm:text-xl">{profile.displayName}</h1>
           <p className="text-sm text-text-muted">{profile.city || 'Bengaluru'}</p>
           <span className="mt-1 inline-block rounded-full bg-primary-light px-2.5 py-0.5 text-xs font-semibold text-primary-dark">
             {profile.level}
@@ -52,15 +54,15 @@ export default function UserProfilePage() {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-3">
+      <div className="mt-4 grid grid-cols-3 gap-2 sm:mt-6 sm:gap-3">
         {[
           { label: 'Reviews', value: profile.reviewCount },
           { label: 'Helpful votes', value: profile.helpfulVotesReceived },
           { label: 'Badges', value: earnedBadges.length },
         ].map(({ label, value }) => (
-          <div key={label} className="rounded-xl bg-bg-cream p-4 text-center">
-            <p className="font-display text-2xl font-bold text-bg-dark">{value}</p>
-            <p className="text-xs text-text-muted">{label}</p>
+          <div key={label} className="rounded-xl bg-bg-cream p-3 text-center sm:p-4">
+            <p className="font-display text-xl font-bold text-heading sm:text-2xl">{value}</p>
+            <p className="text-[10px] text-text-muted sm:text-xs">{label}</p>
           </div>
         ))}
       </div>
@@ -80,13 +82,19 @@ export default function UserProfilePage() {
       )}
 
       <div className="mt-8">
-        <h2 className="font-display text-lg font-semibold text-bg-dark">Reviews</h2>
+        <h2 className="font-display text-lg font-semibold text-heading">Reviews</h2>
         {reviews.length === 0 ? (
           <EmptyState icon="📝" title="No reviews yet" description="This user hasn't reviewed anything yet." />
         ) : (
-          <div className="mt-4 space-y-4">
+          <div className="mt-4 flex flex-col gap-4">
             {reviews.map((review) => (
-              <ReviewCard key={review.id} review={review} currentUserId={currentUser?.id} />
+              <ReviewCardV2
+                key={review.id}
+                review={review}
+                variant="profile"
+                currentUserId={currentUser?.id}
+                dishContext={dishContexts[review.dishId] ?? null}
+              />
             ))}
           </div>
         )}

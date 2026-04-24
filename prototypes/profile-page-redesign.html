@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profile Page — v2 Polished</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #181a22;
+    --card-hover: #1c1e28;
+    --border: #2a2d38;
+    --border-hover: #3d4050;
+    --text-primary: #e8e8ed;
+    --text-secondary: #b0b3c0;
+    --text-muted: #6b6f80;
+    --heading: #f2f2f5;
+    --primary: #e23744;
+    --primary-dark: #c62d39;
+    --brand-orange: #ff6b35;
+    --brand-gold: #ffb800;
+    --brand-gold-light: rgba(255,184,0,0.1);
+    --success: #4ade80;
+    --surface-2: #22242e;
+    --surface-3: #2a2d38;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Page ────────────────────────────────────────── */
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── Hero banner ────────────────────────────────── */
+  .hero-banner {
+    position: relative;
+    padding: 36px 32px 28px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    background:
+      radial-gradient(ellipse 60% 120% at 10% 50%, rgba(226,55,68,0.08), transparent),
+      radial-gradient(ellipse 50% 100% at 90% 30%, rgba(255,107,53,0.06), transparent),
+      var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    margin-bottom: 28px;
+  }
+  .hero-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--brand-orange));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(226,55,68,0.3);
+    border: 3px solid var(--bg);
+  }
+  .hero-info { flex: 1; min-width: 0; }
+  .hero-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--heading);
+    letter-spacing: -0.4px;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 3px;
+    font-size: 13px;
+  }
+  .hero-city { color: var(--text-muted); }
+  .hero-dot { color: var(--border); }
+  .hero-since { color: var(--text-muted); font-size: 12px; }
+  .level-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--brand-gold-light);
+    color: var(--brand-gold);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 99px;
+    border: 1px solid rgba(255,184,0,0.15);
+  }
+  .hero-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    background: linear-gradient(135deg, var(--primary), var(--brand-orange));
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 20px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 2px 10px rgba(226,55,68,0.2);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(226,55,68,0.3); }
+
+  /* ── Hero stats strip ───────────────────────────── */
+  .hero-stats {
+    display: flex;
+    gap: 6px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .hero-stat {
+    flex: 1;
+    text-align: center;
+    padding: 10px 8px;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+  .hero-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--heading);
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* ── Dashboard grid ─────────────────────────────── */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .dashboard { grid-template-columns: 1fr; }
+    .sidebar { order: -1; }
+    .hero-top { flex-wrap: wrap; }
+    .hero-actions { width: 100%; margin-top: 12px; }
+  }
+  .main { min-width: 0; }
+
+  /* ── Sidebar ────────────────────────────────────── */
+  .sidebar {
+    position: sticky;
+    top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* ── Card ────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  /* ── Level progress ─────────────────────────────── */
+  .progress-card { padding: 16px; }
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .progress-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--heading);
+  }
+  .progress-hint { font-size: 11px; color: var(--brand-orange); font-weight: 600; }
+  .progress-track {
+    height: 6px;
+    background: var(--surface-2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--brand-orange));
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* ── Badges ─────────────────────────────────────── */
+  .badges-card { padding: 16px; }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title-count { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .badge-item {
+    text-align: center;
+    padding: 10px 4px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    background: var(--surface-2);
+    transition: all 0.15s;
+  }
+  .badge-item.earned {
+    border-color: var(--border);
+    background: var(--card);
+  }
+  .badge-item.earned:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    border-color: var(--border-hover);
+  }
+  .badge-item.locked { opacity: 0.3; }
+  .badge-icon { font-size: 20px; line-height: 1; }
+  .badge-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 5px;
+  }
+  .badge-item.earned .badge-label { color: var(--text-secondary); }
+
+  /* ── Quick links ────────────────────────────────── */
+  .quick-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .quick-link:last-child { border-bottom: none; }
+  .quick-link:hover { background: var(--surface-2); }
+  .ql-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .quick-link:hover .ql-icon { background: var(--surface-3); }
+  .ql-text { flex: 1; }
+  .ql-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .ql-desc { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .ql-arrow { font-size: 16px; color: var(--text-muted); transition: transform 0.15s; }
+  .quick-link:hover .ql-arrow { transform: translateX(2px); color: var(--text-secondary); }
+
+  /* ── Section header ─────────────────────────────── */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--heading);
+    letter-spacing: -0.2px;
+  }
+  .section-count {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* ── Review card ────────────────────────────────── */
+  .review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .review-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .review-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+  .photo-banner {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .photo-banner.expanded { height: 340px; }
+  .photo-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s;
+  }
+  .photo-banner.expanded img { object-fit: contain; background: #0a0b0f; }
+  .expand-hint {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    color: rgba(255,255,255,0.9);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 6px;
+    pointer-events: none;
+    letter-spacing: 0.2px;
+  }
+  .rc-body { padding: 14px 16px 16px; }
+  .dish-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .dish-info { flex: 1; min-width: 0; }
+  .dish-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--heading);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.1px;
+  }
+  .restaurant-name {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .restaurant-name span { color: var(--text-secondary); font-weight: 500; }
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: linear-gradient(135deg, var(--primary), var(--brand-orange));
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 8px;
+    line-height: 1;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(226,55,68,0.2);
+  }
+  .score-badge .out-of { font-size: 10px; font-weight: 500; opacity: 0.7; }
+
+  .sub-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .sub-pill {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 9px;
+  }
+  .sub-pill .val { font-weight: 700; color: var(--brand-orange); }
+
+  .review-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 10px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  .review-text.full { -webkit-line-clamp: unset; }
+  .see-more {
+    background: none;
+    border: none;
+    color: var(--brand-orange);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 3px;
+  }
+  .see-more:hover { text-decoration: underline; }
+
+  .tags-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 3px 10px;
+    transition: border-color 0.15s;
+  }
+  .tag:hover { border-color: var(--border-hover); }
+
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .timestamp { font-size: 11px; color: var(--text-muted); }
+  .helpful-btn {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .helpful-btn:hover { background: var(--surface-2); color: var(--text-secondary); }
+  .edit-closed {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: auto;
+    cursor: help;
+    position: relative;
+    padding: 3px 0;
+  }
+  .edit-closed .tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 11px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+  }
+  .edit-closed .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 14px;
+    border: 5px solid transparent;
+    border-top-color: var(--surface-3);
+  }
+  .edit-closed:hover .tooltip { display: block; }
+  .action-btns {
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+  }
+  .action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .action-btn.edit { color: var(--primary); opacity: 0.7; }
+  .action-btn.edit:hover { background: rgba(226,55,68,0.1); opacity: 1; }
+  .action-btn.delete { color: #f87171; opacity: 0.7; }
+  .action-btn.delete:hover { background: rgba(248,113,113,0.1); opacity: 1; }
+
+  /* ── Premium upsell (sidebar) ───────────────────── */
+  .upsell-card {
+    padding: 16px;
+    background:
+      radial-gradient(ellipse 80% 100% at 20% 0%, rgba(226,55,68,0.08), transparent),
+      var(--card);
+  }
+  .upsell-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--heading);
+  }
+  .upsell-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .upsell-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .upsell-btn:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- Hero Banner                                        -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="hero-banner">
+    <div class="hero-top">
+      <div class="avatar">N</div>
+      <div class="hero-info">
+        <div class="hero-name">Nikhil Ji</div>
+        <div class="hero-meta">
+          <span class="hero-city">Bengaluru</span>
+          <span class="hero-dot">·</span>
+          <span class="level-pill">⭐ Newbie</span>
+          <span class="hero-dot">·</span>
+          <span class="hero-since">Member since Apr 2026</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="btn-outline">Edit Profile</button>
+        <button class="btn-primary">✍️ Write Review</button>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-value">3</div>
+        <div class="hero-stat-label">Reviews</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">0</div>
+        <div class="hero-stat-label">Helpful</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">1</div>
+        <div class="hero-stat-label">Badges</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">50</div>
+        <div class="hero-stat-label">Points</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- Dashboard Grid                                     -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="dashboard">
+
+    <!-- ── Main (Reviews) ──────────────────────────────── -->
+    <div class="main">
+      <div class="section-header">
+        <h2 class="section-title">My Reviews</h2>
+        <span class="section-count">3 reviews</span>
+      </div>
+
+      <div class="review-list">
+        <!-- Review 1 -->
+        <div class="review-card">
+          <div class="photo-banner" onclick="this.classList.toggle('expanded')">
+            <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=700&q=80" alt="Kheer" />
+            <div class="expand-hint">↕ Expand</div>
+          </div>
+          <div class="rc-body">
+            <div class="dish-header">
+              <div class="dish-info">
+                <div class="dish-name">Gulkand Ki Kheer</div>
+                <div class="restaurant-name">at <span>Indian Grill Room</span></div>
+              </div>
+              <div class="score-badge">3.0 <span class="out-of">/5</span></div>
+            </div>
+            <div class="sub-pills">
+              <span class="sub-pill">Taste <span class="val">3.0</span></span>
+              <span class="sub-pill">Portion <span class="val">4.0</span></span>
+              <span class="sub-pill">Value <span class="val">2.0</span></span>
+            </div>
+            <div class="review-text" id="r1">
+              Good overall dessert but could have been slightly less sweet. The rose petal garnish was a nice touch and presentation was beautiful. Would order again for special occasions though.
+            </div>
+            <button class="see-more" onclick="toggleText('r1',this)">See more</button>
+            <div class="tags-row">
+              <span class="tag">Generous portion</span>
+              <span class="tag">Mild</span>
+              <span class="tag">Fair price</span>
+              <span class="tag">Oily</span>
+            </div>
+            <div class="meta-row">
+              <span class="timestamp">2 days ago</span>
+              <button class="helpful-btn">👍 Helpful · 0</button>
+              <div class="action-btns">
+                <button class="action-btn edit" title="Edit">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="action-btn delete" title="Delete">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review 2 -->
+        <div class="review-card">
+          <div class="photo-banner" onclick="this.classList.toggle('expanded')">
+            <img src="https://images.unsplash.com/photo-1567337710282-00832b415979?w=700&q=80" alt="Wings" />
+            <div class="expand-hint">↕ Expand</div>
+          </div>
+          <div class="rc-body">
+            <div class="dish-header">
+              <div class="dish-info">
+                <div class="dish-name">House of Wings — One Dozen</div>
+                <div class="restaurant-name">at <span>Plan B — House of Wings</span></div>
+              </div>
+              <div class="score-badge">2.7 <span class="out-of">/5</span></div>
+            </div>
+            <div class="sub-pills">
+              <span class="sub-pill">Taste <span class="val">3.0</span></span>
+              <span class="sub-pill">Portion <span class="val">3.0</span></span>
+              <span class="sub-pill">Value <span class="val">2.0</span></span>
+            </div>
+            <div class="review-text" id="r2">
+              Honestly pretty disappointing. The wings were overcooked and the sauce was way too sweet. Small portion for the price they charge. The spice level was fine but everything else let me down.
+            </div>
+            <button class="see-more" onclick="toggleText('r2',this)">See more</button>
+            <div class="tags-row">
+              <span class="tag">Spicy</span>
+              <span class="tag">Small portion</span>
+              <span class="tag">Overpriced</span>
+              <span class="tag">Overcooked</span>
+            </div>
+            <div class="meta-row">
+              <span class="timestamp">5 days ago</span>
+              <button class="helpful-btn">👍 Helpful · 0</button>
+              <div class="edit-closed">
+                Edit closed
+                <div class="tooltip">Reviews can only be edited within 24 hours</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review 3: no photo -->
+        <div class="review-card">
+          <div class="rc-body">
+            <div class="dish-header">
+              <div class="dish-info">
+                <div class="dish-name">Butter Chicken</div>
+                <div class="restaurant-name">at <span>Punjab Grill</span></div>
+              </div>
+              <div class="score-badge">4.3 <span class="out-of">/5</span></div>
+            </div>
+            <div class="sub-pills">
+              <span class="sub-pill">Taste <span class="val">4.5</span></span>
+              <span class="sub-pill">Portion <span class="val">4.0</span></span>
+              <span class="sub-pill">Value <span class="val">4.5</span></span>
+            </div>
+            <div class="review-text full">
+              Absolutely phenomenal butter chicken. Creamy, rich, perfect spice level. Best I've had in Bengaluru.
+            </div>
+            <div class="tags-row">
+              <span class="tag">Recommended</span>
+              <span class="tag">Authentic</span>
+              <span class="tag">Comfort food</span>
+            </div>
+            <div class="meta-row">
+              <span class="timestamp">1 week ago</span>
+              <button class="helpful-btn">👍 Helpful · 3</button>
+              <div class="edit-closed">
+                Edit closed
+                <div class="tooltip">Reviews can only be edited within 24 hours</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Sidebar ─────────────────────────────────────── -->
+    <div class="sidebar">
+
+      <!-- Level progress -->
+      <div class="card progress-card">
+        <div class="progress-header">
+          <span class="progress-title">Level Progress</span>
+          <span class="progress-hint">2 more to Foodie</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:60%"></div>
+        </div>
+        <div class="progress-labels">
+          <span>3 / 5 reviews</span>
+          <span>Foodie</span>
+        </div>
+      </div>
+
+      <!-- Badges -->
+      <div class="card badges-card">
+        <div class="card-title">
+          Badges
+          <span class="card-title-count">1 / 7</span>
+        </div>
+        <div class="badges-grid">
+          <div class="badge-item earned">
+            <div class="badge-icon">🍽️</div>
+            <div class="badge-label">First Bite</div>
+          </div>
+          <div class="badge-item locked">
+            <div class="badge-icon">🔒</div>
+            <div class="badge-label">Regular</div>
+          </div>
+          <div class="badge-item locked">
+            <div class="badge-icon">🔒</div>
+            <div class="badge-label">Explorer</div>
+          </div>
+          <div class="badge-item locked">
+            <div class="badge-icon">🔒</div>
+            <div class="badge-label">Critic</div>
+          </div>
+          <div class="badge-item locked">
+            <div class="badge-icon">🔒</div>
+            <div class="badge-label">Legend</div>
+          </div>
+          <div class="badge-item locked">
+            <div class="badge-icon">🔒</div>
+            <div class="badge-label">Helpful</div>
+          </div>
+          <div class="badge-item locked">
+            <div class="badge-icon">🔒</div>
+            <div class="badge-label">Trusted</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick links -->
+      <div class="card">
+        <a class="quick-link" href="#">
+          <div class="ql-icon">⭐</div>
+          <div class="ql-text">
+            <div class="ql-label">Wishlist</div>
+            <div class="ql-desc">4 saved dishes</div>
+          </div>
+          <span class="ql-arrow">›</span>
+        </a>
+        <a class="quick-link" href="#">
+          <div class="ql-icon">🎁</div>
+          <div class="ql-text">
+            <div class="ql-label">Rewards</div>
+            <div class="ql-desc">50 DishPoints available</div>
+          </div>
+          <span class="ql-arrow">›</span>
+        </a>
+        <a class="quick-link" href="#">
+          <div class="ql-icon">⚙️</div>
+          <div class="ql-text">
+            <div class="ql-label">Settings</div>
+            <div class="ql-desc">Profile, preferences</div>
+          </div>
+          <span class="ql-arrow">›</span>
+        </a>
+      </div>
+
+      <!-- Premium upsell -->
+      <div class="card upsell-card">
+        <div class="upsell-title">Upgrade to Premium</div>
+        <div class="upsell-desc">Unlock advanced filters, dish comparison, and exclusive badges.</div>
+        <button class="upsell-btn">Learn more →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleText(id, btn) {
+    const el = document.getElementById(id);
+    el.classList.toggle('full');
+    btn.textContent = el.classList.contains('full') ? 'See less' : 'See more';
+  }
+</script>
+
+</body>
+</html>

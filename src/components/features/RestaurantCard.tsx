@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Restaurant } from '@/lib/types'
+import { ROUTES } from '@/lib/constants/routes'
 
 interface RestaurantCardProps {
   restaurant: Restaurant
@@ -10,7 +11,7 @@ interface RestaurantCardProps {
 export function RestaurantCard({ restaurant, index = 0 }: RestaurantCardProps) {
   return (
     <Link
-      href={`/restaurant/${restaurant.id}`}
+      href={ROUTES.restaurant(restaurant.id)}
       className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-all duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1.5 hover:border-transparent hover:shadow-lg active:translate-y-0 active:shadow-md animate-pop-in"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms`, animationFillMode: 'both' }}
     >
@@ -28,7 +29,7 @@ export function RestaurantCard({ restaurant, index = 0 }: RestaurantCardProps) {
         )}
       </div>
       <div className="p-3.5">
-        <h3 className="font-display font-semibold text-bg-dark line-clamp-1">{restaurant.name}</h3>
+        <h3 className="font-display font-semibold text-heading line-clamp-1">{restaurant.name}</h3>
         <p className="mt-0.5 text-xs text-text-muted">{restaurant.area}, {restaurant.city}</p>
         {restaurant.cuisines.length > 0 && (
           <p className="mt-1.5 text-xs text-text-secondary line-clamp-1">{restaurant.cuisines.join(' · ')}</p>

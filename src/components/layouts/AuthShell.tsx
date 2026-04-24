@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import Link from 'next/link'
 import { Logo } from '@/components/ui/Logo'
+import { ROUTES } from '@/lib/constants/routes'
 import { AuthScreenDismiss } from '@/components/layouts/AuthScreenDismiss'
 
 interface AuthShellProps {
@@ -13,8 +14,8 @@ export function AuthShell({ children, title, subtitle }: AuthShellProps) {
   return (
     <div className="flex min-h-screen">
       {/* Branded panel (desktop only) */}
-      <div className="hidden w-[45%] flex-col justify-between bg-gradient-to-br from-primary via-primary-dark to-[#1C1C2B] p-10 text-white lg:flex">
-        <Link href="/">
+      <div className="hidden w-[45%] flex-col justify-between bg-gradient-to-br from-primary via-primary-dark to-surface-dark p-10 text-white lg:flex">
+        <Link href={ROUTES.HOME}>
           <Logo className="text-white" size="md" />
         </Link>
         <div>
@@ -40,19 +41,19 @@ export function AuthShell({ children, title, subtitle }: AuthShellProps) {
           </div>
         </div>
         <p className="text-xs text-white/30">
-          &copy; {new Date().getFullYear()} DishCheck
+          &copy; {new Date().getFullYear()} Cravia
         </p>
       </div>
 
       {/* Form panel */}
       <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-12 pt-16 lg:pt-12">
         <AuthScreenDismiss />
-        <Link href="/" className="mb-8 lg:hidden">
+        <Link href={ROUTES.HOME} className="mb-8 lg:hidden">
           <Logo size="lg" />
         </Link>
         <div className="w-full max-w-sm">
           <div className="mb-8">
-            <h1 className="font-display text-2xl font-bold text-bg-dark">{title}</h1>
+            <h1 className="font-display text-2xl font-bold text-heading">{title}</h1>
             {subtitle && (
               <p className="mt-2 text-sm text-text-secondary">{subtitle}</p>
             )}

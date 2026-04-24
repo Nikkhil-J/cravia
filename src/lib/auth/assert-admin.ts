@@ -1,5 +1,6 @@
 import { COLLECTIONS } from '@/lib/firebase/config'
 import { adminAuth, adminDb } from '@/lib/firebase/admin-server'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export class AdminAuthError extends Error {
   status: number
@@ -35,7 +36,7 @@ export async function assertAdmin(req: Request): Promise<AssertAdminResult> {
   try {
     decodedToken = await adminAuth.verifyIdToken(token)
   } catch {
-    throw new AdminAuthError(401, 'Unauthorized')
+    throw new AdminAuthError(401, API_ERRORS.UNAUTHORIZED)
   }
 
   const userDoc = await adminDb.collection(COLLECTIONS.USERS).doc(decodedToken.uid).get()
@@ -43,7 +44,7 @@ export async function assertAdmin(req: Request): Promise<AssertAdminResult> {
   const hasAdminDoc = userDoc.exists && userDoc.get('isAdmin') === true
 
   if (!hasAdminClaim || !hasAdminDoc) {
-    throw new AdminAuthError(403, 'Forbidden')
+    throw new AdminAuthError(403, API_ERRORS.FORBIDDEN)
   }
 
   return { userId: decodedToken.uid }

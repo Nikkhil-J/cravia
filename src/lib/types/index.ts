@@ -78,6 +78,7 @@ export interface Dish {
   avgOverall: number
   reviewCount: number
   topTags: string[]
+  tagCounts?: Record<string, number>
   isActive: boolean
   createdAt: string
 }
@@ -102,6 +103,8 @@ export interface Review {
   isApproved: boolean
   editedAt: string | null
   createdAt: string
+  dishName?: string
+  restaurantName?: string
 }
 
 export interface User {
@@ -157,6 +160,12 @@ export interface Notification {
   message: string
   linkUrl: string | null
   isRead: boolean
+  createdAt: string
+}
+
+// ── Photo types ──────────────────────────────────────────
+export interface DishPhoto {
+  url: string
   createdAt: string
 }
 

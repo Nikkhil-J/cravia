@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { ROUTES } from '@/lib/constants/routes'
 
 function getPasswordStrength(pw: string): { score: number; label: string; color: string } {
   let score = 0
@@ -46,14 +47,14 @@ function SignupForm() {
     const err = await signUpWithEmail(email, password, name)
     setLoading(false)
     if (err) { setError(err); return }
-    router.push(redirect ? `/onboarding?redirect=${encodeURIComponent(redirect)}` : '/onboarding')
+    router.push(redirect ? `${ROUTES.ONBOARDING}?redirect=${encodeURIComponent(redirect)}` : ROUTES.ONBOARDING)
   }
 
   async function handleGoogle() {
     setGoogleLoading(true)
     try {
       await signInWithGoogle()
-      router.push(redirect ? `/onboarding?redirect=${encodeURIComponent(redirect)}` : '/onboarding')
+      router.push(redirect ? `${ROUTES.ONBOARDING}?redirect=${encodeURIComponent(redirect)}` : ROUTES.ONBOARDING)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Google sign up failed')
     } finally {
@@ -126,7 +127,7 @@ function SignupForm() {
 
       <p className="mt-6 text-center text-sm text-text-muted">
         Already have an account?{' '}
-        <Link href={redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login'} className="font-semibold text-primary hover:underline">Sign in</Link>
+        <Link href={redirect ? ROUTES.loginWithRedirect(encodeURIComponent(redirect)) : ROUTES.LOGIN} className="font-semibold text-primary hover:underline">Sign in</Link>
       </p>
     </>
   )
@@ -134,7 +135,7 @@ function SignupForm() {
 
 export default function SignupPage() {
   return (
-    <AuthShell title="Create an account" subtitle="Join DishCheck and start reviewing">
+    <AuthShell title="Create an account" subtitle="Join Cravia and start reviewing">
       <Suspense fallback={<div className="flex justify-center py-4"><LoadingSpinner /></div>}>
         <SignupForm />
       </Suspense>

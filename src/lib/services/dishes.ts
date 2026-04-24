@@ -1,10 +1,12 @@
+import { cache } from 'react'
 import { dishRepository } from '@/lib/repositories'
 import { getRelatedDishes as getRelatedDishesFirebase, getAllActiveDishes as getAllActiveDishesFirebase } from '@/lib/firebase/dishes'
 import type { SearchFilters } from '@/lib/types'
+import { SORT_OPTIONS } from '@/lib/constants'
 
-export function getDish(id: string) {
+export const getDish = cache(async (id: string) => {
   return dishRepository.getById(id)
-}
+})
 
 export function getDishCount() {
   return dishRepository.getCount()
@@ -29,7 +31,7 @@ export function searchDishes(
     area: filters?.area ?? null,
     dietary: filters?.dietary ?? null,
     priceRange: filters?.priceRange ?? null,
-    sortBy: filters?.sortBy ?? 'highest-rated',
+    sortBy: filters?.sortBy ?? SORT_OPTIONS.HIGHEST_RATED,
     cursor: cursor ?? undefined,
   }).then((result) => ({
     items: result.data,

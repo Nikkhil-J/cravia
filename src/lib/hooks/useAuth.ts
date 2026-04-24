@@ -4,12 +4,12 @@ import { useEffect, type ReactNode } from 'react'
 import { FirebaseClientAuthProvider } from '@/lib/auth/firebase-provider'
 import { userRepository } from '@/lib/repositories'
 import { useAuthStore } from '@/lib/store/authStore'
-import { SUPPORTED_CITIES } from '@/lib/constants'
+import { SUPPORTED_CITIES, CONFIG } from '@/lib/constants'
 
 const authProvider = new FirebaseClientAuthProvider()
 
 const SESSION_COOKIE = '__session'
-const SESSION_MAX_AGE = 604800 // 7 days
+const SESSION_MAX_AGE = CONFIG.SESSION_COOKIE_MAX_AGE
 
 function setSessionCookie(): void {
   document.cookie = `${SESSION_COOKIE}=1; path=/; max-age=${SESSION_MAX_AGE}; SameSite=Lax`
@@ -22,12 +22,12 @@ function clearSessionCookie(): void {
 function syncCityCookieFromProfile(profileCity: string): void {
   const existing = document.cookie
     .split('; ')
-    .find((row) => row.startsWith('dishcheck-city='))
+    .find((row) => row.startsWith('cravia-city='))
     ?.split('=')[1]
   if (existing) return
   if (!(SUPPORTED_CITIES as readonly string[]).includes(profileCity)) return
-  document.cookie = `dishcheck-city=${profileCity}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`
-  localStorage.setItem('dishcheck-city', profileCity)
+  document.cookie = `cravia-city=${profileCity}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`
+  localStorage.setItem('cravia-city', profileCity)
 }
 
 export async function signInWithGoogle() {
@@ -59,30 +59,65 @@ export function sendPasswordReset(email: string) {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { setUser, clearUser } = useAuthStore()
+  const { setUser, clearUser, setLoading } = useAuthStore()
 
   useEffect(() => {
-    const unsub = authProvider.onAuthStateChange(async (authUser) => {
-      if (!authUser) {
-        clearUser()
-        clearSessionCookie()
-        return
+    let cancelPrevious: (() => void) | undefined
+
+    const unsub = authProvider.onAuthStateChange((authUser) => {
+      if (cancelPrevious) cancelPrevious()
+
+      let cancelled = false
+      cancelPrevious = () => { cancelled = true }
+
+      setLoading(true)
+
+      const handleAuthChange = async () => {
+        if (!authUser) {
+          if (!cancelled) {
+            clearUser()
+            clearSessionCookie()
+          }
+          return
+        }
+
+        try {
+          let user = await userRepository.getById(authUser.id)
+          if (cancelled) return
+
+          if (!user) {
+            user = await userRepository.createFromAuthUser({
+              id: authUser.id,
+              displayName: authUser.displayName,
+              email: authUser.email,
+              avatarUrl: authUser.avatarUrl,
+            })
+            if (cancelled) return
+          }
+
+          setUser(user, authUser)
+          setSessionCookie()
+          if (user?.city) syncCityCookieFromProfile(user.city)
+        } catch (err) {
+          console.error('[useAuth] Failed to load user profile:', err)
+          if (!cancelled) {
+            clearUser()
+          }
+        } finally {
+          if (!cancelled) {
+            setLoading(false)
+          }
+        }
       }
-      let user = await userRepository.getById(authUser.id)
-      if (!user) {
-        user = await userRepository.createFromAuthUser({
-          id: authUser.id,
-          displayName: authUser.displayName,
-          email: authUser.email,
-          avatarUrl: authUser.avatarUrl,
-        })
-      }
-      setUser(user, authUser)
-      setSessionCookie()
-      if (user?.city) syncCityCookieFromProfile(user.city)
+
+      handleAuthChange()
     })
-    return unsub
-  }, [setUser, clearUser])
+
+    return () => {
+      if (cancelPrevious) cancelPrevious()
+      unsub()
+    }
+  }, [setUser, clearUser, setLoading])
 
   return children as React.ReactElement
 }

@@ -1,5 +1,9 @@
 import type { UserLevel, DishCategory, PriceRange, DietaryType, BadgeDefinition } from '../types'
 
+export * from './routes'
+export * from './api'
+export * from './errors'
+
 // ── Review tags ───────────────────────────────────────────
 export const TAG_LIST = [
   'Spicy',
@@ -23,6 +27,22 @@ export const TAG_LIST = [
   'Skip it',
   'Comfort food',
 ] as const
+
+export const TAG_GROUPS: { label: string; tags: (typeof TAG_LIST)[number][] }[] = [
+  { label: 'Flavour', tags: ['Spicy', 'Mild', 'Very sweet', 'Savoury', 'Authentic'] },
+  { label: 'Portion & Sharing', tags: ['Generous portion', 'Small portion', 'Good for sharing', 'Solo serving'] },
+  { label: 'Value', tags: ['Great value', 'Fair price', 'Overpriced'] },
+  { label: 'Quality & Vibe', tags: ['Fresh ingredients', 'Oily', 'Dry', 'Overcooked', 'Undercooked', 'Comfort food', 'Recommended', 'Skip it'] },
+]
+
+export const RATING_LABELS: Record<number, string> = {
+  0: 'Not rated',
+  1: 'Poor',
+  2: 'Fair',
+  3: 'Good',
+  4: 'Great',
+  5: 'Amazing',
+}
 
 // ── Badge definitions ─────────────────────────────────────
 export const BADGE_DEFINITIONS: BadgeDefinition[] = [
@@ -112,9 +132,9 @@ export const PRICE_LABEL: Record<PriceRange, string> = {
 }
 
 export const DIETARY_BADGE: Record<DietaryType, { label: string; className: string }> = {
-  veg: { label: '🟢 Vegetarian', className: 'bg-[var(--color-success)]/10 text-[var(--color-success)] border-[var(--color-success)]/30' },
-  'non-veg': { label: '🔴 Non-vegetarian', className: 'bg-[var(--color-primary-light)] text-[var(--color-primary)] border-[var(--color-primary)]/30' },
-  egg: { label: '🟡 Contains egg', className: 'bg-[var(--color-accent-light)] text-[var(--color-accent)] border-[var(--color-accent)]/30' },
+  veg: { label: '🟢 Vegetarian', className: 'bg-success/10 text-success border-success/30' },
+  'non-veg': { label: '🔴 Non-vegetarian', className: 'bg-primary-light text-primary border-primary/30' },
+  egg: { label: '🟡 Contains egg', className: 'bg-brand-gold-light text-brand-gold border-brand-gold/30' },
 }
 
 export const DIETARY_ICON: Record<DietaryType, string> = {
@@ -126,7 +146,8 @@ export const DIETARY_ICON: Record<DietaryType, string> = {
 export const LEVEL_COLORS: Record<UserLevel, string> = {
   Newbie: 'bg-border text-text-secondary',
   Foodie: 'bg-primary-light text-primary-dark',
-  Critic: 'bg-accent-light text-[var(--color-accent)]',
+  Critic: 'bg-brand-gold-light text-brand-gold',
+  /* TODO: add --color-legend / --color-legend-light to design system */
   Legend: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
 }
 
@@ -172,3 +193,55 @@ export const CUISINE_EMOJI: Record<string, string> = {
   Fusion: '🍱',
   'Pan-Indian': '🇮🇳',
 }
+
+// ── Sub-rating labels ────────────────────────────────────
+export const SUB_RATING_LABELS = ['Taste', 'Portion', 'Value'] as const
+export type SubRating = (typeof SUB_RATING_LABELS)[number]
+
+export const MAX_RATING = 5
+
+// ── App config ──────────────────────────────────────────
+export const CONFIG = {
+  ISR_REVALIDATE_SECONDS: 3600,
+  NOTIFICATION_POLL_INTERVAL_MS: 120_000,
+  REACT_QUERY_STALE_TIME_MS: 2 * 60 * 1000,
+  NOTIFICATION_PREVIEW_LIMIT: 5,
+  PHOTO_GRID_MAX: 3,
+  REVIEW_CARD_PREVIEW_LENGTH: 60,
+  RELATED_DISHES_COUNT: 4,
+  LANDING_TOP_DISHES: 6,
+  LANDING_FEATURED_RESTAURANTS: 4,
+  SESSION_COOKIE_MAX_AGE: 604800,
+  SLOW_REQUEST_THRESHOLD_MS: 2000,
+} as const
+
+// ── Sort options ────────────────────────────────────────
+export const SORT_OPTIONS = {
+  HIGHEST_RATED: 'highest-rated',
+  NEWEST: 'newest',
+  MOST_HELPFUL: 'most-helpful',
+} as const
+
+// ── HTTP helpers ────────────────────────────────────────
+export const HTTP_HEADERS = {
+  CONTENT_TYPE: 'content-type',
+  CONTENT_TYPE_JSON: 'application/json',
+} as const
+
+// ── Status enums ────────────────────────────────────────
+export const CLAIM_STATUS = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+} as const
+
+export const REQUEST_ACTION = {
+  APPROVE: 'approve',
+  REJECT: 'reject',
+} as const
+
+// ── Dietary types ───────────────────────────────────────
+export const DIETARY = {
+  VEG: 'veg',
+  NON_VEG: 'non-veg',
+} as const

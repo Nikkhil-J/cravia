@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cravia — App Flows Simulator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f1a;--sidebar:#13131f;--card:#1a1a2e;--card-hover:#222240;
+  --border:#2a2a40;--text:#e0e0e8;--text-secondary:#9a9ab0;--text-muted:#6a6a80;
+  --red:#E23744;--orange:#FF6B35;--gold:#FFB800;--green:#22c55e;--blue:#3b82f6;
+  --purple:#a855f7;--teal:#14b8a6;--amber:#f59e0b;--cyan:#06b6d4;
+  --mono:'SF Mono','Fira Code','Cascadia Code',Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --wf-surface:#161628;--wf-block:#1e1e36;--wf-line:#2a2a48;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5}
+::selection{background:var(--red);color:#fff}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#444}
+
+.app{display:flex;flex-direction:column;height:100vh}
+
+/* ── Top Bar ── */
+.topbar{display:flex;align-items:center;gap:12px;padding:0 16px;height:48px;background:var(--sidebar);border-bottom:1px solid var(--border);flex-shrink:0;z-index:20}
+.topbar-logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;letter-spacing:-.3px;white-space:nowrap}
+.topbar-logo svg{flex-shrink:0}
+.topbar-logo .logo-dish{color:var(--red)}
+.topbar-logo .logo-check{color:var(--orange)}
+.topbar-label{font-size:10px;font-weight:600;color:var(--text-muted);background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 7px;white-space:nowrap}
+.topbar-search{flex:1;max-width:320px;margin-left:auto;position:relative}
+.topbar-search input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px 6px 30px;color:var(--text);font-size:12px;outline:none;transition:border .2s}
+.topbar-search input:focus{border-color:var(--red)}
+.topbar-search svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none}
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;flex-shrink:0}
+.view-toggle button{padding:5px 12px;font-size:11px;font-weight:600;border:none;cursor:pointer;background:transparent;color:var(--text-secondary);transition:all .2s}
+.view-toggle button.active{background:var(--red);color:#fff}
+.view-toggle button:hover:not(.active){background:var(--card)}
+.topbar-btn{padding:5px 12px;font-size:11px;font-weight:600;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.topbar-btn:hover{border-color:var(--orange);color:var(--orange)}
+.topbar-btn.active{background:var(--orange);border-color:var(--orange);color:#fff}
+.topbar-btn.tour-btn{border-color:var(--purple);color:var(--purple)}
+.topbar-btn.tour-btn:hover,.topbar-btn.tour-btn.active{background:var(--purple);color:#fff}
+.hamburger{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:4px}
+
+/* ── Breadcrumb ── */
+.breadcrumb-bar{display:flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(13,15,26,.8);border-bottom:1px solid var(--border);flex-shrink:0;min-height:32px;overflow-x:auto}
+.breadcrumb-item{font-size:11px;color:var(--text-muted);cursor:pointer;padding:2px 8px;border-radius:4px;white-space:nowrap;transition:all .15s}
+.breadcrumb-item:hover{color:var(--text);background:var(--card)}
+.breadcrumb-item.current{color:var(--orange);font-weight:600}
+.breadcrumb-sep{color:var(--text-muted);font-size:10px;flex-shrink:0}
+.breadcrumb-reset{font-size:10px;color:var(--text-muted);cursor:pointer;margin-left:auto;padding:2px 8px;border:1px solid var(--border);border-radius:4px;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.breadcrumb-reset:hover{color:var(--red);border-color:var(--red)}
+
+/* ── Body ── */
+.body{display:flex;flex:1;overflow:hidden;position:relative}
+
+/* ── Sidebar ── */
+.sidebar{width:220px;flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--border);overflow-y:auto;padding:8px 0;transition:transform .3s}
+.sidebar-group{margin-bottom:4px}
+.sidebar-group-label{display:flex;align-items:center;gap:6px;padding:4px 14px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted)}
+.sidebar-item{display:flex;align-items:center;gap:7px;padding:6px 14px;cursor:pointer;font-size:12px;color:var(--text-secondary);transition:all .15s;border-left:3px solid transparent}
+.sidebar-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.sidebar-item.active{background:rgba(226,55,68,.1);color:var(--red);border-left-color:var(--red)}
+.sidebar-item.hidden{display:none}
+.sidebar-icon{width:14px;height:14px;flex-shrink:0;opacity:.6}
+.sidebar-item.active .sidebar-icon{opacity:1}
+.sidebar-summary{padding:12px 14px;border-top:1px solid var(--border);margin-top:4px}
+.sidebar-summary-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px}
+.sidebar-stat{display:flex;justify-content:space-between;font-size:11px;color:var(--text-secondary);padding:2px 0}
+.sidebar-stat span:last-child{color:var(--text);font-weight:600}
+
+/* ── Main Panel ── */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.main-content{flex:1;overflow-y:auto;padding:20px 24px;padding-bottom:40px}
+.main.api-view-active .page-view{display:none}
+.main.api-view-active .api-view{display:block}
+.main:not(.api-view-active) .page-view{display:block}
+.main:not(.api-view-active) .api-view{display:none}
+
+/* ── Wireframe Styles ── */
+.wf-container{max-width:900px;margin:0 auto}
+.wf-page{background:var(--wf-surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.wf-page-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.wf-page-title{font-size:16px;font-weight:700}
+.wf-page-route{font-family:var(--mono);font-size:11px;color:var(--orange);background:rgba(255,107,53,.1);padding:2px 8px;border-radius:4px}
+.wf-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.3px}
+.wf-badge-server{background:rgba(34,197,94,.15);color:var(--green)}
+.wf-badge-client{background:rgba(59,130,246,.15);color:var(--blue)}
+.wf-badge-public{background:rgba(255,184,0,.12);color:var(--gold)}
+.wf-badge-protected{background:rgba(168,85,247,.12);color:var(--purple)}
+.wf-badge-admin{background:rgba(226,55,68,.12);color:var(--red)}
+.wf-body{padding:20px}
+.wf-section{margin-bottom:20px}
+.wf-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.wf-section-title::before{content:'';width:3px;height:12px;background:var(--red);border-radius:2px}
+.wf-row{display:flex;gap:16px;margin-bottom:16px}
+.wf-col{flex:1;min-width:0}
+.wf-col-side{width:260px;flex-shrink:0}
+
+/* Wireframe Elements */
+.wf-img{background:var(--wf-block);border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:20px;aspect-ratio:16/9;margin-bottom:12px;position:relative;overflow:hidden}
+.wf-img.square{aspect-ratio:1}
+.wf-img.short{aspect-ratio:3/1}
+.wf-img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.wf-img-grid .wf-img{aspect-ratio:1;margin-bottom:0}
+.wf-text{height:10px;background:var(--wf-line);border-radius:3px;margin-bottom:6px}
+.wf-text.title{height:16px;width:60%;background:var(--text-muted);margin-bottom:8px}
+.wf-text.subtitle{height:12px;width:40%;margin-bottom:8px}
+.wf-text.short{width:35%}
+.wf-text.medium{width:55%}
+.wf-text.long{width:85%}
+.wf-text.full{width:100%}
+
+.wf-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:none;position:relative}
+.wf-btn.primary{background:var(--red);color:#fff}
+.wf-btn.primary:hover{background:#c92f3c;transform:translateY(-1px)}
+.wf-btn.secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.wf-btn.secondary:hover{border-color:var(--text-muted)}
+.wf-btn.ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border)}
+.wf-btn.ghost:hover{color:var(--text);border-color:var(--text-muted)}
+.wf-btn.small{padding:5px 12px;font-size:11px}
+.wf-btn.icon-btn{width:36px;height:36px;padding:0;border-radius:50%;font-size:16px}
+.wf-btn .api-dot{display:none;width:6px;height:6px;border-radius:50%;background:var(--orange);position:absolute;top:3px;right:3px;box-shadow:0 0 6px var(--orange)}
+.show-api-dots .wf-btn.has-api .api-dot{display:block}
+.wf-btn.pulse{animation:pulse-orange .6s ease-out}
+@keyframes pulse-orange{0%{box-shadow:0 0 0 0 rgba(255,107,53,.6)}100%{box-shadow:0 0 0 20px rgba(255,107,53,0)}}
+
+.wf-input{background:var(--wf-block);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--text-muted);margin-bottom:8px;width:100%;display:block}
+.wf-select{background:var(--wf-block);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--text-muted);margin-bottom:8px}
+
+.wf-card{background:var(--wf-block);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;position:relative}
+.wf-card:hover{border-color:var(--text-muted);transform:translateY(-1px)}
+.wf-card .api-dot{display:none;width:6px;height:6px;border-radius:50%;background:var(--orange);position:absolute;top:6px;right:6px;box-shadow:0 0 6px var(--orange)}
+.show-api-dots .wf-card.has-api .api-dot{display:block}
+.wf-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.wf-card-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.wf-card-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.wf-card-img{background:var(--card);border-radius:6px;aspect-ratio:4/3;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:16px}
+.wf-stars{display:flex;gap:2px;margin-bottom:4px}
+.wf-star{color:var(--gold);font-size:12px}
+.wf-star.empty{color:var(--text-muted)}
+
+.wf-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.wf-chip{padding:4px 12px;border-radius:16px;font-size:11px;background:var(--wf-block);border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;transition:all .15s;position:relative}
+.wf-chip:hover{border-color:var(--text-muted);color:var(--text)}
+.wf-chip.active{background:rgba(226,55,68,.15);border-color:var(--red);color:var(--red)}
+
+.wf-review{background:var(--wf-block);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
+.wf-review-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.wf-avatar{width:28px;height:28px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:10px;flex-shrink:0}
+.wf-review-actions{display:flex;gap:8px;margin-top:10px}
+.wf-review .api-dot{display:none;width:6px;height:6px;border-radius:50%;background:var(--orange);position:absolute;top:6px;right:6px;box-shadow:0 0 6px var(--orange)}
+.show-api-dots .wf-review.has-api .api-dot{display:block}
+
+.wf-stat-card{background:var(--wf-block);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.wf-stat-num{font-size:28px;font-weight:700;color:var(--text);margin-bottom:2px}
+.wf-stat-label{font-size:11px;color:var(--text-muted)}
+
+.wf-list-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--wf-block);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;cursor:pointer;transition:all .15s;position:relative}
+.wf-list-item:hover{border-color:var(--text-muted)}
+.wf-list-item .api-dot{display:none;width:6px;height:6px;border-radius:50%;background:var(--orange);position:absolute;top:6px;right:6px;box-shadow:0 0 6px var(--orange)}
+.show-api-dots .wf-list-item.has-api .api-dot{display:block}
+
+.wf-form{max-width:400px}
+.wf-form-label{font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:4px}
+.wf-form-group{margin-bottom:12px}
+.wf-divider{height:1px;background:var(--border);margin:16px 0}
+.wf-empty{text-align:center;padding:32px;color:var(--text-muted);font-size:13px}
+.wf-hero{background:linear-gradient(135deg,rgba(226,55,68,.08),rgba(255,107,53,.05));border-radius:10px;padding:28px;text-align:center;margin-bottom:20px}
+.wf-hero .wf-text.title{margin:0 auto 8px}
+.wf-hero .wf-text.subtitle{margin:0 auto 12px}
+
+.wf-step-indicator{display:flex;align-items:center;gap:8px;margin-bottom:16px;justify-content:center}
+.wf-step{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--border);color:var(--text-muted)}
+.wf-step.active{border-color:var(--red);color:var(--red);background:rgba(226,55,68,.1)}
+.wf-step.done{border-color:var(--green);color:var(--green);background:rgba(34,197,94,.1)}
+.wf-step-line{width:32px;height:2px;background:var(--border)}
+
+.wf-table{width:100%;border-collapse:collapse;font-size:12px}
+.wf-table th{text-align:left;padding:8px;color:var(--text-muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.wf-table td{padding:8px;border-bottom:1px solid var(--border);color:var(--text-secondary)}
+
+.wf-tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border)}
+.wf-tab{padding:8px 16px;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.wf-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.wf-tab:hover:not(.active){color:var(--text)}
+
+/* ── Flow Panel ── */
+.flow-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;opacity:0;transition:opacity .2s}
+.flow-overlay.open{display:block;opacity:1}
+.flow-panel{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:90vw;background:var(--sidebar);border-left:1px solid var(--border);z-index:51;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+.flow-panel.open{transform:translateX(0)}
+.flow-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.flow-title{font-size:14px;font-weight:700}
+.flow-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;padding:4px;border-radius:4px;transition:all .15s}
+.flow-close:hover{color:var(--text);background:var(--card)}
+.flow-body{flex:1;overflow-y:auto;padding:20px}
+.flow-trigger{font-size:13px;color:var(--text);margin-bottom:16px;padding:10px 14px;background:var(--card);border-radius:8px;border-left:3px solid var(--orange)}
+.flow-step{margin-bottom:16px;opacity:0;transform:translateY(10px);animation:flow-step-in .3s forwards}
+.flow-step:nth-child(2){animation-delay:.1s}
+.flow-step:nth-child(3){animation-delay:.2s}
+.flow-step:nth-child(4){animation-delay:.3s}
+.flow-step:nth-child(5){animation-delay:.4s}
+.flow-step:nth-child(6){animation-delay:.5s}
+@keyframes flow-step-in{to{opacity:1;transform:translateY(0)}}
+.flow-step-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:700;margin-right:8px;flex-shrink:0}
+.flow-step-num.fn{background:rgba(6,182,212,.15);color:var(--cyan)}
+.flow-step-num.api{background:rgba(255,107,53,.15);color:var(--orange)}
+.flow-step-num.db{background:rgba(20,184,166,.15);color:var(--teal)}
+.flow-step-num.out{background:rgba(168,85,247,.15);color:var(--purple)}
+.flow-step-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center}
+.flow-step-content{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px}
+.flow-step-content code{font-family:var(--mono);font-size:11px;color:var(--orange)}
+.flow-step-content .filepath{font-family:var(--mono);font-size:10px;color:var(--text-muted);display:block;margin-top:3px}
+.flow-step-content .method-badge{font-size:9px;padding:2px 6px;margin-right:6px}
+.flow-nav-btn{display:flex;align-items:center;gap:8px;width:100%;padding:12px 16px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:8px;color:var(--purple);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px}
+.flow-nav-btn:hover{background:rgba(168,85,247,.2);border-color:var(--purple)}
+
+/* ── Devtools Panel ── */
+.devtools{position:fixed;bottom:0;left:220px;right:0;background:var(--sidebar);border-top:1px solid var(--border);z-index:15;transition:all .3s}
+.devtools.minimized{height:28px}
+.devtools.minimized .devtools-body{display:none}
+.devtools-header{display:flex;align-items:center;padding:4px 12px;height:28px;cursor:pointer;gap:8px;user-select:none}
+.devtools-header:hover{background:rgba(255,255,255,.02)}
+.devtools-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted)}
+.devtools-count{font-size:10px;color:var(--orange);font-weight:600}
+.devtools-toggle{margin-left:auto;font-size:10px;color:var(--text-muted)}
+.devtools-clear{font-size:10px;color:var(--text-muted);cursor:pointer;padding:2px 6px;border-radius:3px;transition:all .15s;background:none;border:none}
+.devtools-clear:hover{color:var(--red);background:var(--card)}
+.devtools-body{max-height:180px;overflow-y:auto;padding:4px 0}
+.devtools-entry{display:flex;align-items:flex-start;gap:8px;padding:3px 12px;font-family:var(--mono);font-size:11px;border-bottom:1px solid rgba(42,42,64,.5)}
+.devtools-entry:hover{background:rgba(255,255,255,.02)}
+.devtools-time{color:var(--text-muted);white-space:nowrap;flex-shrink:0;width:55px}
+.devtools-arrow{flex-shrink:0}
+.devtools-arrow.req{color:var(--orange)}
+.devtools-arrow.res{color:var(--green)}
+.devtools-method{font-weight:700;flex-shrink:0}
+.devtools-method.GET{color:var(--green)}
+.devtools-method.POST{color:var(--blue)}
+.devtools-method.PATCH{color:var(--amber)}
+.devtools-method.DELETE{color:var(--red)}
+.devtools-route{color:var(--text-secondary)}
+.devtools-status{color:var(--green);margin-left:auto;flex-shrink:0}
+.devtools-response{color:var(--text-muted);margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px}
+@keyframes devtools-fade-in{from{opacity:0;background:rgba(255,107,53,.1)}to{opacity:1;background:transparent}}
+.devtools-entry.new{animation:devtools-fade-in .5s ease-out}
+
+/* ── API View (kept from original) ── */
+.api-view{display:none}
+.api-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.api-filter-btn{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .15s}
+.api-filter-btn:hover{border-color:var(--text-muted)}
+.api-filter-btn.active{background:var(--red);border-color:var(--red);color:#fff}
+.api-table{width:100%;border-collapse:separate;border-spacing:0}
+.api-table th{position:sticky;top:0;background:var(--sidebar);padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border);z-index:2}
+.api-table td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:top;transition:background .15s}
+.api-table tr:hover td{background:rgba(255,255,255,.02)}
+.api-table tr.expanded td{background:rgba(226,55,68,.03)}
+.api-table tr{cursor:pointer}
+.api-route-cell{font-family:var(--mono);font-size:12px}
+.method-badge{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:.5px;min-width:50px;justify-content:center}
+.method-GET{background:rgba(34,197,94,.15);color:var(--green)}
+.method-POST{background:rgba(59,130,246,.15);color:var(--blue)}
+.method-PATCH{background:rgba(245,158,11,.15);color:var(--amber)}
+.method-DELETE{background:rgba(226,55,68,.15);color:var(--red)}
+.api-auth-badge{font-size:11px;padding:2px 8px;border-radius:10px}
+.api-auth-required{background:rgba(168,85,247,.1);color:var(--purple)}
+.api-auth-admin{background:rgba(226,55,68,.1);color:var(--red)}
+.api-auth-none{background:rgba(255,255,255,.05);color:var(--text-muted)}
+.api-auth-optional{background:rgba(255,184,0,.1);color:var(--gold)}
+.api-collections{display:flex;flex-wrap:wrap;gap:4px}
+.api-collection-pill{font-family:var(--mono);font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(20,184,166,.08);color:var(--teal)}
+.api-rate-badge{font-size:10px;padding:2px 6px;border-radius:4px}
+.api-rate-yes{background:rgba(245,158,11,.1);color:var(--amber)}
+.api-rate-no{color:var(--text-muted)}
+.api-expand{background:var(--card);border-bottom:1px solid var(--border)}
+.api-expand td{padding:0 !important}
+.api-expand-inner{padding:16px 24px;display:grid;gap:12px}
+.api-expand-row{display:flex;gap:12px;font-size:12px}
+.api-expand-label{font-weight:700;color:var(--text-muted);min-width:100px;flex-shrink:0}
+.api-expand-value{color:var(--text-secondary)}
+.api-expand-value code{font-family:var(--mono);font-size:11px;color:var(--orange)}
+.api-expand-pages{display:flex;flex-wrap:wrap;gap:4px}
+.api-expand-page{font-size:11px;padding:2px 10px;border-radius:12px;background:rgba(168,85,247,.08);color:var(--purple);cursor:pointer;transition:all .15s;border:1px solid transparent}
+.api-expand-page:hover{border-color:var(--purple)}
+.api-expand-side-effect{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--text-secondary)}
+.api-expand-side-effect::before{content:'→';color:var(--orange);flex-shrink:0}
+.hidden-row{display:none}
+.highlight{background:rgba(226,55,68,.2);border-radius:2px;padding:0 2px}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:30;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:25}
+  .sidebar-overlay.open{display:block}
+  .hamburger{display:block}
+  .main-content{padding:12px}
+  .devtools{left:0}
+  .flow-panel{width:100vw}
+  .wf-row{flex-direction:column}
+  .wf-col-side{width:100%}
+  .wf-card-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .topbar-label{display:none}
+  .topbar-search{max-width:none;order:10;flex-basis:100%}
+  .topbar{flex-wrap:wrap;height:auto;padding:8px 12px}
+  .wf-card-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h14M3 10h14M3 14h14"/></svg>
+    </button>
+    <div class="topbar-logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#E23744" opacity=".15"/><path d="M8 12.5C8 10 9.5 8 12 8s4 2 4 4.5c0 1.5-1 3-2 3.5h-4c-1-.5-2-2-2-3.5z" fill="#E23744"/><path d="M10 8V6M14 8V6M12 8V5" stroke="#FF6B35" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span><span class="logo-dish">Dish</span><span class="logo-check">Check</span></span>
+    </div>
+    <span class="topbar-label">Simulator</span>
+    <div class="topbar-search">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="5.5" r="4.5"/><path d="M9 9l3 3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search pages, actions…" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="view-toggle">
+      <button class="active" data-view="page" onclick="switchView('page')">Simulate</button>
+      <button data-view="api" onclick="switchView('api')">API View</button>
+    </div>
+    <button class="topbar-btn" id="apiDotsBtn" onclick="toggleApiDots()">
+      <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor"/></svg>
+      API Dots
+    </button>
+    <button class="topbar-btn tour-btn" id="tourBtn" onclick="startTour()">▶ Auto Tour</button>
+  </header>
+
+  <div class="breadcrumb-bar" id="breadcrumbBar">
+    <span class="breadcrumb-item current" data-index="0">Landing Page</span>
+    <span class="breadcrumb-reset" onclick="resetJourney()">✕ Reset</span>
+  </div>
+
+  <div class="body">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <nav class="sidebar" id="sidebar">
+      <div id="sidebarContent"></div>
+      <div class="sidebar-summary">
+        <div class="sidebar-summary-title">Summary</div>
+        <div class="sidebar-stat"><span>Pages</span><span>29</span></div>
+        <div class="sidebar-stat"><span>API Routes</span><span>39</span></div>
+        <div class="sidebar-stat"><span>Layouts</span><span>5</span></div>
+      </div>
+    </nav>
+    <main class="main" id="mainPanel">
+      <div class="main-content" id="mainContent">
+        <div class="page-view" id="pageView"></div>
+        <div class="api-view" id="apiView"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Flow Panel -->
+<div class="flow-overlay" id="flowOverlay" onclick="closeFlowPanel()"></div>
+<div class="flow-panel" id="flowPanel">
+  <div class="flow-header">
+    <span class="flow-title">Action Flow</span>
+    <button class="flow-close" onclick="closeFlowPanel()">✕</button>
+  </div>
+  <div class="flow-body" id="flowBody"></div>
+</div>
+
+<!-- Devtools Panel -->
+<div class="devtools minimized" id="devtools">
+  <div class="devtools-header" onclick="toggleDevtools()">
+    <span class="devtools-label">Network</span>
+    <span class="devtools-count" id="devtoolsCount">0 requests</span>
+    <button class="devtools-clear" onclick="event.stopPropagation();clearDevtools()">Clear</button>
+    <span class="devtools-toggle" id="devtoolsToggle">▲</span>
+  </div>
+  <div class="devtools-body" id="devtoolsBody"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA (embedded)
+// ═══════════════════════════════════════════════
+const D={"generatedAt":"2026-04-08","summary":{"totalPages":29,"publicPages":6,"protectedPages":14,"adminPages":6,"authPages":3,"totalApiRoutes":39},"pages":[{"name":"Landing Page","route":"/","file":"src/app/(public)/page.tsx","type":"server","auth":"public","onMount":[{"description":"Fetch top-rated dishes (up to 6)","function":"getTopDishes(6, selectedCity)","file":"src/lib/services/dishes.ts","dataSource":"Firestore — dishes collection (via service layer)","fetchType":"server-side","caching":"Next.js revalidate = 3600 (1 hour)","loadingState":"None (server component — full page streams)"},{"description":"Fetch featured restaurants (up to 4)","function":"listRestaurants({ city, limit: 4 })","file":"src/lib/services/catalog.ts","dataSource":"Firestore — restaurants collection","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"None"},{"description":"Fetch dish count","function":"getDishCount()","file":"src/lib/services/dishes.ts","dataSource":"Firestore — dishes collection (count aggregation)","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"None"},{"description":"Fetch restaurant count","function":"getRestaurantCount(selectedCity)","file":"src/lib/services/restaurants.ts","dataSource":"Firestore — restaurants collection (count aggregation)","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"None"},{"description":"Fetch review count","function":"getReviewCount()","file":"src/lib/services/reviews.ts","dataSource":"Firestore — reviews collection (count aggregation)","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"None"},{"description":"Get selected city from cookie","function":"getCityFromCookie()","file":"src/lib/utils/get-city-from-cookie.ts","dataSource":"Server cookie","fetchType":"server-side","caching":"None","loadingState":"None"}],"userActions":[{"trigger":"'See all' link next to Top rated dishes","function":"Link component","apiCall":null,"navigatesTo":"/explore","outcome":"Navigation"},{"trigger":"DishCard click","function":"Link component","apiCall":null,"navigatesTo":"/dish/[id]","outcome":"Navigation"},{"trigger":"Cuisine pill click (Browse by cuisine)","function":"Link component","apiCall":null,"navigatesTo":"/explore?cuisine={cuisine}","outcome":"Navigation"},{"trigger":"RestaurantCard click","function":"Link component","apiCall":null,"navigatesTo":"/restaurant/[id]","outcome":"Navigation"},{"trigger":"CityPills selection","function":"CityPills component","apiCall":null,"navigatesTo":null,"outcome":"Triggers page refresh with updated city cookie"},{"trigger":"LandingCTA section button","function":"Link component","apiCall":null,"navigatesTo":"/signup","outcome":"Navigation"}],"navigationIn":["(any page via Navbar logo)","/review-success"],"navigationOut":["/explore","/dish/[id]","/restaurant/[id]","/explore?cuisine={cuisine}","/signup"]},{"name":"Dish Page","route":"/dish/[id]","file":"src/app/(public)/dish/[id]/page.tsx","type":"server","auth":"public","onMount":[{"description":"Fetch dish details by ID","function":"getDish(id)","file":"src/lib/services/dishes.ts","dataSource":"Firestore — dishes collection","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"DishLoading skeleton"},{"description":"Fetch related dishes from same restaurant","function":"getRelatedDishes(dish.restaurantId, dish.id, 4)","file":"src/lib/services/dishes.ts","dataSource":"Firestore — dishes collection","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"None"},{"description":"Fetch dish reviews","function":"listDishReviews(dish.id)","file":"src/lib/services/catalog.ts","dataSource":"Firestore — reviews collection","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"Suspense with SkeletonCard array"}],"userActions":[{"trigger":"Write a Review button","function":"Link component","apiCall":null,"navigatesTo":"/write-review?dishId={id}&restaurantId={id}","outcome":"Navigation"},{"trigger":"WishlistButton (heart icon)","function":"WishlistButton component","apiCall":"POST /api/users/{userId}/wishlist/{dishId}","navigatesTo":null,"outcome":"Optimistic UI toggle + toast on error"},{"trigger":"Restaurant name link","function":"Link component","apiCall":null,"navigatesTo":"/restaurant/[restaurantId]","outcome":"Navigation"},{"trigger":"Restaurant mini-card in sidebar","function":"Link component","apiCall":null,"navigatesTo":"/restaurant/[restaurantId]","outcome":"Navigation"},{"trigger":"Load More Reviews button","function":"LoadMoreReviews component","apiCall":"GET /api/dishes/{dishId}/reviews?cursor={cursorId}","navigatesTo":null,"outcome":"Appends reviews to list"},{"trigger":"ReviewCard — Helpful vote","function":"handleVote()","apiCall":"POST /api/reviews/{id}/helpful","navigatesTo":null,"outcome":"Optimistic count increment"},{"trigger":"ReviewCard — Report/Flag","function":"handleFlag()","apiCall":"POST /api/reviews/{id}/flag","navigatesTo":null,"outcome":"Optimistic flag state + toast"},{"trigger":"Related DishCard click","function":"Link component","apiCall":null,"navigatesTo":"/dish/[id]","outcome":"Navigation"},{"trigger":"Breadcrumb links","function":"Link component","apiCall":null,"navigatesTo":"/ or /explore","outcome":"Navigation"}],"navigationIn":["/","/explore","/restaurant/[id]","/cuisine/[slug]"],"navigationOut":["/write-review","/restaurant/[id]","/dish/[id]","/","/explore"]},{"name":"Restaurant Page","route":"/restaurant/[id]","file":"src/app/(public)/restaurant/[id]/page.tsx","type":"server","auth":"public","onMount":[{"description":"Fetch restaurant details","function":"getRestaurantDetails(id)","file":"src/lib/services/catalog.ts","dataSource":"Firestore — restaurants collection","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"RestaurantLoading skeleton"},{"description":"Fetch restaurant dishes","function":"listRestaurantDishes(id)","file":"src/lib/services/catalog.ts","dataSource":"Firestore — dishes collection","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"Part of skeleton"}],"userActions":[{"trigger":"Review a Dish button","function":"Link component","apiCall":null,"navigatesTo":"/write-review?restaurantId={id}","outcome":"Navigation"},{"trigger":"DishCard click","function":"Link component","apiCall":null,"navigatesTo":"/dish/[id]","outcome":"Navigation"},{"trigger":"Claim this restaurant link","function":"Link component","apiCall":null,"navigatesTo":"/claim-restaurant/[id]","outcome":"Navigation"},{"trigger":"Google Maps link","function":"External link","apiCall":null,"navigatesTo":"External: Google Maps","outcome":"Opens in new tab"},{"trigger":"Phone number link","function":"tel: link","apiCall":null,"navigatesTo":null,"outcome":"Initiates phone call"},{"trigger":"Website link","function":"External link","apiCall":null,"navigatesTo":"External: website","outcome":"Opens in new tab"}],"navigationIn":["/dish/[id]","/","/explore"],"navigationOut":["/write-review","/dish/[id]","/claim-restaurant/[id]"]},{"name":"Review Page","route":"/review/[id]","file":"src/app/(public)/review/[id]/page.tsx","type":"server","auth":"public","onMount":[{"description":"Fetch review by ID","function":"getReview(id)","file":"src/lib/services/reviews.ts","dataSource":"Firestore — reviews collection","fetchType":"server-side","caching":"None","loadingState":"None"},{"description":"Fetch associated dish","function":"getDish(review.dishId)","file":"src/lib/services/dishes.ts","dataSource":"Firestore — dishes collection","fetchType":"server-side","caching":"None","loadingState":"None"}],"userActions":[{"trigger":"ReviewCard — Helpful vote","function":"handleVote()","apiCall":"POST /api/reviews/{id}/helpful","navigatesTo":null,"outcome":"Optimistic count increment"},{"trigger":"ReviewCard — Report/Flag","function":"handleFlag()","apiCall":"POST /api/reviews/{id}/flag","navigatesTo":null,"outcome":"Optimistic flag state + toast"}],"navigationIn":["/notifications"],"navigationOut":[]},{"name":"Cuisine Page","route":"/cuisine/[slug]","file":"src/app/(public)/cuisine/[slug]/page.tsx","type":"server","auth":"public","onMount":[{"description":"Search dishes filtered by cuisine","function":"searchDishes('', { cuisine, sortBy: 'highest-rated' })","file":"src/lib/services/dishes.ts","dataSource":"Firestore — dishes collection","fetchType":"server-side","caching":"Next.js revalidate = 3600","loadingState":"None"}],"userActions":[{"trigger":"DishCard click","function":"Link component","apiCall":null,"navigatesTo":"/dish/[id]","outcome":"Navigation"},{"trigger":"Empty state CTA — Explore all dishes","function":"Link component","apiCall":null,"navigatesTo":"/explore","outcome":"Navigation"}],"navigationIn":["/explore","/"],"navigationOut":["/dish/[id]","/explore"]},{"name":"Explore Page","route":"/explore","file":"src/app/(public)/explore/page.tsx","type":"server","auth":"public","note":"Server component with client-side ExploreFilters child.","onMount":[{"description":"List dishes with applied filters","function":"listDishes({ query, city, area, cuisine, dietary, priceRange, sortBy })","file":"src/lib/services/catalog.ts","dataSource":"Firestore — dishes collection","fetchType":"server-side","caching":"None (dynamic)","loadingState":"ResultsSkeleton (6 SkeletonCard)"},{"description":"Resolve city from cookie","function":"getCityFromCookie(), resolveCity(), listCityAreas()","file":"src/lib/utils/get-city-from-cookie.ts","dataSource":"Cookie + constants","fetchType":"server-side","caching":"None","loadingState":"None"}],"userActions":[{"trigger":"Cuisine chip toggle","function":"toggleFilter('cuisine', value) → router.push()","apiCall":null,"navigatesTo":"/explore?cuisine={value}","outcome":"URL update → server re-fetch"},{"trigger":"Dietary chip toggle","function":"toggleFilter('dietary', value) → router.push()","apiCall":null,"navigatesTo":"/explore?dietary={value}","outcome":"URL update → server re-fetch"},{"trigger":"Price chip toggle","function":"toggleFilter('priceRange', value) → router.push()","apiCall":null,"navigatesTo":"/explore?priceRange={value}","outcome":"URL update → server re-fetch"},{"trigger":"Area chip toggle","function":"toggleFilter('area', value) → router.push()","apiCall":null,"navigatesTo":"/explore?area={value}","outcome":"URL update → server re-fetch"},{"trigger":"Sort option change","function":"handleSort(value) → router.push()","apiCall":null,"navigatesTo":"/explore?sortBy={value}","outcome":"URL update → server re-fetch"},{"trigger":"Clear all button","function":"router.push('/explore')","apiCall":null,"navigatesTo":"/explore","outcome":"Resets all filters"},{"trigger":"DishCard click","function":"Link component","apiCall":null,"navigatesTo":"/dish/[id]","outcome":"Navigation"},{"trigger":"Load More button","function":"LoadMoreDishes component","apiCall":"GET /api/dishes?cursor={cursorId}","navigatesTo":null,"outcome":"Appends more dishes"}],"navigationIn":["/","/dish/[id]","/cuisine/[slug]"],"navigationOut":["/dish/[id]"]},{"name":"Login Page","route":"/login","file":"src/app/(auth)/login/page.tsx","type":"client","auth":"public","onMount":[],"userActions":[{"trigger":"Sign in with Google button","function":"handleGoogle() → signInWithGoogle()","apiCall":"Firebase Auth — Google sign-in","navigatesTo":"redirect param or /","outcome":"Authentication + navigation"},{"trigger":"Sign in form submit","function":"handleSubmit() → signInWithEmail(email, password)","apiCall":"Firebase Auth — email/password sign-in","navigatesTo":"redirect param or /","outcome":"Authentication + navigation"},{"trigger":"Forgot password link","function":"Link component","apiCall":null,"navigatesTo":"/forgot-password","outcome":"Navigation"},{"trigger":"Sign up link","function":"Link component","apiCall":null,"navigatesTo":"/signup","outcome":"Navigation"}],"navigationIn":["middleware redirect","/signup","/forgot-password"],"navigationOut":["/","/signup","/forgot-password"]},{"name":"Signup Page","route":"/signup","file":"src/app/(auth)/signup/page.tsx","type":"client","auth":"public","onMount":[],"userActions":[{"trigger":"Sign up with Google button","function":"handleGoogle() → signInWithGoogle()","apiCall":"Firebase Auth — Google sign-in","navigatesTo":"/onboarding","outcome":"Authentication + navigation"},{"trigger":"Create account form submit","function":"handleSubmit() → signUpWithEmail(email, password, name)","apiCall":"Firebase Auth — email/password sign-up","navigatesTo":"/onboarding","outcome":"Account creation + navigation"},{"trigger":"Sign in link","function":"Link component","apiCall":null,"navigatesTo":"/login","outcome":"Navigation"}],"navigationIn":["/login","/ (LandingCTA)"],"navigationOut":["/onboarding","/login"]},{"name":"Forgot Password Page","route":"/forgot-password","file":"src/app/(auth)/forgot-password/page.tsx","type":"client","auth":"public","onMount":[],"userActions":[{"trigger":"Send reset link form submit","function":"handleSubmit() → sendPasswordReset(email)","apiCall":"Firebase Auth — sendPasswordResetEmail","navigatesTo":null,"outcome":"Shows success message"},{"trigger":"Back to login link","function":"Link component","apiCall":null,"navigatesTo":"/login","outcome":"Navigation"}],"navigationIn":["/login"],"navigationOut":["/login"]},{"name":"Write Review Page","route":"/write-review","file":"src/app/(protected)/write-review/page.tsx","type":"client","auth":"protected","note":"Multi-step form (Photo → Rate & Tag → Write).","onMount":[{"description":"Fetch dish details for context","function":"getDish(dishId)","file":"src/lib/services/dishes.ts","dataSource":"Firestore — dishes collection","fetchType":"client-side (useEffect)","caching":"None","loadingState":"Skeleton placeholders"},{"description":"If editing: fetch existing review","function":"getReview(editReviewId)","file":"src/lib/services/reviews.ts","dataSource":"Firestore — reviews collection","fetchType":"client-side (useEffect)","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Photo upload (Step 1)","function":"handleFileChange()","apiCall":null,"navigatesTo":null,"outcome":"Photo stored in Zustand form store"},{"trigger":"Star ratings (Step 2)","function":"updateField('tasteRating', value)","apiCall":null,"navigatesTo":null,"outcome":"Form state updated"},{"trigger":"Tag pills (Step 2)","function":"updateField('tags', toggledArray)","apiCall":null,"navigatesTo":null,"outcome":"Tags toggled in form state"},{"trigger":"Submit Review button (Step 3)","function":"handleSubmit()","apiCall":"POST /api/reviews","navigatesTo":"/review-success","outcome":"Photo uploaded, review created, navigation"},{"trigger":"Update Review button (edit mode)","function":"handleSubmit()","apiCall":"PATCH /api/reviews/{editReviewId}","navigatesTo":"/dish/{dishId}","outcome":"Review updated, navigation"},{"trigger":"Back button (between steps)","function":"setStep(previousStep)","apiCall":null,"navigatesTo":null,"outcome":"Returns to previous form step"},{"trigger":"Explore Dishes button","function":"Link component","apiCall":null,"navigatesTo":"/explore","outcome":"Navigation"}],"navigationIn":["/dish/[id]","/restaurant/[id]","/my-profile"],"navigationOut":["/review-success","/dish/[id]","/explore"]},{"name":"My Profile Page","route":"/my-profile","file":"src/app/(protected)/my-profile/page.tsx","type":"client","auth":"protected","onMount":[{"description":"Fetch current user's reviews","function":"useMyReviews()","file":"src/lib/hooks/useMyReviews.ts","dataSource":"Firestore — reviews collection","fetchType":"client-side (React Query)","caching":"React Query cache","loadingState":"LoadingSpinner"},{"description":"Fetch dish contexts for reviews","function":"useReviewDishContexts(reviews)","file":"src/lib/hooks/useReviewDishContexts.ts","dataSource":"Firestore — dishes collection","fetchType":"client-side","caching":"Local state cache","loadingState":"None"}],"userActions":[{"trigger":"Edit Profile button","function":"Link component","apiCall":null,"navigatesTo":"/settings","outcome":"Navigation"},{"trigger":"ReviewCard — Edit button","function":"handleEdit(review)","apiCall":null,"navigatesTo":"/write-review?editReviewId={id}","outcome":"Navigation to edit mode"},{"trigger":"ReviewCard — Delete button","function":"handleDelete(review)","apiCall":"DELETE /api/reviews/{id}?dishId={dishId}","navigatesTo":null,"outcome":"Confirmation → API delete → invalidation"},{"trigger":"ReviewCard — Helpful vote","function":"handleVote()","apiCall":"POST /api/reviews/{id}/helpful","navigatesTo":null,"outcome":"Optimistic count increment"},{"trigger":"Empty state CTA","function":"Link component","apiCall":null,"navigatesTo":"/explore","outcome":"Navigation"}],"navigationIn":["Navbar dropdown","MobileBottomNav"],"navigationOut":["/settings","/write-review","/explore"]},{"name":"Review Success Page","route":"/review-success","file":"src/app/(protected)/review-success/page.tsx","type":"client","auth":"protected","onMount":[{"description":"Read review success data","function":"readSuccessData()","file":"src/app/(protected)/review-success/page.tsx","dataSource":"sessionStorage","fetchType":"client-side","caching":"sessionStorage","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"View dish page button","function":"Link component","apiCall":null,"navigatesTo":"/dish/{dishId}","outcome":"Navigation"},{"trigger":"Review another dish button","function":"Link component","apiCall":null,"navigatesTo":"/explore","outcome":"Navigation"}],"navigationIn":["/write-review"],"navigationOut":["/dish/[id]","/explore","/"]},{"name":"User Profile Page","route":"/profile/[userId]","file":"src/app/(protected)/profile/[userId]/page.tsx","type":"client","auth":"protected","onMount":[{"description":"Fetch user profile and reviews","function":"getUser(userId), getReviewsByUser(userId)","file":"src/lib/services/users.ts","dataSource":"Firestore — users, reviews collections","fetchType":"client-side (useEffect)","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"ReviewCard — Helpful vote","function":"handleVote()","apiCall":"POST /api/reviews/{id}/helpful","navigatesTo":null,"outcome":"Optimistic count increment"},{"trigger":"ReviewCard — Report/Flag","function":"handleFlag()","apiCall":"POST /api/reviews/{id}/flag","navigatesTo":null,"outcome":"Optimistic flag state"}],"navigationIn":["ReviewCard links","/notifications"],"navigationOut":[]},{"name":"Compare Page","route":"/compare","file":"src/app/(protected)/compare/page.tsx","type":"client","auth":"protected","note":"Premium-only feature.","onMount":[],"userActions":[{"trigger":"DishPicker search input","function":"search(q) → searchDishes(q)","apiCall":"searchDishes() — client-side Firestore","navigatesTo":null,"outcome":"Displays matching dishes"},{"trigger":"Select dish from dropdown","function":"onSelect(dish)","apiCall":null,"navigatesTo":null,"outcome":"Dish selected"},{"trigger":"Compare button","function":"compare() → getDishComparison()","apiCall":"getDishComparison() — client-side Firestore","navigatesTo":null,"outcome":"Shows comparison table"},{"trigger":"Clear button","function":"onSelect(null)","apiCall":null,"navigatesTo":null,"outcome":"Clears selection"}],"navigationIn":["Navbar"],"navigationOut":["/upgrade"]},{"name":"Rewards Page","route":"/rewards","file":"src/app/(protected)/rewards/page.tsx","type":"client","auth":"protected","onMount":[{"description":"Fetch DishPoints balance","function":"fetch('/api/rewards/balance')","file":"src/app/(protected)/rewards/page.tsx","dataSource":"API → Firestore users","fetchType":"client-side","caching":"None","loadingState":"LoadingSpinner"},{"description":"Fetch available coupons","function":"fetch('/api/rewards/coupons')","file":"src/app/(protected)/rewards/page.tsx","dataSource":"API → Firestore coupons","fetchType":"client-side","caching":"None","loadingState":"LoadingSpinner"},{"description":"Fetch claimed coupons","function":"fetch('/api/rewards/claims')","file":"src/app/(protected)/rewards/page.tsx","dataSource":"API → Firestore coupon_claims","fetchType":"client-side","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Redeem coupon button","function":"handleRedeem(couponId)","apiCall":"POST /api/rewards/redeem","navigatesTo":null,"outcome":"Coupon claimed → toast → tab switch"},{"trigger":"Tab switch","function":"setTab(tab)","apiCall":null,"navigatesTo":null,"outcome":"Switches content"}],"navigationIn":["Navbar","/review-success"],"navigationOut":[]},{"name":"Wishlist Page","route":"/wishlist","file":"src/app/(protected)/wishlist/page.tsx","type":"client","auth":"protected","onMount":[{"description":"Fetch wishlist items","function":"useWishlist()","file":"src/lib/hooks/useWishlist.ts","dataSource":"API → Firestore wishlist subcollection","fetchType":"client-side (React Query)","caching":"React Query cache","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Heart button (remove)","function":"handleRemove(dishId)","apiCall":"DELETE /api/users/{userId}/wishlist/{dishId}","navigatesTo":null,"outcome":"API delete → invalidation"},{"trigger":"Dish name link","function":"Link component","apiCall":null,"navigatesTo":"/dish/{dishId}","outcome":"Navigation"},{"trigger":"Empty state CTA","function":"Link component","apiCall":null,"navigatesTo":"/explore","outcome":"Navigation"}],"navigationIn":["Navbar dropdown","MobileBottomNav"],"navigationOut":["/dish/[id]","/explore"]},{"name":"Claim Restaurant Page","route":"/claim-restaurant/[id]","file":"src/app/(protected)/claim-restaurant/[id]/page.tsx","type":"client","auth":"protected","onMount":[{"description":"Fetch restaurant details","function":"getRestaurantDetails(params.id)","file":"src/lib/services/catalog.ts","dataSource":"Firestore — restaurants","fetchType":"client-side (useEffect)","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Submit claim form","function":"handleSubmit(e)","apiCall":"POST /api/restaurants/{id}/claim","navigatesTo":null,"outcome":"Shows success message"},{"trigger":"Back to restaurant button","function":"router.push(/restaurant/{id})","apiCall":null,"navigatesTo":"/restaurant/{id}","outcome":"Navigation"}],"navigationIn":["/restaurant/[id]"],"navigationOut":["/restaurant/[id]"]},{"name":"Onboarding Page","route":"/onboarding","file":"src/app/(protected)/onboarding/page.tsx","type":"client","auth":"protected","note":"3-step flow: Cuisines → City → Complete.","onMount":[],"userActions":[{"trigger":"Cuisine selection (Step 1)","function":"toggleCuisine(c)","apiCall":null,"navigatesTo":null,"outcome":"Toggles cuisine in state"},{"trigger":"City selection (Step 2)","function":"setSelectedCity(city)","apiCall":null,"navigatesTo":null,"outcome":"Sets city"},{"trigger":"Area selection (Step 2)","function":"setSelectedArea(area)","apiCall":null,"navigatesTo":null,"outcome":"Sets area"},{"trigger":"Start Exploring button (Step 3)","function":"handleComplete()","apiCall":"updateUser() — Firestore write","navigatesTo":"/","outcome":"Preferences saved, navigation"},{"trigger":"Skip for now link","function":"router.push(redirectTo)","apiCall":null,"navigatesTo":"/","outcome":"Navigation (skips onboarding)"}],"navigationIn":["/signup"],"navigationOut":["/"]},{"name":"Settings Page","route":"/settings","file":"src/app/(protected)/settings/page.tsx","type":"client","auth":"protected","onMount":[],"userActions":[{"trigger":"Save changes form submit","function":"handleSave(e)","apiCall":"updateUser() — Firestore + Cloudinary","navigatesTo":null,"outcome":"Profile updated + toast"},{"trigger":"Avatar photo upload","function":"avatarInputRef handler","apiCall":null,"navigatesTo":null,"outcome":"Local preview shown"},{"trigger":"Update Password form submit","function":"reauthenticateWithCredential + updatePassword","apiCall":"Firebase Auth — updatePassword","navigatesTo":null,"outcome":"Password changed + toast"}],"navigationIn":["/my-profile","Navbar dropdown"],"navigationOut":[]},{"name":"Upgrade Page","route":"/upgrade","file":"src/app/(protected)/upgrade/page.tsx","type":"client","auth":"protected","note":"Razorpay payment integration.","onMount":[],"userActions":[{"trigger":"Plan selection (Monthly/Yearly)","function":"setSelectedPlan(plan)","apiCall":null,"navigatesTo":null,"outcome":"Highlights plan"},{"trigger":"Subscribe button","function":"handlePayment()","apiCall":"POST /api/billing/create-order → POST /api/billing/verify","navigatesTo":null,"outcome":"Razorpay checkout → premium activated"},{"trigger":"Go home button","function":"Link component","apiCall":null,"navigatesTo":"/","outcome":"Navigation"}],"navigationIn":["/compare","Navbar"],"navigationOut":["/"]},{"name":"Notifications Page","route":"/notifications","file":"src/app/(protected)/notifications/page.tsx","type":"client","auth":"protected","onMount":[{"description":"Fetch user notifications","function":"getNotifications(user.id)","file":"src/lib/services/notifications.ts","dataSource":"Firestore — notifications","fetchType":"client-side (useEffect)","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Mark all read button","function":"handleMarkAllRead()","apiCall":"POST /api/notifications/read-all","navigatesTo":null,"outcome":"All marked as read"},{"trigger":"Notification item click","function":"Link component","apiCall":null,"navigatesTo":"notification.linkUrl","outcome":"Navigation"}],"navigationIn":["Navbar bell icon"],"navigationOut":["Various"]},{"name":"Restaurant Dashboard","route":"/restaurant-dashboard/[restaurantId]","file":"src/app/(protected)/restaurant-dashboard/[restaurantId]/page.tsx","type":"client","auth":"protected","note":"Requires restaurant ownership.","onMount":[{"description":"Fetch restaurant analytics","function":"fetch(/api/restaurants/{restaurantId}/analytics)","file":"inline","dataSource":"API → Firestore","fetchType":"client-side","caching":"Server-side cache","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Per-dish breakdown link","function":"Link component","apiCall":null,"navigatesTo":"/restaurant-dashboard/{restaurantId}/dishes","outcome":"Navigation"}],"navigationIn":["Direct URL"],"navigationOut":["/restaurant-dashboard/*/dishes"]},{"name":"Restaurant Dashboard — Dishes","route":"/restaurant-dashboard/[restaurantId]/dishes","file":"src/app/(protected)/restaurant-dashboard/[restaurantId]/dishes/page.tsx","type":"client","auth":"protected","note":"Per-dish sentiment analysis.","onMount":[{"description":"Fetch restaurant analytics","function":"fetch(/api/restaurants/{restaurantId}/analytics)","file":"inline","dataSource":"API → Firestore","fetchType":"client-side","caching":"Server-side cache","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Sort dropdown","function":"setSortBy(value)","apiCall":null,"navigatesTo":null,"outcome":"Re-sorts locally"},{"trigger":"Back to overview link","function":"Link component","apiCall":null,"navigatesTo":"/restaurant-dashboard/{restaurantId}","outcome":"Navigation"},{"trigger":"Dish name link","function":"Link component","apiCall":null,"navigatesTo":"/dish/{dishId}","outcome":"Navigation"}],"navigationIn":["/restaurant-dashboard/*"],"navigationOut":["/restaurant-dashboard/*","/dish/[id]"]},{"name":"Admin Dashboard","route":"/admin","file":"src/app/(admin)/admin/page.tsx","type":"client","auth":"admin","onMount":[{"description":"Fetch admin stats","function":"getAdminStats()","file":"src/lib/services/admin.ts","dataSource":"Firestore — various collections","fetchType":"client-side","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[],"navigationIn":["AdminShell sidebar"],"navigationOut":[]},{"name":"Admin Users","route":"/admin/users","file":"src/app/(admin)/admin/users/page.tsx","type":"client","auth":"admin","onMount":[{"description":"Fetch all users","function":"getUsers()","file":"src/lib/services/admin.ts","dataSource":"Firestore — users","fetchType":"client-side","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Make/Revoke admin link","function":"handleToggleAdmin(user)","apiCall":"PATCH /api/admin/users/{userId}/role","navigatesTo":null,"outcome":"Optimistic update"},{"trigger":"Grant/Revoke premium link","function":"handleTogglePremium(user)","apiCall":"PATCH /api/admin/users/{userId}/premium","navigatesTo":null,"outcome":"Optimistic update"}],"navigationIn":["AdminShell sidebar"],"navigationOut":[]},{"name":"Admin Restaurant Claims","route":"/admin/restaurant-claims","file":"src/app/(admin)/admin/restaurant-claims/page.tsx","type":"client","auth":"admin","onMount":[{"description":"Fetch pending claims","function":"fetch('/api/admin/restaurant-claims')","file":"inline","dataSource":"API → Firestore","fetchType":"client-side","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Approve button","function":"handleAction(claimId, 'approve')","apiCall":"PATCH /api/admin/restaurant-claims","navigatesTo":null,"outcome":"Claim approved → removed from list"},{"trigger":"Reject button","function":"handleAction(claimId, 'reject')","apiCall":"PATCH /api/admin/restaurant-claims","navigatesTo":null,"outcome":"Claim rejected → removed from list"},{"trigger":"View proof document","function":"External link","apiCall":null,"navigatesTo":"External: proofDocumentUrl","outcome":"Opens in new tab"}],"navigationIn":["AdminShell sidebar"],"navigationOut":[]},{"name":"Admin Dish Requests","route":"/admin/requests","file":"src/app/(admin)/admin/requests/page.tsx","type":"client","auth":"admin","onMount":[{"description":"Fetch pending dish requests","function":"getPendingRequests()","file":"src/lib/services/dish-requests.ts","dataSource":"Firestore — dish_requests","fetchType":"client-side","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Approve button","function":"handleApprove(id)","apiCall":"PATCH /api/admin/dish-requests/{id}","navigatesTo":null,"outcome":"Dish created → removed from list"},{"trigger":"Reject button","function":"handleReject(id)","apiCall":"PATCH /api/admin/dish-requests/{id}","navigatesTo":null,"outcome":"Request rejected → removed from list"}],"navigationIn":["AdminShell sidebar"],"navigationOut":[]},{"name":"Admin Coupons","route":"/admin/coupons","file":"src/app/(admin)/admin/coupons/page.tsx","type":"client","auth":"admin","onMount":[{"description":"Fetch active coupons","function":"fetch('/api/admin/coupons')","file":"inline","dataSource":"API → Firestore coupons","fetchType":"client-side","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Add Coupon button","function":"setShowForm(!showForm)","apiCall":null,"navigatesTo":null,"outcome":"Toggles form"},{"trigger":"Create Coupon form submit","function":"handleCreate()","apiCall":"POST /api/admin/coupons","navigatesTo":null,"outcome":"Coupon created → added to list"},{"trigger":"Deactivate button","function":"handleDeactivate(couponId)","apiCall":"DELETE /api/admin/coupons/{id}","navigatesTo":null,"outcome":"Coupon deactivated"}],"navigationIn":["AdminShell sidebar"],"navigationOut":[]},{"name":"Admin Flagged Reviews","route":"/admin/reviews","file":"src/app/(admin)/admin/reviews/page.tsx","type":"client","auth":"admin","onMount":[{"description":"Fetch flagged reviews","function":"getFlaggedReviews()","file":"src/lib/services/admin.ts","dataSource":"Firestore — reviews (flagged)","fetchType":"client-side","caching":"None","loadingState":"LoadingSpinner"}],"userActions":[{"trigger":"Keep (unflag) button","function":"handleApprove(id)","apiCall":"PATCH /api/admin/reviews/{id}","navigatesTo":null,"outcome":"Review unflagged"},{"trigger":"Delete button","function":"handleDelete(review)","apiCall":"DELETE /api/admin/reviews/{id}","navigatesTo":null,"outcome":"Review deleted + stats recalculated"}],"navigationIn":["AdminShell sidebar"],"navigationOut":[]}],"apiRoutes":[{"route":"/api/reviews","method":"POST","description":"Create a new review for a dish","firestoreCollections":["reviews","dishes","users","points_transactions"],"validation":"Zod schema (createReviewSchema)","auth":"Required","rateLimit":"REVIEW_CREATE","returns":"{ item: Review, pointsAwarded, newBalance, isFullReview }","sideEffects":["Awards DishPoints","Auto-sets dish cover image","Syncs to Typesense","Invalidates analytics cache"]},{"route":"/api/reviews/[id]","method":"PATCH","description":"Update an existing review","firestoreCollections":["reviews","dishes"],"validation":"Zod schema (updateReviewSchema)","auth":"Required (author)","rateLimit":"REVIEW_EDIT","returns":"{ item: Review }"},{"route":"/api/reviews/[id]","method":"DELETE","description":"Delete a review","firestoreCollections":["reviews","dishes","users"],"validation":"Requires dishId param","auth":"Required (author/admin)","rateLimit":null,"returns":"{ success: true }","sideEffects":["Recalculates dish averages","Decrements reviewCount"]},{"route":"/api/reviews/[id]/flag","method":"POST","description":"Flag a review","firestoreCollections":["reviews"],"validation":"None beyond auth","auth":"Required","rateLimit":"GENERAL","returns":"{ success: true }"},{"route":"/api/reviews/[id]/helpful","method":"POST","description":"Vote review as helpful","firestoreCollections":["reviews","users","notifications"],"validation":"None beyond auth","auth":"Required","rateLimit":"GENERAL","returns":"{ success: true }","sideEffects":["Creates notification"]},{"route":"/api/billing/create-order","method":"POST","description":"Create Razorpay order","firestoreCollections":[],"validation":"Zod schema","auth":"Required","rateLimit":"GENERAL","returns":"{ orderId, amount, currency, keyId }"},{"route":"/api/billing/verify","method":"POST","description":"Verify payment, activate premium","firestoreCollections":["users","billing_events","notifications"],"validation":"Zod schema","auth":"Required","rateLimit":"GENERAL","returns":"{ success: true }","sideEffects":["Sets isPremium=true","Creates notification"]},{"route":"/api/billing/webhook","method":"POST","description":"Handle Razorpay webhooks","firestoreCollections":["users","billing_events"],"validation":"HMAC signature","auth":"Webhook signature","rateLimit":null,"returns":"{ received: true }","sideEffects":["Deactivates premium on cancel"]},{"route":"/api/restaurants","method":"GET","description":"List restaurants","firestoreCollections":["restaurants"],"validation":"Query params","auth":"Optional","rateLimit":null,"returns":"{ city, areas, items: Restaurant[] }"},{"route":"/api/restaurants/[id]","method":"GET","description":"Get restaurant details","firestoreCollections":["restaurants"],"validation":"None","auth":"None","rateLimit":null,"returns":"{ item: Restaurant }"},{"route":"/api/restaurants/[id]/analytics","method":"GET","description":"Get restaurant analytics","firestoreCollections":["restaurants","dishes","reviews"],"validation":"assertRestaurantOwner","auth":"Required (owner/admin)","rateLimit":null,"returns":"RestaurantAnalytics"},{"route":"/api/restaurants/[id]/dishes","method":"GET","description":"List restaurant dishes","firestoreCollections":["dishes"],"validation":"None","auth":"None","rateLimit":null,"returns":"{ items: Dish[] }"},{"route":"/api/restaurants/[id]/claim","method":"POST","description":"Submit ownership claim","firestoreCollections":["restaurants","restaurant_claims","users"],"validation":"Zod schema","auth":"Required","rateLimit":"GENERAL","returns":"{ success, claimId }","sideEffects":["Checks no existing owner"]},{"route":"/api/dishes","method":"GET","description":"Search/list dishes","firestoreCollections":["dishes"],"validation":"Zod schema","auth":"Optional","rateLimit":null,"returns":"{ items: Dish[], hasMore, nextCursorId }"},{"route":"/api/dishes/[id]/reviews","method":"GET","description":"List dish reviews (paginated)","firestoreCollections":["reviews"],"validation":"cursor param","auth":"None","rateLimit":null,"returns":"{ items: Review[], hasMore, nextCursorId }"},{"route":"/api/notifications/[id]/read","method":"POST","description":"Mark notification as read","firestoreCollections":["notifications"],"validation":"Ownership check","auth":"Required","rateLimit":null,"returns":"{ success: true }"},{"route":"/api/notifications/unread-count","method":"GET","description":"Get unread count","firestoreCollections":["notifications"],"validation":"None","auth":"Required","rateLimit":null,"returns":"{ count }"},{"route":"/api/notifications/read-all","method":"POST","description":"Mark all notifications read","firestoreCollections":["notifications"],"validation":"None","auth":"Required","rateLimit":null,"returns":"{ success: true }"},{"route":"/api/admin/restaurant-claims","method":"GET","description":"List pending claims","firestoreCollections":["restaurant_claims"],"validation":"assertAdmin","auth":"Required (admin)","rateLimit":null,"returns":"{ claims: RestaurantClaim[] }"},{"route":"/api/admin/restaurant-claims","method":"PATCH","description":"Approve/reject claim","firestoreCollections":["restaurant_claims","restaurants"],"validation":"Zod schema","auth":"Required (admin)","rateLimit":null,"returns":"{ success, action }","sideEffects":["Sets restaurant.ownerId on approve"]},{"route":"/api/admin/reviews/[id]","method":"PATCH","description":"Unflag a review","firestoreCollections":["reviews"],"validation":"assertAdmin","auth":"Required (admin)","rateLimit":null,"returns":"{ success: true }"},{"route":"/api/admin/reviews/[id]","method":"DELETE","description":"Admin delete review","firestoreCollections":["reviews","dishes","users"],"validation":"assertAdmin","auth":"Required (admin)","rateLimit":null,"returns":"{ success: true }","sideEffects":["Recalculates averages","Decrements reviewCount","Recomputes badges","Recomputes topTags"]},{"route":"/api/admin/dish-requests/[id]","method":"PATCH","description":"Approve/reject dish request","firestoreCollections":["dish_requests","dishes","restaurants","notifications"],"validation":"Zod schema","auth":"Required (admin)","rateLimit":null,"returns":"{ success, dishId? }","sideEffects":["Creates dish on approve","Sends notification"]},{"route":"/api/admin/coupons","method":"GET","description":"List active coupons","firestoreCollections":["coupons"],"validation":"assertAdmin","auth":"Required (admin)","rateLimit":null,"returns":"{ items: Coupon[] }"},{"route":"/api/admin/coupons","method":"POST","description":"Create coupon","firestoreCollections":["coupons","coupon_codes"],"validation":"Zod schema","auth":"Required (admin)","rateLimit":null,"returns":"{ item: Coupon }"},{"route":"/api/admin/coupons/[id]","method":"DELETE","description":"Deactivate coupon","firestoreCollections":["coupons"],"validation":"assertAdmin","auth":"Required (admin)","rateLimit":null,"returns":"{ success: true }"},{"route":"/api/admin/users/[userId]/premium","method":"PATCH","description":"Toggle premium status","firestoreCollections":["users"],"validation":"Zod schema","auth":"Required (admin)","rateLimit":null,"returns":"{ success: true }"},{"route":"/api/admin/users/[userId]/role","method":"PATCH","description":"Toggle admin role","firestoreCollections":["users"],"validation":"Zod schema","auth":"Required (admin)","rateLimit":null,"returns":"{ success: true }"},{"route":"/api/admin/restaurants/[id]/invalidate-cache","method":"POST","description":"Invalidate analytics cache","firestoreCollections":[],"validation":"assertAdmin","auth":"Required (admin)","rateLimit":null,"returns":"{ success, restaurantId }"},{"route":"/api/admin/sync-typesense","method":"POST","description":"Sync dishes to Typesense","firestoreCollections":["dishes"],"validation":"assertAdmin","auth":"Required (admin)","rateLimit":null,"returns":"{ synced, failed, total }"},{"route":"/api/rewards/balance","method":"GET","description":"Get DishPoints balance","firestoreCollections":["users"],"validation":"None","auth":"Required","rateLimit":null,"returns":"PointsBalance"},{"route":"/api/rewards/coupons","method":"GET","description":"Get coupon catalogue","firestoreCollections":["coupons"],"validation":"None","auth":"Required","rateLimit":null,"returns":"{ items: Coupon[] }"},{"route":"/api/rewards/claims","method":"GET","description":"Get claimed coupons","firestoreCollections":["coupon_claims"],"validation":"None","auth":"Required","rateLimit":null,"returns":"{ items: CouponClaim[] }"},{"route":"/api/rewards/transactions","method":"GET","description":"Points transaction history","firestoreCollections":["points_transactions"],"validation":"limit, cursor","auth":"Required","rateLimit":null,"returns":"{ items, hasMore, nextCursor }"},{"route":"/api/rewards/redeem","method":"POST","description":"Redeem DishPoints for coupon","firestoreCollections":["coupons","coupon_codes","coupon_claims","users","points_transactions","notifications"],"validation":"Zod schema","auth":"Required","rateLimit":"REDEEM","returns":"{ claim: CouponClaim }","sideEffects":["Deducts points","Creates claim","Increments claimedCount","Creates notification","Sends email"]},{"route":"/api/users/[userId]/wishlist","method":"GET","description":"Get wishlist items","firestoreCollections":["users/{userId}/wishlist"],"validation":"Ownership check","auth":"Required (own user)","rateLimit":null,"returns":"{ items: WishlistItem[] }"},{"route":"/api/users/[userId]/wishlist/[dishId]","method":"POST","description":"Add to wishlist","firestoreCollections":["users/{userId}/wishlist","dishes"],"validation":"Ownership + existence","auth":"Required (own user)","rateLimit":null,"returns":"{ success: true }"},{"route":"/api/users/[userId]/wishlist/[dishId]","method":"DELETE","description":"Remove from wishlist","firestoreCollections":["users/{userId}/wishlist"],"validation":"Ownership","auth":"Required (own user)","rateLimit":null,"returns":"{ success: true }"},{"route":"/api/cities","method":"GET","description":"Get cities and areas","firestoreCollections":[],"validation":"None","auth":"None","rateLimit":null,"returns":"{ items: Array<{city, areas}> }"}]};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let currentView='page', currentPageIndex=0, searchTerm='', apiMethodFilter='ALL', expandedApiRow=-1;
+let showApiDots=false, tourRunning=false, tourTimer=null;
+let journey=[{index:0,name:'Landing Page'}];
+let devtoolsEntries=[], devtoolsMinimized=true, reqCounter=0;
+
+// ═══════════════════════════════════════════════
+// ICONS & CATEGORIES
+// ═══════════════════════════════════════════════
+const IC={
+  public:'<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1 8h14M8 1c-2 2-3 4.5-3 7s1 5 3 7c2-2 3-4.5 3-7s-1-5-3-7" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>',
+  auth:'<svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+  protected:'<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2 4v4c0 3.5 2.5 6.5 6 7.5 3.5-1 6-4 6-7.5V4L8 1z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+  admin:'<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>'
+};
+
+const cats=[
+  {key:'public',label:'Public',icon:IC.public,pages:[]},
+  {key:'auth',label:'Auth',icon:IC.auth,pages:[]},
+  {key:'protected',label:'Protected',icon:IC.protected,pages:[]},
+  {key:'admin',label:'Admin',icon:IC.admin,pages:[]}
+];
+D.pages.forEach((p,i)=>{
+  const k=p.auth==='admin'?'admin':p.auth;
+  (cats.find(c=>c.key===k)||cats[0]).pages.push({...p,_i:i});
+});
+
+// ═══════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════
+function e(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+function cap(s){return s?s[0].toUpperCase()+s.slice(1):''}
+function hasApi(a){return a.apiCall&&(a.apiCall.startsWith('GET ')||a.apiCall.startsWith('POST ')||a.apiCall.startsWith('PATCH ')||a.apiCall.startsWith('DELETE '))}
+function parseApiCall(s){const m=s&&s.match(/^(GET|POST|PATCH|DELETE)\s+(\/api\/[^\s]+)/);return m?{method:m[1],route:m[2]}:null}
+function normalizeR(r){return r.replace(/\[[^\]]+\]/g,'*').replace(/\{[^}]+\}/g,'*').replace(/\?.*$/,'')}
+function findPageByRoute(r){const c=r.replace(/\?.*$/,'').replace(/\{[^}]+\}/g,'[id]');return D.pages.findIndex(p=>{const pr=p.route.replace(/\[.*?\]/g,'[id]');return pr===c||c.startsWith(pr)})}
+function findApiRoute(method,route){return D.apiRoutes.find(a=>a.method===method&&normalizeR(a.route)===normalizeR(route))}
+function starsHtml(n){let h='';for(let i=0;i<5;i++)h+=`<span class="wf-star${i<n?'':' empty'}">★</span>`;return h}
+function apiDot(){return '<span class="api-dot"></span>'}
+
+// ═══════════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════════
+function buildSidebar(){
+  let h='';
+  cats.forEach(cat=>{
+    h+=`<div class="sidebar-group"><div class="sidebar-group-label"><span class="sidebar-icon">${cat.icon}</span>${cat.label}</div>`;
+    cat.pages.forEach(p=>{
+      h+=`<div class="sidebar-item" data-index="${p._i}" onclick="navToPage(${p._i})"><span class="sidebar-icon">${cat.icon}</span><span>${e(p.name)}</span></div>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('sidebarContent').innerHTML=h;
+}
+function updateSidebarActive(){
+  document.querySelectorAll('.sidebar-item').forEach(el=>{
+    el.classList.toggle('active',parseInt(el.dataset.index)===currentPageIndex);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// BREADCRUMB
+// ═══════════════════════════════════════════════
+function buildBreadcrumb(){
+  const bar=document.getElementById('breadcrumbBar');
+  let h='';
+  journey.forEach((j,i)=>{
+    if(i>0) h+='<span class="breadcrumb-sep">›</span>';
+    h+=`<span class="breadcrumb-item${i===journey.length-1?' current':''}" onclick="jumpBreadcrumb(${i})">${e(j.name)}</span>`;
+  });
+  h+='<span class="breadcrumb-reset" onclick="resetJourney()">✕ Reset</span>';
+  bar.innerHTML=h;
+}
+function jumpBreadcrumb(i){
+  journey=journey.slice(0,i+1);
+  selectPage(journey[i].index,false);
+}
+function resetJourney(){
+  journey=[{index:0,name:'Landing Page'}];
+  selectPage(0,false);
+}
+
+// ═══════════════════════════════════════════════
+// WIREFRAME BUILDERS (per page type)
+// ═══════════════════════════════════════════════
+const WF={};
+
+WF[0]=function(p){ // Landing Page
+  return `
+  <div class="wf-hero">
+    <div class="wf-text title" style="width:50%;margin:0 auto 8px"></div>
+    <div class="wf-text subtitle" style="width:70%;margin:0 auto 12px"></div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <div class="wf-input" style="max-width:300px;margin:0">🔍 Search for a dish…</div>
+    </div>
+  </div>
+  <div class="wf-section">
+    <div class="wf-section-title">City</div>
+    <div class="wf-chip-row">
+      ${act(p,4,'wf-chip active','Mumbai')}
+      <span class="wf-chip">Delhi</span><span class="wf-chip">Bangalore</span>
+    </div>
+  </div>
+  <div class="wf-section">
+    <div class="wf-section-title">
+      Top Rated Dishes
+      ${act(p,0,'wf-btn ghost small','See all →')}
+    </div>
+    <div class="wf-card-grid cols-3">
+      ${repeat(3,i=>act(p,1,'wf-card',`<div class="wf-card-img">📷</div><div class="wf-text title" style="width:70%"></div><div class="wf-stars">${starsHtml(4)}</div><div class="wf-text short"></div>${apiDot()}`))}
+    </div>
+  </div>
+  <div class="wf-section">
+    <div class="wf-section-title">Browse by Cuisine</div>
+    <div class="wf-chip-row">
+      ${['Indian','Chinese','Italian','Mexican','Thai','Japanese'].map(c=>act(p,2,'wf-chip',c)).join('')}
+    </div>
+  </div>
+  <div class="wf-section">
+    <div class="wf-section-title">Featured Restaurants</div>
+    <div class="wf-card-grid cols-2">
+      ${repeat(2,()=>act(p,3,'wf-card',`<div class="wf-card-img" style="aspect-ratio:3/1">🍽️</div><div class="wf-text title" style="width:60%"></div><div class="wf-text short"></div>${apiDot()}`))}
+    </div>
+  </div>
+  <div class="wf-hero" style="background:linear-gradient(135deg,rgba(226,55,68,.12),rgba(255,107,53,.08))">
+    <div class="wf-text title" style="width:55%;margin:0 auto 8px"></div>
+    <div class="wf-text medium" style="margin:0 auto 12px"></div>
+    ${act(p,5,'wf-btn primary','Join Cravia →')}
+  </div>`;
+};
+
+WF[1]=function(p){ // Dish Page
+  return `
+  <div class="wf-img-grid">${repeat(3,()=>'<div class="wf-img square">📷</div>')}</div>
+  <div class="wf-row">
+    <div class="wf-col">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div class="wf-text title" style="width:50%;margin:0"></div>
+        ${act(p,1,'wf-btn icon-btn has-api','♡')}
+      </div>
+      <div class="wf-stars" style="margin-bottom:6px">${starsHtml(4)}</div>
+      ${act(p,2,'','<span style="color:var(--text-secondary);cursor:pointer;font-size:12px;text-decoration:underline">@ The Great Restaurant</span>')}
+      <div class="wf-text long" style="margin-top:8px"></div>
+      <div class="wf-text medium"></div>
+      <div class="wf-chip-row" style="margin-top:10px"><span class="wf-chip active">Spicy</span><span class="wf-chip active">Must Try</span><span class="wf-chip">Generous Portion</span></div>
+      <div style="margin-top:16px">
+        ${act(p,0,'wf-btn primary','✏️ Write a Review')}
+      </div>
+      <div class="wf-divider"></div>
+      <div class="wf-section-title">Reviews</div>
+      ${repeat(2,()=>reviewCard(p,[5,6]))}
+      <div style="text-align:center;margin-top:12px">
+        ${act(p,4,'wf-btn secondary has-api','Load More Reviews')}
+      </div>
+    </div>
+    <div class="wf-col-side">
+      ${act(p,3,'wf-card','<div class="wf-card-img" style="aspect-ratio:2/1">🍽️</div><div class="wf-text title" style="width:70%"></div><div class="wf-text short"></div><div class="wf-text short"></div>')}
+      <div class="wf-section-title" style="margin-top:16px">Related Dishes</div>
+      <div class="wf-card-grid cols-2">${repeat(2,()=>act(p,7,'wf-card','<div class="wf-card-img">📷</div><div class="wf-text subtitle"></div><div class="wf-stars">'+starsHtml(3)+'</div>'))}</div>
+    </div>
+  </div>`;
+};
+
+WF[2]=function(p){ // Restaurant Page
+  return `
+  <div class="wf-img short" style="font-size:28px">🏪</div>
+  <div class="wf-row">
+    <div class="wf-col">
+      <div class="wf-text title" style="width:55%"></div>
+      <div class="wf-text medium"></div>
+      <div class="wf-chip-row"><span class="wf-chip">Indian</span><span class="wf-chip">North Indian</span></div>
+      <div style="margin:12px 0">${act(p,0,'wf-btn primary','✏️ Review a Dish')}</div>
+      <div class="wf-section-title">Menu</div>
+      <div class="wf-card-grid cols-3">${repeat(3,()=>act(p,1,'wf-card','<div class="wf-card-img">📷</div><div class="wf-text subtitle"></div><div class="wf-stars">'+starsHtml(4)+'</div>'))}</div>
+    </div>
+    <div class="wf-col-side">
+      <div class="wf-card" style="cursor:default">
+        <div class="wf-form-label">Contact</div>
+        <div style="margin:8px 0">${act(p,4,'','<span style="font-size:12px;color:var(--cyan);cursor:pointer">📞 +91 98765 43210</span>')}</div>
+        <div style="margin:8px 0">${act(p,3,'','<span style="font-size:12px;color:var(--cyan);cursor:pointer">📍 View on Google Maps</span>')}</div>
+        <div style="margin:8px 0">${act(p,5,'','<span style="font-size:12px;color:var(--cyan);cursor:pointer">🌐 Visit Website</span>')}</div>
+        <div class="wf-divider"></div>
+        ${act(p,2,'','<span style="font-size:11px;color:var(--purple);cursor:pointer">🏠 Claim this restaurant</span>')}
+      </div>
+    </div>
+  </div>`;
+};
+
+WF[3]=function(p){ // Review Page
+  return `<div style="max-width:600px;margin:0 auto">${reviewCard(p,[0,1],true)}</div>`;
+};
+
+WF[4]=function(p){ // Cuisine Page
+  return `
+  <div class="wf-text title" style="width:40%"></div>
+  <div class="wf-text medium" style="margin-bottom:16px"></div>
+  <div class="wf-card-grid cols-3">${repeat(4,()=>act(p,0,'wf-card','<div class="wf-card-img">📷</div><div class="wf-text subtitle"></div><div class="wf-stars">'+starsHtml(4)+'</div>'))}</div>
+  <div class="wf-empty" style="margin-top:20px">${act(p,1,'wf-btn secondary','Explore All Dishes →')}</div>`;
+};
+
+WF[5]=function(p){ // Explore Page
+  return `
+  <div class="wf-input">🔍 Search dishes…</div>
+  <div class="wf-section">
+    <div class="wf-form-label">Cuisine</div>
+    <div class="wf-chip-row">${['Indian','Chinese','Italian','Thai'].map(c=>act(p,0,'wf-chip',c)).join('')}</div>
+  </div>
+  <div class="wf-section">
+    <div class="wf-form-label">Dietary</div>
+    <div class="wf-chip-row">${['Veg','Non-Veg','Vegan'].map(c=>act(p,1,'wf-chip',c)).join('')}</div>
+  </div>
+  <div class="wf-section">
+    <div class="wf-form-label">Price Range</div>
+    <div class="wf-chip-row">${['₹','₹₹','₹₹₹'].map(c=>act(p,2,'wf-chip',c)).join('')}</div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div class="wf-form-label">Results</div>
+    ${act(p,5,'wf-btn ghost small','Clear all')}
+  </div>
+  <div class="wf-card-grid cols-3">${repeat(6,()=>act(p,6,'wf-card','<div class="wf-card-img">📷</div><div class="wf-text subtitle"></div><div class="wf-stars">'+starsHtml(4)+'</div>'))}</div>
+  <div style="text-align:center;margin-top:16px">${act(p,7,'wf-btn secondary has-api','Load More')}</div>`;
+};
+
+WF[6]=function(p){ // Login
+  return `<div class="wf-form" style="margin:0 auto">
+  <div style="text-align:center;margin-bottom:20px"><div class="wf-text title" style="width:50%;margin:0 auto 8px"></div><div class="wf-text medium" style="margin:0 auto"></div></div>
+  ${act(p,0,'wf-btn secondary has-api','<span style="font-size:16px">G</span> Sign in with Google','width:100%;margin-bottom:12px')}
+  <div class="wf-divider" style="text-align:center"><span style="font-size:11px;color:var(--text-muted)">or</span></div>
+  <div class="wf-form-group"><div class="wf-form-label">Email</div><div class="wf-input">user@example.com</div></div>
+  <div class="wf-form-group"><div class="wf-form-label">Password</div><div class="wf-input">••••••••</div></div>
+  ${act(p,1,'wf-btn primary has-api','Sign In','width:100%;margin-bottom:12px')}
+  <div style="display:flex;justify-content:space-between;font-size:12px">
+    ${act(p,2,'','<span style="color:var(--text-secondary);cursor:pointer">Forgot password?</span>')}
+    ${act(p,3,'','<span style="color:var(--red);cursor:pointer">Sign up →</span>')}
+  </div></div>`;
+};
+
+WF[7]=function(p){ // Signup
+  return `<div class="wf-form" style="margin:0 auto">
+  <div style="text-align:center;margin-bottom:20px"><div class="wf-text title" style="width:50%;margin:0 auto 8px"></div></div>
+  ${act(p,0,'wf-btn secondary has-api','<span style="font-size:16px">G</span> Sign up with Google','width:100%;margin-bottom:12px')}
+  <div class="wf-divider"></div>
+  <div class="wf-form-group"><div class="wf-form-label">Name</div><div class="wf-input">Your name</div></div>
+  <div class="wf-form-group"><div class="wf-form-label">Email</div><div class="wf-input">user@example.com</div></div>
+  <div class="wf-form-group"><div class="wf-form-label">Password</div><div class="wf-input">••••••••</div></div>
+  ${act(p,1,'wf-btn primary has-api','Create Account','width:100%;margin-bottom:12px')}
+  <div style="text-align:center;font-size:12px">${act(p,2,'','<span style="color:var(--text-secondary);cursor:pointer">Already have an account? <b style="color:var(--red)">Sign in</b></span>')}</div></div>`;
+};
+
+WF[8]=function(p){ // Forgot Password
+  return `<div class="wf-form" style="margin:0 auto">
+  <div style="text-align:center;margin-bottom:20px"><div class="wf-text title" style="width:60%;margin:0 auto 8px"></div><div class="wf-text medium" style="margin:0 auto"></div></div>
+  <div class="wf-form-group"><div class="wf-form-label">Email</div><div class="wf-input">user@example.com</div></div>
+  ${act(p,0,'wf-btn primary has-api','Send Reset Link','width:100%;margin-bottom:12px')}
+  <div style="text-align:center;font-size:12px">${act(p,1,'','<span style="color:var(--text-secondary);cursor:pointer">← Back to login</span>')}</div></div>`;
+};
+
+WF[9]=function(p){ // Write Review
+  return `
+  <div class="wf-step-indicator">
+    <span class="wf-step active">1</span><span class="wf-step-line"></span>
+    <span class="wf-step">2</span><span class="wf-step-line"></span>
+    <span class="wf-step">3</span>
+  </div>
+  <div style="text-align:center;margin-bottom:16px"><div class="wf-text subtitle" style="margin:0 auto"></div></div>
+  <div class="wf-section">
+    <div class="wf-section-title">Step 1: Photo</div>
+    ${act(p,0,'wf-card','<div style="text-align:center;padding:24px;color:var(--text-muted)">📸 Tap to upload a photo<br><span style="font-size:11px">or drag & drop</span></div>')}
+  </div>
+  <div class="wf-section">
+    <div class="wf-section-title">Step 2: Rate & Tag</div>
+    <div class="wf-form-label">Taste</div>
+    <div class="wf-stars" style="font-size:20px;margin-bottom:8px">${act(p,1,'','<span style="cursor:pointer">'+starsHtml(0)+'</span>')}</div>
+    <div class="wf-form-label">Portion</div>
+    <div class="wf-stars" style="font-size:20px;margin-bottom:8px">${starsHtml(0)}</div>
+    <div class="wf-form-label">Value</div>
+    <div class="wf-stars" style="font-size:20px;margin-bottom:12px">${starsHtml(0)}</div>
+    <div class="wf-form-label">Tags</div>
+    <div class="wf-chip-row">${['Spicy','Must Try','Generous','Worth It','Authentic'].map(t=>act(p,2,'wf-chip',t)).join('')}</div>
+  </div>
+  <div class="wf-section">
+    <div class="wf-section-title">Step 3: Write</div>
+    <div class="wf-input" style="height:80px">Write your review…</div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      ${act(p,5,'wf-btn ghost','← Back')}
+      ${act(p,3,'wf-btn primary has-api','Submit Review')}
+    </div>
+  </div>`;
+};
+
+WF[10]=function(p){ // My Profile
+  return `
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+    <div class="wf-avatar" style="width:56px;height:56px;font-size:20px">👤</div>
+    <div><div class="wf-text title" style="width:120px"></div><div class="wf-text short"></div></div>
+    <div style="margin-left:auto">${act(p,0,'wf-btn secondary','Edit Profile')}</div>
+  </div>
+  <div class="wf-section-title">My Reviews</div>
+  ${repeat(2,()=>reviewCard(p,[3,1,2],false,true))}
+  <div class="wf-empty">${act(p,4,'wf-btn secondary','Explore Dishes →')}</div>`;
+};
+
+WF[11]=function(p){ // Review Success
+  return `<div style="text-align:center;padding:40px 0">
+  <div style="font-size:48px;margin-bottom:12px">🎉</div>
+  <div class="wf-text title" style="width:50%;margin:0 auto 8px"></div>
+  <div class="wf-text medium" style="margin:0 auto 20px"></div>
+  <div style="display:flex;gap:10px;justify-content:center">
+    ${act(p,0,'wf-btn primary','View Dish Page')}
+    ${act(p,1,'wf-btn secondary','Review Another Dish')}
+  </div></div>`;
+};
+
+WF[12]=function(p){ // User Profile
+  return `
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+    <div class="wf-avatar" style="width:56px;height:56px;font-size:20px">👤</div>
+    <div><div class="wf-text title" style="width:120px"></div><div class="wf-text short"></div></div>
+  </div>
+  <div class="wf-section-title">Reviews</div>
+  ${repeat(2,()=>reviewCard(p,[0,1]))}`;
+};
+
+WF[13]=function(p){ // Compare
+  return `
+  <div class="wf-text title" style="width:40%;margin-bottom:16px"></div>
+  <div class="wf-row">
+    <div class="wf-col">${act(p,0,'wf-card has-api','<div style="text-align:center;padding:20px;color:var(--text-muted)">🔍 Search Dish 1</div>'+apiDot())}</div>
+    <div style="display:flex;align-items:center;font-size:18px;color:var(--text-muted);padding:0 8px">VS</div>
+    <div class="wf-col">${act(p,0,'wf-card has-api','<div style="text-align:center;padding:20px;color:var(--text-muted)">🔍 Search Dish 2</div>'+apiDot())}</div>
+  </div>
+  <div style="text-align:center;margin-top:16px">${act(p,2,'wf-btn primary has-api','Compare Dishes')}</div>`;
+};
+
+WF[14]=function(p){ // Rewards
+  return `
+  <div style="display:flex;gap:12px;margin-bottom:20px">
+    <div class="wf-stat-card" style="flex:1"><div class="wf-stat-num">350</div><div class="wf-stat-label">DishPoints</div></div>
+    <div class="wf-stat-card" style="flex:1"><div class="wf-stat-num">500</div><div class="wf-stat-label">Total Earned</div></div>
+    <div class="wf-stat-card" style="flex:1"><div class="wf-stat-num">150</div><div class="wf-stat-label">Redeemed</div></div>
+  </div>
+  <div class="wf-tabs">
+    ${act(p,1,'wf-tab active','Available Coupons')}
+    ${act(p,1,'wf-tab','My Coupons')}
+  </div>
+  <div class="wf-card-grid cols-2">${repeat(2,()=>`<div class="wf-card"><div class="wf-text title" style="width:60%"></div><div class="wf-text medium"></div><div style="margin-top:8px">${act(p,0,'wf-btn primary small has-api','Redeem — 100 pts')}</div></div>`)}</div>`;
+};
+
+WF[15]=function(p){ // Wishlist
+  return `
+  <div class="wf-text title" style="width:30%;margin-bottom:16px"></div>
+  ${repeat(3,()=>act(p,1,'wf-list-item',`<div class="wf-card-img" style="width:60px;height:60px;margin:0;border-radius:8px;flex-shrink:0">📷</div><div style="flex:1"><div class="wf-text subtitle" style="width:50%"></div><div class="wf-text short"></div></div>${act(p,0,'wf-btn icon-btn has-api','❤️')}${apiDot()}`))}
+  <div class="wf-empty">${act(p,2,'wf-btn secondary','Explore Dishes →')}</div>`;
+};
+
+WF[16]=function(p){ // Claim Restaurant
+  return `<div class="wf-form" style="margin:0 auto">
+  <div class="wf-text title" style="width:60%;margin-bottom:16px"></div>
+  <div class="wf-card" style="margin-bottom:16px;cursor:default"><div class="wf-text subtitle" style="width:50%"></div><div class="wf-text short"></div></div>
+  <div class="wf-form-group"><div class="wf-form-label">Your Role</div><div class="wf-select">Owner</div></div>
+  <div class="wf-form-group"><div class="wf-form-label">Phone</div><div class="wf-input">+91 98765 43210</div></div>
+  <div class="wf-form-group"><div class="wf-form-label">Proof Document</div><div class="wf-input">Upload file…</div></div>
+  ${act(p,0,'wf-btn primary has-api','Submit Claim','width:100%;margin-bottom:12px')}
+  ${act(p,1,'wf-btn ghost','← Back to Restaurant','width:100%')}</div>`;
+};
+
+WF[17]=function(p){ // Onboarding
+  return `
+  <div class="wf-step-indicator">
+    <span class="wf-step active">1</span><span class="wf-step-line"></span>
+    <span class="wf-step">2</span><span class="wf-step-line"></span>
+    <span class="wf-step done">✓</span>
+  </div>
+  <div style="text-align:center;margin-bottom:16px"><div class="wf-text title" style="width:50%;margin:0 auto 8px"></div></div>
+  <div class="wf-section-title">Pick your favorite cuisines</div>
+  <div class="wf-chip-row">${['Indian','Chinese','Italian','Thai','Mexican','Japanese','Korean','Mediterranean'].map(c=>act(p,0,'wf-chip',c)).join('')}</div>
+  <div class="wf-section-title" style="margin-top:16px">Select your city</div>
+  <div class="wf-chip-row">${['Mumbai','Delhi','Bangalore','Hyderabad'].map(c=>act(p,1,'wf-chip',c)).join('')}</div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+    ${act(p,3,'wf-btn primary has-api','Start Exploring →')}
+    ${act(p,4,'wf-btn ghost','Skip for now')}
+  </div>`;
+};
+
+WF[18]=function(p){ // Settings
+  return `<div class="wf-form" style="max-width:500px">
+  <div class="wf-text title" style="width:40%;margin-bottom:16px"></div>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    ${act(p,1,'','<div class="wf-avatar" style="width:64px;height:64px;font-size:24px;cursor:pointer">📷</div>')}
+    <div class="wf-form-label">Change avatar</div>
+  </div>
+  <div class="wf-form-group"><div class="wf-form-label">Display Name</div><div class="wf-input">Jane Doe</div></div>
+  <div class="wf-form-group"><div class="wf-form-label">Bio</div><div class="wf-input" style="height:60px">Food lover…</div></div>
+  ${act(p,0,'wf-btn primary has-api','Save Changes','width:100%;margin-bottom:20px')}
+  <div class="wf-divider"></div>
+  <div class="wf-section-title">Change Password</div>
+  <div class="wf-form-group"><div class="wf-form-label">Current Password</div><div class="wf-input">••••••••</div></div>
+  <div class="wf-form-group"><div class="wf-form-label">New Password</div><div class="wf-input">••••••••</div></div>
+  ${act(p,2,'wf-btn secondary has-api','Update Password','width:100%')}</div>`;
+};
+
+WF[19]=function(p){ // Upgrade
+  return `<div style="max-width:500px;margin:0 auto;text-align:center">
+  <div style="font-size:32px;margin-bottom:8px">👑</div>
+  <div class="wf-text title" style="width:60%;margin:0 auto 8px"></div>
+  <div class="wf-text medium" style="margin:0 auto 20px"></div>
+  <div class="wf-row" style="margin-bottom:16px">
+    ${act(p,0,'wf-card','<div style="font-weight:700;margin-bottom:4px">Monthly</div><div style="font-size:20px;font-weight:700;color:var(--orange)">₹99</div><div style="font-size:11px;color:var(--text-muted)">/month</div>')}
+    ${act(p,0,'wf-card','<div style="font-weight:700;margin-bottom:4px">Yearly</div><div style="font-size:20px;font-weight:700;color:var(--orange)">₹799</div><div style="font-size:11px;color:var(--text-muted)">/year — save 33%</div>')}
+  </div>
+  ${act(p,1,'wf-btn primary has-api','Subscribe Now','width:100%;margin-bottom:12px')}
+  ${act(p,2,'wf-btn ghost','Go Home','width:100%')}</div>`;
+};
+
+WF[20]=function(p){ // Notifications
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div class="wf-text title" style="width:30%"></div>
+    ${act(p,0,'wf-btn secondary small has-api','Mark all read')}
+  </div>
+  ${repeat(4,i=>act(p,1,'wf-list-item','<div class="wf-avatar">🔔</div><div style="flex:1"><div class="wf-text medium"></div><div class="wf-text short"></div></div>'))}`;
+};
+
+WF[21]=function(p){ // Restaurant Dashboard
+  return `
+  <div class="wf-text title" style="width:50%;margin-bottom:16px"></div>
+  <div style="display:flex;gap:12px;margin-bottom:20px">
+    <div class="wf-stat-card" style="flex:1"><div class="wf-stat-num">4.2</div><div class="wf-stat-label">Avg Rating</div></div>
+    <div class="wf-stat-card" style="flex:1"><div class="wf-stat-num">128</div><div class="wf-stat-label">Total Reviews</div></div>
+    <div class="wf-stat-card" style="flex:1"><div class="wf-stat-num">12</div><div class="wf-stat-label">Dishes</div></div>
+  </div>
+  ${act(p,0,'wf-btn secondary','View Per-Dish Breakdown →')}`;
+};
+
+WF[22]=function(p){ // Restaurant Dashboard Dishes
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div class="wf-text title" style="width:40%"></div>
+    <div style="display:flex;gap:8px">
+      ${act(p,0,'wf-select','Sort by: Rating')}
+      ${act(p,1,'wf-btn ghost small','← Back to overview')}
+    </div>
+  </div>
+  ${repeat(3,()=>act(p,2,'wf-card','<div style="display:flex;gap:12px;align-items:center"><div class="wf-card-img" style="width:50px;height:50px;margin:0;border-radius:6px;flex-shrink:0">📷</div><div style="flex:1"><div class="wf-text subtitle" style="width:50%"></div><div class="wf-stars">'+starsHtml(4)+'</div><div class="wf-text short"></div></div></div>'))}`;
+};
+
+function adminDashboard(p){
+  return `<div class="wf-text title" style="width:40%;margin-bottom:16px"></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    <div class="wf-stat-card"><div class="wf-stat-num">156</div><div class="wf-stat-label">Restaurants</div></div>
+    <div class="wf-stat-card"><div class="wf-stat-num">892</div><div class="wf-stat-label">Dishes</div></div>
+    <div class="wf-stat-card"><div class="wf-stat-num">2.4k</div><div class="wf-stat-label">Reviews</div></div>
+    <div class="wf-stat-card"><div class="wf-stat-num">580</div><div class="wf-stat-label">Users</div></div>
+    <div class="wf-stat-card"><div class="wf-stat-num" style="color:var(--amber)">12</div><div class="wf-stat-label">Pending Requests</div></div>
+    <div class="wf-stat-card"><div class="wf-stat-num" style="color:var(--red)">5</div><div class="wf-stat-label">Flagged Reviews</div></div>
+  </div>`;
+}
+WF[23]=adminDashboard;
+
+WF[24]=function(p){ // Admin Users
+  return `<div class="wf-text title" style="width:30%;margin-bottom:16px"></div>
+  <table class="wf-table"><thead><tr><th>User</th><th>Email</th><th>Reviews</th><th>Role</th><th>Actions</th></tr></thead><tbody>
+  ${repeat(3,()=>`<tr><td><div style="display:flex;align-items:center;gap:6px"><div class="wf-avatar">👤</div>User Name</div></td><td style="font-family:var(--mono);font-size:11px">user@email.com</td><td>12</td><td><span class="wf-badge wf-badge-public" style="font-size:9px">User</span></td><td>${act(p,0,'wf-btn ghost small has-api','Toggle Admin')} ${act(p,1,'wf-btn ghost small has-api','Toggle Premium')}</td></tr>`)}
+  </tbody></table>`;
+};
+
+WF[25]=function(p){ // Admin Restaurant Claims
+  return `<div class="wf-text title" style="width:40%;margin-bottom:16px"></div>
+  ${repeat(2,()=>`<div class="wf-card" style="margin-bottom:10px;display:flex;align-items:center;gap:12px">
+    <div style="flex:1"><div class="wf-text subtitle" style="width:50%"></div><div class="wf-text short"></div><div style="margin-top:4px">${act(p,2,'','<span style="font-size:11px;color:var(--cyan);cursor:pointer">View proof →</span>')}</div></div>
+    <div style="display:flex;gap:6px">${act(p,0,'wf-btn primary small has-api','Approve')}${act(p,1,'wf-btn ghost small has-api','Reject')}</div>
+  </div>`)}`;
+};
+
+WF[26]=function(p){ // Admin Dish Requests
+  return `<div class="wf-text title" style="width:40%;margin-bottom:16px"></div>
+  ${repeat(2,()=>`<div class="wf-card" style="margin-bottom:10px;display:flex;align-items:center;gap:12px">
+    <div style="flex:1"><div class="wf-text subtitle" style="width:50%"></div><div class="wf-text short"></div></div>
+    <div style="display:flex;gap:6px">${act(p,0,'wf-btn primary small has-api','Approve')}${act(p,1,'wf-btn ghost small has-api','Reject')}</div>
+  </div>`)}`;
+};
+
+WF[27]=function(p){ // Admin Coupons
+  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div class="wf-text title" style="width:30%"></div>
+    ${act(p,0,'wf-btn primary small','+ Add Coupon')}
+  </div>
+  ${repeat(2,()=>`<div class="wf-card" style="margin-bottom:10px;display:flex;align-items:center;gap:12px">
+    <div style="flex:1"><div class="wf-text subtitle" style="width:40%"></div><div class="wf-text short"></div></div>
+    ${act(p,2,'wf-btn ghost small has-api','Deactivate')}
+  </div>`)}`;
+};
+
+WF[28]=function(p){ // Admin Flagged Reviews
+  return `<div class="wf-text title" style="width:40%;margin-bottom:16px"></div>
+  ${repeat(2,()=>`<div class="wf-review has-api" style="display:flex;align-items:flex-start;gap:12px">
+    <div style="flex:1"><div class="wf-review-header"><div class="wf-avatar">👤</div><div class="wf-text subtitle" style="width:80px"></div></div><div class="wf-text long"></div><div class="wf-text medium"></div></div>
+    <div style="display:flex;flex-direction:column;gap:6px">${act(p,0,'wf-btn primary small has-api','Keep')}${act(p,1,'wf-btn ghost small has-api','Delete')}</div>${apiDot()}
+  </div>`)}`;
+};
+
+// ── Helpers for wireframe building ──
+function act(page,actionIdx,cls,content,extraStyle){
+  const a=page.userActions[actionIdx];
+  if(!a)return `<span class="${cls}"${extraStyle?' style="'+extraStyle+'"':''}>${content}</span>`;
+  const hasA=hasApi(a);
+  const c=cls+(hasA?' has-api':'');
+  return `<span class="${c}" style="cursor:pointer;${extraStyle||''}" onclick="event.stopPropagation();triggerAction(${page._i||0},${actionIdx},this)" data-action="${actionIdx}">${content}${hasA?apiDot():''}</span>`;
+}
+function repeat(n,fn){let h='';for(let i=0;i<n;i++)h+=fn(i);return h}
+function reviewCard(page,actionIdxs,large,editable){
+  const hIdx=actionIdxs[0],fIdx=actionIdxs[1];
+  return `<div class="wf-review has-api">
+    <div class="wf-review-header"><div class="wf-avatar">👤</div><div><div class="wf-text subtitle" style="width:80px"></div><div class="wf-stars">${starsHtml(4)}</div></div></div>
+    ${large?'<div class="wf-img" style="margin:8px 0;aspect-ratio:16/9">📷</div>':''}
+    <div class="wf-text long"></div><div class="wf-text medium"></div>
+    <div class="wf-review-actions">
+      ${page.userActions[hIdx]?act(page,hIdx,'wf-btn ghost small has-api','👍 Helpful (12)'):''}
+      ${page.userActions[fIdx]?act(page,fIdx,'wf-btn ghost small has-api','🚩 Flag'):''}
+      ${editable&&actionIdxs[2]!=null?act(page,actionIdxs[2],'wf-btn ghost small has-api','🗑️ Delete'):''}
+    </div>${apiDot()}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER PAGE WIREFRAME
+// ═══════════════════════════════════════════════
+function buildWireframe(idx){
+  const page=D.pages[idx];
+  page._i=idx;
+  const builder=WF[idx]||genericWireframe;
+  const pv=document.getElementById('pageView');
+  let h='<div class="wf-container'+(showApiDots?' show-api-dots':'')+'" id="wfContainer">';
+  h+='<div class="wf-page">';
+  h+=`<div class="wf-page-header">
+    <span class="wf-page-title">${e(page.name)}</span>
+    <span class="wf-page-route">${e(page.route)}</span>
+    <span class="wf-badge wf-badge-${page.type}">${page.type==='server'?'Server':'Client'}</span>
+    <span class="wf-badge wf-badge-${page.auth}">${cap(page.auth)}</span>
+  </div>`;
+  h+='<div class="wf-body">';
+  if(page.note) h+=`<div style="font-size:11px;color:var(--text-muted);font-style:italic;margin-bottom:12px;padding:6px 10px;background:rgba(255,255,255,.02);border-left:2px solid var(--border);border-radius:0 4px 4px 0">${e(page.note)}</div>`;
+  h+=builder(page);
+  h+='</div></div></div>';
+  pv.innerHTML=h;
+}
+
+function genericWireframe(page){
+  let h='<div class="wf-section-title">Page Content</div>';
+  if(page.onMount.length){
+    h+='<div style="margin-bottom:12px;font-size:11px;color:var(--text-muted)">Loads '+page.onMount.length+' data source'+(page.onMount.length>1?'s':'')+'</div>';
+  }
+  if(page.userActions.length){
+    h+='<div style="display:flex;flex-wrap:wrap;gap:8px">';
+    page.userActions.forEach((a,i)=>{
+      h+=act(page,i,'wf-btn secondary small'+(hasApi(a)?' has-api':''),e(a.trigger));
+    });
+    h+='</div>';
+  }
+  if(!page.userActions.length) h+='<div class="wf-empty">No interactive elements</div>';
+  return h;
+}
+
+// ═══════════════════════════════════════════════
+// FLOW PANEL
+// ═══════════════════════════════════════════════
+function triggerAction(pageIdx,actionIdx,el){
+  const page=D.pages[pageIdx];
+  const action=page.userActions[actionIdx];
+  if(!action)return;
+
+  // Pulse animation
+  el.classList.remove('pulse');
+  void el.offsetWidth;
+  el.classList.add('pulse');
+
+  // Build flow
+  const fb=document.getElementById('flowBody');
+  let h=`<div class="flow-trigger">🖱️ <b>${e(action.trigger)}</b></div>`;
+
+  // Step 1: Function
+  h+=`<div class="flow-step"><div class="flow-step-title"><span class="flow-step-num fn">1</span>Function Called</div>
+  <div class="flow-step-content"><code>${e(action.function)}</code>
+  ${page.file?`<span class="filepath">${e(page.file)}</span>`:''}</div></div>`;
+
+  // Step 2: API
+  const parsed=parseApiCall(action.apiCall);
+  if(parsed){
+    const apiDef=findApiRoute(parsed.method,parsed.route);
+    h+=`<div class="flow-step"><div class="flow-step-title"><span class="flow-step-num api">2</span>API Call</div>
+    <div class="flow-step-content"><span class="method-badge method-${parsed.method}">${parsed.method}</span> <code>${e(parsed.route)}</code>
+    ${apiDef?`<div style="margin-top:6px;font-size:11px;color:var(--text-muted)">${e(apiDef.description)}</div>`:''}
+    ${apiDef&&apiDef.validation?`<div style="margin-top:4px;font-size:10px;color:var(--text-muted)">Validation: ${e(apiDef.validation)}</div>`:''}</div></div>`;
+
+    // Log to devtools
+    logApiCall(parsed.method,parsed.route,apiDef);
+
+    // Step 3: Firestore
+    if(apiDef&&apiDef.firestoreCollections&&apiDef.firestoreCollections.length){
+      h+=`<div class="flow-step"><div class="flow-step-title"><span class="flow-step-num db">3</span>Firestore Collections</div>
+      <div class="flow-step-content"><div class="api-collections">${apiDef.firestoreCollections.map(c=>'<span class="api-collection-pill">'+e(c)+'</span>').join('')}</div></div></div>`;
+    }
+    // Side effects
+    if(apiDef&&apiDef.sideEffects&&apiDef.sideEffects.length){
+      h+=`<div class="flow-step"><div class="flow-step-title"><span class="flow-step-num db">⚡</span>Side Effects</div>
+      <div class="flow-step-content">${apiDef.sideEffects.map(s=>'<div class="api-expand-side-effect">'+e(s)+'</div>').join('')}</div></div>`;
+    }
+  } else if(action.apiCall){
+    h+=`<div class="flow-step"><div class="flow-step-title"><span class="flow-step-num api">2</span>External Call</div>
+    <div class="flow-step-content"><code>${e(action.apiCall)}</code></div></div>`;
+  } else {
+    h+=`<div class="flow-step"><div class="flow-step-title"><span class="flow-step-num api" style="opacity:.4">2</span>API Call</div>
+    <div class="flow-step-content" style="color:var(--text-muted);font-style:italic">No API call — client-only action</div></div>`;
+  }
+
+  // Step: Outcome
+  h+=`<div class="flow-step"><div class="flow-step-title"><span class="flow-step-num out">${parsed?'4':'3'}</span>Outcome</div>
+  <div class="flow-step-content">${e(action.outcome)}</div></div>`;
+
+  // Navigation button
+  if(action.navigatesTo&&!action.navigatesTo.startsWith('External')){
+    const target=action.navigatesTo.replace(/\?.*$/,'').replace(/\{[^}]+\}/g,'[id]');
+    const tIdx=findPageByRoute(target);
+    if(tIdx>=0){
+      h+=`<button class="flow-nav-btn" onclick="closeFlowPanel();navToPage(${tIdx})">Go to ${e(D.pages[tIdx].name)} →</button>`;
+    }
+  }
+
+  fb.innerHTML=h;
+  openFlowPanel();
+}
+
+function openFlowPanel(){
+  document.getElementById('flowOverlay').classList.add('open');
+  document.getElementById('flowPanel').classList.add('open');
+}
+function closeFlowPanel(){
+  document.getElementById('flowOverlay').classList.remove('open');
+  document.getElementById('flowPanel').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════
+// DEVTOOLS PANEL
+// ═══════════════════════════════════════════════
+function logApiCall(method,route,apiDef){
+  reqCounter++;
+  const delay=80+Math.floor(Math.random()*200);
+  const returns=apiDef?apiDef.returns:'{ success: true }';
+  // Request entry
+  devtoolsEntries.push({type:'req',method,route,time:new Date(),id:reqCounter});
+  renderDevtools();
+
+  // Response after simulated delay
+  setTimeout(()=>{
+    devtoolsEntries.push({type:'res',method,route,status:200,delay,returns,time:new Date(),id:reqCounter});
+    renderDevtools();
+  },delay);
+}
+
+function renderDevtools(){
+  const body=document.getElementById('devtoolsBody');
+  const count=document.getElementById('devtoolsCount');
+  const reqs=devtoolsEntries.filter(e=>e.type==='req').length;
+  count.textContent=reqs+' request'+(reqs!==1?'s':'');
+  let h='';
+  devtoolsEntries.forEach((entry,i)=>{
+    const t=entry.time;
+    const ts=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0');
+    const isNew=i>=devtoolsEntries.length-2;
+    if(entry.type==='req'){
+      h+=`<div class="devtools-entry${isNew?' new':''}"><span class="devtools-time">${ts}</span><span class="devtools-arrow req">→</span><span class="devtools-method ${entry.method}">${entry.method}</span><span class="devtools-route">${e(entry.route)}</span></div>`;
+    } else {
+      h+=`<div class="devtools-entry${isNew?' new':''}"><span class="devtools-time">${ts}</span><span class="devtools-arrow res">←</span><span class="devtools-status">${entry.status} OK</span><span style="color:var(--text-muted);margin-left:4px">${entry.delay}ms</span><span class="devtools-response">${e(entry.returns)}</span></div>`;
+    }
+  });
+  body.innerHTML=h;
+  body.scrollTop=body.scrollHeight;
+
+  if(devtoolsMinimized&&devtoolsEntries.length>0){
+    devtoolsMinimized=false;
+    document.getElementById('devtools').classList.remove('minimized');
+    document.getElementById('devtoolsToggle').textContent='▼';
+  }
+}
+
+function toggleDevtools(){
+  devtoolsMinimized=!devtoolsMinimized;
+  document.getElementById('devtools').classList.toggle('minimized',devtoolsMinimized);
+  document.getElementById('devtoolsToggle').textContent=devtoolsMinimized?'▲':'▼';
+}
+function clearDevtools(){
+  devtoolsEntries=[];reqCounter=0;
+  renderDevtools();
+  devtoolsMinimized=true;
+  document.getElementById('devtools').classList.add('minimized');
+  document.getElementById('devtoolsToggle').textContent='▲';
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function navToPage(idx,addToJourney=true){
+  if(addToJourney){
+    const last=journey[journey.length-1];
+    if(!last||last.index!==idx){
+      journey.push({index:idx,name:D.pages[idx].name});
+    }
+  }
+  selectPage(idx,false);
+}
+
+function selectPage(idx,updateJourney=true){
+  currentPageIndex=idx;
+  closeFlowPanel();
+  buildWireframe(idx);
+  updateSidebarActive();
+  buildBreadcrumb();
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+  document.getElementById('mainContent').scrollTop=0;
+  if(currentView!=='page') switchView('page');
+}
+
+// ═══════════════════════════════════════════════
+// API VIEW (kept from original)
+// ═══════════════════════════════════════════════
+function buildApiView(){
+  const av=document.getElementById('apiView');
+  let h='<div class="api-filters">';
+  ['ALL','GET','POST','PATCH','DELETE'].forEach(m=>{
+    h+=`<button class="api-filter-btn ${apiMethodFilter===m?'active':''}" onclick="filterApiMethod('${m}')">${m}</button>`;
+  });
+  h+='</div><div style="overflow-x:auto;border-radius:10px;border:1px solid var(--border)"><table class="api-table"><thead><tr><th>Method</th><th>Route</th><th>Description</th><th>Auth</th><th>Collections</th><th>Rate Limit</th></tr></thead><tbody>';
+  D.apiRoutes.forEach((api,i)=>{
+    const matchM=apiMethodFilter==='ALL'||api.method===apiMethodFilter;
+    const matchS=!searchTerm||apiMatchesSearch(api);
+    const hidden=(!matchM||!matchS)?' hidden-row':'';
+    const exp=expandedApiRow===i;
+    h+=`<tr class="${exp?'expanded':''}${hidden}" onclick="toggleApiExpand(${i})" data-api-index="${i}"><td><span class="method-badge method-${api.method}">${api.method}</span></td><td class="api-route-cell">${e(api.route)}</td><td>${e(api.description)}</td><td>${authBadge(api.auth)}</td><td><div class="api-collections">${api.firestoreCollections.map(c=>'<span class="api-collection-pill">'+e(c)+'</span>').join('')||'<span style="color:var(--text-muted);font-size:11px">—</span>'}</div></td><td>${api.rateLimit?'<span class="api-rate-badge api-rate-yes">'+e(api.rateLimit)+'</span>':'<span class="api-rate-badge api-rate-no">—</span>'}</td></tr>`;
+    h+=`<tr class="api-expand${hidden}${exp?'':' hidden-row'}"><td colspan="6"><div class="api-expand-inner"><div class="api-expand-row"><span class="api-expand-label">Returns</span><span class="api-expand-value"><code>${e(api.returns)}</code></span></div><div class="api-expand-row"><span class="api-expand-label">Validation</span><span class="api-expand-value">${e(api.validation)}</span></div>${api.sideEffects?'<div class="api-expand-row"><span class="api-expand-label">Side Effects</span><span class="api-expand-value">'+api.sideEffects.map(s=>'<div class="api-expand-side-effect">'+e(s)+'</div>').join('')+'</span></div>':''}${findApiCallers(api).length?'<div class="api-expand-row"><span class="api-expand-label">Called By</span><span class="api-expand-value"><div class="api-expand-pages">'+findApiCallers(api).map(c=>'<span class="api-expand-page" onclick="event.stopPropagation();navToPage('+c._i+')">'+e(c.name)+'</span>').join('')+'</div></span></div>':''}</div></td></tr>`;
+  });
+  h+='</tbody></table></div>';
+  av.innerHTML=h;
+}
+
+function authBadge(auth){
+  if(!auth||auth==='None') return '<span class="api-auth-badge api-auth-none">None</span>';
+  if(auth.toLowerCase().includes('admin')) return '<span class="api-auth-badge api-auth-admin">Admin</span>';
+  if(auth.toLowerCase().includes('optional')) return '<span class="api-auth-badge api-auth-optional">Optional</span>';
+  if(auth.toLowerCase().includes('webhook')) return '<span class="api-auth-badge api-auth-none">Webhook</span>';
+  return '<span class="api-auth-badge api-auth-required">Required</span>';
+}
+function apiMatchesSearch(api){const t=searchTerm.toLowerCase();return api.route.toLowerCase().includes(t)||api.description.toLowerCase().includes(t)}
+function findApiCallers(api){const r=[];D.pages.forEach((p,i)=>{if(p.userActions.some(a=>a.apiCall&&normalizeR(a.apiCall).includes(normalizeR(api.route))))r.push({...p,_i:i});});return r}
+function filterApiMethod(m){apiMethodFilter=m;buildApiView()}
+function toggleApiExpand(i){expandedApiRow=expandedApiRow===i?-1:i;buildApiView()}
+
+// ═══════════════════════════════════════════════
+// VIEW TOGGLE, SEARCH, API DOTS, TOUR
+// ═══════════════════════════════════════════════
+function switchView(view){
+  currentView=view;
+  document.getElementById('mainPanel').classList.toggle('api-view-active',view==='api');
+  document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  if(view==='api') buildApiView();
+}
+
+function toggleApiDots(){
+  showApiDots=!showApiDots;
+  document.getElementById('apiDotsBtn').classList.toggle('active',showApiDots);
+  const wf=document.getElementById('wfContainer');
+  if(wf) wf.classList.toggle('show-api-dots',showApiDots);
+}
+
+function handleSearch(){
+  searchTerm=document.getElementById('searchInput').value.trim();
+  const t=searchTerm.toLowerCase();
+  document.querySelectorAll('.sidebar-item').forEach(el=>{
+    const idx=parseInt(el.dataset.index);
+    const p=D.pages[idx];
+    let match=!t||p.name.toLowerCase().includes(t)||p.route.toLowerCase().includes(t);
+    if(!match) match=p.userActions.some(a=>(a.trigger+a.function+(a.apiCall||'')).toLowerCase().includes(t));
+    el.classList.toggle('hidden',!match);
+  });
+  if(currentView==='api') buildApiView();
+}
+
+// Auto Tour
+function startTour(){
+  if(tourRunning){stopTour();return}
+  tourRunning=true;
+  document.getElementById('tourBtn').classList.add('active');
+  document.getElementById('tourBtn').innerHTML='■ Stop Tour';
+
+  const steps=[
+    {page:0,action:null,delay:1500},
+    {page:0,action:1,delay:2000},
+    {page:1,action:null,delay:1500},
+    {page:1,action:0,delay:2000},
+    {page:9,action:null,delay:1500},
+    {page:9,action:3,delay:2000},
+    {page:11,action:null,delay:1500},
+    {page:11,action:0,delay:2000},
+    {page:1,action:null,delay:1000}
+  ];
+
+  let i=0;
+  function runStep(){
+    if(!tourRunning||i>=steps.length){stopTour();return}
+    const step=steps[i];
+    if(step.page!==currentPageIndex) navToPage(step.page);
+    if(step.action!==null){
+      setTimeout(()=>{
+        if(!tourRunning)return;
+        const btns=document.querySelectorAll(`[data-action="${step.action}"]`);
+        if(btns.length){
+          const btn=btns[0];
+          btn.scrollIntoView({behavior:'smooth',block:'center'});
+          setTimeout(()=>{
+            if(!tourRunning)return;
+            triggerAction(step.page,step.action,btn);
+          },400);
+        }
+      },600);
+    }
+    i++;
+    tourTimer=setTimeout(runStep,step.delay);
+  }
+  runStep();
+}
+function stopTour(){
+  tourRunning=false;
+  clearTimeout(tourTimer);
+  document.getElementById('tourBtn').classList.remove('active');
+  document.getElementById('tourBtn').innerHTML='▶ Auto Tour';
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════════════════
+document.addEventListener('keydown',ev=>{
+  if(ev.key==='Escape'){
+    closeFlowPanel();
+    if(document.getElementById('searchInput')===document.activeElement){
+      document.getElementById('searchInput').value='';
+      handleSearch();
+    }
+    stopTour();
+  }
+});
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildSidebar();
+selectPage(0,false);
+buildBreadcrumb();
+renderDevtools();
+document.getElementById('searchInput').addEventListener('input',handleSearch);
+</script>
+</body>
+</html>

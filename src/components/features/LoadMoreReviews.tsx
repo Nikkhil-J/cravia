@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { ReviewCard } from '@/components/features/ReviewCard'
+import { ReviewCardV2 } from '@/components/features/ReviewCardV2'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/hooks/useAuth'
 import type { Review } from '@/lib/types'
+import { API_ENDPOINTS } from '@/lib/constants/api'
 
 interface LoadMoreReviewsProps {
   initialReviews: Review[]
@@ -40,7 +41,7 @@ export function LoadMoreReviews({
       const params = new URLSearchParams()
       if (nextCursorId) params.set('cursor', nextCursorId)
       const qs = params.toString()
-      const res = await fetch(`/api/dishes/${encodeURIComponent(dishId)}/reviews${qs ? `?${qs}` : ''}`, { cache: 'no-store' })
+      const res = await fetch(`${API_ENDPOINTS.dishReviews(encodeURIComponent(dishId))}${qs ? `?${qs}` : ''}`, { cache: 'no-store' })
       if (!res.ok) return
 
       const result = (await res.json()) as DishReviewsApiResult
@@ -53,9 +54,9 @@ export function LoadMoreReviews({
 
   return (
     <>
-      <div className="mt-5 space-y-4">
+      <div className="mt-5 flex flex-col gap-4">
         {reviews.map((review) => (
-          <ReviewCard key={review.id} review={review} currentUserId={currentUserId} />
+          <ReviewCardV2 key={review.id} review={review} variant="dish" currentUserId={currentUserId} />
         ))}
       </div>
       {hasMore && (

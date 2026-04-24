@@ -9,6 +9,9 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { DEFAULT_COUPON_POINTS_COST } from '@/lib/types/rewards'
 import type { Coupon, CouponClaim, PointsBalance } from '@/lib/types/rewards'
+import { API_ENDPOINTS } from '@/lib/constants/api'
+import { CLIENT_ERRORS } from '@/lib/constants/errors'
+import { HTTP_HEADERS } from '@/lib/constants'
 
 type Tab = 'coupons' | 'claims'
 
@@ -29,9 +32,9 @@ export default function RewardsPage() {
     const headers = { authorization: `Bearer ${token}` }
 
     const [balRes, coupRes, claimRes] = await Promise.all([
-      fetch('/api/rewards/balance', { headers }),
-      fetch('/api/rewards/coupons', { headers }),
-      fetch('/api/rewards/claims', { headers }),
+      fetch(API_ENDPOINTS.REWARDS_BALANCE, { headers }),
+      fetch(API_ENDPOINTS.REWARDS_COUPONS, { headers }),
+      fetch(API_ENDPOINTS.REWARDS_CLAIMS, { headers }),
     ])
 
     if (balRes.ok) setBalance(await balRes.json() as PointsBalance)
@@ -58,10 +61,10 @@ export default function RewardsPage() {
 
     try {
       const token = await authUser.getIdToken()
-      const res = await fetch('/api/rewards/redeem', {
+      const res = await fetch(API_ENDPOINTS.REWARDS_REDEEM, {
         method: 'POST',
         headers: {
-          'content-type': 'application/json',
+          [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
           authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ couponId }),
@@ -84,7 +87,7 @@ export default function RewardsPage() {
       await fetchAll()
       setTab('claims')
     } catch {
-      const msg = 'Something went wrong. Please try again.'
+      const msg = CLIENT_ERRORS.SOMETHING_WENT_WRONG_RETRY
       setRedeemError(msg)
       toast.error(msg)
     } finally {
@@ -105,14 +108,14 @@ export default function RewardsPage() {
     : 0
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-8">
-      <h1 className="font-display text-2xl font-bold text-bg-dark">DishPoints & Rewards</h1>
+    <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
+      <h1 className="font-display text-xl font-bold text-heading sm:text-2xl">DishPoints & Rewards</h1>
 
       {/* Balance card */}
       {balance && (
-        <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/5 p-6">
+        <div className="mt-4 rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:mt-6 sm:p-6">
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-4xl font-bold text-primary">{balance.balance}</span>
+            <span className="font-display text-3xl font-bold text-primary sm:text-4xl">{balance.balance}</span>
             <span className="text-sm text-text-secondary">DishPoints</span>
           </div>
 
@@ -132,11 +135,11 @@ export default function RewardsPage() {
           <div className="mt-4 flex gap-6 text-sm">
             <div>
               <span className="text-text-muted">Earned: </span>
-              <span className="font-semibold text-bg-dark">{balance.totalEarned}</span>
+              <span className="font-semibold text-heading">{balance.totalEarned}</span>
             </div>
             <div>
               <span className="text-text-muted">Redeemed: </span>
-              <span className="font-semibold text-bg-dark">{balance.totalRedeemed}</span>
+              <span className="font-semibold text-heading">{balance.totalRedeemed}</span>
             </div>
           </div>
         </div>
@@ -193,7 +196,7 @@ export default function RewardsPage() {
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-display text-lg font-bold text-bg-dark">{coupon.title}</h3>
+                      <h3 className="font-display text-lg font-bold text-heading">{coupon.title}</h3>
                       <p className="mt-1 text-sm text-text-secondary">{coupon.restaurantName}</p>
                     </div>
                     <div className="text-right">
@@ -204,8 +207,8 @@ export default function RewardsPage() {
                     </div>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="flex gap-4 text-xs text-text-muted">
+                  <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-muted">
                       <span>{coupon.pointsCost} pts</span>
                       <span>{remaining} left</span>
                       {coupon.expiresAt && (
@@ -215,7 +218,7 @@ export default function RewardsPage() {
                     <Button
                       onClick={() => handleRedeem(coupon.id)}
                       disabled={!canAfford || redeeming === coupon.id}
-                      className="h-auto rounded-pill px-5 py-2 text-xs font-semibold hover:bg-primary-dark hover:shadow-glow"
+                      className="h-auto w-full rounded-pill px-5 py-2 text-xs font-semibold hover:bg-primary-dark hover:shadow-glow sm:w-auto"
                     >
                       {redeeming === coupon.id ? (
                         <LoadingSpinner size="sm" />
@@ -250,7 +253,7 @@ export default function RewardsPage() {
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-display font-bold text-bg-dark">{claim.couponTitle}</h3>
+                    <h3 className="font-display font-bold text-heading">{claim.couponTitle}</h3>
                     <p className="mt-1 text-xs text-text-muted">
                       Claimed {new Date(claim.claimedAt).toLocaleDateString()}
                     </p>
@@ -269,7 +272,7 @@ export default function RewardsPage() {
 
                 <div className="mt-4 rounded-lg bg-bg-cream p-3 text-center">
                   <span className="text-xs text-text-muted">Your code</span>
-                  <p className="font-mono text-lg font-bold tracking-widest text-bg-dark">{claim.code}</p>
+                  <p className="font-mono text-lg font-bold tracking-widest text-heading">{claim.code}</p>
                 </div>
 
                 {claim.expiresAt && (

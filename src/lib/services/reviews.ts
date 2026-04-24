@@ -1,7 +1,12 @@
+import { cache } from 'react'
 import { reviewRepository } from '@/lib/repositories'
 
-export function getReview(reviewId: string) {
+export const getReview = cache(async (reviewId: string) => {
   return reviewRepository.getById(reviewId)
+})
+
+export function getReviewCount() {
+  return reviewRepository.getCount()
 }
 
 export function getReviewsByUser(userId: string, cursor?: string) {

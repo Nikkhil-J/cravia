@@ -5,6 +5,7 @@ import { COLLECTIONS } from '@/lib/firebase/config'
 import { computeLevel, computeEarnedBadges } from '@/lib/gamification'
 import { computeOverall, computeTopTags } from '@/lib/utils/index'
 import { captureError } from '@/lib/monitoring/sentry'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -27,7 +28,7 @@ export async function PATCH(req: Request, context: RouteContext) {
     }
 
     captureError(error, { route: '/api/admin/reviews/[id]' })
-    return NextResponse.json({ message: 'Failed to approve review' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_APPROVE_REVIEW }, { status: 500 })
   }
 }
 
@@ -110,11 +111,11 @@ export async function DELETE(req: Request, context: RouteContext) {
 
     if (error instanceof Error) {
       if (error.message === 'REVIEW_NOT_FOUND') {
-        return NextResponse.json({ message: 'Review not found' }, { status: 404 })
+        return NextResponse.json({ message: API_ERRORS.REVIEW_NOT_FOUND }, { status: 404 })
       }
 
       if (error.message === 'DISH_NOT_FOUND') {
-        return NextResponse.json({ message: 'Dish not found' }, { status: 400 })
+        return NextResponse.json({ message: API_ERRORS.DISH_NOT_FOUND }, { status: 400 })
       }
 
       if (error.message === 'INVALID_REVIEW') {
@@ -123,6 +124,6 @@ export async function DELETE(req: Request, context: RouteContext) {
     }
 
     captureError(error, { route: '/api/admin/reviews/[id]' })
-    return NextResponse.json({ message: 'Failed to delete review' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_DELETE_REVIEW_ADMIN }, { status: 500 })
   }
 }

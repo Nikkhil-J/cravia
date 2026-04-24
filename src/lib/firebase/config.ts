@@ -33,4 +33,5 @@ export const SUBCOLLECTIONS = {
   WISHLIST: 'wishlist',
   POINT_TRANSACTIONS: 'pointTransactions',
   COUPON_CLAIMS: 'couponClaims',
+  ANALYTICS_CACHE: 'cache',
 } as const

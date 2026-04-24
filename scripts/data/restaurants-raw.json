@@ -1,6 +1,6 @@
 {
   "_instructions": [
-    "Real restaurant data for DishCheck — Bengaluru and Gurugram.",
+    "Real restaurant data for Cravia — Bengaluru and Gurugram.",
     "Run: npx tsx scripts/seed-from-json.ts --dry-run (verify first)",
     "Then run: npx tsx scripts/seed-from-json.ts"
   ],

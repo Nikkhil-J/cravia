@@ -1,8 +1,6 @@
 import {
   collection,
-  doc,
   getDocs,
-  updateDoc,
   getCountFromServer,
   query,
   where,
@@ -55,32 +53,6 @@ export async function getUsers(limitCount = 100): Promise<User[]> {
   }
 }
 
-/** Toggles the isAdmin flag on a user document. */
-export async function toggleAdmin(userId: string, isAdmin: boolean): Promise<boolean> {
-  try {
-    await updateDoc(doc(db, COLLECTIONS.USERS, userId), { isAdmin })
-    return true
-  } catch (e) {
-    logError('toggleAdmin', e)
-    return false
-  }
-}
-
-/** Toggles the isPremium flag and sets/clears premiumSince. */
-export async function togglePremium(userId: string, isPremium: boolean): Promise<boolean> {
-  try {
-    const { Timestamp } = await import('firebase/firestore')
-    await updateDoc(doc(db, COLLECTIONS.USERS, userId), {
-      isPremium,
-      premiumSince: isPremium ? Timestamp.now() : null,
-    })
-    return true
-  } catch (e) {
-    logError('togglePremium', e)
-    return false
-  }
-}
-
 /** Returns flagged reviews, capped by limitCount. */
 export async function getFlaggedReviews(limitCount = 50): Promise<Review[]> {
   try {
@@ -95,19 +67,5 @@ export async function getFlaggedReviews(limitCount = 50): Promise<Review[]> {
   } catch (e) {
     logError('getFlaggedReviews', e)
     return []
-  }
-}
-
-/** Unflags a review and marks it as approved. */
-export async function unflagReview(reviewId: string): Promise<boolean> {
-  try {
-    await updateDoc(doc(db, COLLECTIONS.REVIEWS, reviewId), {
-      isFlagged: false,
-      isApproved: true,
-    })
-    return true
-  } catch (e) {
-    logError('unflagReview', e)
-    return false
   }
 }

@@ -6,6 +6,7 @@ import { Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/lib/hooks/useDebounce'
+import { ROUTES } from '@/lib/constants/routes'
 
 interface SearchBarProps {
   variant: 'navbar' | 'hero'
@@ -33,7 +34,7 @@ export function SearchBar({ variant, autoFocus, initialQuery = '' }: SearchBarPr
       inputRef.current?.focus()
       const params = new URLSearchParams(searchParams.toString())
       params.delete('focus')
-      const newUrl = params.toString() ? `/explore?${params.toString()}` : '/explore'
+      const newUrl = params.toString() ? `${ROUTES.EXPLORE}?${params.toString()}` : ROUTES.EXPLORE
       router.replace(newUrl, { scroll: false })
     }, 300)
     return () => clearTimeout(timer)
@@ -44,11 +45,11 @@ export function SearchBar({ variant, autoFocus, initialQuery = '' }: SearchBarPr
   useEffect(() => {
     if (variant !== 'navbar') return
     if (debouncedQuery.length >= 2) {
-      router.push(`/explore?q=${encodeURIComponent(debouncedQuery)}`)
+      router.push(`${ROUTES.EXPLORE}?q=${encodeURIComponent(debouncedQuery)}`)
     } else if (debouncedQuery.length === 0 && searchParams.get('q')) {
       const params = new URLSearchParams(searchParams.toString())
       params.delete('q')
-      const newUrl = params.toString() ? `/explore?${params.toString()}` : '/explore'
+      const newUrl = params.toString() ? `${ROUTES.EXPLORE}?${params.toString()}` : ROUTES.EXPLORE
       router.push(newUrl)
     }
   }, [debouncedQuery, variant, router, searchParams])
@@ -56,21 +57,18 @@ export function SearchBar({ variant, autoFocus, initialQuery = '' }: SearchBarPr
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (query.trim()) {
-      router.push(`/explore?q=${encodeURIComponent(query.trim())}`)
+      router.push(`${ROUTES.EXPLORE}?q=${encodeURIComponent(query.trim())}`)
     }
   }
 
   if (variant === 'hero') {
     return (
       <div
-        className="flex items-center gap-3 rounded-pill border border-border bg-card py-4 pl-6 pr-4 text-left shadow-lg"
+        className="flex items-center gap-3 rounded-pill border border-border bg-card py-4 px-6 text-left shadow-lg"
       >
         <Search className="h-5 w-5 shrink-0 text-text-muted" />
         <span className="flex-1 text-base text-text-muted">
           Search for a dish or restaurant...
-        </span>
-        <span className="rounded-pill bg-primary px-5 py-2 text-sm font-semibold text-white">
-          Search
         </span>
       </div>
     )

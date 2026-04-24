@@ -1,5 +1,5 @@
 import { createUser, getUser, getUserReviewCount, updateUser } from '@/lib/firebase/users'
-import { getUsers, toggleAdmin, togglePremium } from '@/lib/firebase/admin'
+import { getUsers } from '@/lib/firebase/admin'
 import type { UserRepository } from '@/lib/repositories/userRepository'
 import type { User, UserProfileUpdate } from '@/lib/types'
 import { mapUser } from './mappers'
@@ -41,13 +41,5 @@ export class FirebaseUserRepository implements UserRepository {
   async list(limit?: number): Promise<User[]> {
     const users = await getUsers(limit)
     return users.map(mapUser)
-  }
-
-  toggleAdmin(userId: string, isAdmin: boolean): Promise<boolean> {
-    return toggleAdmin(userId, isAdmin)
-  }
-
-  togglePremium(userId: string, isPremium: boolean): Promise<boolean> {
-    return togglePremium(userId, isPremium)
   }
 }

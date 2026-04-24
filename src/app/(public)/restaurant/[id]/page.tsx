@@ -6,6 +6,7 @@ import { Building2, MapPin, Phone, Globe } from 'lucide-react'
 import { getRestaurantDetails, listRestaurantDishes } from '@/lib/services/catalog'
 import { DishCard } from '@/components/features/DishCard'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ROUTES } from '@/lib/constants/routes'
 
 export const revalidate = 3600
 
@@ -16,9 +17,9 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
   const restaurant = await getRestaurantDetails(id)
-  if (!restaurant) return { title: 'Not found — DishCheck' }
+  if (!restaurant) return { title: 'Not found — Cravia' }
   return {
-    title: `${restaurant.name} — DishCheck`,
+    title: `${restaurant.name} — Cravia`,
     description: `Dish reviews for ${restaurant.name} in ${restaurant.area}, ${restaurant.city}.`,
   }
 }
@@ -55,15 +56,15 @@ export default async function RestaurantPage({ params }: PageProps) {
       {/* Hero */}
       <div className="relative h-56 w-full overflow-hidden bg-gradient-to-r from-bg-cream via-accent-light to-primary-light sm:h-64">
         {restaurant.coverImage && (
-          <Image src={restaurant.coverImage} alt={restaurant.name} fill className="object-cover" />
+          <Image src={restaurant.coverImage} alt={restaurant.name} fill sizes="100vw" priority className="object-cover" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
       </div>
 
       {/* Info */}
       <div className="relative -mt-8 rounded-t-xl bg-surface">
-        <div className="mx-auto max-w-[1000px] px-6 pt-8">
-          <h1 className="font-display text-3xl font-bold text-bg-dark">{restaurant.name}</h1>
+        <div className="mx-auto max-w-[1000px] px-4 pt-6 sm:px-6 sm:pt-8">
+          <h1 className="font-display text-2xl font-bold text-heading sm:text-3xl">{restaurant.name}</h1>
           <p className="mt-1 text-sm text-text-secondary">
             {restaurant.cuisines.join(' · ')}
           </p>
@@ -125,7 +126,7 @@ export default async function RestaurantPage({ params }: PageProps) {
           {dishes.length > 0 && (
             <div className="mt-6 flex gap-3">
               <Link
-                href={`/write-review?dishId=${dishes[0].id}&restaurantId=${restaurant.id}`}
+                href={`${ROUTES.WRITE_REVIEW}?dishId=${dishes[0].id}&restaurantId=${restaurant.id}&dishName=${encodeURIComponent(dishes[0].name)}&restaurantName=${encodeURIComponent(restaurant.name)}`}
                 className="inline-flex items-center gap-2 rounded-pill bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-primary-dark hover:-translate-y-0.5 hover:shadow-glow"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
@@ -141,15 +142,15 @@ export default async function RestaurantPage({ params }: PageProps) {
               { num: dishes.reduce((sum, d) => sum + d.reviewCount, 0), label: 'Total reviews' },
             ].map((s) => (
               <div key={s.label} className="flex-1 py-4 text-center">
-                <div className="font-display text-xl font-bold text-bg-dark">{s.num}</div>
+                <div className="font-display text-xl font-bold text-heading">{s.num}</div>
                 <div className="text-xs text-text-muted">{s.label}</div>
               </div>
             ))}
           </div>
 
           {/* Dishes */}
-          <div className="mt-10 pb-12">
-            <h2 className="font-display text-xl font-bold text-bg-dark">
+          <div className="mt-8 pb-12 sm:mt-10">
+            <h2 className="font-display text-lg font-bold text-heading sm:text-xl">
               Popular Dishes
             </h2>
             {dishes.length === 0 ? (
@@ -159,7 +160,7 @@ export default async function RestaurantPage({ params }: PageProps) {
                 description="Be the first to add a dish review for this restaurant."
               />
             ) : (
-              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                 {dishes.map((dish, i) => (
                   <DishCard key={dish.id} dish={dish} index={i} />
                 ))}
@@ -173,7 +174,7 @@ export default async function RestaurantPage({ params }: PageProps) {
                 Is this your restaurant?
               </p>
               <Link
-                href={`/claim-restaurant/${restaurant.id}`}
+                href={ROUTES.claimRestaurant(restaurant.id)}
                 className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
               >
                 <Building2 size={14} />

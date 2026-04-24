@@ -14,7 +14,7 @@ import {
 } from 'firebase/firestore'
 import { db, COLLECTIONS } from './config'
 import type { Dish, PaginatedResult, SearchFilters } from '../types'
-import { DISHES_PER_PAGE } from '../constants'
+import { DISHES_PER_PAGE, CONFIG, SORT_OPTIONS } from '../constants'
 import { logError } from '../logger'
 
 /** Returns a single dish by ID, or null if not found. */
@@ -76,7 +76,7 @@ export async function getDishesByRestaurant(restaurantId: string): Promise<Dish[
 export async function getRelatedDishes(
   restaurantId: string,
   excludeId: string,
-  limitCount = 4
+  limitCount: number = CONFIG.RELATED_DISHES_COUNT
 ): Promise<Dish[]> {
   try {
     const ref = collection(db, COLLECTIONS.DISHES)
@@ -141,8 +141,8 @@ export async function searchDishes(
     if (hasMinRating) constraints.push(where('avgOverall', '>=', filters.minRating))
 
     const sortField = hasMinRating ? 'avgOverall'
-      : filters?.sortBy === 'highest-rated' ? 'avgOverall'
-      : filters?.sortBy === 'most-helpful' ? 'reviewCount'
+      : filters?.sortBy === SORT_OPTIONS.HIGHEST_RATED ? 'avgOverall'
+      : filters?.sortBy === SORT_OPTIONS.MOST_HELPFUL ? 'reviewCount'
       : 'createdAt'
     constraints.push(orderBy(sortField, 'desc'))
 

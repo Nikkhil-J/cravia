@@ -1,4 +1,4 @@
-# DishCheck Operational Runbook
+# Cravia Operational Runbook
 
 Procedures for common production incidents and administrative tasks.
 
@@ -57,11 +57,11 @@ Procedures for common production incidents and administrative tasks.
 
 ## Rolling Back a Bad Deploy
 
-DishCheck is deployed on Vercel. Rollbacks are instant.
+Cravia is deployed on Vercel. Rollbacks are instant.
 
 **Steps:**
 
-1. Go to [Vercel Dashboard](https://vercel.com) → DishCheck project → Deployments.
+1. Go to [Vercel Dashboard](https://vercel.com) → Cravia project → Deployments.
 2. Find the last known good deployment.
 3. Click the three-dot menu → **Promote to Production**.
 4. Verify the site is working.
@@ -140,7 +140,7 @@ DishCheck is deployed on Vercel. Rollbacks are instant.
 ### Webhook not firing
 
 1. Check Razorpay Dashboard → Webhooks → delivery logs.
-2. Verify the webhook URL is `https://dishcheck.app/api/billing/webhook`.
+2. Verify the webhook URL is `https://cravia.app/api/billing/webhook`.
 3. Verify `RAZORPAY_WEBHOOK_SECRET` matches the secret in Razorpay Dashboard.
 4. Check Sentry for errors on the webhook route.
 

@@ -9,6 +9,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { formatRelativeTime } from '@/lib/utils/index'
 import type { Notification } from '@/lib/types'
+import { API_ENDPOINTS } from '@/lib/constants/api'
 
 export default function NotificationsPage() {
   const { user, authUser } = useAuth()
@@ -20,12 +21,12 @@ export default function NotificationsPage() {
     getNotifications(user.id)
       .then(setNotifications)
       .finally(() => setLoading(false))
-  }, [user])
+  }, [user?.id])
 
   async function handleMarkAllRead() {
     if (!user || !authUser) return
     const token = await authUser.getIdToken()
-    const res = await fetch('/api/notifications/read-all', {
+    const res = await fetch(API_ENDPOINTS.NOTIFICATIONS_READ_ALL, {
       method: 'POST',
       headers: { authorization: `Bearer ${token}` },
     })
@@ -39,12 +40,12 @@ export default function NotificationsPage() {
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-bg-dark">Notifications</h1>
+        <h1 className="font-display text-2xl font-bold text-heading">Notifications</h1>
         {unreadCount > 0 && (
           <Button
             variant="link"
             onClick={handleMarkAllRead}
-            className="h-auto p-0 text-xs font-medium text-primary"
+            className="min-h-[44px] px-3 text-xs font-medium text-primary"
           >
             Mark all read
           </Button>

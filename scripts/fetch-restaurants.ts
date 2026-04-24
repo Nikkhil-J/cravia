@@ -4,7 +4,7 @@
  * Fetches real restaurants from Google Places API for Bengaluru and Gurugram.
  * Outputs a JSON file (restaurants-raw.json) that you then fill with dish data.
  *
- * Run from your DishCheck project root:
+ * Run from your Cravia project root:
  *   GOOGLE_PLACES_API_KEY=AIzaSy... npx tsx scripts/fetch-restaurants.ts
  *
  * Output: scripts/data/restaurants-raw.json
@@ -307,7 +307,7 @@ function delay(ms: number) {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log("🍽️  DishCheck Restaurant Fetcher");
+  console.log("🍽️  Cravia Restaurant Fetcher");
   console.log("==================================");
   console.log(
     `Fetching restaurants for ${SEARCHES.length} areas across 2 cities...\n`,

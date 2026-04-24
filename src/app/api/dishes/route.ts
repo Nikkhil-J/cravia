@@ -3,6 +3,8 @@ import { listDishes } from '@/lib/services/catalog'
 import { getRequestAuth } from '@/lib/services/request-auth'
 import { dishSearchParamsSchema } from '@/lib/validation/dish.schema'
 import { captureError } from '@/lib/monitoring/sentry'
+import { API_ERRORS } from '@/lib/constants/errors'
+import { SORT_OPTIONS } from '@/lib/constants'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -16,14 +18,14 @@ export async function GET(req: Request) {
     cuisine: searchParams.get('cuisine'),
     dietary: searchParams.get('dietary'),
     priceRange: searchParams.get('priceRange'),
-    sortBy: searchParams.get('sortBy') ?? 'highest-rated',
+    sortBy: searchParams.get('sortBy') ?? SORT_OPTIONS.HIGHEST_RATED,
     cursor: searchParams.get('cursor'),
   }
 
   const parsed = dishSearchParamsSchema.safeParse(raw)
   if (!parsed.success) {
     return NextResponse.json(
-      { message: 'Invalid query parameters', errors: parsed.error.flatten().fieldErrors },
+      { message: API_ERRORS.INVALID_QUERY_PARAMS, errors: parsed.error.flatten().fieldErrors },
       { status: 400 }
     )
   }
@@ -46,6 +48,6 @@ export async function GET(req: Request) {
     return NextResponse.json(result)
   } catch (error) {
     captureError(error, { route: '/api/dishes' })
-    return NextResponse.json({ message: 'Failed to fetch data' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_FETCH_DATA }, { status: 500 })
   }
 }

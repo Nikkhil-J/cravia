@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'motion/react'
 import { SearchBar } from '@/components/features/SearchBar'
+import { ROUTES } from '@/lib/constants/routes'
 
 interface HeroSearchBarProps {
   onExiting?: () => void
@@ -17,7 +18,7 @@ export function HeroSearchBar({ onExiting }: HeroSearchBarProps) {
     if (isExiting) return
     setIsExiting(true)
     onExiting?.()
-    setTimeout(() => router.push('/explore?focus=1'), 150)
+    setTimeout(() => router.push(`${ROUTES.EXPLORE}?focus=1`), 150)
   }
 
   return (

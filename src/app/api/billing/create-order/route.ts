@@ -5,10 +5,11 @@ import { createOrderSchema } from '@/lib/validation/billing.schema'
 import { createOrder } from '@/lib/services/billing'
 import { captureError } from '@/lib/monitoring/sentry'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export async function POST(req: Request) {
   const auth = await getRequestAuth(req)
-  if (!auth) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+  if (!auth) return NextResponse.json({ message: API_ERRORS.UNAUTHORIZED }, { status: 401 })
 
   const rateLimited = await checkRateLimit(auth.userId, 'GENERAL')
   if (rateLimited) return rateLimited
@@ -21,6 +22,6 @@ export async function POST(req: Request) {
     return NextResponse.json(order)
   } catch (error) {
     captureError(error, { userId: auth.userId, route: '/api/billing/create-order' })
-    return NextResponse.json({ message: 'Failed to create order' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_CREATE_ORDER }, { status: 500 })
   }
 }

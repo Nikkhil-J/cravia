@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 // ── Tier definitions ────────────────────────────────────
 
@@ -111,13 +112,18 @@ export async function rateLimit(identifier: string, tier: RateLimitTier): Promis
     return checkMemory(key, config)
   }
 
-  const limiter = getUpstashLimiter(tier)
-  const result = await limiter.limit(identifier)
+  try {
+    const limiter = getUpstashLimiter(tier)
+    const result = await limiter.limit(identifier)
 
-  return {
-    success: result.success,
-    remaining: result.remaining,
-    resetAt: result.reset,
+    return {
+      success: result.success,
+      remaining: result.remaining,
+      resetAt: result.reset,
+    }
+  } catch {
+    console.error(`Rate limit check failed for ${tier}, falling back to in-memory limiter`)
+    return checkMemory(key, config)
   }
 }
 
@@ -134,7 +140,7 @@ export async function checkRateLimit(
   if (!result.success) {
     const retryAfterSec = Math.ceil((result.resetAt - Date.now()) / 1000)
     return NextResponse.json(
-      { message: 'Too many requests', resetAt: result.resetAt },
+      { message: API_ERRORS.TOO_MANY_REQUESTS, resetAt: result.resetAt },
       {
         status: 429,
         headers: { 'Retry-After': String(Math.max(retryAfterSec, 1)) },

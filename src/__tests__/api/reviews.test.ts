@@ -34,8 +34,8 @@ vi.mock('@/lib/services/request-auth', () => ({
   getRequestAuth: vi.fn(),
 }))
 
-vi.mock('@/lib/repositories', () => ({
-  reviewRepository: {
+const { mockReviewRepository } = vi.hoisted(() => ({
+  mockReviewRepository: {
     create: vi.fn(),
     getById: vi.fn(),
     update: vi.fn(),
@@ -45,12 +45,22 @@ vi.mock('@/lib/repositories', () => ({
     findByUserAndDish: vi.fn().mockResolvedValue(null),
     getRecentByUser: vi.fn().mockResolvedValue([]),
   },
+}))
+
+vi.mock('@/lib/repositories', () => ({
+  reviewRepository: mockReviewRepository,
   userRepository: {
     getById: vi.fn(),
   },
   dishRepository: {
     getById: vi.fn(),
   },
+}))
+
+vi.mock('@/lib/repositories/server', () => ({
+  reviewRepository: mockReviewRepository,
+  pointsRepository: {},
+  couponRepository: {},
 }))
 
 vi.mock('@/lib/services/rewards', () => ({

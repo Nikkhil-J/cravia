@@ -9,8 +9,8 @@ const RAZORPAY_KEY_ID = env.RAZORPAY_KEY_ID ?? ''
 const RAZORPAY_KEY_SECRET = env.RAZORPAY_KEY_SECRET ?? ''
 
 const PLANS = {
-  monthly: { amount: PLAN_PRICES.monthly, currency: 'INR', description: 'DishCheck Premium — Monthly' },
-  yearly:  { amount: PLAN_PRICES.yearly,  currency: 'INR', description: 'DishCheck Premium — Yearly' },
+  monthly: { amount: PLAN_PRICES.monthly, currency: 'INR', description: 'Cravia Premium — Monthly' },
+  yearly:  { amount: PLAN_PRICES.yearly,  currency: 'INR', description: 'Cravia Premium — Yearly' },
 } as const
 
 export type PlanType = keyof typeof PLANS

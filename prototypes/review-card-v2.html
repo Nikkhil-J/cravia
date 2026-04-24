@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReviewCard Redesign — 3 Prototypes</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #181a22;
+    --card-hover: #1e2029;
+    --border: #2a2d38;
+    --border-hover: #3d4050;
+    --text-primary: #e8e8ed;
+    --text-secondary: #b0b3c0;
+    --text-muted: #6b6f80;
+    --heading: #f2f2f5;
+    --primary: #e05545;
+    --brand-orange: #f09030;
+    --brand-gold: #f0b040;
+    --success: #34c759;
+    --surface-2: #22242e;
+    --surface-3: #2a2d38;
+    --destructive: #e05545;
+    --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text-primary);
+    padding: 32px 24px 80px;
+    line-height: 1.5;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--heading);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 48px;
+  }
+
+  .prototype-section {
+    max-width: 640px;
+    margin: 0 auto 56px;
+  }
+  .proto-label {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--brand-orange);
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+  .proto-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .variant-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    margin-top: 20px;
+  }
+
+  /* ── Shared card styles ─────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.15s, background 0.15s;
+    overflow: hidden;
+  }
+  .card:hover {
+    border-color: var(--border-hover);
+    background: var(--card-hover);
+  }
+
+  .card-body { padding: 14px 16px; }
+
+  /* ── Dish context ───────────────────────────────── */
+  .dish-context {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .dish-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--heading);
+    line-height: 1.3;
+  }
+  .restaurant-name {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .restaurant-name span {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  /* ── User row (dish page variant only) ──────────── */
+  .user-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+  .user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .level-badge {
+    font-size: 9px;
+    font-weight: 700;
+    background: var(--surface-3);
+    color: var(--text-secondary);
+    padding: 2px 7px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .user-row .timestamp {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* ── Score badge ────────────────────────────────── */
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: linear-gradient(135deg, var(--primary), var(--brand-orange));
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 6px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .score-badge-sm {
+    font-size: 12px;
+    padding: 2px 7px;
+    border-radius: 5px;
+  }
+  .score-badge .out-of {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  /* ── Sub-ratings (collapsed: inline pills) ──────── */
+  .sub-ratings-compact {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .sub-pill {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 8px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .sub-pill .val {
+    font-weight: 700;
+    color: var(--brand-orange);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Sub-ratings (expanded: bars) ───────────────── */
+  .sub-ratings-expanded {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .sub-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sub-bar-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    width: 48px;
+    flex-shrink: 0;
+  }
+  .sub-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--surface-2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .sub-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--brand-orange));
+    transition: width 0.4s ease;
+  }
+  .sub-bar-val {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand-orange);
+    width: 24px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Review text ────────────────────────────────── */
+  .review-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .review-text.clamped { -webkit-line-clamp: 2; }
+  .review-text.full { -webkit-line-clamp: unset; }
+  .see-more-btn {
+    background: none;
+    border: none;
+    color: var(--brand-orange);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 2px;
+  }
+  .see-more-btn:hover { text-decoration: underline; }
+
+  /* ── Tags ────────────────────────────────────────── */
+  .tags-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .tag-overflow {
+    font-size: 10px;
+    color: var(--brand-orange);
+    font-weight: 600;
+    cursor: pointer;
+    padding: 3px 6px;
+  }
+
+  /* ── Bottom row (meta + actions) ────────────────── */
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .timestamp {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .helpful-btn {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .helpful-btn:hover {
+    color: var(--text-secondary);
+    background: var(--surface-2);
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+  }
+  .action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .action-btn.edit { color: var(--primary); }
+  .action-btn.edit:hover { background: rgba(224,85,69,0.1); }
+  .action-btn.delete { color: var(--destructive); }
+  .action-btn.delete:hover { background: rgba(224,85,69,0.1); }
+
+  .edit-closed {
+    font-size: 10px;
+    color: var(--text-muted);
+    cursor: help;
+    position: relative;
+  }
+  .edit-closed .tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    right: 0;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .edit-closed .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    border: 5px solid transparent;
+    border-top-color: var(--surface-3);
+  }
+  .edit-closed:hover .tooltip { display: block; }
+
+  /* ── Photo styles ───────────────────────────────── */
+  .photo-thumb {
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: border-color 0.15s, transform 0.15s;
+    position: relative;
+  }
+  .photo-thumb:hover {
+    border-color: var(--brand-orange);
+    transform: scale(1.03);
+  }
+  .photo-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .photo-expand-icon {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Photo banner */
+  .photo-banner {
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+  }
+  .photo-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+  .photo-banner:hover img { transform: scale(1.03); }
+  .photo-banner .photo-expand-icon {
+    bottom: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  /* Inline expand area */
+  .inline-photo-expand {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .inline-photo-expand.open { max-height: 320px; }
+  .inline-photo-expand img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  /* ── Lightbox ───────────────────────────────────── */
+  .lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .lightbox-overlay.open {
+    display: flex;
+    opacity: 1;
+  }
+  .lightbox-overlay img {
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .lightbox-close {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+  }
+
+  /* ── SVG icons (inline) ─────────────────────────── */
+  .icon { width: 14px; height: 14px; }
+  .icon-sm { width: 12px; height: 12px; }
+
+  /* ── Divider ────────────────────────────────────── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* ── Header row for score + dish ────────────────── */
+  .header-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .header-text { flex: 1; min-width: 0; }
+
+  /* ── Prototype A specific ───────────────────────── */
+  .proto-a .card-inner {
+    display: flex;
+    gap: 14px;
+  }
+  .proto-a .photo-thumb {
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    align-self: flex-start;
+  }
+  .proto-a .card-content { flex: 1; min-width: 0; }
+  .proto-a .no-photo-spacer { display: none; }
+
+  /* ── Prototype B specific ───────────────────────── */
+  .proto-b .score-overlay {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    z-index: 2;
+  }
+
+  /* ── Prototype C specific ───────────────────────── */
+  .proto-c .card-inner {
+    display: flex;
+    gap: 0;
+  }
+  .proto-c .card-content { flex: 1; min-width: 0; }
+  .proto-c .photo-side {
+    width: 56px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 12px 14px 0;
+  }
+  .proto-c .photo-side .photo-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+  }
+  .proto-c .photo-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand-orange);
+    margin-top: 6px;
+  }
+
+  /* ── Expand toggle area ─────────────────────────── */
+  .expand-section {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .expand-section.open { max-height: 500px; }
+  .expand-section-inner {
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Photo placeholder ──────────────────────────── */
+  .photo-placeholder {
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 22px;
+  }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">ReviewCard Redesign</h1>
+<p class="page-subtitle">3 prototypes — each shown in "My Profile" variant and "Dish Page" variant. Click photos and "See more" to interact.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PROTOTYPE A: Photo-Left Media Card                        -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="prototype-section proto-a">
+  <div class="proto-label">Prototype A — Photo-Left Media Card</div>
+  <p class="proto-desc">
+    Photo is a left-side thumbnail (88px). Dish name + overall score anchor the top-right.
+    Sub-ratings expand below. Photo click opens lightbox.
+  </p>
+
+  <!-- Profile variant -->
+  <div class="variant-label">My Profile variant (no avatar)</div>
+  <div class="card" id="a-profile">
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="photo-thumb" onclick="openLightbox('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80')">
+          <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=200&q=80" alt="Gulkand Ki Kheer" />
+          <div class="photo-expand-icon">⤢</div>
+        </div>
+        <div class="card-content">
+          <div class="header-row">
+            <div class="header-text">
+              <div class="dish-name">Gulkand Ki Kheer</div>
+              <div class="restaurant-name">at <span>Indian Grill Room</span></div>
+            </div>
+            <div class="score-badge">3.0 <span class="out-of">/5</span></div>
+          </div>
+
+          <div style="margin-top:8px">
+            <div class="review-text clamped" id="a-profile-text">
+              Good overall dessert but could have been slightly less sweet. The rose petal garnish was a nice touch and presentation was beautiful. Would order again for special occasions.
+            </div>
+            <button class="see-more-btn" onclick="toggleText('a-profile-text', this)">See more</button>
+          </div>
+
+          <div class="tags-row" style="margin-top:8px">
+            <span class="tag">Generous portion</span>
+            <span class="tag">Mild</span>
+            <span class="tag">Fair price</span>
+            <span class="tag-overflow" onclick="this.previousElementSibling.style.display='inline'; this.style.display='none'">+1</span>
+            <span class="tag" style="display:none">Oily</span>
+          </div>
+
+          <div class="meta-row">
+            <span class="timestamp">2 days ago</span>
+            <button class="helpful-btn">👍 Helpful · 0</button>
+            <div class="actions">
+              <button class="action-btn edit" title="Edit review">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="action-btn delete" title="Delete review">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Expanded sub-ratings (hidden by default) -->
+          <div class="expand-section" id="a-profile-expand">
+            <div class="expand-section-inner">
+              <div class="sub-ratings-expanded">
+                <div class="sub-bar-row">
+                  <span class="sub-bar-label">Taste</span>
+                  <div class="sub-bar-track"><div class="sub-bar-fill" style="width:60%"></div></div>
+                  <span class="sub-bar-val">3.0</span>
+                </div>
+                <div class="sub-bar-row">
+                  <span class="sub-bar-label">Portion</span>
+                  <div class="sub-bar-track"><div class="sub-bar-fill" style="width:80%"></div></div>
+                  <span class="sub-bar-val">4.0</span>
+                </div>
+                <div class="sub-bar-row">
+                  <span class="sub-bar-label">Value</span>
+                  <div class="sub-bar-track"><div class="sub-bar-fill" style="width:40%"></div></div>
+                  <span class="sub-bar-val">2.0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dish page variant -->
+  <div class="variant-label">Dish Page variant (with avatar + name)</div>
+  <div class="card" id="a-dish">
+    <div class="card-body">
+      <div class="user-row">
+        <div class="avatar">TU</div>
+        <span class="user-name">Test User</span>
+        <span class="level-badge">Newbie</span>
+        <span class="timestamp">2 days ago</span>
+      </div>
+      <div class="card-inner">
+        <div class="photo-thumb" onclick="openLightbox('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80')">
+          <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=200&q=80" alt="Gulkand Ki Kheer" />
+          <div class="photo-expand-icon">⤢</div>
+        </div>
+        <div class="card-content">
+          <div class="header-row">
+            <div class="header-text" style="flex:1">
+              <div class="sub-ratings-compact">
+                <div class="score-badge score-badge-sm">3.0 <span class="out-of">/5</span></div>
+                <span class="sub-pill">Taste <span class="val">3.0</span></span>
+                <span class="sub-pill">Portion <span class="val">4.0</span></span>
+                <span class="sub-pill">Value <span class="val">2.0</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:8px">
+            <div class="review-text clamped" id="a-dish-text">
+              Good overall dessert but could have been slightly less sweet. The rose petal garnish was a nice touch and presentation was beautiful. Would order again for special occasions.
+            </div>
+            <button class="see-more-btn" onclick="toggleText('a-dish-text', this)">See more</button>
+          </div>
+
+          <div class="tags-row" style="margin-top:8px">
+            <span class="tag">Generous portion</span>
+            <span class="tag">Mild</span>
+            <span class="tag">Fair price</span>
+            <span class="tag">Oily</span>
+          </div>
+
+          <div class="meta-row">
+            <button class="helpful-btn">👍 Helpful · 0</button>
+            <div class="actions">
+              <div class="edit-closed">
+                Edit closed
+                <div class="tooltip">Reviews can only be edited within 24 hours</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PROTOTYPE B: Photo-Top Banner Card                        -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="prototype-section proto-b">
+  <div class="proto-label">Prototype B — Photo-Top Banner Card</div>
+  <p class="proto-desc">
+    Photo spans full-width as a top banner with score overlaid. Vertical layout gives
+    every element room to breathe. Click photo for lightbox.
+  </p>
+
+  <!-- Profile variant -->
+  <div class="variant-label">My Profile variant (no avatar)</div>
+  <div class="card" id="b-profile">
+    <div class="photo-banner" onclick="openLightbox('https://images.unsplash.com/photo-1567337710282-00832b415979?w=800&q=80')" style="position:relative">
+      <img src="https://images.unsplash.com/photo-1567337710282-00832b415979?w=800&q=80" alt="Wings" />
+      <div class="score-overlay">
+        <div class="score-badge">2.7 <span class="out-of">/5</span></div>
+      </div>
+      <div class="photo-expand-icon">⤢</div>
+    </div>
+    <div class="card-body">
+      <div class="header-row">
+        <div class="header-text">
+          <div class="dish-name">House of Wings — One Dozen</div>
+          <div class="restaurant-name">at <span>Plan B — House of Wings</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <div class="review-text clamped" id="b-profile-text">
+          Honestly pretty disappointing. The wings were overcooked and the sauce was way too sweet. Small portion for the price they charge. The spice level was fine but everything else let me down. Wouldn't recommend this place for wings specifically.
+        </div>
+        <button class="see-more-btn" onclick="toggleText('b-profile-text', this)">See more</button>
+      </div>
+
+      <div class="tags-row" style="margin-top:8px">
+        <span class="tag">Spicy</span>
+        <span class="tag">Small portion</span>
+        <span class="tag">Overpriced</span>
+        <span class="tag-overflow" onclick="showHiddenTags(this)">+1</span>
+        <span class="tag" style="display:none">Overcooked</span>
+      </div>
+
+      <div class="meta-row">
+        <span class="timestamp">5 days ago</span>
+        <button class="helpful-btn">👍 Helpful · 0</button>
+        <div class="actions">
+          <div class="edit-closed">
+            Edit closed
+            <div class="tooltip">Reviews can only be edited within 24 hours</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expandable sub-ratings -->
+      <div class="expand-section" id="b-profile-expand">
+        <div class="expand-section-inner">
+          <div class="sub-ratings-expanded">
+            <div class="sub-bar-row">
+              <span class="sub-bar-label">Taste</span>
+              <div class="sub-bar-track"><div class="sub-bar-fill" style="width:60%"></div></div>
+              <span class="sub-bar-val">3.0</span>
+            </div>
+            <div class="sub-bar-row">
+              <span class="sub-bar-label">Portion</span>
+              <div class="sub-bar-track"><div class="sub-bar-fill" style="width:60%"></div></div>
+              <span class="sub-bar-val">3.0</span>
+            </div>
+            <div class="sub-bar-row">
+              <span class="sub-bar-label">Value</span>
+              <div class="sub-bar-track"><div class="sub-bar-fill" style="width:40%"></div></div>
+              <span class="sub-bar-val">2.0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dish page variant -->
+  <div class="variant-label">Dish Page variant (with avatar + name)</div>
+  <div class="card" id="b-dish">
+    <div class="photo-banner" onclick="openLightbox('https://images.unsplash.com/photo-1567337710282-00832b415979?w=800&q=80')" style="position:relative">
+      <img src="https://images.unsplash.com/photo-1567337710282-00832b415979?w=800&q=80" alt="Wings" />
+      <div class="photo-expand-icon">⤢</div>
+    </div>
+    <div class="card-body">
+      <div class="user-row">
+        <div class="avatar">TU</div>
+        <span class="user-name">Test User</span>
+        <span class="level-badge">Newbie</span>
+        <div class="score-badge score-badge-sm" style="margin-left:auto">2.7 <span class="out-of">/5</span></div>
+      </div>
+
+      <div style="margin-top:2px">
+        <div class="sub-ratings-compact">
+          <span class="sub-pill">Taste <span class="val">3.0</span></span>
+          <span class="sub-pill">Portion <span class="val">3.0</span></span>
+          <span class="sub-pill">Value <span class="val">2.0</span></span>
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <div class="review-text clamped" id="b-dish-text">
+          Honestly pretty disappointing. The wings were overcooked and the sauce was way too sweet. Small portion for the price they charge. The spice level was fine but everything else let me down. Wouldn't recommend this place for wings specifically.
+        </div>
+        <button class="see-more-btn" onclick="toggleText('b-dish-text', this)">See more</button>
+      </div>
+
+      <div class="tags-row" style="margin-top:8px">
+        <span class="tag">Spicy</span>
+        <span class="tag">Small portion</span>
+        <span class="tag">Overpriced</span>
+        <span class="tag">Overcooked</span>
+      </div>
+
+      <div class="meta-row">
+        <span class="timestamp">5 days ago</span>
+        <button class="helpful-btn">👍 Helpful · 0</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PROTOTYPE C: Compact Stacked (text-forward)               -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="prototype-section proto-c">
+  <div class="proto-label">Prototype C — Compact Stacked (text-forward)</div>
+  <p class="proto-desc">
+    Minimal footprint. Score and dish name lead. Photo is a small right-side indicator
+    with inline expand below. Ideal for long review lists. Click the thumbnail to expand inline,
+    or double-click for lightbox.
+  </p>
+
+  <!-- Profile variant -->
+  <div class="variant-label">My Profile variant (no avatar)</div>
+  <div class="card" id="c-profile">
+    <div class="card-body">
+      <div class="header-row">
+        <div class="score-badge">3.0 <span class="out-of">/5</span></div>
+        <div class="header-text">
+          <div class="dish-name">Gulkand Ki Kheer</div>
+          <div class="restaurant-name">at <span>Indian Grill Room</span></div>
+        </div>
+        <div class="photo-thumb" style="width:48px;height:48px;border-radius:6px;" onclick="toggleInlinePhoto('c-profile-photo')" ondblclick="openLightbox('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80')">
+          <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=200&q=80" alt="Gulkand Ki Kheer" />
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <div class="review-text clamped" id="c-profile-text">
+          Good overall dessert but could have been slightly less sweet. The rose petal garnish was a nice touch and presentation was beautiful. Would order again for special occasions.
+        </div>
+        <button class="see-more-btn" onclick="toggleTextAndExpand('c-profile-text', 'c-profile-expand', this)">See more</button>
+      </div>
+
+      <div class="tags-row" style="margin-top:8px">
+        <span class="tag">Generous portion</span>
+        <span class="tag">Mild</span>
+        <span class="tag">Fair price</span>
+        <span class="tag-overflow" onclick="showHiddenTags(this)">+1</span>
+        <span class="tag" style="display:none">Oily</span>
+      </div>
+
+      <div class="meta-row">
+        <span class="timestamp">2 days ago</span>
+        <button class="helpful-btn">👍 Helpful · 0</button>
+        <div class="actions">
+          <button class="action-btn edit" title="Edit review">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="action-btn delete" title="Delete review">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Inline photo expand -->
+      <div class="inline-photo-expand" id="c-profile-photo">
+        <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80" alt="Gulkand Ki Kheer" onclick="openLightbox('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80')" />
+      </div>
+
+      <!-- Expanded sub-ratings (on "See more") -->
+      <div class="expand-section" id="c-profile-expand">
+        <div class="expand-section-inner">
+          <div class="sub-ratings-expanded">
+            <div class="sub-bar-row">
+              <span class="sub-bar-label">Taste</span>
+              <div class="sub-bar-track"><div class="sub-bar-fill" style="width:60%"></div></div>
+              <span class="sub-bar-val">3.0</span>
+            </div>
+            <div class="sub-bar-row">
+              <span class="sub-bar-label">Portion</span>
+              <div class="sub-bar-track"><div class="sub-bar-fill" style="width:80%"></div></div>
+              <span class="sub-bar-val">4.0</span>
+            </div>
+            <div class="sub-bar-row">
+              <span class="sub-bar-label">Value</span>
+              <div class="sub-bar-track"><div class="sub-bar-fill" style="width:40%"></div></div>
+              <span class="sub-bar-val">2.0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dish page variant -->
+  <div class="variant-label">Dish Page variant (with avatar + name)</div>
+  <div class="card" id="c-dish">
+    <div class="card-body">
+      <div class="user-row">
+        <div class="avatar">TU</div>
+        <span class="user-name">Test User</span>
+        <span class="level-badge">Newbie</span>
+        <span class="timestamp">2 days ago</span>
+      </div>
+
+      <div class="header-row">
+        <div class="score-badge">3.0 <span class="out-of">/5</span></div>
+        <div class="sub-ratings-compact" style="flex:1">
+          <span class="sub-pill">Taste <span class="val">3.0</span></span>
+          <span class="sub-pill">Portion <span class="val">4.0</span></span>
+          <span class="sub-pill">Value <span class="val">2.0</span></span>
+        </div>
+        <div class="photo-thumb" style="width:48px;height:48px;border-radius:6px;" onclick="toggleInlinePhoto('c-dish-photo')" ondblclick="openLightbox('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80')">
+          <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=200&q=80" alt="Gulkand Ki Kheer" />
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <div class="review-text clamped" id="c-dish-text">
+          Good overall dessert but could have been slightly less sweet. The rose petal garnish was a nice touch and presentation was beautiful. Would order again for special occasions.
+        </div>
+        <button class="see-more-btn" onclick="toggleText('c-dish-text', this)">See more</button>
+      </div>
+
+      <div class="tags-row" style="margin-top:8px">
+        <span class="tag">Generous portion</span>
+        <span class="tag">Mild</span>
+        <span class="tag">Fair price</span>
+        <span class="tag">Oily</span>
+      </div>
+
+      <div class="meta-row">
+        <button class="helpful-btn">👍 Helpful · 0</button>
+        <div class="actions">
+          <div class="edit-closed">
+            Edit closed
+            <div class="tooltip">Reviews can only be edited within 24 hours</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inline photo expand -->
+      <div class="inline-photo-expand" id="c-dish-photo">
+        <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80" alt="Gulkand Ki Kheer" onclick="openLightbox('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80')" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- BONUS: No-photo card (every prototype must handle this)   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<hr class="divider" />
+<div class="prototype-section">
+  <div class="proto-label">Bonus — No-Photo Card (applies to all prototypes)</div>
+  <p class="proto-desc">
+    When a review has no photo, the card gracefully degrades. Shown here in Prototype C layout.
+  </p>
+  <div class="variant-label">My Profile variant</div>
+  <div class="card proto-c" id="no-photo">
+    <div class="card-body">
+      <div class="header-row">
+        <div class="score-badge">4.3 <span class="out-of">/5</span></div>
+        <div class="header-text">
+          <div class="dish-name">Butter Chicken</div>
+          <div class="restaurant-name">at <span>Punjab Grill</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <div class="review-text full" id="no-photo-text">
+          Absolutely phenomenal butter chicken. Creamy, rich, perfect spice level. Best I've had in Bengaluru.
+        </div>
+      </div>
+
+      <div class="tags-row" style="margin-top:8px">
+        <span class="tag">Recommended</span>
+        <span class="tag">Authentic</span>
+        <span class="tag">Comfort food</span>
+      </div>
+
+      <div class="meta-row">
+        <span class="timestamp">1 week ago</span>
+        <button class="helpful-btn">👍 Helpful · 3</button>
+        <div class="actions">
+          <div class="edit-closed">
+            Edit closed
+            <div class="tooltip">Reviews can only be edited within 24 hours</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="Review photo" />
+</div>
+
+<script>
+  function toggleText(id, btn) {
+    const el = document.getElementById(id);
+    if (el.classList.contains('clamped')) {
+      el.classList.remove('clamped');
+      el.classList.add('full');
+      btn.textContent = 'See less';
+    } else {
+      el.classList.remove('full');
+      el.classList.add('clamped');
+      btn.textContent = 'See more';
+    }
+  }
+
+  function toggleTextAndExpand(textId, expandId, btn) {
+    toggleText(textId, btn);
+    const expand = document.getElementById(expandId);
+    expand.classList.toggle('open');
+  }
+
+  function toggleInlinePhoto(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+
+  function openLightbox(src) {
+    const overlay = document.getElementById('lightbox');
+    const img = document.getElementById('lightbox-img');
+    img.src = src;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    const overlay = document.getElementById('lightbox');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function showHiddenTags(btn) {
+    let sibling = btn.nextElementSibling;
+    while (sibling) {
+      if (sibling.classList.contains('tag')) sibling.style.display = 'inline';
+      sibling = sibling.nextElementSibling;
+    }
+    btn.style.display = 'none';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
+
+</body>
+</html>

@@ -2,8 +2,8 @@ import {
   collection,
   doc,
   getDoc,
+  getCountFromServer,
   getDocs,
-  updateDoc,
   query,
   where,
   orderBy,
@@ -17,10 +17,23 @@ import {
 } from 'firebase/firestore'
 import { db, COLLECTIONS } from './config'
 import type { Review, User, ReviewFormData, PaginatedResult } from '../types'
-import { computeOverall, computeTopTags, canEditReview } from '../utils/index'
+import { computeOverall, canEditReview } from '../utils/index'
+
 import { REVIEWS_PER_PAGE } from '../constants'
 import { computeLevel, computeEarnedBadges } from '../gamification'
 import { logError } from '../logger'
+
+/**
+ * Derives the top 5 tags from a tagCounts map without reading any reviews.
+ * Filters out tags with zero or negative counts (from decrements on deletions).
+ */
+function deriveTopTagsFromCounts(tagCounts: Record<string, number>): string[] {
+  return Object.entries(tagCounts)
+    .filter(([, count]) => count > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([tag]) => tag)
+}
 
 /** Returns a single review by ID. */
 export async function getReview(reviewId: string): Promise<Review | null> {
@@ -31,6 +44,17 @@ export async function getReview(reviewId: string): Promise<Review | null> {
   } catch (e) {
     logError('getReview', e)
     return null
+  }
+}
+
+/** Returns the total number of reviews using an aggregation query (no full scan). */
+export async function getReviewCount(): Promise<number> {
+  try {
+    const snap = await getCountFromServer(collection(db, COLLECTIONS.REVIEWS))
+    return snap.data().count
+  } catch (e) {
+    logError('getReviewCount', e)
+    return 0
   }
 }
 
@@ -140,10 +164,12 @@ export async function createReview(data: ReviewFormData, user: User, photoUrl: s
       tags:           data.tags,
       text:           data.text || null,
       helpfulVotes:   0,
-      helpfulVotedBy: [],
+      helpfulVotedBy: [] as string[],
       isFlagged:      false,
       isApproved:     true,
-      editedAt:       null,
+      editedAt:       null as null,
+      dishName:       '',
+      restaurantName: '',
       createdAt:      now,
     }
 
@@ -156,30 +182,33 @@ export async function createReview(data: ReviewFormData, user: User, photoUrl: s
 
       const dish = dishSnap.data()
 
-      const prevCount   = dish.reviewCount as number
-      const newCount    = prevCount + 1
-      const avgTaste    = ((dish.avgTaste   * prevCount) + data.tasteRating!)   / newCount
-      const avgPortion  = ((dish.avgPortion * prevCount) + data.portionRating!) / newCount
-      const avgValue    = ((dish.avgValue   * prevCount) + data.valueRating!)   / newCount
-      const avgOverall  = computeOverall(avgTaste, avgPortion, avgValue)
+      reviewData.dishName = dish.name as string
+      reviewData.restaurantName = dish.restaurantName as string
+
+      const prevCount  = dish.reviewCount as number
+      const newCount   = prevCount + 1
+      const avgTaste   = ((dish.avgTaste   * prevCount) + data.tasteRating!)   / newCount
+      const avgPortion = ((dish.avgPortion * prevCount) + data.portionRating!) / newCount
+      const avgValue   = ((dish.avgValue   * prevCount) + data.valueRating!)   / newCount
+      const avgOverall = computeOverall(avgTaste, avgPortion, avgValue)
+
+      // Increment tag counts atomically — no getDocs scan needed
+      const existingTagCounts = (dish.tagCounts as Record<string, number>) ?? {}
+      const newTagCounts = { ...existingTagCounts }
+      for (const tag of data.tags) {
+        newTagCounts[tag] = (newTagCounts[tag] ?? 0) + 1
+      }
+      const topTags = deriveTopTagsFromCounts(newTagCounts)
 
       tx.set(reviewRef, reviewData)
-      tx.update(dishRef, { avgTaste, avgPortion, avgValue, avgOverall, reviewCount: newCount })
+      tx.update(dishRef, { avgTaste, avgPortion, avgValue, avgOverall, reviewCount: newCount, tagCounts: newTagCounts, topTags })
 
-      const newReviewCount = (userSnap.data().reviewCount as number) + 1
+      const newReviewCount  = (userSnap.data().reviewCount as number) + 1
       const newHelpfulVotes = userSnap.data().helpfulVotesReceived as number
-      const newLevel  = computeLevel(newReviewCount)
-      const newBadges = computeEarnedBadges(newReviewCount, newHelpfulVotes)
+      const newLevel        = computeLevel(newReviewCount)
+      const newBadges       = computeEarnedBadges(newReviewCount, newHelpfulVotes)
       tx.update(userRef, { reviewCount: newReviewCount, level: newLevel, badges: newBadges })
     })
-
-    // Recompute topTags outside the transaction (best-effort, display-only)
-    const existingTagsSnap = await getDocs(
-      query(collection(db, COLLECTIONS.REVIEWS), where('dishId', '==', data.dishId))
-    )
-    const allTagArrays = existingTagsSnap.docs.map((d) => d.data().tags as string[])
-    const topTags = computeTopTags(allTagArrays)
-    await updateDoc(dishRef, { topTags })
 
     return {
       id: reviewRef.id,
@@ -196,6 +225,9 @@ export async function createReview(data: ReviewFormData, user: User, photoUrl: s
 /**
  * Updates a review if the caller owns it and it's within the edit window,
  * then recalculates dish averages and refreshes topTags.
+ *
+ * dishId cannot change on update — only ratings, tags, and text are editable,
+ * so dishName/restaurantName do not need to be refreshed here.
  */
 export async function updateReview(
   reviewId: string,
@@ -207,7 +239,13 @@ export async function updateReview(
     const reviewSnap = await getDoc(reviewRef)
     if (!reviewSnap.exists()) return null
 
-    const review = { id: reviewSnap.id, ...reviewSnap.data() } as Review
+    const raw = reviewSnap.data()!
+    const createdAtRaw = raw.createdAt
+    const createdAtStr: string =
+      typeof createdAtRaw === 'string'
+        ? createdAtRaw
+        : createdAtRaw?.toDate?.().toISOString() ?? ''
+    const review = { id: reviewSnap.id, ...raw, createdAt: createdAtStr } as Review
 
     if (review.userId !== callerId) return null
     if (!canEditReview(review.createdAt)) return null
@@ -222,40 +260,44 @@ export async function updateReview(
 
       tx.update(reviewRef, payload)
 
-      const dish = dishSnap.data()
+      const dish  = dishSnap.data()
       const count = dish.reviewCount as number
+      const dishUpdates: Record<string, unknown> = {}
 
       if (count > 0) {
         const oldTaste   = review.tasteRating
         const oldPortion = review.portionRating
         const oldValue   = review.valueRating
-        const newTaste   = (updates.tasteRating   ?? oldTaste)
-        const newPortion = (updates.portionRating ?? oldPortion)
-        const newValue   = (updates.valueRating   ?? oldValue)
-
-        const avgTaste   = ((dish.avgTaste as number)   * count - oldTaste   + newTaste)   / count
+        const newTaste   = updates.tasteRating   ?? oldTaste
+        const newPortion = updates.portionRating ?? oldPortion
+        const newValue   = updates.valueRating   ?? oldValue
+        const avgTaste   = ((dish.avgTaste   as number) * count - oldTaste   + newTaste)   / count
         const avgPortion = ((dish.avgPortion as number) * count - oldPortion + newPortion) / count
-        const avgValue   = ((dish.avgValue as number)   * count - oldValue   + newValue)   / count
-        const avgOverall = computeOverall(avgTaste, avgPortion, avgValue)
+        const avgValue   = ((dish.avgValue   as number) * count - oldValue   + newValue)   / count
+        dishUpdates.avgTaste   = avgTaste
+        dishUpdates.avgPortion = avgPortion
+        dishUpdates.avgValue   = avgValue
+        dishUpdates.avgOverall = computeOverall(avgTaste, avgPortion, avgValue)
+      }
 
-        tx.update(dishRef, { avgTaste, avgPortion, avgValue, avgOverall })
+      if (updates.tags) {
+        // Decrement old tag counts, increment new ones — no getDocs scan needed
+        const existingTagCounts = (dish.tagCounts as Record<string, number>) ?? {}
+        const newTagCounts = { ...existingTagCounts }
+        for (const tag of review.tags) {
+          newTagCounts[tag] = Math.max((newTagCounts[tag] ?? 0) - 1, 0)
+        }
+        for (const tag of updates.tags) {
+          newTagCounts[tag] = (newTagCounts[tag] ?? 0) + 1
+        }
+        dishUpdates.tagCounts = newTagCounts
+        dishUpdates.topTags   = deriveTopTagsFromCounts(newTagCounts)
+      }
+
+      if (Object.keys(dishUpdates).length > 0) {
+        tx.update(dishRef, dishUpdates)
       }
     })
-
-    if (updates.tags) {
-      const allReviewsSnap = await getDocs(
-        query(
-          collection(db, COLLECTIONS.REVIEWS),
-          where('dishId', '==', review.dishId),
-          where('isApproved', '==', true)
-        )
-      )
-      const allTagArrays = allReviewsSnap.docs.map((d) =>
-        d.id === reviewId ? (updates.tags ?? d.data().tags as string[]) : d.data().tags as string[]
-      )
-      const topTags = computeTopTags(allTagArrays)
-      await updateDoc(doc(db, COLLECTIONS.DISHES, review.dishId), { topTags })
-    }
 
     return { ...review, ...updates, editedAt: editedAt.toDate().toISOString() }
   } catch (e) {
@@ -295,32 +337,29 @@ export async function deleteReview(reviewId: string, dishId: string, callerId: s
         avgOverall = computeOverall(avgTaste, avgPortion, avgValue)
       }
 
+      // Decrement tag counts for the deleted review's tags — no getDocs scan needed
+      const existingTagCounts = (dish.tagCounts as Record<string, number>) ?? {}
+      const newTagCounts = { ...existingTagCounts }
+      for (const tag of (review.tags as string[]) ?? []) {
+        newTagCounts[tag] = Math.max((newTagCounts[tag] ?? 0) - 1, 0)
+      }
+      const topTags = deriveTopTagsFromCounts(newTagCounts)
+
       tx.delete(reviewRef)
-      tx.update(dishRef, { avgTaste, avgPortion, avgValue, avgOverall, reviewCount: newCount })
+      tx.update(dishRef, { avgTaste, avgPortion, avgValue, avgOverall, reviewCount: newCount, tagCounts: newTagCounts, topTags })
 
       const authorId = review.userId as string
       const userRef  = doc(db, COLLECTIONS.USERS, authorId)
       const userSnap = await tx.get(userRef)
       if (userSnap.exists()) {
-        const userData         = userSnap.data()
-        const newReviewCount   = Math.max((userData.reviewCount as number) - 1, 0)
-        const helpfulVotes     = userData.helpfulVotesReceived as number
-        const newLevel         = computeLevel(newReviewCount)
-        const newBadges        = computeEarnedBadges(newReviewCount, helpfulVotes)
+        const userData       = userSnap.data()
+        const newReviewCount = Math.max((userData.reviewCount as number) - 1, 0)
+        const helpfulVotes   = userData.helpfulVotesReceived as number
+        const newLevel       = computeLevel(newReviewCount)
+        const newBadges      = computeEarnedBadges(newReviewCount, helpfulVotes)
         tx.update(userRef, { reviewCount: newReviewCount, level: newLevel, badges: newBadges })
       }
     })
-
-    const remainingSnap = await getDocs(
-      query(
-        collection(db, COLLECTIONS.REVIEWS),
-        where('dishId', '==', dishId),
-        where('isApproved', '==', true)
-      )
-    )
-    const allTagArrays = remainingSnap.docs.map((d) => d.data().tags as string[])
-    const topTags = computeTopTags(allTagArrays)
-    await updateDoc(dishRef, { topTags })
 
     return true
   } catch (e) {

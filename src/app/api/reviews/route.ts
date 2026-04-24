@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { reviewRepository, userRepository, dishRepository } from '@/lib/repositories'
+import { userRepository, dishRepository } from '@/lib/repositories'
+import { reviewRepository } from '@/lib/repositories/server'
 import { getRequestAuth } from '@/lib/services/request-auth'
 import { parseBody } from '@/lib/validation'
 import { createReviewSchema } from '@/lib/validation/review.schema'
@@ -11,11 +12,12 @@ import { isTypesenseConfigured, getTypesenseClient } from '@/lib/repositories/ty
 import { invalidateAnalyticsCache } from '@/lib/services/analytics-cache'
 import { adminDb } from '@/lib/firebase/admin-server'
 import { COLLECTIONS } from '@/lib/firebase/config'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export async function POST(req: Request) {
   const start = Date.now()
   const auth = await getRequestAuth(req)
-  if (!auth) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+  if (!auth) return NextResponse.json({ message: API_ERRORS.UNAUTHORIZED }, { status: 401 })
 
   const rateLimited = await checkRateLimit(auth.userId, 'REVIEW_CREATE')
   if (rateLimited) return rateLimited
@@ -25,16 +27,11 @@ export async function POST(req: Request) {
 
   const { data: body } = parsed
 
+  // Full User document is required here: reviewRepository.create() needs displayName, level,
+  // and avatarUrl for review denormalization, and dishPointsBalance is used in the response.
+  // These fields are not available on the auth token, so this fetch cannot be eliminated.
   const user = await userRepository.getById(auth.userId)
-  if (!user) return NextResponse.json({ message: 'User not found' }, { status: 404 })
-
-  const existing = await reviewRepository.findByUserAndDish(auth.userId, body.dishId)
-  if (existing) {
-    return NextResponse.json(
-      { message: 'You have already reviewed this dish', existingReviewId: existing.id },
-      { status: 409 },
-    )
-  }
+  if (!user) return NextResponse.json({ message: API_ERRORS.USER_NOT_FOUND }, { status: 404 })
 
   try {
     const result = await reviewRepository.create(
@@ -52,7 +49,7 @@ export async function POST(req: Request) {
       user,
       body.photoUrl ?? ''
     )
-    if (!result) return NextResponse.json({ message: 'Failed to create review' }, { status: 500 })
+    if (!result) return NextResponse.json({ message: API_ERRORS.FAILED_TO_CREATE_REVIEW }, { status: 500 })
 
     addBreadcrumb('Review created', { reviewId: result.id, dishId: body.dishId })
 
@@ -123,12 +120,15 @@ export async function POST(req: Request) {
       isFullReview: !!body.photoUrl && body.tags.length > 0 && body.text.length >= REVIEW_FULL_MIN_TEXT_LENGTH,
     }, { status: 201 })
   } catch (e) {
+    const message = e instanceof Error ? e.message : API_ERRORS.FAILED_TO_CREATE_REVIEW
+    if (message === 'You have already reviewed this dish') {
+      return NextResponse.json({ message: API_ERRORS.ALREADY_REVIEWED }, { status: 409 })
+    }
     captureError(e, {
       userId: auth.userId,
       route: '/api/reviews',
       requestBody: { dishId: body.dishId, restaurantId: body.restaurantId },
     })
-    const message = e instanceof Error ? e.message : 'Failed to create review'
     return NextResponse.json({ message }, { status: 400 })
   }
 }

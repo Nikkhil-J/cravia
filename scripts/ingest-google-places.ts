@@ -136,7 +136,7 @@ function generateDocId(place: PlaceSearchResult): string {
 async function main() {
   const { city, cuisine, limit, dryRun } = parseArgs()
 
-  console.log(`\nDishCheck — Google Places Ingestion`)
+  console.log(`\nCravia — Google Places Ingestion`)
   console.log(`  City:    ${city}`)
   console.log(`  Cuisine: ${cuisine ?? '(all)'}`)
   console.log(`  Limit:   ${limit}`)

@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test'
 test.describe('Landing page', () => {
   test('loads and shows hero search bar', async ({ page }) => {
     await page.goto('/')
-    await expect(page).toHaveTitle(/DishCheck/i)
+    await expect(page).toHaveTitle(/Cravia/i)
     // HeroSearchBar renders a div with a Search icon and span text, not an input
     await expect(page.getByText('Search for a dish or restaurant...')).toBeVisible({ timeout: 8000 })
   })

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cravia — Review card prototype</title>
+  <style>
+    :root {
+      --bg: #0d0f1a;
+      --bg-elevated: #141824;
+      --bg-subtle: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.12);
+      --text: #f4f4f5;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.15);
+      --accent-red: #ef4444;
+      --radius-card: 16px;
+      --radius-pill: 999px;
+      --shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(249, 115, 22, 0.12), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(239, 68, 68, 0.06), transparent);
+      padding: 48px 24px 64px;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 6px;
+    }
+
+    .page-header p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      max-width: 42ch;
+    }
+
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .grid .review-card {
+      flex: 0 1 calc(50% - 8px);
+      max-width: calc(50% - 8px);
+      min-width: 0;
+    }
+
+    @media (max-width: 800px) {
+      .grid .review-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+
+    /* Card: wide, low profile */
+    .review-card {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px 20px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .review-card:hover {
+      border-color: var(--border-strong);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.08) inset,
+        0 16px 48px rgba(0, 0, 0, 0.4);
+    }
+
+    .avatar {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      background: linear-gradient(145deg, rgba(249, 115, 22, 0.35), rgba(239, 68, 68, 0.2));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 10px;
+      row-gap: 4px;
+    }
+
+    .name {
+      font-weight: 600;
+      font-size: 0.9375rem;
+      letter-spacing: -0.01em;
+    }
+
+    .section-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin: 0 0 12px;
+    }
+
+    .prototype-section + .prototype-section {
+      margin-top: 40px;
+    }
+
+    .grid--profile .review-card {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+
+    .time {
+      font-size: 0.8125rem;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+
+    @media (max-width: 520px) {
+      .time {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+
+    .dish-line {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-top: -4px;
+    }
+
+    .dish-line strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .ratings-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .rating-pill {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+    }
+
+    .rating-pill .label {
+      color: var(--text-dim);
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+
+    .rating-pill .value {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+
+    .rating-pill .value.accent {
+      color: #fdba74;
+    }
+
+    .text {
+      font-size: 0.9375rem;
+      color: #d4d4d8;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .footer-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .footer-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: none;
+    }
+
+    .btn-helpful {
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: default;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-helpful:hover {
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--border);
+    }
+
+    .btn-helpful svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.7;
+    }
+
+    .photo-thumbs {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .photo-thumb {
+      position: relative;
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s ease, transform 0.15s ease;
+      flex-shrink: 0;
+      padding: 0;
+      background: none;
+    }
+
+    .photo-thumb:hover {
+      border-color: var(--border-strong);
+      transform: scale(1.05);
+    }
+
+    .photo-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-thumb-overflow {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #fff;
+      pointer-events: none;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .lightbox[hidden] {
+      display: none !important;
+    }
+
+    .lightbox-backdrop {
+      position: absolute;
+      inset: 0;
+      border: none;
+      padding: 0;
+      margin: 0;
+      background: rgba(0, 0, 0, 0.88);
+      cursor: pointer;
+    }
+
+    .lightbox-panel {
+      position: relative;
+      z-index: 1;
+      max-width: min(92vw, 1100px);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lightbox-img-wrap {
+      position: relative;
+      max-width: 100%;
+      max-height: calc(90vh - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-img-wrap img {
+      max-width: 100%;
+      max-height: calc(90vh - 80px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      z-index: 2;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .lightbox-close:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .lightbox-nav:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
+    .lightbox-nav:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .lightbox-nav--prev {
+      left: 8px;
+    }
+
+    .lightbox-nav--next {
+      right: 8px;
+    }
+
+    .lightbox-counter {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    body.lightbox-open {
+      overflow: hidden;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="page-header">
+      <h1>Review cards — layout prototype</h1>
+      <p>Two cards per row on wide screens (≈half width each); stacks on narrow. Dish page: no “at restaurant · dish” line. User profile: same card with context line below the name row.</p>
+    </header>
+
+    <section class="prototype-section" aria-labelledby="label-dish">
+      <h2 id="label-dish" class="section-label">Dish page</h2>
+      <div class="grid">
+      <article class="review-card">
+        <div class="avatar" aria-hidden="true">MK</div>
+        <div class="body">
+          <div class="meta">
+            <span class="name">Maya K.</span>
+            <time class="time" datetime="2026-04-05">Apr 5, 2026</time>
+          </div>
+          <div class="ratings-row" aria-label="Sub-ratings">
+            <span class="rating-pill"><span class="label">Taste</span><span class="value accent">4.5</span></span>
+            <span class="rating-pill"><span class="label">Portion</span><span class="value">3.0</span></span>
+            <span class="rating-pill"><span class="label">Value</span><span class="value">4.0</span></span>
+          </div>
+          <p class="text">Broth had real depth—garlic chile oil on top without drowning the pork flavor. Noodles were springy. Only knock is it’s a bit pricey for the bowl size, but I’d come back for a cold night.</p>
+          <div class="footer-row">
+            <div class="footer-left">
+              <div class="photo-thumbs" data-photo-key="maya">
+                <button type="button" class="photo-thumb" data-photo-index="0" aria-label="View photo 1">
+                  <img src="" alt="Review photo 1" data-thumb="maya-0" />
+                </button>
+                <button type="button" class="photo-thumb" data-photo-index="1" aria-label="View photo 2">
+                  <img src="" alt="Review photo 2" data-thumb="maya-1" />
+                </button>
+              </div>
+              <div class="tags">
+                <span class="tag">Spicy</span>
+                <span class="tag">Rich broth</span>
+                <span class="tag">Would reorder</span>
+              </div>
+            </div>
+            <button type="button" class="btn-helpful" aria-label="Mark as helpful">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+              </svg>
+              Helpful · 24
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="review-card">
+        <div class="avatar" aria-hidden="true">JR</div>
+        <div class="body">
+          <div class="meta">
+            <span class="name">Jordan R.</span>
+            <time class="time" datetime="2026-04-02">Apr 2, 2026</time>
+          </div>
+          <div class="ratings-row" aria-label="Sub-ratings">
+            <span class="rating-pill"><span class="label">Taste</span><span class="value accent">5.0</span></span>
+            <span class="rating-pill"><span class="label">Portion</span><span class="value">2.5</span></span>
+            <span class="rating-pill"><span class="label">Value</span><span class="value">2.0</span></span>
+          </div>
+          <p class="text">Absolutely luxurious—earthy, buttery, parmesan crisp was a nice touch. Portion is tasting-menu sized; fine for date night, less so if you’re hungry. Service paced it well.</p>
+          <div class="footer-row">
+            <div class="footer-left">
+              <div class="tags">
+                <span class="tag">Date night</span>
+                <span class="tag">Small portion</span>
+                <span class="tag">Truffle</span>
+              </div>
+            </div>
+            <button type="button" class="btn-helpful" aria-label="Mark as helpful">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+              </svg>
+              Helpful · 9
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <article class="review-card">
+        <div class="avatar" aria-hidden="true">SL</div>
+        <div class="body">
+          <div class="meta">
+            <span class="name">Sam L.</span>
+            <time class="time" datetime="2026-03-28">Mar 28, 2026</time>
+          </div>
+          <div class="ratings-row" aria-label="Sub-ratings">
+            <span class="rating-pill"><span class="label">Taste</span><span class="value accent">4.0</span></span>
+            <span class="rating-pill"><span class="label">Portion</span><span class="value">4.5</span></span>
+            <span class="rating-pill"><span class="label">Value</span><span class="value accent">4.5</span></span>
+          </div>
+          <p class="text">Chicken was crispy outside, juicy inside—pickled veg cut through the richness. Bento felt like a full lunch, not a snack. Under $18 with miso soup; hard to beat in this neighborhood.</p>
+          <div class="footer-row">
+            <div class="footer-left">
+              <div class="photo-thumbs" data-photo-key="sam">
+                <button type="button" class="photo-thumb" data-photo-index="0" aria-label="View photo">
+                  <img src="" alt="Review photo" data-thumb="sam-0" />
+                </button>
+              </div>
+              <div class="tags">
+                <span class="tag">Crispy</span>
+                <span class="tag">Great value</span>
+                <span class="tag">Lunch spot</span>
+              </div>
+            </div>
+            <button type="button" class="btn-helpful" aria-label="Mark as helpful">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+              </svg>
+              Helpful · 41
+            </button>
+          </div>
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="prototype-section" aria-labelledby="label-profile">
+      <h2 id="label-profile" class="section-label">User profile — same component</h2>
+      <div class="grid grid--profile">
+        <article class="review-card">
+          <div class="avatar" aria-hidden="true">AP</div>
+          <div class="body">
+            <div class="meta">
+              <span class="name">Alex P.</span>
+              <time class="time" datetime="2026-04-01">Apr 1, 2026</time>
+            </div>
+            <div class="dish-line">at <strong>Bhukkad Bistro</strong> · <strong>Butter chicken &amp; naan</strong></div>
+            <div class="ratings-row" aria-label="Sub-ratings">
+              <span class="rating-pill"><span class="label">Taste</span><span class="value accent">4.0</span></span>
+              <span class="rating-pill"><span class="label">Portion</span><span class="value">4.0</span></span>
+              <span class="rating-pill"><span class="label">Value</span><span class="value">3.5</span></span>
+            </div>
+            <p class="text">Solid neighborhood spot—sauce was creamy without being too sweet, naan came out hot. Would skip the rice next time and double down on bread.</p>
+            <div class="footer-row">
+              <div class="footer-left">
+                <div class="tags">
+                  <span class="tag">Comfort food</span>
+                  <span class="tag">Family-friendly</span>
+                </div>
+              </div>
+              <button type="button" class="btn-helpful" aria-label="Mark as helpful">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+                </svg>
+                Helpful · 6
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <div id="photo-lightbox" class="lightbox" hidden role="dialog" aria-modal="true" aria-label="Review photos">
+    <button type="button" class="lightbox-backdrop" tabindex="-1" aria-label="Close gallery"></button>
+    <div class="lightbox-panel">
+      <div class="lightbox-img-wrap">
+        <button type="button" class="lightbox-close" aria-label="Close">×</button>
+        <button type="button" class="lightbox-nav lightbox-nav--prev" aria-label="Previous photo">← Prev</button>
+        <img src="" alt="Review photo" />
+        <button type="button" class="lightbox-nav lightbox-nav--next" aria-label="Next photo">Next →</button>
+      </div>
+      <div class="lightbox-counter" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      function svgDataUrl(label, c1, c2) {
+        var svg =
+          '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">' +
+          '<defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">' +
+          '<stop offset="0%" style="stop-color:' + c1 + '"/>' +
+          '<stop offset="100%" style="stop-color:' + c2 + '"/></linearGradient></defs>' +
+          '<rect width="960" height="640" fill="url(#g)"/>' +
+          '<text x="480" y="330" text-anchor="middle" fill="rgba(255,255,255,0.22)" font-family="system-ui,sans-serif" font-size="26">' +
+          label +
+          '</text></svg>';
+        return 'data:image/svg+xml,' + encodeURIComponent(svg);
+      }
+
+      var PHOTOS_BY_KEY = {
+        maya: [
+          svgDataUrl('🍜 Ramen bowl', '#6b2a1a', '#c2543a'),
+          svgDataUrl('🍥 Broth close-up', '#3a1832', '#8b3d6e'),
+        ],
+        sam: [svgDataUrl('🍱 Bento box', '#1e4a24', '#4d8258')],
+      };
+
+      var root = document.getElementById('photo-lightbox');
+      if (!root) return;
+
+      var backdrop = root.querySelector('.lightbox-backdrop');
+      var closeBtn = root.querySelector('.lightbox-close');
+      var prevBtn = root.querySelector('.lightbox-nav--prev');
+      var nextBtn = root.querySelector('.lightbox-nav--next');
+      var img = root.querySelector('.lightbox-img-wrap img');
+      var counter = root.querySelector('.lightbox-counter');
+
+      var urls = [];
+      var index = 0;
+
+      function render() {
+        if (!urls.length) return;
+        img.src = urls[index];
+        img.alt = 'Review photo ' + (index + 1) + ' of ' + urls.length;
+        counter.textContent = index + 1 + ' / ' + urls.length;
+        var multi = urls.length > 1;
+        prevBtn.hidden = !multi;
+        nextBtn.hidden = !multi;
+        prevBtn.disabled = !multi;
+        nextBtn.disabled = !multi;
+        if (multi) {
+          prevBtn.disabled = index === 0;
+          nextBtn.disabled = index === urls.length - 1;
+        }
+      }
+
+      function open(key, startAt) {
+        var list = PHOTOS_BY_KEY[key];
+        if (!list || !list.length) return;
+        urls = list;
+        index = startAt || 0;
+        root.hidden = false;
+        document.body.classList.add('lightbox-open');
+        document.removeEventListener('keydown', onDocKey, true);
+        document.addEventListener('keydown', onDocKey, true);
+        render();
+        closeBtn.focus();
+      }
+
+      function close() {
+        root.hidden = true;
+        document.body.classList.remove('lightbox-open');
+        document.removeEventListener('keydown', onDocKey, true);
+        urls = [];
+        img.removeAttribute('src');
+      }
+
+      function step(delta) {
+        var next = index + delta;
+        if (next < 0 || next >= urls.length) return;
+        index = next;
+        render();
+      }
+
+      function onDocKey(e) {
+        if (root.hidden) return;
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          close();
+          return;
+        }
+        if (urls.length > 1 && e.key === 'ArrowLeft') {
+          e.preventDefault();
+          step(-1);
+        }
+        if (urls.length > 1 && e.key === 'ArrowRight') {
+          e.preventDefault();
+          step(1);
+        }
+      }
+
+      document.querySelectorAll('[data-thumb]').forEach(function (img) {
+        var parts = img.getAttribute('data-thumb').split('-');
+        var key = parts[0];
+        var idx = parseInt(parts[1], 10);
+        var list = PHOTOS_BY_KEY[key];
+        if (list && list[idx]) img.src = list[idx];
+      });
+
+      document.querySelectorAll('.photo-thumb[data-photo-index]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var container = btn.closest('.photo-thumbs');
+          var key = container.getAttribute('data-photo-key');
+          var startIndex = parseInt(btn.getAttribute('data-photo-index'), 10);
+          open(key, startIndex);
+        });
+      });
+
+      closeBtn.addEventListener('click', close);
+      backdrop.addEventListener('click', close);
+      prevBtn.addEventListener('click', function () {
+        step(-1);
+      });
+      nextBtn.addEventListener('click', function () {
+        step(1);
+      });
+    })();
+  </script>
+</body>
+</html>

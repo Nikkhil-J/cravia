@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 interface LogoProps {
   className?: string
   showWordmark?: boolean
+  wordmarkClassName?: string
   size?: 'sm' | 'md' | 'lg'
 }
 
@@ -12,7 +13,7 @@ const sizes = {
   lg: { icon: 40, text: 'text-2xl' },
 }
 
-export function Logo({ className, showWordmark = true, size = 'md' }: LogoProps) {
+export function Logo({ className, showWordmark = true, wordmarkClassName, size = 'md' }: LogoProps) {
   const s = sizes[size]
   return (
     <span className={cn('flex items-center gap-2 font-display font-bold text-primary', className)}>
@@ -37,7 +38,7 @@ export function Logo({ className, showWordmark = true, size = 'md' }: LogoProps)
         />
         <circle cx="13.5" cy="8.5" r="1.5" fill="white" opacity="0.9" />
       </svg>
-      {showWordmark && <span className={s.text}>DishCheck</span>}
+      {showWordmark && <span className={cn(s.text, wordmarkClassName)}>Cravia</span>}
     </span>
   )
 }

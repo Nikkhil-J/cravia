@@ -9,7 +9,26 @@
       "Bash(npx shadcn@latest init -y --template next)",
       "Bash(printf '\\\\n\\\\n')",
       "Bash(npx shadcn@latest init -y --template next --defaults)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(perl -i -pe 's/DishCheck/Savora/g; s/dishcheck\\\\.app/savora\\\\.app/g; s/dishcheck\\\\.in/savora\\\\.app/g; s/dishcheck-city/savora-city/g; s/dishcheck\\\\/avatars/savora\\\\/avatars/g; s/dishcheck\\\\/reviews/savora\\\\/reviews/g; s/demo-dishcheck-test/demo-savora-test/g; s/\"name\": \"dishcheck\"/\"name\": \"savora\"/g; s/dishcheck-web/savora-web/g; s/\\\\bdishcheck\\\\b/savora/g' README.md package.json ARCHITECTURE.md next.config.ts docs/RUNBOOK.md docs/state-audit.md docs/TODO.md docs/V2.md docs/constants-audit.md docs/app-flows.html public/robots.txt prototypes/index.html prototypes/07-profile.html prototypes/02-explore.html prototypes/06-home-feed.html prototypes/footer-prototype.html prototypes/landing-stats-fix.html prototypes/08-restaurant.html prototypes/notification-popover.html prototypes/05-write-review.html prototypes/09-wishlist-and-404.html prototypes/03-auth.html prototypes/rate-this-dish-redesign.html prototypes/01-landing.html prototypes/progress-banner-redesign.html prototypes/dish-review-card-redesign.html prototypes/04-dish-detail.html scripts/ingest-google-places.ts src/app/sitemap.ts scripts/seed-cities.ts scripts/data/restaurants-raw.json scripts/fetch-restaurants.ts scripts/cleanup-gurgaon.ts scripts/seed-from-json.ts src/app/layout.tsx 'src/app/\\(protected\\)/upgrade/page.tsx' 'src/app/\\(public\\)/restaurant/[id]/page.tsx' 'src/app/\\(public\\)/dish/[id]/page.tsx' 'src/app/\\(public\\)/cuisine/[slug]/page.tsx' 'src/app/\\(public\\)/review/[id]/page.tsx' 'src/app/\\(public\\)/explore/page.tsx' 'src/app/api/admin/dish-requests/[id]/route.ts' 'src/app/\\(auth\\)/signup/page.tsx' src/components/ui/Logo.tsx src/components/layouts/Footer.tsx src/__tests__/e2e/06-navbar.spec.ts src/components/layouts/AdminShell.tsx src/__tests__/rules/firestore.rules.test.ts src/components/layouts/AuthShell.tsx src/lib/logger.ts src/lib/context/CityContext.tsx src/__tests__/e2e/01-public-pages.spec.ts src/lib/utils/get-city-from-cookie.ts src/lib/services/cloudinary.ts src/lib/services/email.ts src/lib/hooks/useAuth.ts src/lib/services/billing.ts)",
+      "Bash(pnpm --version)",
+      "Bash(rm -rf node_modules)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm approve-builds *)",
+      "Bash(cat pnpm-workspace.yaml)",
+      "Bash(cat .npmrc)",
+      "Bash(cat)",
+      "Bash(pnpm config *)",
+      "Bash(node -e ' *)",
+      "Bash(timeout 20 pnpm dev)",
+      "Bash(pnpm dev *)",
+      "Bash(kill %1)",
+      "Bash(wait)",
+      "Bash(kill 3112)",
+      "Bash(npx tsx *)",
+      "Bash(perl -i -pe ' *)",
+      "Bash(grep -v '^\\\\s*$')",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('name:', p.name\\); console.log\\('next version:', p.dependencies?.next || p.devDependencies?.next\\); console.log\\('build:', p.scripts?.build\\); console.log\\('output dir:', p.scripts?.start\\);\")"
     ]
   }
 }

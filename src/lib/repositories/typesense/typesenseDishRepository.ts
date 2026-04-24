@@ -3,6 +3,7 @@ import type { SearchResponseHit } from 'typesense/lib/Typesense/Documents'
 import type { DishRepository, GetDishesParams, PaginatedData } from '@/lib/repositories/dishRepository'
 import type { Dish, DietaryType, PriceRange } from '@/lib/types'
 import { captureError } from '@/lib/monitoring/sentry'
+import { SORT_OPTIONS } from '@/lib/constants'
 
 const COLLECTION_NAME = 'dishes'
 const DEFAULT_PAGE_SIZE = 20
@@ -61,11 +62,11 @@ function hitToDish(hit: SearchResponseHit<TypesenseDishDoc>): Dish {
 
 function buildSortBy(sortBy?: string): string {
   switch (sortBy) {
-    case 'highest-rated':
+    case SORT_OPTIONS.HIGHEST_RATED:
       return 'avgOverall:desc'
-    case 'most-helpful':
+    case SORT_OPTIONS.MOST_HELPFUL:
       return 'reviewCount:desc'
-    case 'newest':
+    case SORT_OPTIONS.NEWEST:
       return 'createdAt:desc'
     default:
       return '_text_match:desc,avgOverall:desc'

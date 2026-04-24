@@ -9,11 +9,12 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ROUTES } from '@/lib/constants/routes'
 
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirect = searchParams.get('redirect') || '/home'
+  const redirect = searchParams.get('redirect') || ROUTES.HOME
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -53,6 +54,7 @@ function LoginForm() {
         disabled={googleLoading}
         className="w-full gap-2.5 rounded-lg border-2 py-3 font-semibold"
       >
+        {/* APPROVED HARDCODED COLOR — Official Google brand colors for "G" logo */}
         <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
           <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4" />
           <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853" />
@@ -90,7 +92,7 @@ function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             className="h-auto border-2 border-border bg-bg-cream px-3 py-2.5 text-sm placeholder:text-text-muted focus-visible:border-primary focus-visible:ring-0"
           />
-          <Link href="/forgot-password" className="mt-1.5 block text-right text-xs font-medium text-primary hover:underline">
+          <Link href={ROUTES.FORGOT_PASSWORD} className="mt-1.5 block text-right text-xs font-medium text-primary hover:underline">
             Forgot password?
           </Link>
         </div>
@@ -102,7 +104,7 @@ function LoginForm() {
 
       <p className="mt-6 text-center text-sm text-text-muted">
         Don&apos;t have an account?{' '}
-        <Link href={redirect !== '/home' ? `/signup?redirect=${encodeURIComponent(redirect)}` : '/signup'} className="font-semibold text-primary hover:underline">Sign up</Link>
+        <Link href={redirect !== ROUTES.HOME ? `${ROUTES.SIGNUP}?redirect=${encodeURIComponent(redirect)}` : ROUTES.SIGNUP} className="font-semibold text-primary hover:underline">Sign up</Link>
       </p>
     </>
   )

@@ -6,6 +6,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import type { Dish, SearchFilters } from '@/lib/types'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { API_ENDPOINTS } from '@/lib/constants/api'
 
 interface LoadMoreDishesProps {
   initialDishes: Dish[]
@@ -47,7 +48,7 @@ export function LoadMoreDishes({
       if (nextCursorId) params.set('cursor', nextCursorId)
 
       const token = authUser ? await authUser.getIdToken() : null
-      const res = await fetch(`/api/dishes?${params.toString()}`, {
+      const res = await fetch(`${API_ENDPOINTS.DISHES}?${params.toString()}`, {
         cache: 'no-store',
         headers: token ? { authorization: `Bearer ${token}` } : undefined,
       })

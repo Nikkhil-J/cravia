@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cravia Footer — Prototype</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+      background: #111827;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    /* ─── Footer ────────────────────────────────────────────── */
+
+    .footer {
+      background: #0d0f1a;
+      color: #fff;
+      padding: 64px 0 0;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ── 4-column grid ─────────────────────────────────────── */
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 48px;
+    }
+
+    /* ── Column 1 — Brand ──────────────────────────────────── */
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-logo svg {
+      flex-shrink: 0;
+    }
+
+    .brand-wordmark {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ef4444;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-tagline {
+      margin-top: 16px;
+      font-size: 0.9375rem;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.65);
+      max-width: 280px;
+    }
+
+    .brand-sub {
+      margin-top: 8px;
+      font-size: 0.8125rem;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* ── Column headings ───────────────────────────────────── */
+
+    .col-heading {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.92);
+      margin-bottom: 20px;
+    }
+
+    /* ── Link lists ────────────────────────────────────────── */
+
+    .link-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .link-list a {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.45);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .link-list a:hover {
+      color: #fff;
+    }
+
+    /* ── City items ────────────────────────────────────────── */
+
+    .city-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .active-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+      flex-shrink: 0;
+    }
+
+    .city-coming {
+      font-size: 0.8125rem;
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.25);
+      margin-top: 4px;
+    }
+
+    /* ── Bottom bar ────────────────────────────────────────── */
+
+    .footer-bottom {
+      margin-top: 56px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8125rem;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .footer-bottom-heart {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ─── Responsive ───────────────────────────────────────── */
+
+    @media (max-width: 900px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px 48px;
+      }
+
+      .brand-tagline {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .footer {
+        padding: 48px 0 0;
+      }
+
+      .footer-inner {
+        padding: 0 20px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        margin-top: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+
+        <!-- Column 1 — Brand -->
+        <div>
+          <a href="#" class="brand-logo">
+            <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+              <rect width="34" height="34" rx="10" fill="#ef4444" />
+              <path d="M10 12.5C10 11.67 10.67 11 11.5 11H15.5C16.33 11 17 11.67 17 12.5V22.5C17 23.33 16.33 24 15.5 24H11.5C10.67 24 10 23.33 10 22.5V12.5Z" fill="white" opacity="0.9" />
+              <path d="M18.5 9.5C18.5 8.67 19.17 8 20 8H22C22.83 8 23.5 8.67 23.5 9.5V22.5C23.5 23.33 22.83 24 22 24H20C19.17 24 18.5 23.33 18.5 22.5V9.5Z" fill="white" opacity="0.7" />
+              <circle cx="13.5" cy="8.5" r="1.5" fill="white" opacity="0.9" />
+            </svg>
+            <span class="brand-wordmark">Cravia</span>
+          </a>
+          <p class="brand-tagline">Find your next favourite dish, wherever you are.</p>
+          <p class="brand-sub">Honest reviews from real food lovers.</p>
+        </div>
+
+        <!-- Column 2 — Explore -->
+        <div>
+          <h4 class="col-heading">Explore</h4>
+          <ul class="link-list">
+            <li><a href="#">Browse Dishes</a></li>
+            <li><a href="#">Browse Cuisines</a></li>
+            <li><a href="#">Top Rated</a></li>
+            <li><a href="#">New This Week</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3 — Account -->
+        <div>
+          <h4 class="col-heading">Account</h4>
+          <ul class="link-list">
+            <li><a href="#">Your Profile</a></li>
+            <li><a href="#">Your Wishlist</a></li>
+            <li><a href="#">Write a Review</a></li>
+            <li><a href="#">Settings</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 4 — Cities -->
+        <div>
+          <h4 class="col-heading">Cities</h4>
+          <ul class="link-list">
+            <li>
+              <span class="city-item">
+                <span class="active-dot"></span>
+                Bengaluru
+              </span>
+            </li>
+            <li>
+              <span class="city-item">
+                <span class="active-dot"></span>
+                Dublin
+              </span>
+            </li>
+          </ul>
+          <p class="city-coming">More coming soon&hellip;</p>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="footer-bottom">
+        <span>&copy; 2026 Cravia. All rights reserved.</span>
+        <span class="footer-bottom-heart">Made with ❤️ for food lovers</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

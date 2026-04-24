@@ -107,7 +107,7 @@ function extractArea(components: AddressComponent[] | undefined, fallbackCity: s
   ]
 
   for (const target of priorities) {
-    const match = components.find((c) => c.types.includes(target))
+    const match = components.find((c) => c.types?.includes(target))
     if (match) return match.longText
   }
 
@@ -122,7 +122,7 @@ function extractCity(components: AddressComponent[] | undefined, fallbackCity: s
   if (!components?.length) return fallbackCity
 
   const match = components.find(
-    (c) => c.types.includes('locality') || c.types.includes('administrative_area_level_2')
+    (c) => c.types?.includes('locality') || c.types?.includes('administrative_area_level_2')
   )
   return match?.longText ?? fallbackCity
 }

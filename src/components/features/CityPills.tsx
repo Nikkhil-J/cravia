@@ -19,7 +19,7 @@ export function CityPills({ currentCity }: CityPillsProps) {
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       {SUPPORTED_CITIES.map((city) => (
         <button
           key={city}

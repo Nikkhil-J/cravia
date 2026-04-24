@@ -6,6 +6,7 @@ import { COLLECTIONS } from '@/lib/firebase/config'
 import { parseBody } from '@/lib/validation'
 import { togglePremiumSchema } from '@/lib/validation/admin.schema'
 import { captureError } from '@/lib/monitoring/sentry'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 interface RouteContext {
   params: Promise<{ userId: string }>
@@ -31,6 +32,6 @@ export async function PATCH(req: Request, context: RouteContext) {
     }
 
     captureError(error, { route: '/api/admin/users/[userId]/premium' })
-    return NextResponse.json({ message: 'Failed to update premium role' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_UPDATE_PREMIUM }, { status: 500 })
   }
 }

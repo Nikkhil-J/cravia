@@ -8,6 +8,7 @@ import { MotionConfig } from 'motion/react'
 import { Toaster } from 'sonner'
 import { AuthProvider } from '@/lib/hooks/useAuth'
 import { CityProvider } from '@/lib/context/CityContext'
+import { CONFIG } from '@/lib/constants'
 
 function ThemedToaster() {
   const { resolvedTheme } = useTheme()
@@ -27,7 +28,7 @@ export function Providers({ children }: { children: ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 2 * 60 * 1000,
+            staleTime: CONFIG.REACT_QUERY_STALE_TIME_MS,
             retry: 1,
             refetchOnWindowFocus: false,
           },
@@ -45,7 +46,7 @@ export function Providers({ children }: { children: ReactNode }) {
       <Suspense>
         <AppProgressBar
           height="3px"
-          color="#E23744"
+          color="var(--color-primary)"
           options={{ showSpinner: false }}
           shallowRouting
         />

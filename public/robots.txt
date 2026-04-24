@@ -5,4 +5,4 @@ Disallow: /settings
 Disallow: /write-review
 Disallow: /onboarding
 
-Sitemap: https://dishcheck.in/sitemap.xml
+Sitemap: https://cravia.app/sitemap.xml

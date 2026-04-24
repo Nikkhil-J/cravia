@@ -56,6 +56,48 @@ Tailwind CSS, Zustand, and TanStack Query. Deployed on Vercel.
 - Admin features: check user.isAdmin === true.
   Redirect to "/" if false. Never render admin UI for non-admins.
 
+## Design system color rule — ALWAYS FOLLOW
+- Never hardcode color values anywhere in the codebase.
+  This includes hex values, rgb/rgba values, named colors, and
+  Tailwind arbitrary color values like bg-[#...].
+- Always use CSS custom properties (variables) defined in globals.css.
+
+  CORRECT tokens to use:
+  - Headings/titles: text-heading
+  - Body text: text-text-primary
+  - Secondary text: text-text-secondary
+  - Muted text: text-text-muted
+  - Page background: bg-background
+  - Card/elevated surface: bg-card
+  - Subtle surface: bg-surface-2
+  - Stronger surface: bg-surface-3
+  - Warm surface: bg-bg-warm
+  - Cream surface: bg-bg-cream
+  - Brand red: bg-primary / text-primary
+  - Brand orange: bg-brand-orange / text-brand-orange
+  - Brand gold/stars: bg-brand-gold / text-brand-gold
+  - Success: bg-success / text-success
+  - Destructive/error: bg-destructive / text-destructive
+  - Borders: border-border
+
+  NEVER USE these — they are either deprecated or cause collisions:
+  - text-bg-dark (renamed to text-heading)
+  - bg-secondary / text-secondary (collides with shadcn)
+  - bg-accent / text-accent (collides with shadcn)
+  - bg-muted as a surface (invisible in light mode — use bg-surface-2)
+  - Any var(--color-*) arbitrary values except inside SVG attributes
+    and shadow utilities
+  - Any hardcoded hex, rgb, or rgba color values
+
+- Before writing any color-related class, check globals.css to confirm
+  the token exists.
+- If no suitable token exists, add a TODO comment and notify the
+  developer rather than hardcoding.
+- The only approved exceptions are colors explicitly marked with a
+  comment: "// APPROVED HARDCODED COLOR"
+- This rule applies to all files: .tsx, .ts, .css, .module.css, inline
+  styles, Tailwind classes, and SVG attributes.
+
 ## What NOT to do
 - Do not add features not in the sprint scope.
 - Do not change the data model without explicit instruction.

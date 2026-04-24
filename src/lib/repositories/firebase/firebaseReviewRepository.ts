@@ -11,13 +11,14 @@ import {
   deleteReview,
   flagReview,
   getReview,
+  getReviewCount,
   getReviewSnapshot,
   getReviewsByDish,
   getReviewsByUser,
   updateReview,
   voteHelpful,
 } from '@/lib/firebase/reviews'
-import { getFlaggedReviews, unflagReview } from '@/lib/firebase/admin'
+import { getFlaggedReviews } from '@/lib/firebase/admin'
 import { db, COLLECTIONS } from '@/lib/firebase/config'
 import type { ReviewRepository } from '@/lib/repositories/reviewRepository'
 import type { GetReviewsParams } from '@/lib/repositories/reviewRepository'
@@ -40,6 +41,10 @@ export class FirebaseReviewRepository implements ReviewRepository {
   async getById(reviewId: string): Promise<Review | null> {
     const review = await getReview(reviewId)
     return review ? mapReview(review) : null
+  }
+
+  getCount(): Promise<number> {
+    return getReviewCount()
   }
 
   /**
@@ -129,9 +134,5 @@ export class FirebaseReviewRepository implements ReviewRepository {
   async getFlagged(limit?: number): Promise<Review[]> {
     const reviews = await getFlaggedReviews(limit)
     return reviews.map(mapReview)
-  }
-
-  unflag(reviewId: string): Promise<boolean> {
-    return unflagReview(reviewId)
   }
 }

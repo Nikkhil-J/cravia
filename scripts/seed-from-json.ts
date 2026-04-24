@@ -4,7 +4,7 @@
  * Reads scripts/data/restaurants-raw.json (after you've filled in dishes)
  * and writes all restaurants + dishes to Firestore.
  *
- * Run from your DishCheck project root:
+ * Run from your Cravia project root:
  *   npx tsx scripts/seed-from-json.ts [--dry-run]
  *
  * Flags:
@@ -122,23 +122,24 @@ async function main() {
     .find((a) => a.startsWith("--city="))
     ?.split("=")[1];
 
-  console.log("🍽️  DishCheck JSON Seeder");
+  console.log("🍽️  Cravia JSON Seeder");
   console.log("==========================");
   if (isDryRun) console.log("🔍 DRY RUN — nothing will be written\n");
   if (cityFilter) console.log(`🏙️  Filtering to city: ${cityFilter}\n`);
 
-  // Read the JSON file
-  const jsonPath = path.join(
-    process.cwd(),
-    "scripts",
-    "data",
-    "restaurants-raw.json",
-  );
+  // Read the JSON file (supports --file flag for alternate data files)
+  const fileArg = process.argv
+    .find((a) => a.startsWith("--file="))
+    ?.split("=")[1];
+  const jsonPath = fileArg
+    ? path.resolve(process.cwd(), fileArg)
+    : path.join(process.cwd(), "scripts", "data", "restaurants-raw.json");
   if (!fs.existsSync(jsonPath)) {
     console.error(`❌ File not found: ${jsonPath}`);
     console.error("   Run fetch-restaurants.ts first to generate this file");
     process.exit(1);
   }
+  console.log(`📂 Reading: ${jsonPath}\n`);
 
   const raw = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
   let restaurants: RestaurantEntry[] = raw.restaurants ?? [];

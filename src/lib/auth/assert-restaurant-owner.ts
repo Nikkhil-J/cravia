@@ -1,5 +1,6 @@
 import { COLLECTIONS } from '@/lib/firebase/config'
 import { adminAuth, adminDb } from '@/lib/firebase/admin-server'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export class RestaurantOwnerAuthError extends Error {
   status: number
@@ -43,7 +44,7 @@ export async function assertRestaurantOwner(
   try {
     decodedToken = await adminAuth.verifyIdToken(token)
   } catch {
-    throw new RestaurantOwnerAuthError(401, 'Unauthorized')
+    throw new RestaurantOwnerAuthError(401, API_ERRORS.UNAUTHORIZED)
   }
 
   const restaurantDoc = await adminDb
@@ -52,7 +53,7 @@ export async function assertRestaurantOwner(
     .get()
 
   if (!restaurantDoc.exists) {
-    throw new RestaurantOwnerAuthError(404, 'Restaurant not found')
+    throw new RestaurantOwnerAuthError(404, API_ERRORS.RESTAURANT_NOT_FOUND)
   }
 
   const ownerId = restaurantDoc.get('ownerId') as string | null | undefined

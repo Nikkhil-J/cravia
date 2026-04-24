@@ -20,7 +20,7 @@ export default function AdminDashboardPage() {
     return (
       <div className="py-20 text-center">
         <p className="text-5xl">⚠️</p>
-        <p className="mt-4 font-display text-lg font-bold text-bg-dark">Failed to load stats</p>
+        <p className="mt-4 font-display text-lg font-bold text-heading">Failed to load stats</p>
         <p className="mt-1 text-sm text-text-secondary">Please refresh the page or try again later.</p>
       </div>
     )
@@ -37,13 +37,13 @@ export default function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="font-display text-xl font-bold text-bg-dark">Dashboard</h1>
+      <h1 className="font-display text-xl font-bold text-heading">Dashboard</h1>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map(({ label, value, icon, highlight }) => (
-          <div key={label} className={`rounded-xl border p-5 ${highlight ? 'border-[var(--color-accent)]/30 bg-[var(--color-accent-light)]' : 'border-border bg-card'}`}>
+          <div key={label} className={`rounded-xl border p-5 ${highlight ? 'border-brand-gold/30 bg-brand-gold-light' : 'border-border bg-card'}`}>
             <div className="flex items-center justify-between">
               <span className="text-2xl">{icon}</span>
-              <span className={`font-display text-2xl font-bold ${highlight ? 'text-[var(--color-accent)]' : 'text-bg-dark'}`}>{value}</span>
+              <span className={`font-display text-2xl font-bold ${highlight ? 'text-brand-gold' : 'text-heading'}`}>{value}</span>
             </div>
             <p className="mt-2 text-sm text-text-muted">{label}</p>
           </div>

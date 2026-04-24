@@ -8,11 +8,13 @@ import { parseBody } from '@/lib/validation'
 import { redeemCouponSchema } from '@/lib/validation/coupon.schema'
 import { captureError, logRouteDuration } from '@/lib/monitoring/sentry'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { ROUTES } from '@/lib/constants/routes'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export async function POST(req: Request) {
   const start = Date.now()
   const auth = await getRequestAuth(req)
-  if (!auth) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+  if (!auth) return NextResponse.json({ message: API_ERRORS.UNAUTHORIZED }, { status: 401 })
 
   const rateLimited = await checkRateLimit(auth.userId, 'REDEEM')
   if (rateLimited) return rateLimited
@@ -28,7 +30,7 @@ export async function POST(req: Request) {
       'system',
       'Coupon redeemed!',
       'Your coupon has been redeemed successfully. Check your rewards page for details.',
-      '/rewards'
+      ROUTES.REWARDS
     ).catch((e) => captureError(e, { route: '/api/rewards/redeem', extra: { context: 'notification' } }))
 
     userRepository.getById(auth.userId).then((user) => {
@@ -53,12 +55,12 @@ export async function POST(req: Request) {
     }
     if (error instanceof Error) {
       if (error.message === 'COUPON_EXHAUSTED') {
-        return NextResponse.json({ message: 'Coupon no longer available' }, { status: 409 })
+        return NextResponse.json({ message: API_ERRORS.COUPON_UNAVAILABLE }, { status: 409 })
       }
       if (error.message === 'INSUFFICIENT_BALANCE') {
-        return NextResponse.json({ message: 'Insufficient DishPoints' }, { status: 400 })
+        return NextResponse.json({ message: API_ERRORS.INSUFFICIENT_POINTS }, { status: 400 })
       }
     }
-    return NextResponse.json({ message: 'Failed to redeem coupon' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_REDEEM_COUPON }, { status: 500 })
   }
 }

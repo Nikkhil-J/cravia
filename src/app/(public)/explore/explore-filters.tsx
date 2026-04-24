@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils'
 import type { DietaryType, PriceRange } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { ROUTES } from '@/lib/constants/routes'
+import { SORT_OPTIONS as SORT_OPTION_VALUES } from '@/lib/constants'
 import {
   Sheet,
   SheetTrigger,
@@ -37,15 +39,15 @@ interface ExploreFiltersProps {
 }
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: 'highest-rated', label: 'Highest Rated' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'most-helpful', label: 'Most Reviewed' },
+  { value: SORT_OPTION_VALUES.HIGHEST_RATED, label: 'Highest Rated' },
+  { value: SORT_OPTION_VALUES.NEWEST, label: 'Newest' },
+  { value: SORT_OPTION_VALUES.MOST_HELPFUL, label: 'Most Reviewed' },
 ]
 
 const DIETARY_OPTIONS: { value: DietaryType; label: string; dotClass: string }[] = [
   { value: 'veg', label: 'Veg', dotClass: 'bg-success' },
   { value: 'non-veg', label: 'Non-veg', dotClass: 'bg-destructive' },
-  { value: 'egg', label: 'Egg', dotClass: 'bg-accent' },
+  { value: 'egg', label: 'Egg', dotClass: 'bg-brand-gold' },
 ]
 
 const PRICE_OPTIONS: { value: PriceRange; label: string }[] = [
@@ -130,7 +132,7 @@ function SortSegmented({
   return (
     <div
       ref={containerRef}
-      className="relative hidden items-center gap-1 rounded-pill bg-muted/80 p-1 md:flex"
+      className="relative hidden items-center gap-1 rounded-pill bg-surface-3 p-1 md:flex"
     >
       {pill && (
         <motion.div
@@ -201,7 +203,7 @@ function FiltersInner({
       if (val) params.set(key, val)
       else params.delete(key)
     })
-    return `/explore?${params.toString()}`
+    return `${ROUTES.EXPLORE}?${params.toString()}`
   }, [searchParams])
 
   function signalFilterChange() {
@@ -224,7 +226,7 @@ function FiltersInner({
   function handleSort(value: SortOption) {
     setOptimisticSort(value)
     signalFilterChange()
-    router.push(buildUrl({ sortBy: value === 'highest-rated' ? null : value }))
+    router.push(buildUrl({ sortBy: value === SORT_OPTION_VALUES.HIGHEST_RATED ? null : value }))
   }
 
   const filterCount = [
@@ -392,7 +394,7 @@ function FiltersInner({
           </SheetTrigger>
           <SheetContent side="bottom" className="max-h-[85dvh] rounded-t-2xl pb-[max(1rem,env(safe-area-inset-bottom))]">
             <SheetHeader>
-              <SheetTitle className="font-display text-lg font-bold text-bg-dark">Filters</SheetTitle>
+              <SheetTitle className="font-display text-lg font-bold text-heading">Filters</SheetTitle>
             </SheetHeader>
             <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">{filterGroups}</div>
           </SheetContent>
@@ -402,12 +404,12 @@ function FiltersInner({
       {summaryRow}
 
       {/* Desktop filter groups */}
-      <div className="mt-4 hidden space-y-5 rounded-2xl border border-border bg-surface/80 p-5 md:block">
+      <div className="mt-4 hidden space-y-5 rounded-2xl border border-border bg-surface-2 p-5 md:block">
         {filterGroups}
       </div>
 
       {/* Sort toolbar */}
-      <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-border bg-muted/60 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-5">
+      <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-border bg-surface-2 px-4 py-3 md:flex-row md:items-center md:justify-between md:px-5">
         <span className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted md:block">
           Sort by
         </span>

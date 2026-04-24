@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Heart } from 'lucide-react'
+import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useWishlist } from '@/lib/hooks/useWishlist'
@@ -10,6 +11,8 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { formatRating } from '@/lib/utils/index'
+import { ROUTES } from '@/lib/constants/routes'
+import { API_ENDPOINTS } from '@/lib/constants/api'
 
 export default function WishlistPage() {
   const { user, authUser } = useAuth()
@@ -20,19 +23,19 @@ export default function WishlistPage() {
     if (!user || !authUser) return
     const token = await authUser.getIdToken()
     const res = await fetch(
-      `/api/users/${encodeURIComponent(user.id)}/wishlist/${encodeURIComponent(dishId)}`,
+      API_ENDPOINTS.wishlistItem(encodeURIComponent(user.id), encodeURIComponent(dishId)),
       { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }
     )
-    await queryClient.invalidateQueries({ queryKey: ['wishlist'] })
     if (!res.ok) {
-      await queryClient.invalidateQueries({ queryKey: ['wishlist'] })
+      toast.error('Could not remove dish from wishlist')
     }
+    await queryClient.invalidateQueries({ queryKey: ['wishlist'] })
   }
 
   return (
-    <div className="mx-auto max-w-[900px] px-6 py-8">
+    <div className="mx-auto max-w-[900px] px-4 py-6 sm:px-6 sm:py-8">
       <div className="text-center">
-        <h1 className="font-display text-2xl font-bold text-bg-dark">Your Wishlist</h1>
+        <h1 className="font-display text-xl font-bold text-heading sm:text-2xl">Your Wishlist</h1>
         <p className="mt-1 text-sm text-text-secondary">Dishes you want to try next</p>
         {items.length > 0 && (
           <p className="mt-2 text-xs text-text-muted">{items.length} dishes saved</p>
@@ -48,16 +51,16 @@ export default function WishlistPage() {
             title="No dishes saved yet"
             description="Browse dishes and tap the heart icon to save them here for later."
             ctaLabel="Explore Dishes"
-            ctaHref="/explore"
+            ctaHref={ROUTES.EXPLORE}
           />
         </div>
       ) : (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {items.map((item) => (
-            <div key={item.dishId} className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:-translate-y-0.5 hover:border-transparent hover:shadow-md">
+            <div key={item.dishId} className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:-translate-y-0.5 active:translate-y-0 hover:border-transparent hover:shadow-md active:shadow-sm">
               <div className="relative h-36 bg-bg-cream">
                 {item.coverImage ? (
-                  <Image src={item.coverImage} alt={item.dishName} fill className="object-cover" />
+                  <Image src={item.coverImage} alt={item.dishName} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                 ) : (
                   <div className="flex h-full items-center justify-center text-4xl">🍽️</div>
                 )}
@@ -65,13 +68,13 @@ export default function WishlistPage() {
                   variant="ghost"
                   size="icon"
                   onClick={() => handleRemove(item.dishId)}
-                  className="absolute right-2.5 top-2.5 size-8 rounded-full bg-card/90 text-primary backdrop-blur-sm hover:bg-primary hover:text-white"
+                  className="absolute right-2.5 top-2.5 min-h-[44px] min-w-[44px] rounded-full bg-card/90 text-primary backdrop-blur-sm hover:bg-primary hover:text-white"
                 >
                   <Heart className="h-3.5 w-3.5" fill="currentColor" />
                 </Button>
               </div>
               <div className="p-3.5">
-                <Link href={`/dish/${item.dishId}`} className="font-display font-semibold text-bg-dark line-clamp-1 hover:text-primary">
+                <Link href={ROUTES.dish(item.dishId)} className="font-display font-semibold text-heading line-clamp-1 hover:text-primary">
                   {item.dishName}
                 </Link>
                 <p className="mt-0.5 text-xs text-text-muted">{item.restaurantName}</p>

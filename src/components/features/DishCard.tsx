@@ -5,6 +5,7 @@ import { formatRating } from '@/lib/utils/index'
 import { cn } from '@/lib/utils'
 import { getCuisineEmoji, getCuisineGradient } from '@/lib/utils/dish-display'
 import { PRICE_LABEL, DIETARY_ICON } from '@/lib/constants'
+import { ROUTES } from '@/lib/constants/routes'
 
 interface DishCardProps {
   dish: Dish
@@ -14,7 +15,7 @@ interface DishCardProps {
 export function DishCard({ dish, index = 0 }: DishCardProps) {
   return (
     <Link
-      href={`/dish/${dish.id}`}
+      href={ROUTES.dish(dish.id)}
       className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-all duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1.5 hover:border-transparent hover:shadow-lg active:translate-y-0 active:shadow-md animate-pop-in"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms`, animationFillMode: 'both' }}
     >
@@ -55,12 +56,12 @@ export function DishCard({ dish, index = 0 }: DishCardProps) {
         )}
       </div>
       <div className="flex flex-1 flex-col p-3.5">
-        <h3 className="font-display font-semibold text-bg-dark line-clamp-1">{dish.name}</h3>
+        <h3 className="font-display font-semibold text-heading line-clamp-1">{dish.name}</h3>
         <p className="mt-0.5 text-xs text-text-muted line-clamp-1">{dish.restaurantName}</p>
         <div className="mt-auto flex items-center justify-between pt-2">
           <span className="text-xs text-text-muted">{dish.reviewCount} reviews</span>
           {dish.priceRange && (
-            <span className="text-sm font-bold text-bg-dark">{PRICE_LABEL[dish.priceRange]}</span>
+            <span className="text-sm font-bold text-heading">{PRICE_LABEL[dish.priceRange]}</span>
           )}
         </div>
       </div>

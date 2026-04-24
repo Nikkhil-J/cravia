@@ -1,39 +1,42 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import type { Review } from '@/lib/types'
-import { formatRelativeTime, canEditReview } from '@/lib/utils/index'
-import { SubRatingBar } from '@/components/ui/SubRatingBar'
-import { TagCloud } from '@/components/ui/TagCloud'
-import { UserAvatar } from '@/components/ui/Avatar'
-import { LEVEL_COLORS } from '@/lib/constants'
+import { canEditReview } from '@/lib/utils/index'
+import { LEVEL_COLORS, CONFIG } from '@/lib/constants'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Pencil, Trash2 } from 'lucide-react'
+import { API_ENDPOINTS } from '@/lib/constants/api'
+import { CLIENT_ERRORS } from '@/lib/constants/errors'
 
 interface ReviewCardProps {
   review: Review
   currentUserId?: string
   onEdit?: () => void
   onDelete?: () => void
+  /** When set (e.g. user profile), shows "at restaurant · dish". Omit on dish page. */
+  dishContext?: { dishName: string; restaurantName: string } | null
 }
 
-export function ReviewCard({ review, currentUserId, onEdit, onDelete }: ReviewCardProps) {
+function RatingPill({ label, value }: { label: string; value: number }) {
+  return (
+    <span className="inline-flex items-baseline gap-1 rounded-full border border-border px-2 py-0.5 text-[11px]">
+      <span className="font-medium text-text-muted">{label}</span>
+      <span className="font-semibold tabular-nums text-brand-orange">{value.toFixed(1)}</span>
+    </span>
+  )
+}
+
+export function ReviewCard({ review, currentUserId, onEdit, onDelete, dishContext }: ReviewCardProps) {
   const { authUser } = useAuth()
   const [expanded, setExpanded] = useState(false)
   const [photoOpen, setPhotoOpen] = useState(false)
-  const closeButtonRef = useRef<HTMLButtonElement>(null)
 
-  useEffect(() => {
-    if (photoOpen) {
-      document.body.style.overflow = 'hidden'
-      closeButtonRef.current?.focus()
-    }
-    return () => { document.body.style.overflow = '' }
-  }, [photoOpen])
   const [hasVoted, setHasVoted] = useState(
     currentUserId ? review.helpfulVotedBy.includes(currentUserId) : false,
   )
@@ -49,14 +52,14 @@ export function ReviewCard({ review, currentUserId, onEdit, onDelete }: ReviewCa
     if (!token) return
     setHasVoted(true)
     setHelpfulCount((n) => n + 1)
-    const res = await fetch(`/api/reviews/${encodeURIComponent(review.id)}/helpful`, {
+    const res = await fetch(API_ENDPOINTS.reviewHelpful(encodeURIComponent(review.id)), {
       method: 'POST',
       headers: { authorization: `Bearer ${token}` },
     })
     if (!res.ok) {
       setHasVoted(false)
       setHelpfulCount((n) => Math.max(n - 1, 0))
-      toast.error('Could not mark as helpful')
+      toast.error(CLIENT_ERRORS.COULD_NOT_MARK_HELPFUL)
     }
   }
 
@@ -65,13 +68,13 @@ export function ReviewCard({ review, currentUserId, onEdit, onDelete }: ReviewCa
     const token = authUser ? await authUser.getIdToken() : null
     if (!token) return
     setFlagged(true)
-    const res = await fetch(`/api/reviews/${encodeURIComponent(review.id)}/flag`, {
+    const res = await fetch(API_ENDPOINTS.reviewFlag(encodeURIComponent(review.id)), {
       method: 'POST',
       headers: { authorization: `Bearer ${token}` },
     })
     if (!res.ok) {
       setFlagged(false)
-      toast.error('Could not report review')
+      toast.error(CLIENT_ERRORS.COULD_NOT_REPORT_REVIEW)
     } else {
       toast.success('Review reported')
     }
@@ -79,122 +82,193 @@ export function ReviewCard({ review, currentUserId, onEdit, onDelete }: ReviewCa
 
   const levelColorClass = LEVEL_COLORS[review.userLevel as keyof typeof LEVEL_COLORS] ?? 'bg-border text-text-secondary'
 
+  const initials = review.userName
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+
+  const previewText = review.text
+    ? review.text.length > CONFIG.REVIEW_CARD_PREVIEW_LENGTH ? `${review.text.slice(0, CONFIG.REVIEW_CARD_PREVIEW_LENGTH)}…` : review.text
+    : null
+
+  const hasExpandableText = review.text && review.text.length > CONFIG.REVIEW_CARD_PREVIEW_LENGTH
+
   return (
-    <div className="rounded-lg border border-border bg-card p-5 transition-colors hover:shadow-sm">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-3">
-          <UserAvatar src={review.userAvatarUrl} name={review.userName} size="sm" />
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-bg-dark">{review.userName}</span>
-              <Badge className={`rounded-pill px-2.5 text-[10px] font-semibold ${levelColorClass}`}>
-                {review.userLevel}
-              </Badge>
-            </div>
-            <p className="text-xs text-text-muted">{formatRelativeTime(review.createdAt)}</p>
-          </div>
+    <div className="rounded-md border-[0.5px] border-border bg-card px-3.5 py-3 transition-colors hover:border-text-muted">
+      {/* Row 1: identity + ratings */}
+      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <div
+          className={cn(
+            'flex size-[30px] shrink-0 items-center justify-center rounded-full text-[11px] font-bold',
+            levelColorClass,
+          )}
+        >
+          {initials}
         </div>
-        {isOwn && (
-          <div className="flex gap-2">
+
+        <span className="shrink-0 text-[13px] font-medium text-text-primary">{review.userName}</span>
+
+        <Badge className={cn('shrink-0 rounded-full px-1.5 py-0 text-[9px] font-semibold', levelColorClass)}>
+          {review.userLevel}
+        </Badge>
+
+        <div className="flex shrink-0 items-center gap-1">
+          <RatingPill label="T" value={review.tasteRating} />
+          <RatingPill label="P" value={review.portionRating} />
+          <RatingPill label="V" value={review.valueRating} />
+        </div>
+
+        {isOwn && (onEdit || onDelete) && (
+          <div className="ml-auto flex shrink-0 gap-0.5">
             {canEdit ? (
               <>
-                <Button variant="link" onClick={onEdit} className="h-auto p-0 text-xs font-medium text-primary">Edit</Button>
-                <Button variant="link" onClick={onDelete} className="h-auto p-0 text-xs font-medium text-destructive">Delete</Button>
+                <Button variant="ghost" size="icon-sm" onClick={onEdit} className="flex min-h-[44px] min-w-[44px] items-center justify-center text-primary/70 hover:bg-primary/10 hover:text-primary" title="Edit review">
+                  <Pencil className="size-3" />
+                </Button>
+                <Button variant="ghost" size="icon-sm" onClick={onDelete} className="flex min-h-[44px] min-w-[44px] items-center justify-center text-destructive/70 hover:bg-destructive/10 hover:text-destructive" title="Delete review">
+                  <Trash2 className="size-3" />
+                </Button>
               </>
             ) : (
-              <span
-                className="cursor-not-allowed text-text-muted text-xs"
-                title="Reviews can only be edited within 24 hours"
-              >
-                Edit window closed
+              <span className="cursor-not-allowed text-[10px] text-text-muted" title="Reviews can only be edited within 24 hours">
+                Edit closed
               </span>
             )}
           </div>
         )}
       </div>
 
-      {review.photoUrl && (
-        <Button variant="ghost" onClick={() => setPhotoOpen(true)} className="mt-4 block h-auto w-full overflow-hidden rounded-md p-0 hover:bg-transparent">
-          <Image
-            src={review.photoUrl}
-            alt="Review photo"
-            width={600}
-            height={300}
-            className="w-full rounded-md object-cover"
-          />
-        </Button>
-      )}
-
-      <div className="mt-4 space-y-2">
-        <SubRatingBar label="Taste" value={review.tasteRating} />
-        <SubRatingBar label="Portion" value={review.portionRating} />
-        <SubRatingBar label="Value" value={review.valueRating} />
-      </div>
-
-      {review.tags.length > 0 && (
-        <div className="mt-4">
-          <TagCloud tags={review.tags} maxVisible={5} />
-        </div>
-      )}
-
-      {review.text && (
-        <div className="mt-4">
-          <p className={`text-sm leading-relaxed text-text-primary ${!expanded ? 'line-clamp-3' : ''}`}>
-            {review.text}
-          </p>
-          {review.text.length > 150 && (
-            <Button variant="link" onClick={() => setExpanded((v) => !v)} className="mt-1 h-auto p-0 text-xs font-semibold text-primary">
-              {expanded ? 'Show less' : 'Read more'}
-            </Button>
+      {/* Preview text */}
+      {review.text && !expanded && (
+        <div className="mt-1.5 flex items-baseline gap-1.5 pl-[38px]">
+          <span className="min-w-0 flex-1 truncate text-[13px] italic text-text-muted">
+            &ldquo;{previewText}&rdquo;
+          </span>
+          {hasExpandableText && (
+            <button
+              type="button"
+              onClick={() => setExpanded((v) => !v)}
+              className="shrink-0 text-[12px] font-semibold text-brand-orange hover:underline"
+            >
+              See more
+            </button>
           )}
         </div>
       )}
 
-      <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
-        <Button
-          variant="ghost"
+      {expanded && hasExpandableText && (
+        <div className="mt-1 pl-[38px]">
+          <button
+            type="button"
+            onClick={() => setExpanded(false)}
+            className="text-[12px] font-semibold text-brand-orange hover:underline"
+          >
+            See less
+          </button>
+        </div>
+      )}
+
+      {/* Dish context (profile pages only) */}
+      {dishContext && (
+        <p className="mt-1 truncate pl-[38px] text-[11px] text-text-muted">
+          at <span className="font-medium text-text-primary">{dishContext.restaurantName}</span>
+          {' · '}
+          <span className="font-medium text-text-primary">{dishContext.dishName}</span>
+        </p>
+      )}
+
+      {/* Expanded text */}
+      {review.text && (
+        <div
+          className={cn(
+            'grid transition-[grid-template-rows] duration-200 ease-out',
+            expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+          )}
+        >
+          <div className="overflow-hidden">
+            <div className="mt-2 border-t border-border pt-2">
+              <p className="break-words text-[13px] leading-relaxed text-text-secondary">
+                {review.text}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Row 2: tags, helpful, report — photo on far right */}
+      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        {review.tags.length > 0 && review.tags.map((tag) => (
+          <span key={tag} className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] text-text-muted">
+            {tag}
+          </span>
+        ))}
+
+        <button
+          type="button"
           onClick={handleVote}
           disabled={!currentUserId || isOwn}
-          className={`h-auto p-0 text-xs font-medium transition-colors hover:bg-transparent ${hasVoted ? 'font-bold text-primary' : 'text-text-muted hover:text-text-secondary'} disabled:cursor-default disabled:opacity-100`}
+          className={cn(
+            'inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium transition-colors',
+            hasVoted
+              ? 'bg-primary/10 font-bold text-primary'
+              : 'text-text-muted hover:text-text-secondary',
+            'disabled:cursor-default disabled:opacity-100',
+          )}
         >
-          👍 Helpful ({helpfulCount})
-        </Button>
+          Helpful · {helpfulCount}
+        </button>
+
         {currentUserId && !isOwn && !flagged && (
-          <Button variant="ghost" onClick={handleFlag} className="h-auto p-0 text-xs text-text-muted hover:bg-transparent hover:text-destructive">
+          <button type="button" onClick={handleFlag} className="shrink-0 text-[10px] text-text-muted transition-colors hover:text-destructive">
             Report
-          </Button>
+          </button>
         )}
-        {flagged && <span className="text-xs text-text-muted">Reported</span>}
+        {flagged && <span className="shrink-0 text-[10px] text-text-muted">Reported</span>}
+
+        {review.photoUrl && (
+          <button
+            type="button"
+            onClick={() => setPhotoOpen((v) => !v)}
+            className={cn(
+              'relative ml-auto h-14 w-14 shrink-0 overflow-hidden border transition-all hover:scale-105',
+              photoOpen ? 'border-primary' : 'border-border hover:border-text-muted',
+            )}
+          >
+            <Image
+              src={review.photoUrl}
+              alt="Review photo"
+              fill
+              sizes="56px"
+              className="object-cover"
+            />
+          </button>
+        )}
       </div>
 
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Review photo"
-        className={cn(
-          'fixed inset-0 z-50 flex items-center justify-center bg-black/80',
-          'transition-all duration-200',
-          photoOpen
-            ? 'opacity-100 pointer-events-auto'
-            : 'opacity-0 pointer-events-none'
-        )}
-        onClick={() => setPhotoOpen(false)}
-        onKeyDown={(e) => { if (e.key === 'Escape') setPhotoOpen(false) }}
-      >
-        {review.photoUrl && (
-          <>
-            <Image src={review.photoUrl} alt="Review photo" width={800} height={600} className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain" />
-            <button
-              ref={closeButtonRef}
-              onClick={() => setPhotoOpen(false)}
-              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white"
-              aria-label="Close photo"
-            >
-              &times;
-            </button>
-          </>
-        )}
-      </div>
+      {/* Inline photo expand */}
+      {review.photoUrl && (
+        <div
+          className={cn(
+            'grid transition-[grid-template-rows] duration-200 ease-out',
+            photoOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+          )}
+        >
+          <div className="overflow-hidden">
+            <div className="mt-2 flex justify-end">
+              <Image
+                src={review.photoUrl}
+                alt="Review photo"
+                width={400}
+                height={300}
+                className="max-h-[240px] max-w-full w-auto rounded-md object-contain"
+                onClick={() => setPhotoOpen(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

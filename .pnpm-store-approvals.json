@@ -1,0 +1,8 @@
+[
+  "@firebase/util",
+  "@sentry/cli",
+  "msw",
+  "protobufjs",
+  "sharp",
+  "unrs-resolver"
+]

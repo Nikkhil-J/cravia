@@ -1,4 +1,4 @@
-# DishCheck Architecture
+# Cravia Architecture
 
 ## High-Level Diagram
 

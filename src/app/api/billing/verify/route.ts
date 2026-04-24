@@ -6,10 +6,12 @@ import { verifyPaymentSignature, activatePremium } from '@/lib/services/billing'
 import { captureError } from '@/lib/monitoring/sentry'
 import { createServerNotification } from '@/lib/services/notifications-server'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { ROUTES } from '@/lib/constants/routes'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export async function POST(req: Request) {
   const auth = await getRequestAuth(req)
-  if (!auth) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+  if (!auth) return NextResponse.json({ message: API_ERRORS.UNAUTHORIZED }, { status: 401 })
 
   const rateLimited = await checkRateLimit(auth.userId, 'GENERAL')
   if (rateLimited) return rateLimited
@@ -26,7 +28,7 @@ export async function POST(req: Request) {
       route: '/api/billing/verify',
       extra: { razorpay_order_id },
     })
-    return NextResponse.json({ message: 'Payment verification failed' }, { status: 400 })
+    return NextResponse.json({ message: API_ERRORS.PAYMENT_FAILED }, { status: 400 })
   }
 
   try {
@@ -37,7 +39,7 @@ export async function POST(req: Request) {
       'system',
       'Welcome to Premium!',
       'Your premium subscription is now active. Enjoy all premium features!',
-      '/home'
+      ROUTES.HOME
     ).catch((e) => captureError(e, { route: '/api/billing/verify', extra: { context: 'notification' } }))
 
     return NextResponse.json({ success: true })
@@ -47,6 +49,6 @@ export async function POST(req: Request) {
       route: '/api/billing/verify',
       extra: { razorpay_order_id, razorpay_payment_id },
     })
-    return NextResponse.json({ message: 'Failed to activate premium' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_ACTIVATE_PREMIUM }, { status: 500 })
   }
 }

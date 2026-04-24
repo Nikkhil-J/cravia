@@ -1,4 +1,4 @@
-# DishCheck
+# Cravia
 
 Dish-level review platform for India. Users search for a specific dish at a specific restaurant and read or write reviews with photos, sub-ratings (taste, portion, value), and tags. Includes a DishPoints economy, premium tier, and restaurant owner dashboards.
 

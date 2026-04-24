@@ -1,8 +1,9 @@
 import { z } from 'zod'
+import { SORT_OPTIONS } from '@/lib/constants'
 
 const dietaryValues = ['veg', 'non-veg', 'egg'] as const
 const priceRangeValues = ['under-100', '100-200', '200-400', '400-600', 'above-600'] as const
-const sortByValues = ['highest-rated', 'newest', 'most-helpful'] as const
+const sortByValues = [SORT_OPTIONS.HIGHEST_RATED, SORT_OPTIONS.NEWEST, SORT_OPTIONS.MOST_HELPFUL] as const
 
 export const dishSearchParamsSchema = z.object({
   q: z.string().nullable().default(null),
@@ -11,7 +12,7 @@ export const dishSearchParamsSchema = z.object({
   cuisine: z.string().nullable().default(null),
   dietary: z.enum(dietaryValues).nullable().default(null),
   priceRange: z.enum(priceRangeValues).nullable().default(null),
-  sortBy: z.enum(sortByValues).default('highest-rated'),
+  sortBy: z.enum(sortByValues).default(SORT_OPTIONS.HIGHEST_RATED),
   cursor: z.string().nullable().default(null),
 }).strip()
 

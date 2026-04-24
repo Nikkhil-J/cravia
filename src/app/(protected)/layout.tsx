@@ -6,6 +6,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { PageShell } from '@/components/layouts/PageShell'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { ROUTES } from '@/lib/constants/routes'
 
 function AuthGate({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth()
@@ -18,7 +19,7 @@ function AuthGate({ children }: { children: ReactNode }) {
       const returnUrl = searchParams.toString()
         ? `${pathname}?${searchParams.toString()}`
         : pathname
-      router.replace(`/login?redirect=${encodeURIComponent(returnUrl)}`)
+      router.replace(ROUTES.loginWithRedirect(encodeURIComponent(returnUrl)))
     }
   }, [isAuthenticated, isLoading, router, pathname, searchParams])
 

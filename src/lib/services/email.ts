@@ -2,6 +2,7 @@ import { Resend } from 'resend'
 import { captureError, addBreadcrumb } from '@/lib/monitoring/sentry'
 import { env } from '@/lib/env'
 import type { CouponClaim } from '@/lib/types/rewards'
+import { ROUTES } from '@/lib/constants/routes'
 
 // ── Config ──────────────────────────────────────────────
 
@@ -52,7 +53,7 @@ async function sendEmail(payload: EmailPayload): Promise<void> {
 
 // ── HTML helpers ────────────────────────────────────────
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dishcheck.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://cravia.app'
 
 function wrapHtml(body: string, email: string): string {
   return `<!DOCTYPE html>
@@ -68,7 +69,7 @@ ${body}
 </table>
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
 <tr><td style="padding:16px 24px;font-size:12px;color:#888;text-align:center;">
-You're receiving this because you have a DishCheck account. This email was sent to ${email}.
+You're receiving this because you have a Cravia account. This email was sent to ${email}.
 </td></tr>
 </table>
 </td></tr>
@@ -109,7 +110,7 @@ export async function sendPointsMilestoneEmail(
 <p>You're <strong>${pointsNeeded} DishPoints</strong> away from redeeming your first free coupon.</p>
 ${progressBar(points, 500)}
 <p>Keep reviewing dishes to earn more points and unlock rewards.</p>
-${ctaButton('View Rewards', `${SITE_URL}/rewards`)}
+${ctaButton('View Rewards', `${SITE_URL}${ROUTES.REWARDS}`)}
 `, user.email)
 
   await sendEmail({
@@ -139,12 +140,12 @@ export async function sendCouponClaimedEmail(
 </table>
 <p style="font-size:14px;color:#666;">${expiryText}</p>
 <p>Show this code at checkout to redeem your discount.</p>
-${ctaButton('View My Coupons', `${SITE_URL}/rewards`)}
+${ctaButton('View My Coupons', `${SITE_URL}${ROUTES.REWARDS}`)}
 `, user.email)
 
   await sendEmail({
     to: user.email,
-    subject: `Your DishCheck coupon is ready`,
+    subject: `Your Cravia coupon is ready`,
     html,
   })
 }
@@ -153,9 +154,9 @@ export async function sendWelcomeEmail(
   user: { email: string; displayName: string },
 ): Promise<void> {
   const html = wrapHtml(`
-<h1 style="margin:0 0 16px;font-size:24px;">Welcome to DishCheck!</h1>
+<h1 style="margin:0 0 16px;font-size:24px;">Welcome to Cravia!</h1>
 <p>Hi ${user.displayName}, great to have you here.</p>
-<p>DishCheck helps you know exactly what to order. Search for any dish at any restaurant and read honest, dish-level reviews from real diners.</p>
+<p>Cravia helps you know exactly what to order. Search for any dish at any restaurant and read honest, dish-level reviews from real diners.</p>
 <h2 style="font-size:18px;margin:24px 0 12px;">How to earn your first DishPoints:</h2>
 <ol style="padding-left:20px;">
 <li style="margin-bottom:8px;">Find a dish you've tried recently</li>
@@ -163,12 +164,12 @@ export async function sendWelcomeEmail(
 <li style="margin-bottom:8px;">Earn up to 25 DishPoints per review</li>
 </ol>
 <p>Collect 500 DishPoints and redeem them for real restaurant coupons.</p>
-${ctaButton('Start Exploring', `${SITE_URL}/explore`)}
+${ctaButton('Start Exploring', `${SITE_URL}${ROUTES.EXPLORE}`)}
 `, user.email)
 
   await sendEmail({
     to: user.email,
-    subject: 'Welcome to DishCheck \u2014 know exactly what to order',
+    subject: 'Welcome to Cravia \u2014 know exactly what to order',
     html,
   })
 }

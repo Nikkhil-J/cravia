@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ROUTES } from '@/lib/constants/routes'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -30,11 +31,11 @@ export default function ForgotPasswordPage() {
       {sent ? (
         <div className="text-center">
           <div className="text-5xl">📬</div>
-          <p className="mt-4 font-display text-lg font-bold text-bg-dark">Check your inbox</p>
+          <p className="mt-4 font-display text-lg font-bold text-heading">Check your inbox</p>
           <p className="mt-2 text-sm text-text-secondary">
             We sent a reset link to <strong>{email}</strong>
           </p>
-          <Button className="mt-6 rounded-pill px-6 font-semibold" render={<Link href="/login" />}>
+          <Button className="mt-6 rounded-pill px-6 font-semibold" render={<Link href={ROUTES.LOGIN} />}>
             Back to login
           </Button>
         </div>
@@ -55,7 +56,7 @@ export default function ForgotPasswordPage() {
           <Button type="submit" disabled={loading} className="w-full rounded-lg py-3 font-semibold">
             {loading ? <LoadingSpinner size="sm" /> : 'Send reset link'}
           </Button>
-          <Link href="/login" className="block text-center text-sm text-text-muted hover:text-primary hover:underline">
+          <Link href={ROUTES.LOGIN} className="block text-center text-sm text-text-muted hover:text-primary hover:underline">
             Back to login
           </Link>
         </form>

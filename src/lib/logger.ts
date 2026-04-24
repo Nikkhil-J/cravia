@@ -3,5 +3,5 @@
  * Replace the console.error call with Sentry/LogRocket when ready for production.
  */
 export function logError(context: string, error: unknown): void {
-  console.error(`[DishCheck] ${context}:`, error)
+  console.error(`[Cravia] ${context}:`, error)
 }

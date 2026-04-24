@@ -1,4 +1,6 @@
 import { adminRepository, reviewRepository, userRepository } from '@/lib/repositories'
+import { API_ENDPOINTS } from '@/lib/constants/api'
+import { HTTP_HEADERS } from '@/lib/constants'
 
 export function getAdminStats() {
   return adminRepository.getStats()
@@ -17,7 +19,7 @@ async function adminPatch(url: string, token: string, body: Record<string, unkno
     method: 'PATCH',
     headers: {
       authorization: `Bearer ${token}`,
-      'content-type': 'application/json',
+      [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
     },
     body: JSON.stringify(body),
   })
@@ -25,14 +27,14 @@ async function adminPatch(url: string, token: string, body: Record<string, unkno
 }
 
 export function toggleAdmin(userId: string, isAdmin: boolean, token: string) {
-  return adminPatch(`/api/admin/users/${encodeURIComponent(userId)}/role`, token, { isAdmin })
+  return adminPatch(API_ENDPOINTS.adminUserRole(encodeURIComponent(userId)), token, { isAdmin })
 }
 
 export function togglePremium(userId: string, isPremium: boolean, token: string) {
-  return adminPatch(`/api/admin/users/${encodeURIComponent(userId)}/premium`, token, { isPremium })
+  return adminPatch(API_ENDPOINTS.adminUserPremium(encodeURIComponent(userId)), token, { isPremium })
 }
 
 export function unflagReview(reviewId: string, token: string) {
-  return adminPatch(`/api/admin/reviews/${encodeURIComponent(reviewId)}`, token, {})
+  return adminPatch(API_ENDPOINTS.adminReview(encodeURIComponent(reviewId)), token, {})
 }
 

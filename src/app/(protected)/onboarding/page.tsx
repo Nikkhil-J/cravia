@@ -9,6 +9,8 @@ import { CUISINE_TYPES, CITY_AREAS, CUISINE_EMOJI, SUPPORTED_CITIES, type City }
 import { cn } from '@/lib/utils'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
+import { ROUTES } from '@/lib/constants/routes'
+import { CLIENT_ERRORS } from '@/lib/constants/errors'
 
 export default function OnboardingPage() {
   return (
@@ -21,7 +23,7 @@ export default function OnboardingPage() {
 function OnboardingContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirect') || '/home'
+  const redirectTo = searchParams.get('redirect') || ROUTES.HOME
   const { user } = useAuth()
   const authUser = useAuthStore((s) => s.authUser)
   const setUser = useAuthStore((s) => s.setUser)
@@ -30,6 +32,7 @@ function OnboardingContent() {
   const [selectedCity, setSelectedCity] = useState<City | null>(null)
   const [selectedArea, setSelectedArea] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   function toggleCuisine(c: string) {
     setSelectedCuisines(prev =>
@@ -40,14 +43,30 @@ function OnboardingContent() {
   async function handleComplete() {
     if (!user) { router.push(redirectTo); return }
     setSaving(true)
-    const updates: Parameters<typeof updateUser>[1] = {}
-    if (selectedCuisines.length > 0) updates.favoriteCuisines = selectedCuisines
-    if (selectedCity) updates.city = selectedCity
-    if (selectedArea) updates.area = selectedArea
-    await updateUser(user.id, updates)
-    setUser({ ...user, city: selectedCity ?? user.city }, authUser)
-    setSaving(false)
-    router.push(redirectTo)
+    setSaveError(null)
+
+    try {
+      const updates: Parameters<typeof updateUser>[1] = {}
+      if (selectedCuisines.length > 0) updates.favoriteCuisines = selectedCuisines
+      if (selectedCity) updates.city = selectedCity
+      if (selectedArea) updates.area = selectedArea
+
+      const success = await updateUser(user.id, updates)
+
+      if (!success) {
+        setSaveError(CLIENT_ERRORS.SOMETHING_WENT_WRONG_RETRY)
+        setSaving(false)
+        return
+      }
+
+      setUser({ ...user, city: selectedCity ?? user.city }, authUser)
+      router.push(redirectTo)
+    } catch (err) {
+      console.error('[Onboarding] Failed to save preferences:', err)
+      setSaveError(CLIENT_ERRORS.SOMETHING_WENT_WRONG_RETRY)
+    } finally {
+      setSaving(false)
+    }
   }
 
   const areas: readonly string[] = selectedCity ? CITY_AREAS[selectedCity] ?? [] : []
@@ -65,7 +84,7 @@ function OnboardingContent() {
         {/* Step 1: Cuisine preferences */}
         {step === 1 && (
           <div>
-            <h1 className="font-display text-2xl font-bold text-bg-dark">
+            <h1 className="font-display text-2xl font-bold text-heading">
               What cuisines do you love?
             </h1>
             <p className="mt-2 text-sm text-text-secondary">
@@ -109,7 +128,7 @@ function OnboardingContent() {
         {/* Step 2: City/Area */}
         {step === 2 && (
           <div>
-            <h1 className="font-display text-2xl font-bold text-bg-dark">
+            <h1 className="font-display text-2xl font-bold text-heading">
               Where are you based?
             </h1>
             <p className="mt-2 text-sm text-text-secondary">
@@ -141,7 +160,7 @@ function OnboardingContent() {
                       variant="outline"
                       onClick={() => setSelectedArea(area)}
                       className={cn(
-                        'h-auto rounded-pill border px-3 py-1.5 text-xs font-medium',
+                        'h-auto min-h-[44px] rounded-pill border px-3 text-xs font-medium',
                         selectedArea === area
                           ? 'border-primary bg-primary text-white hover:bg-primary hover:text-white'
                           : 'border-border bg-card text-text-secondary hover:border-primary'
@@ -176,18 +195,26 @@ function OnboardingContent() {
         {step === 3 && (
           <div className="text-center">
             <div className="text-6xl">🎉</div>
-            <h1 className="mt-5 font-display text-3xl font-bold text-bg-dark">
+            <h1 className="mt-5 font-display text-3xl font-bold text-heading">
               You&apos;re all set!
             </h1>
             <p className="mt-3 text-text-secondary">
               Welcome{user ? `, ${user.displayName.split(' ')[0]}` : ''}! Start discovering amazing dishes.
             </p>
+            {saveError && (
+              <div className="mt-6 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                <p>{saveError}</p>
+                <p className="mt-1 text-text-muted">
+                  Your progress is saved — just your preferences didn&apos;t save. Please try again.
+                </p>
+              </div>
+            )}
             <Button
               onClick={handleComplete}
               disabled={saving}
               className="mt-8 w-full h-auto rounded-pill py-3 text-sm font-semibold hover:bg-primary-dark hover:shadow-glow"
             >
-              {saving ? 'Saving...' : 'Start Exploring'}
+              {saving ? 'Saving...' : saveError ? 'Try Again' : 'Start Exploring'}
             </Button>
           </div>
         )}

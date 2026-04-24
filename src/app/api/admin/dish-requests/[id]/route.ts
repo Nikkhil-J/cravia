@@ -7,6 +7,7 @@ import { parseBody } from '@/lib/validation'
 import { dishRequestActionSchema } from '@/lib/validation/admin.schema'
 import { createServerNotification } from '@/lib/services/notifications-server'
 import { captureError } from '@/lib/monitoring/sentry'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -85,7 +86,7 @@ export async function PATCH(req: Request, context: RouteContext) {
           result.requestedBy,
           'review_approved',
           'Your dish request was approved!',
-          `"${result.dishName}" at ${result.restaurantName} is now on DishCheck. Be the first to review it!`,
+          `"${result.dishName}" at ${result.restaurantName} is now on Cravia. Be the first to review it!`,
           `/dish/${result.dishId}`
         ).catch((e) => captureError(e, { route: '/api/admin/dish-requests/[id]', extra: { context: 'notification' } }))
       }
@@ -135,6 +136,6 @@ export async function PATCH(req: Request, context: RouteContext) {
     }
 
     captureError(error, { route: '/api/admin/dish-requests/[id]' })
-    return NextResponse.json({ message: 'Failed to update dish request' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_UPDATE_REQUEST }, { status: 500 })
   }
 }

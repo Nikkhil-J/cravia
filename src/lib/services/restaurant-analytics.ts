@@ -92,18 +92,21 @@ async function computeAndCacheAnalytics(restaurantId: string): Promise<Restauran
   const { Timestamp } = await import('firebase-admin/firestore')
   const thirtyDaysTimestamp = Timestamp.fromDate(thirtyDaysAgo)
 
-  const allReviewsSnap = await adminDb
+  const allReviewsQuery = adminDb
     .collection(COLLECTIONS.REVIEWS)
     .where('restaurantId', '==', restaurantId)
     .where('isApproved', '==', true)
-    .get()
 
-  const recentReviewsSnap = await adminDb
+  const recentReviewsQuery = adminDb
     .collection(COLLECTIONS.REVIEWS)
     .where('restaurantId', '==', restaurantId)
     .where('isApproved', '==', true)
     .where('createdAt', '>=', thirtyDaysTimestamp)
-    .get()
+
+  const [allReviewsSnap, recentReviewsSnap] = await Promise.all([
+    allReviewsQuery.get(),
+    recentReviewsQuery.get(),
+  ])
 
   const totalReviews30d = recentReviewsSnap.size
 

@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { Coupon } from '@/lib/types/rewards'
+import { API_ENDPOINTS } from '@/lib/constants/api'
+import { HTTP_HEADERS } from '@/lib/constants'
 
 interface CouponFormData {
   title: string
@@ -51,7 +53,7 @@ export default function AdminCouponsPage() {
     async function load() {
       try {
         const token = await getToken()
-        const res = await fetch('/api/admin/coupons', {
+        const res = await fetch(API_ENDPOINTS.ADMIN_COUPONS, {
           headers: { authorization: `Bearer ${token}` },
         })
         if (res.ok) {
@@ -84,10 +86,10 @@ export default function AdminCouponsPage() {
 
     try {
       const token = await getToken()
-      const res = await fetch('/api/admin/coupons', {
+      const res = await fetch(API_ENDPOINTS.ADMIN_COUPONS, {
         method: 'POST',
         headers: {
-          'content-type': 'application/json',
+          [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
           authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
@@ -123,7 +125,7 @@ export default function AdminCouponsPage() {
   async function handleDeactivate(couponId: string) {
     try {
       const token = await getToken()
-      const res = await fetch(`/api/admin/coupons/${encodeURIComponent(couponId)}`, {
+      const res = await fetch(API_ENDPOINTS.adminCoupon(encodeURIComponent(couponId)), {
         method: 'DELETE',
         headers: { authorization: `Bearer ${token}` },
       })
@@ -140,7 +142,7 @@ export default function AdminCouponsPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-xl font-bold text-bg-dark">Coupon Management</h1>
+        <h1 className="font-display text-xl font-bold text-heading">Coupon Management</h1>
         <Button
           onClick={() => setShowForm(!showForm)}
           className="rounded-pill px-5 py-2 font-semibold hover:bg-primary-dark"
@@ -152,9 +154,9 @@ export default function AdminCouponsPage() {
       {/* Create form */}
       {showForm && (
         <div className="mt-6 rounded-xl border border-border bg-card p-6 space-y-4">
-          <h2 className="font-display text-lg font-bold text-bg-dark">New Coupon</h2>
+          <h2 className="font-display text-lg font-bold text-heading">New Coupon</h2>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <Label className="mb-1 block text-xs font-semibold text-text-secondary">Title</Label>
               <Input
@@ -269,9 +271,9 @@ export default function AdminCouponsPage() {
           />
         ) : (
           coupons.map((coupon) => (
-            <div key={coupon.id} className="flex items-center justify-between rounded-xl border border-border bg-card p-4">
-              <div>
-                <h3 className="font-display font-bold text-bg-dark">{coupon.title}</h3>
+            <div key={coupon.id} className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <h3 className="truncate font-display font-bold text-heading">{coupon.title}</h3>
                 <p className="text-xs text-text-muted">
                   {coupon.restaurantName} · {coupon.claimedCount}/{coupon.totalStock} claimed · {coupon.pointsCost} pts
                 </p>
@@ -279,7 +281,7 @@ export default function AdminCouponsPage() {
               <Button
                 variant="destructive"
                 onClick={() => handleDeactivate(coupon.id)}
-                className="rounded-pill bg-transparent border border-destructive/30 px-4 py-1.5 text-xs font-semibold hover:bg-destructive/5"
+                className="w-full rounded-pill bg-transparent border border-destructive/30 px-4 py-1.5 text-xs font-semibold hover:bg-destructive/5 sm:w-auto"
               >
                 Deactivate
               </Button>

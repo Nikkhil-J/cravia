@@ -1,0 +1,1124 @@
+{
+  "_instructions": [
+    "Gurgaon restaurant data fetched via Google Places API + online menu research.",
+    "Run: npx tsx scripts/seed-from-json.ts --file=scripts/data/gurgaon-restaurants.json --dry-run",
+    "Then run: npx tsx scripts/seed-from-json.ts --file=scripts/data/gurgaon-restaurants.json"
+  ],
+  "_stats": {
+    "totalRestaurants": 20,
+    "gurgaon": 20,
+    "fetchedAt": "2026-04-12T00:00:00.000Z"
+  },
+  "restaurants": [
+    {
+      "googlePlaceId": "ChIJVVcsPJg9DTkRKOXisrZv2O4",
+      "name": "Under The Neem",
+      "city": "Gurugram",
+      "area": "Sector 80",
+      "address": "Karma Lakelands, NH 8, Sector 80, Gurugram",
+      "coordinates": { "lat": 28.3548, "lng": 76.9441 },
+      "googleRating": 4.4,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["Italian", "North Indian", "Cafe"],
+      "priceLevel": "700-1500",
+      "types": ["restaurant", "cafe"],
+      "dishes": [
+        {
+          "name": "Pasta Arrabiatta",
+          "description": "Classic penne in spicy tomato sauce with garlic and red chilli flakes.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "400-600"
+        },
+        {
+          "name": "Pasta Alfredo",
+          "description": "Creamy white sauce pasta with parmesan and herbs.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "400-600"
+        },
+        {
+          "name": "Tawa Chicken",
+          "description": "Marinated chicken cooked on a flat iron tawa with spices and peppers.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "500-700"
+        },
+        {
+          "name": "Margherita Pizza",
+          "description": "Wood-fired pizza with fresh mozzarella, tomato sauce and basil.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "400-600"
+        },
+        {
+          "name": "Garden Fresh Salad",
+          "description": "Mixed greens with seasonal vegetables and house dressing.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "300-400"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJ18lkjQIZDTkRHt3ypwWBsPs",
+      "name": "21 Gun Salute",
+      "city": "Gurugram",
+      "area": "Sector 29",
+      "address": "SCO 35-36, 1st Floor, Main Market, Sector 29, Gurugram",
+      "coordinates": { "lat": 28.4744, "lng": 77.0633 },
+      "googleRating": 4.3,
+      "googleMapsUrl": null,
+      "website": "https://21gunsalute.co.in",
+      "phoneNumber": "+919971133557",
+      "cuisines": ["North Indian", "Mughlai", "Chinese"],
+      "priceLevel": "300-700",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Rajasthani Laal Maas",
+          "description": "Fiery Rajasthani mutton curry cooked with mathania chillies and yoghurt.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "500-700"
+        },
+        {
+          "name": "Malai Kofta",
+          "description": "Cottage cheese and potato dumplings in rich creamy cashew gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "300-450"
+        },
+        {
+          "name": "Manchow Soup",
+          "description": "Indo-Chinese spicy soup topped with crispy fried noodles.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "150-250"
+        },
+        {
+          "name": "Shahi Tawa Veg",
+          "description": "Assorted vegetables cooked on tawa in a rich Mughlai gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "300-450"
+        },
+        {
+          "name": "Butter Naan",
+          "description": "Soft leavened bread baked in tandoor, brushed with butter.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "50-80"
+        },
+        {
+          "name": "Khasta Roti",
+          "description": "Crispy flaky layered roti baked in tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "50-80"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJYxeFb08YDTkRDNXoZQqcpVU",
+      "name": "32nd Avenue",
+      "city": "Gurugram",
+      "area": "Sector 15",
+      "address": "32nd Avenue, Sector 15 Part 2, Gurugram",
+      "coordinates": { "lat": 28.4642, "lng": 77.0507 },
+      "googleRating": 4.6,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["Continental", "Cafe", "European"],
+      "priceLevel": "300-700",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Mushroom & Water Chestnut Dimsum",
+          "description": "Steamed dumplings filled with shiitake mushroom and water chestnut.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "350-400"
+        },
+        {
+          "name": "Korean Chilli Chicken",
+          "description": "Crispy fried chicken tossed in Korean gochujang chilli sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "500-550"
+        },
+        {
+          "name": "Avocado Toast Platter",
+          "description": "Sourdough toast topped with smashed avocado, cherry tomato and microgreens.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "550-650"
+        },
+        {
+          "name": "Pulled Jackfruit Taco",
+          "description": "Soft tacos with slow-cooked pulled jackfruit and tangy slaw.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Mushroom Cappuccino Soup",
+          "description": "Creamy wild mushroom soup served cappuccino-style with truffle oil.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "350-425"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJlaaV1UUZDTkRUCy4I_FjhZg",
+      "name": "threesixtyone°",
+      "city": "Gurugram",
+      "area": "Sector 19",
+      "address": "The Oberoi, 443 Udyog Vihar Phase V, Sector 19, Gurugram",
+      "coordinates": { "lat": 28.4961, "lng": 77.0882 },
+      "googleRating": 4.7,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+911242451234",
+      "cuisines": ["Continental", "Asian", "North Indian", "Italian"],
+      "priceLevel": "1500+",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Dal Makhani",
+          "description": "Slow-cooked black lentils in rich tomato-butter cream gravy, Oberoi signature.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "800-1000"
+        },
+        {
+          "name": "Dahi Kebab",
+          "description": "Hung curd patties with mixed herbs, shallow fried until golden.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "700-900"
+        },
+        {
+          "name": "Tandoori King Mushroom",
+          "description": "King oyster mushrooms marinated in tandoori spices and grilled.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "800-1000"
+        },
+        {
+          "name": "Nasi Goreng",
+          "description": "Indonesian fried rice with vegetables, fried egg and prawn crackers.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "900-1200"
+        },
+        {
+          "name": "Goan Fish Curry",
+          "description": "Fresh catch of the day in tangy coconut-based Goan curry.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "1000-1400"
+        },
+        {
+          "name": "Blueberry Cheesecake",
+          "description": "Baked New York cheesecake topped with blueberry compote.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "600-800"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJraqqYVQfDTkRCy_bg5mzGkU",
+      "name": "Indian Grill Room",
+      "city": "Gurugram",
+      "area": "Sector 56",
+      "address": "IGR Ground, Baani Address 1, behind BMW showroom, Sector 56, Gurugram",
+      "coordinates": { "lat": 28.4287, "lng": 77.0893 },
+      "googleRating": 4.2,
+      "googleMapsUrl": null,
+      "website": "https://home.indiangrillroom.com",
+      "phoneNumber": "+918527246777",
+      "cuisines": ["North Indian", "Chinese"],
+      "priceLevel": "700-1500",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Ajwain Paneer Tikka",
+          "description": "Cottage cheese marinated with carom seeds and spices, grilled in tandoor.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "400-550"
+        },
+        {
+          "name": "Tandoori Ananas",
+          "description": "Fresh pineapple wedges marinated in tandoori masala and chargrilled.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "350-450"
+        },
+        {
+          "name": "Pineapple Jalebi",
+          "description": "Crispy jalebi with a pineapple twist, served with rabdi.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "250-350"
+        },
+        {
+          "name": "Gulkand Ki Kheer",
+          "description": "Traditional rice kheer infused with rose petal preserve.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "250-350"
+        },
+        {
+          "name": "Trifle Pudding",
+          "description": "Layered dessert with sponge cake, custard, fruit and cream.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "300-400"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJccb0fBwZDTkRd53hsbG9bdo",
+      "name": "Seasonal Tastes",
+      "city": "Gurugram",
+      "area": "Sector 29",
+      "address": "The Westin Gurgaon, Sector 29, Gurugram",
+      "coordinates": { "lat": 28.4733, "lng": 77.0712 },
+      "googleRating": 4.3,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+917290013905",
+      "cuisines": ["North Indian", "Asian", "Kebab"],
+      "priceLevel": "1500+",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Crispy Sichuan Chicken",
+          "description": "Deep-fried chicken tossed in spicy Sichuan pepper and dried chilli sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "800-1000"
+        },
+        {
+          "name": "Five Spiced Prawns",
+          "description": "Tiger prawns wok-tossed with Chinese five-spice seasoning.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1000-1200"
+        },
+        {
+          "name": "Chicken & Egg Kathi Roll",
+          "description": "Flaky paratha roll stuffed with spiced chicken keema and egg.",
+          "category": "Snack",
+          "dietary": "non-veg",
+          "priceRange": "700-850"
+        },
+        {
+          "name": "Paneer Tikka Kathi Roll",
+          "description": "Tandoori paneer tikka wrapped in flaky layered paratha.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "600-750"
+        },
+        {
+          "name": "Ginger Hoisin Chicken Drumsticks",
+          "description": "Roasted chicken drumsticks glazed with ginger and hoisin sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "600-700"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJF6QrXDgZDTkRXOymqHJU35o",
+      "name": "Burma Burma",
+      "city": "Gurugram",
+      "area": "Cyber Hub",
+      "address": "Shop 6, Ground Floor, Building 8, Tower C, Cyber Hub, DLF Cyber City, Gurugram",
+      "coordinates": { "lat": 28.4944, "lng": 77.0886 },
+      "googleRating": 4.6,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["Burmese", "Asian"],
+      "priceLevel": "300-700",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Oh No Khowsuey",
+          "description": "Signature Burmese coconut curry with lemongrass, tamarind and choice of noodles.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "550-650"
+        },
+        {
+          "name": "Tea Leaf Salad",
+          "description": "Fermented tea leaves tossed with crunchy beans, sesame and garlic chips.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Samuza Hincho",
+          "description": "Burmese samosa soup with crispy samosa pieces in a tangy broth.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "350-450"
+        },
+        {
+          "name": "Raw Mango Salad",
+          "description": "Shredded raw mango with peanuts, sesame and tangy Burmese dressing.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "450-500"
+        },
+        {
+          "name": "Mekong Curry",
+          "description": "Mixed vegetables in a fragrant curry inspired by the Mekong river region.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Coconut Rice with Peanut Chutney",
+          "description": "Steamed coconut-flavoured rice served with homemade peanut chutney.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "400-500"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJQWalWw8iDTkRK5nMn8laNhg",
+      "name": "Farzi Cafe",
+      "city": "Gurugram",
+      "area": "Cyber Hub",
+      "address": "Cyber Hub, DLF Cyber City, Gurugram",
+      "coordinates": { "lat": 28.4943, "lng": 77.0886 },
+      "googleRating": 4.0,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["North Indian", "Modern Indian"],
+      "priceLevel": "700-1500",
+      "types": ["restaurant", "cafe"],
+      "dishes": [
+        {
+          "name": "Dal Chawal Arancini",
+          "description": "Crispy Italian arancini reimagined with Indian dal and rice filling.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Vada Pav Farzified",
+          "description": "Deconstructed vada pav with molecular gastronomy elements.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "400-450"
+        },
+        {
+          "name": "Farzi Fried Chicken",
+          "description": "Crispy buttermilk fried chicken with house spice blend and dip.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "500-600"
+        },
+        {
+          "name": "Chicken Tikka Tart",
+          "description": "Flaky pastry tart filled with creamy chicken tikka mousse.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "450-550"
+        },
+        {
+          "name": "Keema Kulcha",
+          "description": "Stuffed kulcha with spiced lamb keema, served with pickle and raita.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "550-650"
+        },
+        {
+          "name": "Dakhni Paneer Tikka",
+          "description": "Paneer marinated in Dakhni spices, grilled in tandoor.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "450-500"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJf_WUSv8ZDTkRw2q3mNcGxt0",
+      "name": "SOCA - Brewery & Lounge",
+      "city": "Gurugram",
+      "area": "Sector 30",
+      "address": "201/202, 2nd Floor, DLF Star Mall, Sector 30, Gurugram",
+      "coordinates": { "lat": 28.4696, "lng": 77.0436 },
+      "googleRating": 4.8,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+919311782771",
+      "cuisines": ["North Indian", "Asian", "Italian"],
+      "priceLevel": "300-700",
+      "types": ["restaurant", "bar"],
+      "dishes": [
+        {
+          "name": "Craft Beer Sampler",
+          "description": "Tasting flight of 4 in-house brewed craft beers.",
+          "category": "Beverage",
+          "dietary": "veg",
+          "priceRange": "400-600"
+        },
+        {
+          "name": "Tandoori Paneer Pizza",
+          "description": "Wood-fired pizza topped with tandoori paneer, onions and peppers.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Thai Basil Chicken",
+          "description": "Stir-fried chicken with Thai holy basil, chilli and garlic.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "450-550"
+        },
+        {
+          "name": "Peri Peri Chicken Wings",
+          "description": "Crispy chicken wings tossed in spicy peri peri sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "350-450"
+        },
+        {
+          "name": "Mojito Cocktail",
+          "description": "Classic Cuban cocktail with fresh mint, lime and white rum.",
+          "category": "Beverage",
+          "dietary": "veg",
+          "priceRange": "350-500"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJa9OjFkgYDTkRAYYuBOj_r60",
+      "name": "Civil Line Wala",
+      "city": "Gurugram",
+      "area": "Civil Lines",
+      "address": "K-125, Old Judiciary Complex, Sector 15, Gurugram",
+      "coordinates": { "lat": 28.4635, "lng": 77.0375 },
+      "googleRating": 4.2,
+      "googleMapsUrl": null,
+      "website": "https://civillineswala.in",
+      "phoneNumber": null,
+      "cuisines": ["North Indian", "Street Food"],
+      "priceLevel": "100-300",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Chole Bhature",
+          "description": "Award-winning spiced chickpea curry served with fluffy fried bread.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "100-180"
+        },
+        {
+          "name": "Chur Chur Naan",
+          "description": "Crispy flaky layered naan stuffed with spiced filling.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "80-120"
+        },
+        {
+          "name": "Rajma Chawal",
+          "description": "Creamy kidney bean curry served over steamed basmati rice.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "100-150"
+        },
+        {
+          "name": "Kadhi Chawal",
+          "description": "Tangy yoghurt-based gram flour curry with pakoras, served with rice.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "100-150"
+        },
+        {
+          "name": "Dal Makhani",
+          "description": "Slow-cooked black lentils in butter and cream, Punjabi style.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "120-180"
+        },
+        {
+          "name": "Shahi Paneer",
+          "description": "Cottage cheese cubes in rich creamy tomato-cashew gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "150-200"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJcZQiRTgZDTkR1NzcWoqONvc",
+      "name": "Cyber Hub Social",
+      "city": "Gurugram",
+      "area": "Cyber Hub",
+      "address": "Shop 04A, Ground Floor, Tower 8C, DLF Cyber City, Gurugram",
+      "coordinates": { "lat": 28.4943, "lng": 77.0889 },
+      "googleRating": 4.3,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+919228035641",
+      "cuisines": ["North Indian", "Chinese", "Cafe"],
+      "priceLevel": "300-700",
+      "types": ["restaurant", "cafe", "bar"],
+      "dishes": [
+        {
+          "name": "Popcorn Momos",
+          "description": "Bite-sized crispy fried momos tossed in spicy schezwan sauce.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "300-400"
+        },
+        {
+          "name": "Wasabi Hash Brown Chaat",
+          "description": "Crispy hash browns topped with chutneys and wasabi mayo.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "300-400"
+        },
+        {
+          "name": "Bang Bang Chicken",
+          "description": "Crispy battered chicken in creamy spicy bang bang sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Fully Reloaded Nachos",
+          "description": "Loaded nachos with beans, cheese sauce, salsa and sour cream.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "350-450"
+        },
+        {
+          "name": "Pacific Poke Bowl",
+          "description": "Fresh poke bowl with rice, edamame, avocado and sesame dressing.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "400-500"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJBR8dyDcZDTkRt1VThPY7yWw",
+      "name": "Curry Garden",
+      "city": "Gurugram",
+      "area": "Sector 14",
+      "address": "Rajiv Nagar, Old Delhi Road, Sector 14, Gurugram",
+      "coordinates": { "lat": 28.4591, "lng": 77.0261 },
+      "googleRating": 4.7,
+      "googleMapsUrl": null,
+      "website": "https://currygardengurgaon.in",
+      "phoneNumber": null,
+      "cuisines": ["North Indian", "Chinese", "Biryani"],
+      "priceLevel": "100-300",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Chicken Biryani",
+          "description": "Fragrant basmati rice layered with spiced chicken and slow-cooked in dum style.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "200-300"
+        },
+        {
+          "name": "Veg Hakka Noodles",
+          "description": "Stir-fried noodles with vegetables in Indo-Chinese style.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "200-280"
+        },
+        {
+          "name": "Butter Naan",
+          "description": "Soft leavened bread baked in tandoor, brushed with butter.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "40-50"
+        },
+        {
+          "name": "Thukpa Soup",
+          "description": "Tibetan-style noodle soup with vegetables and warm spices.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "150-180"
+        },
+        {
+          "name": "Veg Pulao",
+          "description": "Fragrant basmati rice cooked with mixed vegetables and whole spices.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "180-220"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJe1BxLGUZDTkRW60ArhqZrzU",
+      "name": "Lost Lemons",
+      "city": "Gurugram",
+      "area": "Sector 29",
+      "address": "SCO 27/28, Sector 29, Gurugram",
+      "coordinates": { "lat": 28.4744, "lng": 77.0788 },
+      "googleRating": 4.1,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["North Indian", "European", "Mediterranean"],
+      "priceLevel": "300-700",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Truffle Mushroom Bitterballen",
+          "description": "Dutch-style crispy fried mushroom croquettes with truffle oil.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "350-450"
+        },
+        {
+          "name": "Hummus Pita Falafel",
+          "description": "Creamy hummus served with crispy falafel and warm pita bread.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "250-300"
+        },
+        {
+          "name": "Red Wine Infused Chicken Tikka",
+          "description": "Chicken tikka marinated in red wine and Indian spices, chargrilled.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Jack Daniel BBQ Chicken Wings",
+          "description": "Crispy chicken wings glazed with Jack Daniel's BBQ sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Kashmiri Mutton Rogan Josh",
+          "description": "Slow-cooked lamb in aromatic Kashmiri spice and yoghurt gravy.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "500-600"
+        },
+        {
+          "name": "Penne Arrabiata",
+          "description": "Al dente penne in spicy tomato sauce with garlic and chilli.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "350-450"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJG6XSXvohDTkRXILI0z_EvOw",
+      "name": "Pirates of Grill",
+      "city": "Gurugram",
+      "area": "MG Road",
+      "address": "Ground Floor, MGF Mega City Mall, Sector 28, MG Road, Gurugram",
+      "coordinates": { "lat": 28.4726, "lng": 77.0632 },
+      "googleRating": 4.2,
+      "googleMapsUrl": null,
+      "website": "https://piratesofgrill.com",
+      "phoneNumber": null,
+      "cuisines": ["North Indian", "BBQ", "Chinese"],
+      "priceLevel": "300-700",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Paneer Tikka",
+          "description": "Cottage cheese cubes marinated in tandoori spices and grilled on live counter.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "300-400"
+        },
+        {
+          "name": "Chicken Tikka",
+          "description": "Boneless chicken marinated in yoghurt and spices, grilled on live counter.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "350-450"
+        },
+        {
+          "name": "Dal Makhani",
+          "description": "Slow-cooked black lentils in creamy butter gravy, buffet staple.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "300-400"
+        },
+        {
+          "name": "Mutton Rogan Josh",
+          "description": "Kashmiri-style lamb curry cooked in aromatic spices.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Veg Biryani",
+          "description": "Fragrant basmati rice with mixed vegetables in dum-style biryani.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "300-400"
+        },
+        {
+          "name": "Gulab Jamun",
+          "description": "Deep-fried milk solid dumplings soaked in saffron sugar syrup.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "150-200"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJd9iLYoAYDTkRALp5lDsL7pw",
+      "name": "Norenj",
+      "city": "Gurugram",
+      "area": "Sector 47",
+      "address": "SS Plaza Mall, South City 2, Sector 47, Gurugram",
+      "coordinates": { "lat": 28.4279, "lng": 77.0569 },
+      "googleRating": 4.3,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["Continental", "Italian", "North Indian", "Middle Eastern"],
+      "priceLevel": "300-700",
+      "types": ["restaurant", "bar"],
+      "dishes": [
+        {
+          "name": "Adana Kebab",
+          "description": "Turkish-style spiced minced lamb kebab grilled on skewers.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "500-650"
+        },
+        {
+          "name": "Chapli Kebab",
+          "description": "Peshawari-style flat spiced meat patty with pomegranate seeds.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "450-600"
+        },
+        {
+          "name": "Baklawa",
+          "description": "Flaky phyllo pastry layered with chopped nuts and honey syrup.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "350-450"
+        },
+        {
+          "name": "Tandoori Mushroom",
+          "description": "Button mushrooms marinated in tandoori spices and chargrilled.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "350-450"
+        },
+        {
+          "name": "Jasmine Rice with Kebab Platter",
+          "description": "Fragrant jasmine rice served with a mixed grill kebab selection.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "600-800"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJDxgoJ4sjDTkR4D-z8dAJu9A",
+      "name": "Ranisa N Rajasa",
+      "city": "Gurugram",
+      "area": "Sector 50",
+      "address": "2nd Floor, Good Earth City Center, Sector 50, Gurugram",
+      "coordinates": { "lat": 28.4277, "lng": 77.0548 },
+      "googleRating": 4.5,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+919205039639",
+      "cuisines": ["North Indian", "Rajasthani"],
+      "priceLevel": "300-700",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Kesariya Balam Thali",
+          "description": "Grand Rajasthani thali with paneer curry, veg curry, dal, pulao, raita and sweet.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "500-700"
+        },
+        {
+          "name": "Chokhi Executive Thali",
+          "description": "Paneer curry, dal fried, rice, 4 tawa chapati, salad, papad churi and pickle.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "300-450"
+        },
+        {
+          "name": "Dal Baati Churma",
+          "description": "Classic Rajasthani baked wheat balls with lentil curry and sweet churma.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "300-400"
+        },
+        {
+          "name": "Gatte Ki Sabzi",
+          "description": "Gram flour dumplings cooked in spiced yoghurt-based gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "250-350"
+        },
+        {
+          "name": "Ker Sangri",
+          "description": "Traditional Rajasthani dish of desert beans and berries cooked with spices.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "250-350"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJt4doI7AjDTkRrv_koctGIjs",
+      "name": "The Malabar Coast",
+      "city": "Gurugram",
+      "area": "Sector 57",
+      "address": "Shop 6-8, Ground Floor, M3M Atrium, Sector 57, Gurugram",
+      "coordinates": { "lat": 28.4158, "lng": 77.0865 },
+      "googleRating": 4.4,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["South Indian", "Kerala", "Seafood"],
+      "priceLevel": "300-700",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Neer Dosa",
+          "description": "Thin lacy rice crepe from Mangalore, served with coconut chutney.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "150-250"
+        },
+        {
+          "name": "Appam with Stew",
+          "description": "Lacy fermented rice pancake served with Kerala vegetable stew.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "200-300"
+        },
+        {
+          "name": "Chicken Chettinad",
+          "description": "Fiery chicken curry from Tamil Nadu with freshly ground spices and curry leaves.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "300-400"
+        },
+        {
+          "name": "Kerala Chicken Curry",
+          "description": "Coconut milk-based chicken curry with whole spices, Kerala style.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "300-400"
+        },
+        {
+          "name": "Coconut Payasam",
+          "description": "Traditional Kerala dessert with vermicelli, coconut milk and jaggery.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "150-200"
+        },
+        {
+          "name": "Filter Coffee",
+          "description": "Authentic South Indian filter coffee brewed with chicory.",
+          "category": "Beverage",
+          "dietary": "veg",
+          "priceRange": "80-120"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJ1WQc97UYDTkRzkpbtjdT81w",
+      "name": "Delhi Club House",
+      "city": "Gurugram",
+      "area": "Sector 43",
+      "address": "One Horizon Center, Golf Course Road, Sector 43, Gurugram",
+      "coordinates": { "lat": 28.4513, "lng": 77.0967 },
+      "googleRating": 4.4,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["Chinese", "Italian", "North Indian", "Japanese"],
+      "priceLevel": "700-1500",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Paneer Tikka",
+          "description": "Tandoori-grilled cottage cheese with bell peppers and onions.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "500-650"
+        },
+        {
+          "name": "Sushi Platter",
+          "description": "Assorted sushi rolls with salmon, tuna and vegetable options.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "700-1000"
+        },
+        {
+          "name": "Thai Curry Rice",
+          "description": "Fragrant Thai curry with coconut milk, served over steamed jasmine rice.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "500-700"
+        },
+        {
+          "name": "Truffle Mushroom Risotto",
+          "description": "Creamy arborio rice with wild mushrooms and truffle oil.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "600-800"
+        },
+        {
+          "name": "Chicken Momos",
+          "description": "Steamed Tibetan dumplings filled with minced chicken and ginger.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "400-500"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJdUB03NMeDTkRzTP-zjgZpYU",
+      "name": "Kogai - Fine Japanese Dining",
+      "city": "Gurugram",
+      "area": "Sector 43",
+      "address": "Unit 05, GF, Global Foyer, Golf Course Road, Sector 43, Gurugram",
+      "coordinates": { "lat": 28.4513, "lng": 77.0962 },
+      "googleRating": 4.8,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["Japanese", "Sushi"],
+      "priceLevel": "700-1500",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Ebi Mayo",
+          "description": "Crispy fried tempura shrimp tossed in creamy Japanese mayo sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "700-850"
+        },
+        {
+          "name": "Chicken Gyoza",
+          "description": "Pan-fried Japanese dumplings filled with minced chicken and ginger.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "450-550"
+        },
+        {
+          "name": "Veg Miso Ramen",
+          "description": "Rich miso broth with ramen noodles, tofu, corn, and seasonal vegetables.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "600-700"
+        },
+        {
+          "name": "California Roll",
+          "description": "Inside-out sushi roll with crab stick, avocado and cucumber.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "500-650"
+        },
+        {
+          "name": "Agedashi Tofu",
+          "description": "Lightly fried silken tofu in warm dashi broth with grated daikon.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "500-650"
+        },
+        {
+          "name": "Katsu Curry Rice",
+          "description": "Crispy breaded chicken cutlet with Japanese curry sauce and steamed rice.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "600-750"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "ChIJ_yIqlgIZDTkRPw7oONmE1I8",
+      "name": "Punjab Grill",
+      "city": "Gurugram",
+      "area": "Sector 29",
+      "address": "SCO 08, Ground Floor, Sector 29, Gurugram",
+      "coordinates": { "lat": 28.4744, "lng": 77.0788 },
+      "googleRating": 4.8,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": null,
+      "cuisines": ["North Indian", "Mughlai", "Kebab"],
+      "priceLevel": "700-1500",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Dahi ke Kebab",
+          "description": "Creamy hung curd kebabs with cashew and fresh herbs, shallow fried.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "450-550"
+        },
+        {
+          "name": "Murgh Malai Tikka",
+          "description": "Tender chicken marinated in cream, cheese and cardamom, grilled in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "550-700"
+        },
+        {
+          "name": "Bhatti Murg",
+          "description": "Whole chicken leg marinated in robust spices, cooked over charcoal bhatti.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "600-750"
+        },
+        {
+          "name": "Murg Makhani",
+          "description": "Classic butter chicken in creamy tomato-fenugreek gravy.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "600-750"
+        },
+        {
+          "name": "Dal Punjabi",
+          "description": "Yellow lentils tempered with cumin, ghee and fresh coriander.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "400-500"
+        },
+        {
+          "name": "Lamb Chops",
+          "description": "Tandoori lamb chops marinated overnight in yoghurt and Punjabi spices.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "800-1000"
+        }
+      ]
+    }
+  ]
+}

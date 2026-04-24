@@ -7,6 +7,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/button'
 import type { Review } from '@/lib/types'
+import { API_ENDPOINTS } from '@/lib/constants/api'
 
 export default function AdminReviewsPage() {
   const { user, authUser } = useAuth()
@@ -31,7 +32,7 @@ export default function AdminReviewsPage() {
   async function handleDelete(review: Review) {
     if (!user || !authUser || !confirm('Delete this review?')) return
     const token = await authUser.getIdToken()
-    const res = await fetch(`/api/admin/reviews/${encodeURIComponent(review.id)}`, {
+    const res = await fetch(API_ENDPOINTS.adminReview(encodeURIComponent(review.id)), {
       method: 'DELETE',
       headers: {
         authorization: `Bearer ${token}`,
@@ -46,7 +47,7 @@ export default function AdminReviewsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-xl font-bold text-bg-dark">Flagged Reviews</h1>
+      <h1 className="font-display text-xl font-bold text-heading">Flagged Reviews</h1>
       <p className="mt-1 text-sm text-text-muted">{reviews.length} flagged</p>
 
       {reviews.length === 0 ? (
@@ -57,7 +58,7 @@ export default function AdminReviewsPage() {
             <div key={review.id} className="rounded-xl border border-destructive/20 bg-card p-5 shadow-sm">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold text-bg-dark">{review.userName}</p>
+                  <p className="text-sm font-semibold text-heading">{review.userName}</p>
                   <p className="text-xs text-text-muted">Dish: {review.dishId}</p>
                   {review.text && <p className="mt-1 text-sm text-text-primary">&ldquo;{review.text}&rdquo;</p>}
                   <div className="mt-1 flex gap-2 text-xs text-text-muted">

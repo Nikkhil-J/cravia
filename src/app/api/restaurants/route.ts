@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { listRestaurants } from '@/lib/services/catalog'
 import { getRequestAuth } from '@/lib/services/request-auth'
 import { captureError } from '@/lib/monitoring/sentry'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
     return NextResponse.json(result)
   } catch (error) {
     captureError(error, { route: '/api/restaurants' })
-    return NextResponse.json({ message: 'Failed to fetch data' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_FETCH_DATA }, { status: 500 })
   }
 }
 

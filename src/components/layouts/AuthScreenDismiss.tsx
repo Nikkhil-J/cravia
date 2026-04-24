@@ -5,14 +5,15 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ROUTES } from '@/lib/constants/routes'
 
 function getSafeAuthDismissHref(redirect: string | null | undefined): string {
-  if (redirect == null || typeof redirect !== 'string') return '/'
+  if (redirect == null || typeof redirect !== 'string') return ROUTES.HOME
   const t = redirect.trim()
-  if (t === '' || !t.startsWith('/')) return '/'
-  if (t.startsWith('//')) return '/'
-  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(t)) return '/'
-  if (/[\r\n<>]/.test(t)) return '/'
+  if (t === '' || !t.startsWith('/')) return ROUTES.HOME
+  if (t.startsWith('//')) return ROUTES.HOME
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(t)) return ROUTES.HOME
+  if (/[\r\n<>]/.test(t)) return ROUTES.HOME
   return t
 }
 
@@ -43,7 +44,7 @@ function AuthScreenDismissInner() {
 
 export function AuthScreenDismiss() {
   return (
-    <Suspense fallback={<DismissLink href="/" />}>
+    <Suspense fallback={<DismissLink href={ROUTES.HOME} />}>
       <AuthScreenDismissInner />
     </Suspense>
   )

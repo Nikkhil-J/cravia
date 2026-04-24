@@ -15,7 +15,7 @@ const CityContext = createContext<CityContextValue>({
 })
 
 function setCityCookie(city: City) {
-  document.cookie = `dishcheck-city=${city}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`
+  document.cookie = `cravia-city=${city}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`
 }
 
 export function CityProvider({ children }: { children: ReactNode }) {
@@ -24,15 +24,15 @@ export function CityProvider({ children }: { children: ReactNode }) {
 
     const cookieValue = document.cookie
       .split('; ')
-      .find((row) => row.startsWith('dishcheck-city='))
+      .find((row) => row.startsWith('cravia-city='))
       ?.split('=')[1]
 
     if (cookieValue && (SUPPORTED_CITIES as readonly string[]).includes(cookieValue)) {
-      localStorage.setItem('dishcheck-city', cookieValue)
+      localStorage.setItem('cravia-city', cookieValue)
       return cookieValue as City
     }
 
-    const stored = localStorage.getItem('dishcheck-city')
+    const stored = localStorage.getItem('cravia-city')
     if (stored && (SUPPORTED_CITIES as readonly string[]).includes(stored)) {
       setCityCookie(stored as City)
       return stored as City
@@ -43,7 +43,7 @@ export function CityProvider({ children }: { children: ReactNode }) {
 
   function handleSetCity(c: City) {
     setCity(c)
-    localStorage.setItem('dishcheck-city', c)
+    localStorage.setItem('cravia-city', c)
     setCityCookie(c)
   }
 

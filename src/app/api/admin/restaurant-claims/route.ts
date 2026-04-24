@@ -5,6 +5,7 @@ import { COLLECTIONS } from '@/lib/firebase/config'
 import { parseBody } from '@/lib/validation'
 import { reviewClaimSchema } from '@/lib/validation/restaurant-claim.schema'
 import { captureError } from '@/lib/monitoring/sentry'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export async function GET(req: Request) {
   try {
@@ -29,7 +30,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: error.message }, { status: error.status })
     }
     captureError(error, { route: '/api/admin/restaurant-claims' })
-    return NextResponse.json({ message: 'Failed to fetch claims' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_FETCH_CLAIMS }, { status: 500 })
   }
 }
 
@@ -40,7 +41,7 @@ export async function PATCH(req: Request) {
     const body = await req.json()
     const claimId = body?.claimId as string | undefined
     if (!claimId) {
-      return NextResponse.json({ message: 'claimId is required' }, { status: 400 })
+      return NextResponse.json({ message: API_ERRORS.CLAIM_ID_REQUIRED }, { status: 400 })
     }
 
     const parsed = parseBody(reviewClaimSchema, body)
@@ -50,12 +51,12 @@ export async function PATCH(req: Request) {
     const claimSnap = await claimRef.get()
 
     if (!claimSnap.exists) {
-      return NextResponse.json({ message: 'Claim not found' }, { status: 404 })
+      return NextResponse.json({ message: API_ERRORS.CLAIM_NOT_FOUND }, { status: 404 })
     }
 
     const claim = claimSnap.data()
     if (claim?.status !== 'pending') {
-      return NextResponse.json({ message: 'Claim has already been reviewed' }, { status: 409 })
+      return NextResponse.json({ message: API_ERRORS.CLAIM_ALREADY_REVIEWED }, { status: 409 })
     }
 
     const restaurantId = claim?.restaurantId as string
@@ -65,13 +66,13 @@ export async function PATCH(req: Request) {
       const restaurantRef = adminDb.collection(COLLECTIONS.RESTAURANTS).doc(restaurantId)
       const restaurantSnap = await restaurantRef.get()
       if (!restaurantSnap.exists) {
-        return NextResponse.json({ message: 'Restaurant not found' }, { status: 404 })
+        return NextResponse.json({ message: API_ERRORS.RESTAURANT_NOT_FOUND }, { status: 404 })
       }
 
       const existingOwnerId = restaurantSnap.data()?.ownerId as string | null | undefined
       if (existingOwnerId) {
         return NextResponse.json(
-          { message: 'Restaurant already has an owner' },
+          { message: API_ERRORS.RESTAURANT_ALREADY_OWNED },
           { status: 409 }
         )
       }
@@ -104,6 +105,6 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ message: error.message }, { status: error.status })
     }
     captureError(error, { route: '/api/admin/restaurant-claims' })
-    return NextResponse.json({ message: 'Failed to review claim' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_REVIEW_CLAIM }, { status: 500 })
   }
 }

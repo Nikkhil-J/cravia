@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Camera } from 'lucide-react'
 import { toast } from 'sonner'
@@ -47,6 +47,8 @@ export default function SettingsPage() {
   const [passwordLoading, setPasswordLoading] = useState(false)
 
   const avatarInputRef = useRef<HTMLInputElement>(null)
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout>>(null)
+  useEffect(() => () => { if (savedTimerRef.current) clearTimeout(savedTimerRef.current) }, [])
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
 
@@ -89,12 +91,12 @@ export default function SettingsPage() {
     setSaved(true)
     toast.success('Profile updated')
     router.refresh()
-    setTimeout(() => setSaved(false), 3000)
+    savedTimerRef.current = setTimeout(() => setSaved(false), 3000)
   }
 
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
-      <h1 className="font-display text-2xl font-bold text-bg-dark">Settings</h1>
+      <h1 className="font-display text-2xl font-bold text-heading">Settings</h1>
       <p className="mt-1 text-sm text-text-secondary">Update your profile information</p>
 
       <form onSubmit={handleSave} className="mt-8 space-y-5">
@@ -168,7 +170,7 @@ export default function SettingsPage() {
 
       {/* Avatar upload */}
       <section className="mt-6 border-t border-border pt-6">
-        <h3 className="mb-4 text-base font-semibold text-bg-dark">Profile Photo</h3>
+        <h3 className="mb-4 text-base font-semibold text-heading">Profile Photo</h3>
         <div className="flex items-center gap-4">
           <div
             className="relative cursor-pointer"
@@ -204,7 +206,7 @@ export default function SettingsPage() {
       {/* Password change (email users only) */}
       {isPasswordUser && (
         <section className="mt-6 border-t border-border pt-6">
-          <h3 className="mb-4 text-base font-semibold text-bg-dark">Change Password</h3>
+          <h3 className="mb-4 text-base font-semibold text-heading">Change Password</h3>
           <form
             onSubmit={async (e) => {
               e.preventDefault()

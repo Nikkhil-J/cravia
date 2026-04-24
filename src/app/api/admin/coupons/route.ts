@@ -4,6 +4,7 @@ import { couponRepository } from '@/lib/repositories/server'
 import { parseBody } from '@/lib/validation'
 import { createCouponSchema } from '@/lib/validation/coupon.schema'
 import { captureError } from '@/lib/monitoring/sentry'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export async function GET(req: Request) {
   try {
@@ -15,7 +16,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: error.message }, { status: error.status })
     }
     captureError(error, { route: '/api/admin/coupons' })
-    return NextResponse.json({ message: 'Failed to fetch coupons' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_FETCH_COUPONS }, { status: 500 })
   }
 }
 
@@ -33,6 +34,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: error.message }, { status: error.status })
     }
     captureError(error, { route: '/api/admin/coupons' })
-    return NextResponse.json({ message: 'Failed to create coupon' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.FAILED_TO_CREATE_COUPON }, { status: 500 })
   }
 }

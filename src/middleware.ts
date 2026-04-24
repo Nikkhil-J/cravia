@@ -1,22 +1,21 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
-const SLOW_REQUEST_THRESHOLD_MS = 2000
+import { ROUTES } from '@/lib/constants/routes'
+import { CONFIG } from '@/lib/constants'
 
 const PROTECTED_PATHS = [
-  '/home',
-  '/write-review',
-  '/my-profile',
-  '/settings',
-  '/compare',
-  '/upgrade',
-  '/wishlist',
-  '/notifications',
-  '/rewards',
+  ROUTES.WRITE_REVIEW,
+  ROUTES.MY_PROFILE,
+  ROUTES.SETTINGS,
+  ROUTES.COMPARE,
+  ROUTES.UPGRADE,
+  ROUTES.WISHLIST,
+  ROUTES.NOTIFICATIONS,
+  ROUTES.REWARDS,
   '/claim-restaurant',
   '/restaurant-dashboard',
-  '/onboarding',
-  '/review-success',
+  ROUTES.ONBOARDING,
+  ROUTES.REVIEW_SUCCESS,
   '/profile',
 ]
 
@@ -51,7 +50,7 @@ export function middleware(request: NextRequest) {
 
   if (isProtectedPath(pathname) && !hasAuthToken(request)) {
     const loginUrl = request.nextUrl.clone()
-    loginUrl.pathname = '/login'
+    loginUrl.pathname = ROUTES.LOGIN
     loginUrl.searchParams.set('redirect', pathname + request.nextUrl.search)
     return NextResponse.redirect(loginUrl)
   }
@@ -61,7 +60,7 @@ export function middleware(request: NextRequest) {
   const durationMs = Date.now() - start
   response.headers.set('x-request-duration', String(durationMs))
 
-  if (pathname.startsWith('/api/') && durationMs > SLOW_REQUEST_THRESHOLD_MS) {
+  if (pathname.startsWith('/api/') && durationMs > CONFIG.SLOW_REQUEST_THRESHOLD_MS) {
     console.warn(
       `[perf] Slow middleware pass: ${request.method} ${pathname} ${durationMs}ms`,
     )
@@ -71,7 +70,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/api/:path*', '/home', '/write-review', '/my-profile', '/settings',
+  matcher: ['/api/:path*', '/write-review', '/my-profile', '/settings',
     '/compare', '/upgrade', '/wishlist', '/notifications', '/rewards',
     '/claim-restaurant/:path*', '/restaurant-dashboard/:path*', '/onboarding',
     '/review-success', '/profile/:path*'],

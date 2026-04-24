@@ -41,11 +41,37 @@ export default function AdminUsersPage() {
 
   return (
     <div>
-      <h1 className="font-display text-xl font-bold text-bg-dark">Users</h1>
+      <h1 className="font-display text-xl font-bold text-heading">Users</h1>
       <p className="mt-1 text-sm text-text-muted">{users.length} users</p>
 
-      <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        <table className="w-full text-sm">
+      {/* Mobile card list */}
+      <div className="mt-6 flex flex-col gap-3 md:hidden">
+        {users.map((user) => (
+          <div key={user.id} className="rounded-lg border border-border p-4">
+            <p className="font-medium text-heading">{user.displayName}</p>
+            <p className="mt-0.5 text-xs text-text-muted">{user.email}</p>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="text-xs text-text-secondary">{user.level}</span>
+              <span className="text-border">·</span>
+              <span className="text-xs text-text-secondary">{user.reviewCount} reviews</span>
+              {user.isAdmin && <Badge className="bg-destructive/15 text-destructive">Admin</Badge>}
+              {user.isPremium && <Badge className="bg-brand-gold-light text-brand-gold">Premium</Badge>}
+            </div>
+            <div className="mt-3 flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => handleToggleAdmin(user)} className="min-h-[44px] flex-1 text-xs">
+                {user.isAdmin ? 'Revoke admin' : 'Make admin'}
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleTogglePremium(user)} className="min-h-[44px] flex-1 text-xs text-brand-gold">
+                {user.isPremium ? 'Revoke premium' : 'Grant premium'}
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <div className="mt-6 hidden overflow-x-auto rounded-xl border border-border bg-card shadow-sm md:block">
+        <table className="w-full min-w-[600px] text-sm">
           <thead className="border-b border-border bg-bg-cream">
             <tr>
               <th className="px-4 py-3 text-left font-medium text-text-secondary">User</th>
@@ -59,7 +85,7 @@ export default function AdminUsersPage() {
             {users.map((user) => (
               <tr key={user.id} className="hover:bg-bg-cream">
                 <td className="px-4 py-3">
-                  <p className="font-medium text-bg-dark">{user.displayName}</p>
+                  <p className="font-medium text-heading">{user.displayName}</p>
                   <p className="text-xs text-text-muted">{user.email}</p>
                 </td>
                 <td className="px-4 py-3 text-text-secondary">{user.level}</td>
@@ -67,7 +93,7 @@ export default function AdminUsersPage() {
                 <td className="px-4 py-3">
                   <div className="flex gap-1">
                     {user.isAdmin && <Badge className="bg-destructive/15 text-destructive">Admin</Badge>}
-                    {user.isPremium && <Badge className="bg-[var(--color-accent-light)] text-[var(--color-accent)]">Premium</Badge>}
+                    {user.isPremium && <Badge className="bg-brand-gold-light text-brand-gold">Premium</Badge>}
                   </div>
                 </td>
                 <td className="px-4 py-3">
@@ -75,7 +101,7 @@ export default function AdminUsersPage() {
                     <Button variant="link" onClick={() => handleToggleAdmin(user)} className="h-auto p-0 text-xs text-primary">
                       {user.isAdmin ? 'Revoke admin' : 'Make admin'}
                     </Button>
-                    <Button variant="link" onClick={() => handleTogglePremium(user)} className="h-auto p-0 text-xs text-[var(--color-accent)]">
+                    <Button variant="link" onClick={() => handleTogglePremium(user)} className="h-auto p-0 text-xs text-brand-gold">
                       {user.isPremium ? 'Revoke premium' : 'Grant premium'}
                     </Button>
                   </div>

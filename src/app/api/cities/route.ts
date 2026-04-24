@@ -6,6 +6,8 @@ export async function GET() {
     city,
     areas: CITY_AREAS[city] ?? [],
   }))
-  return NextResponse.json({ items: payload })
+  return NextResponse.json({ items: payload }, {
+    headers: { 'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800' },
+  })
 }
 

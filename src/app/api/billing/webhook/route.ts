@@ -4,6 +4,7 @@ import { adminDb } from '@/lib/firebase/admin-server'
 import { COLLECTIONS } from '@/lib/firebase/config'
 import { FieldValue } from 'firebase-admin/firestore'
 import { captureError } from '@/lib/monitoring/sentry'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET ?? ''
 
@@ -41,20 +42,20 @@ async function isEventAlreadyProcessed(eventKey: string): Promise<boolean> {
 export async function POST(req: Request) {
   const signature = req.headers.get('x-razorpay-signature')
   if (!signature || !RAZORPAY_WEBHOOK_SECRET) {
-    return NextResponse.json({ message: 'Missing signature' }, { status: 400 })
+    return NextResponse.json({ message: API_ERRORS.MISSING_SIGNATURE }, { status: 400 })
   }
 
   const rawBody = await req.text()
 
   if (!verifyWebhookSignature(rawBody, signature, RAZORPAY_WEBHOOK_SECRET)) {
-    return NextResponse.json({ message: 'Invalid signature' }, { status: 400 })
+    return NextResponse.json({ message: API_ERRORS.INVALID_SIGNATURE }, { status: 400 })
   }
 
   let payload: WebhookPayload
   try {
     payload = JSON.parse(rawBody) as WebhookPayload
   } catch {
-    return NextResponse.json({ message: 'Invalid JSON' }, { status: 400 })
+    return NextResponse.json({ message: API_ERRORS.INVALID_JSON }, { status: 400 })
   }
 
   try {
@@ -93,6 +94,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true })
   } catch (error) {
     captureError(error, { route: '/api/billing/webhook', extra: { event: payload.event } })
-    return NextResponse.json({ message: 'Webhook processing failed' }, { status: 500 })
+    return NextResponse.json({ message: API_ERRORS.WEBHOOK_FAILED }, { status: 500 })
   }
 }

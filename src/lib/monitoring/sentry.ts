@@ -72,7 +72,9 @@ export function addBreadcrumb(message: string, data?: Record<string, unknown>): 
   })
 }
 
-const SLOW_REQUEST_THRESHOLD_MS = 2000
+import { CONFIG } from '@/lib/constants'
+
+const SLOW_REQUEST_THRESHOLD_MS = CONFIG.SLOW_REQUEST_THRESHOLD_MS
 
 /**
  * Logs API route duration. Sends a Sentry message for slow routes.

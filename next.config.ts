@@ -10,17 +10,18 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
     ],
     formats: ['image/avif', 'image/webp'],
+    unoptimized: process.env.NODE_ENV === 'development',
   },
   compress: true,
   experimental: {
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ['lucide-react', 'motion/react'],
     viewTransition: true,
   },
 };
 
 export default withSentryConfig(nextConfig, {
-  org: process.env.SENTRY_ORG ?? 'dishcheck',
-  project: process.env.SENTRY_PROJECT ?? 'dishcheck-web',
+  org: process.env.SENTRY_ORG ?? 'cravia',
+  project: process.env.SENTRY_PROJECT ?? 'cravia-web',
   silent: !process.env.CI,
   authToken: process.env.SENTRY_AUTH_TOKEN,
   widenClientFileUpload: true,

@@ -16,6 +16,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { Restaurant, ClaimantRole } from '@/lib/types'
+import { ROUTES } from '@/lib/constants/routes'
+import { API_ENDPOINTS } from '@/lib/constants/api'
+import { CLIENT_ERRORS } from '@/lib/constants/errors'
+import { HTTP_HEADERS } from '@/lib/constants'
 
 export default function ClaimRestaurantPage() {
   const params = useParams<{ id: string }>()
@@ -47,11 +51,11 @@ export default function ClaimRestaurantPage() {
     setError(null)
 
     const token = await authUser.getIdToken()
-    const res = await fetch(`/api/restaurants/${encodeURIComponent(restaurant.id)}/claim`, {
+    const res = await fetch(API_ENDPOINTS.restaurantClaim(encodeURIComponent(restaurant.id)), {
       method: 'POST',
       headers: {
         authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
+        [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
       },
       body: JSON.stringify({
         phone,
@@ -64,7 +68,7 @@ export default function ClaimRestaurantPage() {
 
     if (!res.ok) {
       const data = await res.json().catch(() => null)
-      setError(data?.message ?? 'Something went wrong. Please try again.')
+      setError(data?.message ?? CLIENT_ERRORS.SOMETHING_WENT_WRONG_RETRY)
       return
     }
 
@@ -78,7 +82,7 @@ export default function ClaimRestaurantPage() {
   if (!restaurant) {
     return (
       <div className="mx-auto max-w-xl px-4 py-10 text-center">
-        <p className="text-lg font-semibold text-bg-dark">Restaurant not found</p>
+        <p className="text-lg font-semibold text-heading">Restaurant not found</p>
         <p className="mt-1 text-sm text-text-muted">The restaurant you are looking for does not exist.</p>
       </div>
     )
@@ -88,7 +92,7 @@ export default function ClaimRestaurantPage() {
     return (
       <div className="mx-auto max-w-xl px-4 py-10 text-center">
         <p className="text-4xl">✅</p>
-        <p className="mt-3 text-lg font-semibold text-bg-dark">Already claimed</p>
+        <p className="mt-3 text-lg font-semibold text-heading">Already claimed</p>
         <p className="mt-1 text-sm text-text-muted">This restaurant already has a verified owner.</p>
       </div>
     )
@@ -98,13 +102,13 @@ export default function ClaimRestaurantPage() {
     return (
       <div className="mx-auto max-w-xl px-4 py-10 text-center">
         <p className="text-4xl">📋</p>
-        <p className="mt-3 text-lg font-semibold text-bg-dark">Claim submitted!</p>
+        <p className="mt-3 text-lg font-semibold text-heading">Claim submitted!</p>
         <p className="mt-1 text-sm text-text-secondary">
           We&apos;ll review your claim for <strong>{restaurant.name}</strong> and notify you once it&apos;s approved.
           This usually takes 1–3 business days.
         </p>
         <Button
-          onClick={() => router.push(`/restaurant/${restaurant.id}`)}
+          onClick={() => router.push(ROUTES.restaurant(restaurant.id))}
           className="mt-6 h-auto px-5 py-2.5 text-sm font-semibold hover:bg-primary-dark"
         >
           Back to restaurant
@@ -115,13 +119,13 @@ export default function ClaimRestaurantPage() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
-      <h1 className="font-display text-2xl font-bold text-bg-dark">Claim this restaurant</h1>
+      <h1 className="font-display text-2xl font-bold text-heading">Claim this restaurant</h1>
       <p className="mt-1 text-sm text-text-secondary">
         Verify your ownership of <strong>{restaurant.name}</strong> to access the analytics dashboard.
       </p>
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
-        <p className="font-semibold text-bg-dark">{restaurant.name}</p>
+        <p className="font-semibold text-heading">{restaurant.name}</p>
         <p className="text-sm text-text-muted">{restaurant.area}, {restaurant.city}</p>
         <p className="text-xs text-text-muted">{restaurant.address}</p>
       </div>

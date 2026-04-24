@@ -1,5 +1,7 @@
+import { cache } from 'react'
 import { dishRepository, restaurantRepository, reviewRepository } from '@/lib/repositories'
 import type { DietaryType, Dish, PriceRange, Restaurant, Review, SearchFilters } from '@/lib/types'
+import { SORT_OPTIONS } from '@/lib/constants'
 import { listCityAreas, resolveCity } from './city'
 
 export interface ListRestaurantsParams {
@@ -30,9 +32,9 @@ export async function listRestaurants(params?: ListRestaurantsParams): Promise<R
   }
 }
 
-export async function getRestaurantDetails(restaurantId: string): Promise<Restaurant | null> {
+export const getRestaurantDetails = cache(async (restaurantId: string): Promise<Restaurant | null> => {
   return restaurantRepository.getById(restaurantId)
-}
+})
 
 export async function listRestaurantDishes(restaurantId: string): Promise<Dish[]> {
   return dishRepository.getByRestaurant(restaurantId)
@@ -69,7 +71,7 @@ export async function listDishes(params?: SearchDishesParams): Promise<SearchDis
     area,
     dietary: params?.dietary ?? null,
     priceRange: params?.priceRange ?? null,
-    sortBy: params?.sortBy ?? 'highest-rated',
+    sortBy: params?.sortBy ?? SORT_OPTIONS.HIGHEST_RATED,
     cursor: params?.cursorId ?? undefined,
   })
 
@@ -88,12 +90,12 @@ export interface DishReviewsResult {
   nextCursorId: string | null
 }
 
-export async function listDishReviews(dishId: string, cursorId?: string | null): Promise<DishReviewsResult> {
+export const listDishReviews = cache(async (dishId: string, cursorId?: string | null): Promise<DishReviewsResult> => {
   const result = await reviewRepository.getMany({ dishId, cursor: cursorId ?? undefined })
   return {
     items: result.data,
     hasMore: result.hasMore,
     nextCursorId: result.nextCursor ?? null,
   }
-}
+})
 

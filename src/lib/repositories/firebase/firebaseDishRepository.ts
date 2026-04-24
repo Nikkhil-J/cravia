@@ -10,6 +10,7 @@ import {
 import type { DishRepository } from '@/lib/repositories/dishRepository'
 import type { GetDishesParams, PaginatedData } from '@/lib/repositories/dishRepository'
 import type { Dish } from '@/lib/types'
+import { SORT_OPTIONS } from '@/lib/constants'
 import { mapDish } from './mappers'
 
 function toCursor(lastDoc: unknown): string | undefined {
@@ -49,7 +50,7 @@ export class FirebaseDishRepository implements DishRepository {
         dietary: params.dietary ?? null,
         priceRange: params.priceRange ?? null,
         minRating: null,
-        sortBy: params.sortBy ?? 'highest-rated',
+        sortBy: params.sortBy ?? SORT_OPTIONS.HIGHEST_RATED,
       },
       cursorSnap
     )

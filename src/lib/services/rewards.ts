@@ -12,6 +12,7 @@ import {
 import { createServerNotification } from '@/lib/services/notifications-server'
 import { sendPointsMilestoneEmail } from '@/lib/services/email'
 import { addBreadcrumb, captureError } from '@/lib/monitoring/sentry'
+import { ROUTES } from '@/lib/constants/routes'
 
 const MILESTONE_250 = 250
 const MILESTONE_450 = 450
@@ -191,7 +192,7 @@ export async function rewardPointsForReview(
       'system',
       'Halfway to your coupon!',
       `You've earned ${MILESTONE_250} DishPoints — keep reviewing to unlock coupons!`,
-      '/rewards'
+      ROUTES.REWARDS
     ).catch((e) => captureError(e, { route: 'rewards/rewardPointsForReview', extra: { context: 'notification' } }))
   }
 
@@ -201,7 +202,7 @@ export async function rewardPointsForReview(
       'system',
       '50 points to go!',
       `You're at ${newTotal} DishPoints — just ${500 - newTotal} more to redeem your first coupon!`,
-      '/rewards'
+      ROUTES.REWARDS
     ).catch((e) => captureError(e, { route: 'rewards/rewardPointsForReview', extra: { context: 'notification' } }))
 
     userRepository.getById(userId).then((user) => {

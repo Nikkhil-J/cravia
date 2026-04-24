@@ -10,6 +10,7 @@ export interface GetReviewsParams {
 
 export interface ReviewRepository {
   getById(reviewId: string): Promise<Review | null>
+  getCount(): Promise<number>
   getMany(params: GetReviewsParams): Promise<PaginatedData<Review>>
   findByUserAndDish(userId: string, dishId: string): Promise<Review | null>
   getRecentByUser(userId: string, limit: number): Promise<Review[]>
@@ -23,5 +24,4 @@ export interface ReviewRepository {
   voteHelpful(reviewId: string, voterId: string): Promise<boolean>
   flag(reviewId: string, userId: string): Promise<'ok' | 'already_flagged' | null>
   getFlagged(limit?: number): Promise<Review[]>
-  unflag(reviewId: string): Promise<boolean>
 }

@@ -8,6 +8,8 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { DishRequest } from '@/lib/types'
+import { API_ENDPOINTS } from '@/lib/constants/api'
+import { HTTP_HEADERS } from '@/lib/constants'
 
 export default function AdminRequestsPage() {
   const { user, authUser } = useAuth()
@@ -22,11 +24,11 @@ export default function AdminRequestsPage() {
   async function handleApprove(id: string) {
     if (!user || !authUser) return
     const token = await authUser.getIdToken()
-    const response = await fetch(`/api/admin/dish-requests/${encodeURIComponent(id)}`, {
+    const response = await fetch(API_ENDPOINTS.adminDishRequest(encodeURIComponent(id)), {
       method: 'PATCH',
       headers: {
         authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
+        [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
       },
       body: JSON.stringify({ action: 'approve' }),
     })
@@ -38,11 +40,11 @@ export default function AdminRequestsPage() {
   async function handleReject(id: string) {
     if (!user || !authUser) return
     const token = await authUser.getIdToken()
-    const response = await fetch(`/api/admin/dish-requests/${encodeURIComponent(id)}`, {
+    const response = await fetch(API_ENDPOINTS.adminDishRequest(encodeURIComponent(id)), {
       method: 'PATCH',
       headers: {
         authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
+        [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
       },
       body: JSON.stringify({ action: 'reject', note: rejectNote[id] ?? '' }),
     })
@@ -55,7 +57,7 @@ export default function AdminRequestsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-xl font-bold text-bg-dark">Dish Requests</h1>
+      <h1 className="font-display text-xl font-bold text-heading">Dish Requests</h1>
       <p className="mt-1 text-sm text-text-muted">{requests.length} pending</p>
 
       {requests.length === 0 ? (
@@ -66,7 +68,7 @@ export default function AdminRequestsPage() {
             <div key={req.id} className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="font-semibold text-bg-dark">{req.dishName}</p>
+                  <p className="font-semibold text-heading">{req.dishName}</p>
                   <p className="text-sm text-text-secondary">{req.restaurantName}</p>
                   {req.description && <p className="mt-1 text-xs text-text-muted">{req.description}</p>}
                   <p className="mt-1 text-xs text-text-muted">Requested by {req.requestedByName}</p>

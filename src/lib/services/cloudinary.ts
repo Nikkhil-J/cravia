@@ -15,8 +15,8 @@ export async function uploadDishPhoto(file: File, dishId: string): Promise<strin
   const formData = new FormData()
   formData.append('file', file)
   formData.append('upload_preset', UPLOAD_PRESET)
-  formData.append('folder', `dishcheck/reviews/${dishId}`)
-  formData.append('transformation', 'c_limit,w_1200,q_auto,f_auto')
+  formData.append('folder', `cravia/reviews/${dishId}`)
+
 
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS)
@@ -48,8 +48,8 @@ export async function uploadAvatarPhoto(
   const formData = new FormData()
   formData.append('file', file)
   formData.append('upload_preset', UPLOAD_PRESET)
-  formData.append('folder', `dishcheck/avatars/${userId}`)
-  formData.append('transformation', 'c_fill,w_200,h_200,q_auto,f_auto')
+  formData.append('folder', `cravia/avatars/${userId}`)
+
 
   try {
     const res = await fetch(

@@ -10,7 +10,7 @@ function toDate(value: string | undefined | null): Date {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dishcheck.app'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://cravia.app'
 
   const [restaurants, dishes] = await Promise.all([
     getAllRestaurantsForSitemap(),

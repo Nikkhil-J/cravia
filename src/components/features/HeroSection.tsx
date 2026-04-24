@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'motion/react'
 import { HeroSearchBar } from '@/components/features/HeroSearchBar'
+import { ROUTES } from '@/lib/constants/routes'
 
 const HERO_TAGS = ['Sushi', 'Pizza', 'Wings', 'Ramen', 'Biryani', 'Dimsum']
 
@@ -14,7 +15,7 @@ export function HeroSection() {
   function handleTagClick(tag: string) {
     if (heroExiting) return
     setHeroExiting(true)
-    setTimeout(() => router.push(`/explore?q=${encodeURIComponent(tag)}&focus=1`), 150)
+    setTimeout(() => router.push(`${ROUTES.EXPLORE}?q=${encodeURIComponent(tag)}&focus=1`), 150)
   }
 
   return (
@@ -23,18 +24,18 @@ export function HeroSection() {
         animate={heroExiting ? { opacity: 0, y: -40 } : { opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: 'easeIn' }}
       >
-        <h1 className="font-display text-4xl font-bold tracking-tight text-bg-dark sm:text-5xl lg:text-6xl">
+        <h1 className="font-display text-3xl font-bold tracking-tight text-heading sm:text-5xl lg:text-6xl">
           Find your next{' '}
-          <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-primary to-brand-orange bg-clip-text text-transparent">
             favourite dish
           </span>
         </h1>
-        <p className="mx-auto mt-5 max-w-lg text-lg text-text-secondary">
+        <p className="mx-auto mt-3 max-w-lg text-base text-text-secondary sm:mt-5 sm:text-lg">
           Honest reviews from real food lovers. Discover amazing dishes — not just restaurants.
         </p>
       </motion.div>
 
-      <div className="mt-8">
+      <div className="mt-5 sm:mt-8">
         <HeroSearchBar onExiting={() => setHeroExiting(true)} />
       </div>
 
@@ -48,7 +49,7 @@ export function HeroSection() {
             key={tag}
             type="button"
             onClick={() => handleTagClick(tag)}
-            className="rounded-pill bg-card/80 px-4 py-1.5 text-xs font-medium text-text-secondary shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+            className="inline-flex min-h-[44px] items-center rounded-pill bg-card/80 px-4 text-xs font-medium text-text-secondary shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 active:translate-y-0 hover:shadow-md active:shadow-sm"
           >
             {tag}
           </button>

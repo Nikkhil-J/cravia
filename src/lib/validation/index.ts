@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { type ZodSchema, ZodError } from 'zod'
+import { API_ERRORS } from '@/lib/constants/errors'
 
 export function parseBody<T>(schema: ZodSchema<T>, data: unknown):
   | { success: true; data: T }
@@ -11,7 +12,7 @@ export function parseBody<T>(schema: ZodSchema<T>, data: unknown):
     return {
       success: false,
       response: NextResponse.json(
-        { message: 'Validation failed', errors },
+        { message: API_ERRORS.VALIDATION_FAILED, errors },
         { status: 400 }
       ),
     }

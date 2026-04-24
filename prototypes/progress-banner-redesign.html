@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cravia — Progress banner prototype</title>
+  <style>
+    /* ─── Design tokens (mirroring Cravia globals.css) ─── */
+    :root {
+      /* Light theme */
+      --background: #ffffff;
+      --card: #ffffff;
+      --surface: #F7F7F8;
+      --bg-warm: #FFF8F0;
+      --bg-cream: #FFFAF5;
+      --primary: #E23744;
+      --primary-dark: #C62D39;
+      --secondary: #FF6B35;
+      --accent: #FFB800;
+      --primary-light: #FEE2E5;
+      --accent-light: #FFF0C2;
+      --text-primary: #2D2D3A;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --border: #F0F0F0;
+      --brand-light: #FEE2E5;
+    }
+
+    .dark {
+      --background: #1C1C2B;
+      --card: #252538;
+      --surface: #2D2D45;
+      --bg-warm: #1E1C2E;
+      --bg-cream: #232333;
+      --primary: #E23744;
+      --primary-dark: #C62D39;
+      --secondary: #FF6B35;
+      --accent: #FFB800;
+      --primary-light: #3D1A1D;
+      --accent-light: #2D2510;
+      --text-primary: #F2F2F7;
+      --text-secondary: #A8A8B8;
+      --text-muted: #6B6B80;
+      --border: #3A3A52;
+      --brand-light: #3D1A1D;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      background: #1a1a2e;
+      padding: 48px 24px 80px;
+      color: #ccc;
+    }
+
+    .page-header {
+      max-width: 1200px;
+      margin: 0 auto 40px;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .page-header p {
+      margin-top: 8px;
+      font-size: 0.875rem;
+      color: #888;
+    }
+
+    /* ─── Theme columns ─── */
+    .themes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    @media (max-width: 900px) {
+      .themes { grid-template-columns: 1fr; }
+    }
+
+    .theme-col {
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .theme-label {
+      padding: 12px 24px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ─── Page simulation ─── */
+    .page-sim {
+      background: var(--background);
+      color: var(--text-primary);
+    }
+
+    .hero-sim {
+      background: linear-gradient(to bottom, var(--bg-cream), var(--bg-warm), var(--surface));
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .hero-sim h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .hero-sim h2 span {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sim p {
+      margin-top: 10px;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    /* Stats bar simulation */
+    .statsbar-sim {
+      padding: 20px 24px;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+    }
+    .statsbar-sim .stat {
+      text-align: center;
+    }
+    .statsbar-sim .stat-num {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #ff4141;
+      letter-spacing: -0.02em;
+    }
+    .statsbar-sim .stat-label {
+      font-size: 0.55rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    /* Top dishes simulation */
+    .dishes-sim {
+      padding: 32px 24px;
+    }
+    .dishes-sim h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .dish-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .dish-card-placeholder {
+      height: 140px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+
+    /* ─── Option labels ─── */
+    .option-header {
+      max-width: 1400px;
+      margin: 56px auto 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .option-header::before,
+    .option-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+    }
+    .option-header span {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #E23744;
+      white-space: nowrap;
+    }
+    .option-desc {
+      max-width: 1400px;
+      margin: 0 auto 24px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #777;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       OPTION A — Card strip with left border accent
+       ════════════════════════════════════════════════════════════ */
+    .banner-a {
+      padding: 0 24px;
+      margin: 4px 0;
+    }
+    .banner-a-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 14px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      border-radius: 12px;
+    }
+    .banner-a .progress-side {
+      flex: 1;
+      min-width: 200px;
+    }
+    .banner-a .progress-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .banner-a .progress-line {
+      margin-top: 4px;
+      font-size: 0.8125rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .banner-a .level-pill {
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .banner-a .bar-track {
+      margin-top: 6px;
+      width: 40%;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .banner-a .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      width: 60%;
+    }
+    .banner-a .progress-sub {
+      margin-top: 4px;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+    .banner-a .stats-side {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .banner-a .stat-item {
+      text-align: center;
+    }
+    .banner-a .stat-num {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .banner-a .stat-lbl {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+    }
+    .banner-a .divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+    }
+    .banner-a .profile-btn {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .banner-a .profile-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       OPTION B — Flush surface strip, no card
+       ════════════════════════════════════════════════════════════ */
+    .banner-b {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+    }
+    .banner-b-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .banner-b .progress-side {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .banner-b .fire-icon {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary-light), var(--brand-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem;
+    }
+    .banner-b .progress-text {
+      flex: 1;
+    }
+    .banner-b .progress-line {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .banner-b .level-pill {
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+    .banner-b .level-pill.foodie {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .banner-b .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .banner-b .bar-track {
+      width: 120px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .banner-b .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      width: 60%;
+    }
+    .banner-b .bar-label {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+    }
+    .banner-b .stats-side {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .banner-b .stat-item {
+      text-align: center;
+    }
+    .banner-b .stat-num {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .banner-b .stat-lbl {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+    }
+    .banner-b .divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+    }
+    .banner-b .profile-btn {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .banner-b .profile-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       OPTION C — Warm gradient band (brand but restrained)
+       ════════════════════════════════════════════════════════════ */
+    .banner-c {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      padding: 16px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .banner-c::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 120% at 0% 50%, rgba(0,0,0,0.15), transparent),
+        radial-gradient(ellipse 50% 120% at 100% 50%, rgba(255,255,255,0.06), transparent);
+      pointer-events: none;
+    }
+    .banner-c-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .banner-c .progress-side {
+      flex: 1;
+      min-width: 200px;
+    }
+    .banner-c .progress-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
+    }
+    .banner-c .progress-line {
+      margin-top: 3px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .banner-c .level-pill {
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+    .banner-c .bar-track {
+      margin-top: 6px;
+      width: 40%;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .banner-c .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: #fff;
+      width: 60%;
+    }
+    .banner-c .progress-sub {
+      margin-top: 4px;
+      font-size: 0.625rem;
+      color: rgba(255,255,255,0.5);
+    }
+    .banner-c .stats-side {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .banner-c .stat-item {
+      text-align: center;
+    }
+    .banner-c .stat-num {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .banner-c .stat-lbl {
+      font-size: 0.625rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .banner-c .divider {
+      width: 1px;
+      height: 32px;
+      background: rgba(255,255,255,0.2);
+    }
+    .banner-c .profile-btn {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      backdrop-filter: blur(4px);
+    }
+    .banner-c .profile-btn:hover {
+      background: rgba(255,255,255,0.25);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    /* ── Legend variant (max level) ── */
+    .legend-note {
+      max-width: 1400px;
+      margin: 32px auto 12px;
+      padding: 0 0 0 4px;
+      font-size: 0.7rem;
+      color: #666;
+      border-left: 2px solid #E23744;
+      padding-left: 10px;
+    }
+
+    /* Option A legend */
+    .banner-a .legend-text {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    /* Option B legend */
+    .banner-b .legend-text {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    /* Option C legend */
+    .banner-c .legend-text {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Progress Banner — Redesign</h1>
+    <p>Three options shown in both light &amp; dark themes, in context between hero/stats and top dishes.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       OPTION A — Card strip with left border accent
+       ═══════════════════════════════════════════════════════ -->
+  <div class="option-header"><span>Option A — Card strip with accent border</span></div>
+  <p class="option-desc">Rounded card within the content area. Feels like a native page element — same card/border tokens as profile stats. Thin primary left-border draws the eye without shouting.</p>
+
+  <div class="themes">
+    <!-- Light -->
+    <div class="theme-col">
+      <div class="theme-label">Light</div>
+      <div class="page-sim">
+        <div class="hero-sim">
+          <h2>Find your next <span>favourite dish</span></h2>
+          <p>Honest reviews from real food lovers.</p>
+        </div>
+        <div class="statsbar-sim">
+          <div class="stat"><div class="stat-num">86+</div><div class="stat-label">Dishes</div></div>
+          <div class="stat"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
+          <div class="stat"><div class="stat-num">2</div><div class="stat-label">Cities</div></div>
+        </div>
+
+        <!-- BANNER A -->
+        <div class="banner-a">
+          <div class="banner-a-inner">
+            <div class="progress-side">
+              <div class="progress-label">Your progress</div>
+              <div class="progress-line">
+                2 reviews to reach
+                <span class="level-pill">Foodie</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill"></div></div>
+              <div class="progress-sub">currently Newbie · 3 reviews</div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-lbl">Reviews</div>
+              </div>
+              <div class="divider"></div>
+              <div class="stat-item">
+                <div class="stat-num">1</div>
+                <div class="stat-lbl">Badges</div>
+              </div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="dishes-sim">
+          <h3>Top rated dishes</h3>
+          <div class="dish-cards">
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Dark -->
+    <div class="theme-col">
+      <div class="theme-label">Dark</div>
+      <div class="page-sim dark">
+        <div class="hero-sim">
+          <h2>Find your next <span>favourite dish</span></h2>
+          <p>Honest reviews from real food lovers.</p>
+        </div>
+        <div class="statsbar-sim">
+          <div class="stat"><div class="stat-num">86+</div><div class="stat-label">Dishes</div></div>
+          <div class="stat"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
+          <div class="stat"><div class="stat-num">2</div><div class="stat-label">Cities</div></div>
+        </div>
+        <div class="banner-a">
+          <div class="banner-a-inner">
+            <div class="progress-side">
+              <div class="progress-label">Your progress</div>
+              <div class="progress-line">
+                2 reviews to reach
+                <span class="level-pill">Foodie</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill"></div></div>
+              <div class="progress-sub">currently Newbie · 3 reviews</div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-lbl">Reviews</div>
+              </div>
+              <div class="divider"></div>
+              <div class="stat-item">
+                <div class="stat-num">1</div>
+                <div class="stat-lbl">Badges</div>
+              </div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+        <div class="dishes-sim">
+          <h3>Top rated dishes</h3>
+          <div class="dish-cards">
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       OPTION B — Flush surface strip
+       ═══════════════════════════════════════════════════════ -->
+  <div class="option-header"><span>Option B — Surface strip with icon</span></div>
+  <p class="option-desc">Full bleed surface band. No border-radius. Top/bottom borders create a clear lane. Fire icon adds personality without a gradient.</p>
+
+  <div class="themes">
+    <div class="theme-col">
+      <div class="theme-label">Light</div>
+      <div class="page-sim">
+        <div class="hero-sim">
+          <h2>Find your next <span>favourite dish</span></h2>
+          <p>Honest reviews from real food lovers.</p>
+        </div>
+        <div class="statsbar-sim">
+          <div class="stat"><div class="stat-num">86+</div><div class="stat-label">Dishes</div></div>
+          <div class="stat"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
+          <div class="stat"><div class="stat-num">2</div><div class="stat-label">Cities</div></div>
+        </div>
+
+        <!-- BANNER B -->
+        <div class="banner-b">
+          <div class="banner-b-inner">
+            <div class="progress-side">
+              <div class="fire-icon">🔥</div>
+              <div class="progress-text">
+                <div class="progress-line">
+                  2 reviews to reach
+                  <span class="level-pill foodie">Foodie</span>
+                </div>
+                <div class="bar-row">
+                  <div class="bar-track"><div class="bar-fill"></div></div>
+                  <span class="bar-label">Newbie · 3 reviews</span>
+                </div>
+              </div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-lbl">Reviews</div>
+              </div>
+              <div class="divider"></div>
+              <div class="stat-item">
+                <div class="stat-num">1</div>
+                <div class="stat-lbl">Badges</div>
+              </div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="dishes-sim">
+          <h3>Top rated dishes</h3>
+          <div class="dish-cards">
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="theme-col">
+      <div class="theme-label">Dark</div>
+      <div class="page-sim dark">
+        <div class="hero-sim">
+          <h2>Find your next <span>favourite dish</span></h2>
+          <p>Honest reviews from real food lovers.</p>
+        </div>
+        <div class="statsbar-sim">
+          <div class="stat"><div class="stat-num">86+</div><div class="stat-label">Dishes</div></div>
+          <div class="stat"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
+          <div class="stat"><div class="stat-num">2</div><div class="stat-label">Cities</div></div>
+        </div>
+        <div class="banner-b">
+          <div class="banner-b-inner">
+            <div class="progress-side">
+              <div class="fire-icon">🔥</div>
+              <div class="progress-text">
+                <div class="progress-line">
+                  2 reviews to reach
+                  <span class="level-pill foodie">Foodie</span>
+                </div>
+                <div class="bar-row">
+                  <div class="bar-track"><div class="bar-fill"></div></div>
+                  <span class="bar-label">Newbie · 3 reviews</span>
+                </div>
+              </div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-lbl">Reviews</div>
+              </div>
+              <div class="divider"></div>
+              <div class="stat-item">
+                <div class="stat-num">1</div>
+                <div class="stat-lbl">Badges</div>
+              </div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+        <div class="dishes-sim">
+          <h3>Top rated dishes</h3>
+          <div class="dish-cards">
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       OPTION C — Warm gradient band
+       ═══════════════════════════════════════════════════════ -->
+  <div class="option-header"><span>Option C — Brand gradient band</span></div>
+  <p class="option-desc">Bold full-bleed gradient using the brand primary→secondary. White text throughout. Looks identical in both themes — a deliberate brand moment like the CTA section at the bottom of the page.</p>
+
+  <div class="themes">
+    <div class="theme-col">
+      <div class="theme-label">Light</div>
+      <div class="page-sim">
+        <div class="hero-sim">
+          <h2>Find your next <span>favourite dish</span></h2>
+          <p>Honest reviews from real food lovers.</p>
+        </div>
+        <div class="statsbar-sim">
+          <div class="stat"><div class="stat-num">86+</div><div class="stat-label">Dishes</div></div>
+          <div class="stat"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
+          <div class="stat"><div class="stat-num">2</div><div class="stat-label">Cities</div></div>
+        </div>
+
+        <!-- BANNER C -->
+        <div class="banner-c">
+          <div class="banner-c-inner">
+            <div class="progress-side">
+              <div class="progress-label">Your progress</div>
+              <div class="progress-line">
+                2 reviews to reach
+                <span class="level-pill">Foodie</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill"></div></div>
+              <div class="progress-sub">currently Newbie · 3 reviews</div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-lbl">Reviews</div>
+              </div>
+              <div class="divider"></div>
+              <div class="stat-item">
+                <div class="stat-num">1</div>
+                <div class="stat-lbl">Badges</div>
+              </div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="dishes-sim">
+          <h3>Top rated dishes</h3>
+          <div class="dish-cards">
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="theme-col">
+      <div class="theme-label">Dark</div>
+      <div class="page-sim dark">
+        <div class="hero-sim">
+          <h2>Find your next <span>favourite dish</span></h2>
+          <p>Honest reviews from real food lovers.</p>
+        </div>
+        <div class="statsbar-sim">
+          <div class="stat"><div class="stat-num">86+</div><div class="stat-label">Dishes</div></div>
+          <div class="stat"><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
+          <div class="stat"><div class="stat-num">2</div><div class="stat-label">Cities</div></div>
+        </div>
+        <div class="banner-c">
+          <div class="banner-c-inner">
+            <div class="progress-side">
+              <div class="progress-label">Your progress</div>
+              <div class="progress-line">
+                2 reviews to reach
+                <span class="level-pill">Foodie</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill"></div></div>
+              <div class="progress-sub">currently Newbie · 3 reviews</div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-lbl">Reviews</div>
+              </div>
+              <div class="divider"></div>
+              <div class="stat-item">
+                <div class="stat-num">1</div>
+                <div class="stat-lbl">Badges</div>
+              </div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+        <div class="dishes-sim">
+          <h3>Top rated dishes</h3>
+          <div class="dish-cards">
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+            <div class="dish-card-placeholder"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       Legend state variants
+       ═══════════════════════════════════════════════════════ -->
+  <div class="option-header"><span>Legend state (max level) — all three options</span></div>
+  <p class="option-desc">When the user has reached Legend (50+ reviews), the progress side replaces with a single-line message.</p>
+
+  <div class="themes">
+    <div class="theme-col">
+      <div class="theme-label">Light — Legend variants</div>
+      <div class="page-sim">
+        <p class="legend-note" style="color: var(--text-muted); border-color: var(--primary); margin: 16px 24px 8px; font-size: 0.65rem;">Option A</p>
+        <div class="banner-a">
+          <div class="banner-a-inner">
+            <div class="progress-side">
+              <div class="legend-text">You've reached the top. You're a Legend. 👑</div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item"><div class="stat-num">52</div><div class="stat-lbl">Reviews</div></div>
+              <div class="divider"></div>
+              <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Badges</div></div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+
+        <p class="legend-note" style="color: var(--text-muted); border-color: var(--primary); margin: 16px 24px 8px; font-size: 0.65rem;">Option B</p>
+        <div class="banner-b">
+          <div class="banner-b-inner">
+            <div class="progress-side">
+              <div class="fire-icon">👑</div>
+              <div class="progress-text">
+                <div class="legend-text">You've reached the top. You're a Legend.</div>
+              </div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item"><div class="stat-num">52</div><div class="stat-lbl">Reviews</div></div>
+              <div class="divider"></div>
+              <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Badges</div></div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+
+        <p class="legend-note" style="color: var(--text-muted); border-color: var(--primary); margin: 16px 24px 8px; font-size: 0.65rem;">Option C</p>
+        <div class="banner-c">
+          <div class="banner-c-inner">
+            <div class="progress-side">
+              <div class="legend-text">You've reached the top. You're a Legend. 👑</div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item"><div class="stat-num">52</div><div class="stat-lbl">Reviews</div></div>
+              <div class="divider"></div>
+              <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Badges</div></div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-col">
+      <div class="theme-label">Dark — Legend variants</div>
+      <div class="page-sim dark">
+        <p class="legend-note" style="color: var(--text-muted); border-color: var(--primary); margin: 16px 24px 8px; font-size: 0.65rem;">Option A</p>
+        <div class="banner-a">
+          <div class="banner-a-inner">
+            <div class="progress-side">
+              <div class="legend-text">You've reached the top. You're a Legend. 👑</div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item"><div class="stat-num">52</div><div class="stat-lbl">Reviews</div></div>
+              <div class="divider"></div>
+              <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Badges</div></div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+
+        <p class="legend-note" style="color: var(--text-muted); border-color: var(--primary); margin: 16px 24px 8px; font-size: 0.65rem;">Option B</p>
+        <div class="banner-b">
+          <div class="banner-b-inner">
+            <div class="progress-side">
+              <div class="fire-icon">👑</div>
+              <div class="progress-text">
+                <div class="legend-text">You've reached the top. You're a Legend.</div>
+              </div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item"><div class="stat-num">52</div><div class="stat-lbl">Reviews</div></div>
+              <div class="divider"></div>
+              <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Badges</div></div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+
+        <p class="legend-note" style="color: var(--text-muted); border-color: var(--primary); margin: 16px 24px 8px; font-size: 0.65rem;">Option C</p>
+        <div class="banner-c">
+          <div class="banner-c-inner">
+            <div class="progress-side">
+              <div class="legend-text">You've reached the top. You're a Legend. 👑</div>
+            </div>
+            <div class="stats-side">
+              <div class="stat-item"><div class="stat-num">52</div><div class="stat-lbl">Reviews</div></div>
+              <div class="divider"></div>
+              <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Badges</div></div>
+              <div class="divider"></div>
+              <a href="#" class="profile-btn">View profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
