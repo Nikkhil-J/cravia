@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { RestaurantCard } from '@/components/features/RestaurantCard'
 import { LandingCTA } from '@/components/features/LandingCTA'
@@ -58,7 +59,9 @@ export default async function LandingPage() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-bg-cream via-bg-warm to-surface px-4 pt-12 pb-10 text-center sm:px-6 sm:pt-[101px] sm:pb-24">
-        <HeroSection />
+        <Suspense>
+          <HeroSection />
+        </Suspense>
       </section>
 
       {/* Social proof stats */}
