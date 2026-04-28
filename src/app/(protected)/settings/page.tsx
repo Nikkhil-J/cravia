@@ -26,18 +26,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { UserAvatar } from '@/components/ui/Avatar'
-import { CITY_AREAS, SUPPORTED_CITIES, type City } from '@/lib/constants'
+import { CITY_AREAS, GURUGRAM } from '@/lib/constants'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
-import { useCityContext } from '@/lib/context/CityContext'
 
 export default function SettingsPage() {
   const { user } = useAuth()
   const setUser = useAuthStore((s) => s.setUser)
   const authUser = useAuthStore((s) => s.authUser)
   const router = useRouter()
-  const { setCity: setCityContext } = useCityContext()
   const [displayName, setDisplayName] = useState('')
-  const [city, setCity] = useState('')
   const [area, setArea] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -58,9 +55,7 @@ export default function SettingsPage() {
   const firebaseUser = auth.currentUser
   const isPasswordUser = firebaseUser?.providerData?.[0]?.providerId === 'password'
 
-  const areas: readonly string[] = city && (SUPPORTED_CITIES as readonly string[]).includes(city)
-    ? CITY_AREAS[city as City] ?? []
-    : []
+  const areas: readonly string[] = CITY_AREAS[GURUGRAM] ?? []
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -68,9 +63,7 @@ export default function SettingsPage() {
     setSaving(true)
     setError(null)
     const nextDisplayName = displayName.trim() || user.displayName
-    const nextCity = city || user.city
-    const updates: Parameters<typeof updateUser>[1] = { displayName: nextDisplayName }
-    if (nextCity) updates.city = nextCity
+    const updates: Parameters<typeof updateUser>[1] = { displayName: nextDisplayName, city: GURUGRAM }
     if (area) updates.area = area
     if (avatarFile) {
       const result = await uploadAvatarPhoto(avatarFile, user.id)
@@ -85,10 +78,7 @@ export default function SettingsPage() {
       toast.error('Could not save profile')
       return
     }
-    setUser({ ...user, displayName: nextDisplayName, city: nextCity }, authUser)
-    if (nextCity && (SUPPORTED_CITIES as readonly string[]).includes(nextCity)) {
-      setCityContext(nextCity as City)
-    }
+    setUser({ ...user, displayName: nextDisplayName, city: GURUGRAM }, authUser)
     setSaved(true)
     toast.success('Profile updated')
     router.refresh()
@@ -125,23 +115,6 @@ export default function SettingsPage() {
           />
         </div>
 
-        <div>
-          <Label className="mb-1.5 text-sm font-semibold text-text-primary">City</Label>
-          <Select
-            value={city || user.city || ''}
-            onValueChange={(val) => { setCity(val as string); setArea('') }}
-          >
-            <SelectTrigger className="w-full rounded-lg border-2 border-border bg-bg-cream px-3 py-2.5 text-sm">
-              <SelectValue placeholder="Select city" />
-            </SelectTrigger>
-            <SelectContent>
-              {SUPPORTED_CITIES.map((c) => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         {areas.length > 0 && (
           <div>
             <Label className="mb-1.5 text-sm font-semibold text-text-primary">Area (optional)</Label>
@@ -150,7 +123,7 @@ export default function SettingsPage() {
                 <SelectValue placeholder="Select area" />
               </SelectTrigger>
               <SelectContent>
-                {(CITY_AREAS[city as City] ?? []).map((a) => (
+                {areas.map((a) => (
                   <SelectItem key={a} value={a}>{a}</SelectItem>
                 ))}
               </SelectContent>

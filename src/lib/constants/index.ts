@@ -80,19 +80,18 @@ export const CUISINE_TYPES = [
   'Fusion', 'Pan-Indian',
 ] as const
 
-// ── City areas (single source of truth) ──────────────────
-export const SUPPORTED_CITIES = ['Bengaluru', 'Gurugram'] as const
+// ── City (single source of truth) ────────────────────────
+export const SUPPORTED_CITIES = ['gurugram'] as const
 export type City = (typeof SUPPORTED_CITIES)[number]
 
+export const GURUGRAM: City = 'gurugram'
+
+export const CITY_DISPLAY_NAME: Record<City, string> = {
+  gurugram: 'Gurugram',
+}
+
 export const CITY_AREAS: Record<City, readonly string[]> = {
-  Bengaluru: [
-    'Indiranagar', 'Koramangala', 'HSR Layout', 'Whitefield',
-    'Jayanagar', 'JP Nagar', 'Marathahalli', 'Electronic City',
-    'Bannerghatta Road', 'Yelahanka', 'Hebbal', 'Rajajinagar',
-    'Malleshwaram', 'Sadashivanagar', 'MG Road', 'Brigade Road',
-    'Bellandur', 'Sarjapur Road',
-  ],
-  Gurugram: [
+  gurugram: [
     'Sector 29', 'Cyber City', 'Golf Course Road', 'DLF Phase 1',
     'Sohna Road', 'MG Road', 'Udyog Vihar', 'Sector 14',
     'South City', 'Palam Vihar',
@@ -214,6 +213,9 @@ export const CONFIG = {
   SESSION_COOKIE_MAX_AGE: 604800,
   SLOW_REQUEST_THRESHOLD_MS: 2000,
 } as const
+
+// ── Hero tags (shared between landing hero + empty state) ──
+export const HERO_TAGS = ['Biryani', 'Butter Chicken', 'Pizza', 'Dosa', 'Momos', 'Ramen'] as const
 
 // ── Sort options ────────────────────────────────────────
 export const SORT_OPTIONS = {

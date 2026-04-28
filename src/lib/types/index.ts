@@ -41,6 +41,8 @@ export interface Restaurant {
   isVerified: boolean
   isActive: boolean
   createdAt: string
+  totalReviews?: number
+  dishCount?: number
 }
 
 export interface RestaurantClaim {

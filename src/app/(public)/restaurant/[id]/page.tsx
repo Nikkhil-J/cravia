@@ -146,7 +146,7 @@ export default async function RestaurantPage({ params }: PageProps) {
           {/* Stats */}
           <div className="mt-8 flex gap-0 overflow-hidden rounded-lg bg-bg-cream">
             {[
-              { num: dishes.length, label: 'Dishes reviewed' },
+              { num: dishes.filter(d => d.reviewCount > 0).length, label: 'Dishes reviewed' },
               { num: dishes.reduce((sum, d) => sum + d.reviewCount, 0), label: 'Total reviews' },
             ].map((s) => (
               <div key={s.label} className="flex-1 py-4 text-center">

@@ -10,7 +10,7 @@ import { ROUTES } from '@/lib/constants/routes'
 const navItems = [
   { href: ROUTES.HOME, label: 'Home', icon: Home },
   { href: ROUTES.EXPLORE, label: 'Explore', icon: Search },
-  { href: ROUTES.WRITE_REVIEW, label: 'Review', icon: Plus, isFab: true, authOnly: true },
+  { href: `${ROUTES.WRITE_REVIEW}?from=fab`, label: 'Review', icon: Plus, isFab: true, authOnly: true },
   { href: ROUTES.WISHLIST, label: 'Saved', icon: Heart, authOnly: true },
   { href: ROUTES.MY_PROFILE, label: 'Profile', icon: User, authOnly: true },
   { href: ROUTES.LOGIN, label: 'Sign in', icon: User, guestOnly: true },

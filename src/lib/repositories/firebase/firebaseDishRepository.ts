@@ -55,8 +55,13 @@ export class FirebaseDishRepository implements DishRepository {
       cursorSnap
     )
 
+    let items = result.items.map(mapDish)
+    if (params.maxReviewCount !== undefined && params.maxReviewCount !== null) {
+      items = items.filter((d) => d.reviewCount <= params.maxReviewCount!)
+    }
+
     return {
-      data: result.items.map(mapDish),
+      data: items,
       hasMore: result.hasMore,
       nextCursor: toCursor(result.lastDoc),
     }

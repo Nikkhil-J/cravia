@@ -46,9 +46,11 @@ export function DishCard({ dish, index = 0 }: DishCardProps) {
             </div>
           </div>
         )}
-        <div className="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-sm bg-success px-2 py-0.5 text-xs font-bold text-white">
-          ★ {formatRating(dish.avgOverall)}
-        </div>
+        {dish.reviewCount > 0 && (
+          <div className="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-sm bg-success px-2 py-0.5 text-xs font-bold text-white">
+            ★ {formatRating(dish.avgOverall)}
+          </div>
+        )}
         {dish.dietary && (
           <div className="absolute left-2.5 top-2.5 rounded-sm bg-card/90 px-1.5 py-0.5 text-xs font-medium shadow-sm backdrop-blur-sm">
             {DIETARY_ICON[dish.dietary] ?? dish.dietary}
@@ -59,7 +61,15 @@ export function DishCard({ dish, index = 0 }: DishCardProps) {
         <h3 className="font-display font-semibold text-heading line-clamp-1">{dish.name}</h3>
         <p className="mt-0.5 text-xs text-text-muted line-clamp-1">{dish.restaurantName}</p>
         <div className="mt-auto flex items-center justify-between pt-2">
-          <span className="text-xs text-text-muted">{dish.reviewCount} reviews</span>
+          <div>
+            <span className="text-xs text-text-muted">{dish.reviewCount} reviews</span>
+            {dish.reviewCount > 0 && dish.reviewCount < 3 && (
+              <span className="ml-1.5 text-[10px] text-text-muted">· Limited data</span>
+            )}
+            {dish.reviewCount >= 10 && (
+              <span className="ml-1.5 text-[10px] text-success">· ✓ Reliable</span>
+            )}
+          </div>
           {dish.priceRange && (
             <span className="text-sm font-bold text-heading">{PRICE_LABEL[dish.priceRange]}</span>
           )}

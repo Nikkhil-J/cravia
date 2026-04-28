@@ -7,7 +7,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Star, Gift, Settings, ChevronRight } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useMyReviews } from '@/lib/hooks/useMyReviews'
-import { BADGE_DEFINITIONS, LEVEL_THRESHOLDS } from '@/lib/constants'
+import { BADGE_DEFINITIONS, LEVEL_THRESHOLDS, CITY_DISPLAY_NAME } from '@/lib/constants'
+import type { City } from '@/lib/constants'
 import { ReviewCardV2 } from '@/components/features/ReviewCardV2'
 import { useReviewDishContexts } from '@/lib/hooks/useReviewDishContexts'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -118,7 +119,7 @@ export default function MyProfilePage() {
               {user.displayName}
             </h1>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-[13px]">
-              <span className="text-text-muted">{user.city || 'Bengaluru'}</span>
+              <span className="text-text-muted">{CITY_DISPLAY_NAME[user.city as City] ?? user.city ?? 'Gurugram'}</span>
               <span className="text-border">·</span>
               <span className="inline-flex items-center gap-1 rounded-pill border border-brand-gold/15 bg-brand-gold-light px-2.5 py-0.5 text-[11px] font-bold text-brand-gold">
                 ⭐ {user.level}

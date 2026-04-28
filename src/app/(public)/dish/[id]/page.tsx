@@ -10,13 +10,16 @@ import { LoadMoreReviews } from '@/components/features/LoadMoreReviews'
 import { SubRatingBar } from '@/components/ui/SubRatingBar'
 import { TagCloud } from '@/components/ui/TagCloud'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { formatRating } from '@/lib/utils/index'
+import { formatRating, formatRelativeTime } from '@/lib/utils/index'
 import { DIETARY_BADGE, PRICE_LABEL, CONFIG, SUB_RATING_LABELS } from '@/lib/constants'
 import { WishlistButton } from '@/components/features/WishlistButton'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import type { DishPhoto } from '@/lib/types'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
 import { ROUTES } from '@/lib/constants/routes'
+import { EarlyStageCard } from '@/components/features/EarlyStageCard'
+import { TrackDishView } from '@/components/features/TrackDishView'
+import { StreakCTA } from '@/components/features/StreakCTA'
 
 export const revalidate = 3600
 
@@ -80,6 +83,15 @@ export default async function DishPage({ params }: PageProps) {
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
     <div className="mx-auto max-w-[1200px] overflow-hidden px-4 py-8 sm:px-6">
+      <TrackDishView dish={{
+        id: dish.id,
+        name: dish.name,
+        restaurantName: dish.restaurantName,
+        restaurantId: dish.restaurantId,
+        coverImage: dish.coverImage,
+        avgOverall: dish.avgOverall,
+        cuisines: dish.cuisines,
+      }} />
       <MobileBackButton />
       {/* Breadcrumb */}
       <nav className="mb-4 flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:mb-6 sm:gap-2 sm:text-sm">
@@ -125,7 +137,12 @@ export default async function DishPage({ params }: PageProps) {
             <span className="flex items-center gap-1 font-bold text-brand-gold">
               ★ {formatRating(dish.avgOverall)}
             </span>
-            <span className="text-text-muted">{dish.reviewCount} reviews</span>
+            <span className="text-text-muted">
+              {dish.reviewCount} reviews
+              {reviewsForPhotos.items.length > 0 && (
+                <> · Last reviewed {formatRelativeTime(reviewsForPhotos.items[0].createdAt)}</>
+              )}
+            </span>
             {dish.priceRange && (
               <span className="font-semibold text-heading">{PRICE_LABEL[dish.priceRange]}</span>
             )}
@@ -136,41 +153,88 @@ export default async function DishPage({ params }: PageProps) {
           )}
 
           {/* Tags */}
-          {dish.topTags.length > 0 && (
+          {dish.topTags.length > 0 && dish.reviewCount > 0 && (
             <div className="mt-5">
               <TagCloud tags={dish.topTags} maxVisible={8} />
             </div>
           )}
 
           {/* CTA */}
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href={`${ROUTES.WRITE_REVIEW}?dishId=${dish.id}&restaurantId=${dish.restaurantId}&dishName=${encodeURIComponent(dish.name)}&restaurantName=${encodeURIComponent(dish.restaurantName)}&from=${encodeURIComponent(ROUTES.dish(dish.id))}`}
-              className="inline-flex items-center justify-center rounded-pill bg-primary px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-primary-dark hover:-translate-y-0.5 hover:shadow-glow"
-            >
-              Write a Review
-            </Link>
-            <WishlistButton dishId={dish.id} />
-          </div>
+          {dish.reviewCount > 0 && (
+            <div className="mt-8">
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href={`${ROUTES.WRITE_REVIEW}?dishId=${dish.id}&restaurantId=${dish.restaurantId}&dishName=${encodeURIComponent(dish.name)}&restaurantName=${encodeURIComponent(dish.restaurantName)}&from=${encodeURIComponent(ROUTES.dish(dish.id))}`}
+                  className="inline-flex items-center justify-center rounded-pill bg-primary px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-primary-dark hover:-translate-y-0.5 hover:shadow-glow"
+                >
+                  Earn 25 pts — Review this dish
+                </Link>
+                <WishlistButton dishId={dish.id} />
+              </div>
+              <p className="mt-2 text-xs text-text-muted">
+                Photo + detailed review = 25 pts | Quick review = 10 pts
+              </p>
+              {dish.reviewCount >= 1 && dish.reviewCount <= 2 && (
+                <p className="mt-2 text-xs font-semibold text-primary">
+                  Add your review — Earn up to 25 DishPoints
+                </p>
+              )}
+              {dish.reviewCount >= 3 && dish.reviewCount <= 4 && (
+                <p className="mt-1 text-xs font-medium text-primary">
+                  Help build this dish&apos;s profile
+                </p>
+              )}
+              <StreakCTA dishId={dish.id} />
+            </div>
+          )}
+          {dish.reviewCount === 0 && (
+            <div className="mt-8 flex">
+              <WishlistButton dishId={dish.id} />
+            </div>
+          )}
 
         </div>
 
         {/* Sidebar */}
         <div className="lg:col-span-1">
           <div className="sticky top-24 space-y-6">
-            <div className="rounded-xl border border-border bg-card p-6">
-              <div className="text-center">
-                <div className="font-display text-4xl font-bold text-heading sm:text-5xl">
-                  {formatRating(dish.avgOverall)}
+            {dish.reviewCount === 0 ? (
+              <EarlyStageCard
+                dishId={dish.id}
+                restaurantId={dish.restaurantId}
+                dishName={dish.name}
+                restaurantName={dish.restaurantName}
+              />
+            ) : (
+              <div className="rounded-xl border border-border bg-card p-6">
+                <div className="text-center">
+                  <div className="font-display text-4xl font-bold text-heading sm:text-5xl">
+                    {formatRating(dish.avgOverall)}
+                  </div>
+                  <div className="mt-1 text-sm text-text-muted">{dish.reviewCount} reviews</div>
+                  {dish.reviewCount < 3 && (
+                    <p className="mt-1 text-xs text-text-muted">Limited data</p>
+                  )}
+                  {dish.reviewCount >= 10 && (
+                    <p className="mt-1 text-xs text-success">✓ Reliable rating</p>
+                  )}
                 </div>
-                <div className="mt-1 text-sm text-text-muted">{dish.reviewCount} reviews</div>
+                {dish.reviewCount >= 1 && (
+                  <>
+                    {dish.reviewCount <= 2 && (
+                      <p className="mt-3 text-center text-xs text-text-muted">
+                        Ratings based on {dish.reviewCount} review{dish.reviewCount !== 1 ? 's' : ''}
+                      </p>
+                    )}
+                    <div className="mt-5 space-y-3">
+                      <SubRatingBar label={SUB_RATING_LABELS[0]} value={dish.avgTaste} />
+                      <SubRatingBar label={SUB_RATING_LABELS[1]} value={dish.avgPortion} />
+                      <SubRatingBar label={SUB_RATING_LABELS[2]} value={dish.avgValue} />
+                    </div>
+                  </>
+                )}
               </div>
-              <div className="mt-5 space-y-3">
-                <SubRatingBar label={SUB_RATING_LABELS[0]} value={dish.avgTaste} />
-                <SubRatingBar label={SUB_RATING_LABELS[1]} value={dish.avgPortion} />
-                <SubRatingBar label={SUB_RATING_LABELS[2]} value={dish.avgValue} />
-              </div>
-            </div>
+            )}
 
             {/* Restaurant mini-card */}
             <Link
@@ -212,6 +276,12 @@ export default async function DishPage({ params }: PageProps) {
   )
 }
 
+function hybridScore(review: { helpfulVotes: number; createdAt: string }): number {
+  const recencyDays = (Date.now() - new Date(review.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+  const recencyBoost = Math.max(0, 1 - recencyDays / 30)
+  return Math.log(1 + review.helpfulVotes) * 3 + recencyBoost
+}
+
 async function DishReviewsSection({ dishId }: { dishId: string }) {
   const reviewsResult = await listDishReviews(dishId)
 
@@ -225,12 +295,31 @@ async function DishReviewsSection({ dishId }: { dishId: string }) {
     )
   }
 
+  const isSeedingComplete = process.env.NEXT_PUBLIC_SEEDING_COMPLETE === 'true'
+
+  let pinnedReview = null
+  let sortedReviews = [...reviewsResult.items]
+
+  if (isSeedingComplete) {
+    const mostHelpful = sortedReviews.reduce((best, r) =>
+      r.helpfulVotes > (best?.helpfulVotes ?? 0) ? r : best, null as typeof sortedReviews[0] | null
+    )
+
+    if (mostHelpful && mostHelpful.helpfulVotes >= 2) {
+      pinnedReview = mostHelpful
+      sortedReviews = sortedReviews.filter((r) => r.id !== mostHelpful.id)
+    }
+  }
+
+  sortedReviews.sort((a, b) => hybridScore(b) - hybridScore(a))
+
   return (
     <LoadMoreReviews
-      initialReviews={reviewsResult.items}
+      initialReviews={sortedReviews}
       initialHasMore={reviewsResult.hasMore}
       initialCursorId={reviewsResult.nextCursorId}
       dishId={dishId}
+      pinnedReview={pinnedReview}
     />
   )
 }

@@ -53,7 +53,7 @@ async function sendEmail(payload: EmailPayload): Promise<void> {
 
 // ── HTML helpers ────────────────────────────────────────
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://cravia.app'
+const SITE_URL = env.NEXT_PUBLIC_SITE_URL ?? 'https://cravia.app'
 
 function wrapHtml(body: string, email: string): string {
   return `<!DOCTYPE html>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useStreak } from '@/lib/hooks/useStreak'
 import { LEVEL_THRESHOLDS } from '@/lib/constants'
 import type { UserLevel } from '@/lib/types'
 import { ROUTES } from '@/lib/constants/routes'
@@ -16,6 +17,7 @@ const NEXT_LEVEL: Record<UserLevel, UserLevel | null> = {
 
 export function PersonalStatsBanner() {
   const { user } = useAuth()
+  const { currentStreak: streak } = useStreak()
   const [animate, setAnimate] = useState(false)
 
   useEffect(() => {
@@ -127,6 +129,29 @@ export function PersonalStatsBanner() {
             <div className="font-display text-xl font-bold text-white">{user.badges.length}</div>
             <div className="text-xs text-white/60">Badges</div>
           </div>
+          <div className="h-8 w-px bg-white/20" />
+          <div className="text-center">
+            <div className="font-display text-xl font-bold text-white">{user.dishPointsBalance ?? 0}</div>
+            <div className="text-xs text-white/60">DishPoints</div>
+          </div>
+          {streak > 0 && (
+            <>
+              <div className="h-8 w-px bg-white/20" />
+              <div className="text-center">
+                <div className="font-display text-xl font-bold text-white">🔥 {streak}</div>
+                <div className="text-xs text-white/60">Streak</div>
+              </div>
+            </>
+          )}
+          {user.helpfulVotesReceived > 0 && (
+            <>
+              <div className="h-8 w-px bg-white/20" />
+              <div className="text-center">
+                <div className="font-display text-xl font-bold text-white">{user.helpfulVotesReceived}</div>
+                <div className="text-xs text-white/60">Helpful</div>
+              </div>
+            </>
+          )}
           <div className="h-8 w-px bg-white/20" />
           <Link
             href={ROUTES.MY_PROFILE}

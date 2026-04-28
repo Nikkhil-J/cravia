@@ -285,7 +285,7 @@ describe('userProfileUpdateSchema', () => {
   it('accepts valid profile update', () => {
     const result = userProfileUpdateSchema.safeParse({
       displayName: 'Alice',
-      city: 'Bengaluru',
+      city: 'gurugram',
     })
     expect(result.success).toBe(true)
   })

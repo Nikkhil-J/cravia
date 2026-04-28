@@ -7,7 +7,6 @@ import { AppProgressBar } from 'next-nprogress-bar'
 import { MotionConfig } from 'motion/react'
 import { Toaster } from 'sonner'
 import { AuthProvider } from '@/lib/hooks/useAuth'
-import { CityProvider } from '@/lib/context/CityContext'
 import { CONFIG } from '@/lib/constants'
 
 function ThemedToaster() {
@@ -53,9 +52,7 @@ export function Providers({ children }: { children: ReactNode }) {
       </Suspense>
       <MotionConfig reducedMotion="user">
         <QueryClientProvider client={queryClient}>
-          <CityProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </CityProvider>
+          <AuthProvider>{children}</AuthProvider>
         </QueryClientProvider>
       </MotionConfig>
       <ThemedToaster />

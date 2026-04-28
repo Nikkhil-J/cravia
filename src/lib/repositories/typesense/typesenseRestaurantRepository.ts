@@ -45,13 +45,15 @@ function hitToRestaurant(hit: SearchResponseHit<TypesenseRestaurantDoc>): Restau
     createdAt: d.createdAt
       ? new Date(d.createdAt * 1000).toISOString()
       : new Date(0).toISOString(),
+    totalReviews: d.totalReviews ?? 0,
+    dishCount: d.dishCount ?? 0,
   }
 }
 
 function buildSortBy(sortBy?: string): string {
   switch (sortBy) {
     case 'most-reviewed':
-      return 'totalReviews:desc'
+      return 'totalReviews:desc,dishCount:desc'
     case 'newest':
       return 'createdAt:desc'
     case 'alphabetical':

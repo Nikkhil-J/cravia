@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'motion/react'
 import { HeroSearchBar } from '@/components/features/HeroSearchBar'
 import { ROUTES } from '@/lib/constants/routes'
-
-const HERO_TAGS = ['Biryani', 'Pizza', 'Sushi', 'Ramen', 'Dosa', 'Burger']
+import { HERO_TAGS } from '@/lib/constants'
 
 export function HeroSection() {
   const [heroExiting, setHeroExiting] = useState(false)
@@ -15,7 +14,7 @@ export function HeroSection() {
   function handleTagClick(tag: string) {
     if (heroExiting) return
     setHeroExiting(true)
-    setTimeout(() => router.push(`${ROUTES.EXPLORE}?q=${encodeURIComponent(tag)}&focus=1`), 150)
+    setTimeout(() => router.push(`${ROUTES.EXPLORE}?tab=dishes&q=${encodeURIComponent(tag)}&focus=1`), 150)
   }
 
   return (
@@ -31,7 +30,7 @@ export function HeroSection() {
           </span>
         </h1>
         <p className="mx-auto mt-3 max-w-lg text-base text-text-secondary sm:mt-5 sm:text-lg">
-          Search restaurants by name, cuisine, or a dish you love. Read honest dish-level reviews from real food lovers.
+          Real diners rate taste, portion, and value for every dish. Know exactly what to order before you go.
         </p>
       </motion.div>
 

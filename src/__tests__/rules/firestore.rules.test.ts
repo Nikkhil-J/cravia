@@ -107,7 +107,7 @@ describe('users collection', () => {
     await assertSucceeds(
       db.collection('users').doc('alice').update({
         displayName: 'Alice Updated',
-        city: 'Bengaluru',
+        city: 'gurugram',
       })
     )
   })
@@ -226,7 +226,7 @@ describe('restaurants collection', () => {
     await testEnv.withSecurityRulesDisabled(async (ctx) => {
       await ctx.firestore().collection('restaurants').doc('rest1').set({
         name: 'Test Restaurant',
-        city: 'Bengaluru',
+        city: 'gurugram',
       })
     })
 

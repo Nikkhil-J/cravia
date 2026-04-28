@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import type { Review } from '@/lib/types'
 import { canEditReview, computeOverall, formatRelativeTime, formatRating } from '@/lib/utils/index'
-import { LEVEL_COLORS, CONFIG } from '@/lib/constants'
+import { LEVEL_COLORS } from '@/lib/constants'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -88,12 +88,23 @@ export function ReviewCardV2({
   const overflowTagCount = review.tags.length - MAX_VISIBLE_TAGS
   const [showAllTags, setShowAllTags] = useState(false)
 
+  const helpfulVoteSessionCount = useRef(
+    typeof window !== 'undefined'
+      ? parseInt(sessionStorage.getItem('helpfulVoteCount') ?? '0', 10)
+      : 0
+  )
+
   async function handleVote() {
     if (!currentUserId || isOwn || hasVoted) return
     const token = authUser ? await authUser.getIdToken() : null
     if (!token) return
     setHasVoted(true)
     setHelpfulCount((n) => n + 1)
+    helpfulVoteSessionCount.current += 1
+    sessionStorage.setItem('helpfulVoteCount', String(helpfulVoteSessionCount.current))
+    if (helpfulVoteSessionCount.current <= 3) {
+      toast.success('You helped highlight a great review', { duration: 2000 })
+    }
     const res = await fetch(API_ENDPOINTS.reviewHelpful(encodeURIComponent(review.id)), {
       method: 'POST',
       headers: { authorization: `Bearer ${token}` },
@@ -131,7 +142,7 @@ export function ReviewCardV2({
           onClick={() => setPhotoExpanded((v) => !v)}
           className={cn(
             'relative w-full cursor-pointer overflow-hidden transition-[height] duration-400 ease-out',
-            photoExpanded ? 'h-[200px] sm:h-[260px] md:h-[320px]' : 'h-[100px] sm:h-[115px] md:h-[130px]',
+            photoExpanded ? 'h-[200px] sm:h-[260px] md:h-[320px]' : 'h-[140px] sm:h-[160px] md:h-[180px]',
           )}
         >
           <Image
@@ -270,14 +281,20 @@ export function ReviewCardV2({
             onClick={handleVote}
             disabled={!currentUserId || isOwn}
             className={cn(
-              'inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium transition-colors',
+              'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-colors',
               hasVoted
-                ? 'bg-primary/10 font-bold text-primary'
-                : 'text-text-muted hover:text-text-secondary',
+                ? 'border-primary/30 bg-primary/10 font-bold text-primary'
+                : 'border-border text-text-muted hover:border-primary/40 hover:bg-primary/5',
               'disabled:cursor-default disabled:opacity-100',
             )}
           >
-            👍 Helpful · {helpfulCount}
+            {hasVoted
+              ? helpfulCount === 1
+                ? '👍 You found this helpful'
+                : `👍 You and ${helpfulCount - 1} other${helpfulCount - 1 !== 1 ? 's' : ''}`
+              : helpfulCount === 0
+                ? '👍 Helpful?'
+                : `👍 ${helpfulCount} found this helpful`}
           </button>
 
           {currentUserId && !isOwn && !flagged && (

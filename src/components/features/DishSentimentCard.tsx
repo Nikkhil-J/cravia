@@ -12,7 +12,7 @@ interface DishSentimentCardProps {
   restaurantId: string
 }
 
-export function DishSentimentCard({ dish }: DishSentimentCardProps) {
+export function DishSentimentCard({ dish, restaurantId: _restaurantId }: DishSentimentCardProps) {
   const sortedTags = Object.entries(dish.tagFrequency)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 8)

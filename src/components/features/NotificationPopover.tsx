@@ -228,7 +228,7 @@ function EmptyBell() {
       </svg>
       <h3 className="text-[15px] font-bold text-heading">No notifications yet</h3>
       <p className="mt-1 max-w-[220px] text-[13px] text-text-muted">
-        When you get helpful votes, earn badges, or have reviews approved, they&apos;ll show up here.
+        When you get helpful votes or earn badges, they&apos;ll show up here.
       </p>
     </div>
   )

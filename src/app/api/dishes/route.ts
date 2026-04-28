@@ -19,6 +19,7 @@ export async function GET(req: Request) {
     dietary: searchParams.get('dietary'),
     priceRange: searchParams.get('priceRange'),
     sortBy: searchParams.get('sortBy') ?? SORT_OPTIONS.HIGHEST_RATED,
+    maxReviewCount: searchParams.get('maxReviewCount'),
     cursor: searchParams.get('cursor'),
   }
 
@@ -42,6 +43,7 @@ export async function GET(req: Request) {
       dietary: params.dietary,
       priceRange: params.priceRange,
       sortBy: params.sortBy,
+      maxReviewCount: params.maxReviewCount,
       cursorId: params.cursor,
     })
 

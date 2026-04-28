@@ -8,13 +8,6 @@ test.describe('Landing page', () => {
     await expect(page.getByText('Search for a dish or restaurant...')).toBeVisible({ timeout: 8000 })
   })
 
-  test('shows city pills', async ({ page }) => {
-    await page.goto('/')
-    await expect(
-      page.getByText(/bengaluru|gurugram/i).first()
-    ).toBeVisible({ timeout: 8000 })
-  })
-
   test('shows top dishes section', async ({ page }) => {
     await page.goto('/')
     // DishCard renders as a <Link> (anchor) with href=/dish/

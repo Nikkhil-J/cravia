@@ -41,3 +41,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated data pipeline output
+scripts/gurgaon/data/*.json
+scripts/gurgaon/data/debug/

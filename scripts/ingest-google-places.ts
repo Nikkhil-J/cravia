@@ -5,9 +5,9 @@
  * into Firestore with properly-typed schema.
  *
  * Usage:
- *   npx tsx scripts/ingest-google-places.ts --city=Bengaluru
- *   npx tsx scripts/ingest-google-places.ts --city=Bengaluru --cuisine="North Indian"
- *   npx tsx scripts/ingest-google-places.ts --city=Bengaluru --limit=50 --dry-run
+ *   npx tsx scripts/ingest-google-places.ts --city=Gurugram
+ *   npx tsx scripts/ingest-google-places.ts --city=Gurugram --cuisine="North Indian"
+ *   npx tsx scripts/ingest-google-places.ts --city=Gurugram --limit=50 --dry-run
  *
  * Requires:
  *   GOOGLE_PLACES_API_KEY in .env.local
@@ -59,7 +59,7 @@ function parseArgs(): { city: string; cuisine: string | undefined; limit: number
 
   if (!city) {
     console.error('Error: --city flag is required')
-    console.error('Usage: npx tsx scripts/ingest-google-places.ts --city=Bengaluru [--cuisine="North Indian"] [--limit=100] [--dry-run]')
+    console.error('Usage: npx tsx scripts/ingest-google-places.ts --city=Gurugram [--cuisine="North Indian"] [--limit=100] [--dry-run]')
     process.exit(1)
   }
 

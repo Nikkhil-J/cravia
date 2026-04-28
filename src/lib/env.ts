@@ -55,6 +55,9 @@ const envSchema = z.object({
 
   // Site
   NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
+
+  // Content seeding gate — set to 'true' once minimum viable content thresholds are met
+  NEXT_PUBLIC_SEEDING_COMPLETE: z.string().optional(),
 })
 
 /**
@@ -101,6 +104,8 @@ const rawEnv = {
   RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
 
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+
+  NEXT_PUBLIC_SEEDING_COMPLETE: process.env.NEXT_PUBLIC_SEEDING_COMPLETE,
 }
 
 function validateEnv() {

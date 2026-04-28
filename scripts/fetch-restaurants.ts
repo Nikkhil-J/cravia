@@ -1,7 +1,7 @@
 /**
  * SCRIPT 1: fetch-restaurants.ts
  *
- * Fetches real restaurants from Google Places API for Bengaluru and Gurugram.
+ * Fetches real restaurants from Google Places API for Gurugram.
  * Outputs a JSON file (restaurants-raw.json) that you then fill with dish data.
  *
  * Run from your Cravia project root:
@@ -25,73 +25,36 @@ if (!API_KEY) {
 // ── Config ────────────────────────────────────────────────────────────────────
 
 const SEARCHES = [
-  // Bengaluru
   {
-    city: "Bengaluru",
-    area: "Koramangala",
-    query: "popular restaurants in Koramangala Bengaluru",
-    lat: 12.9352,
-    lng: 77.6245,
-  },
-  {
-    city: "Bengaluru",
-    area: "Indiranagar",
-    query: "popular restaurants in Indiranagar Bengaluru",
-    lat: 12.9784,
-    lng: 77.6408,
-  },
-  {
-    city: "Bengaluru",
-    area: "HSR Layout",
-    query: "popular restaurants in HSR Layout Bengaluru",
-    lat: 12.9116,
-    lng: 77.6474,
-  },
-  {
-    city: "Bengaluru",
-    area: "Jayanagar",
-    query: "popular restaurants in Jayanagar Bengaluru",
-    lat: 12.9308,
-    lng: 77.5838,
-  },
-  {
-    city: "Bengaluru",
-    area: "Whitefield",
-    query: "popular restaurants in Whitefield Bengaluru",
-    lat: 12.9698,
-    lng: 77.7499,
-  },
-  // Gurugram
-  {
-    city: "Gurugram",
+    city: "gurugram",
     area: "Cyber Hub",
     query: "popular restaurants in Cyber Hub Gurugram",
     lat: 28.495,
     lng: 77.0888,
   },
   {
-    city: "Gurugram",
+    city: "gurugram",
     area: "Golf Course Road",
     query: "popular restaurants in Golf Course Road Gurugram",
     lat: 28.4595,
     lng: 77.1026,
   },
   {
-    city: "Gurugram",
+    city: "gurugram",
     area: "Sohna Road",
     query: "popular restaurants in Sohna Road Gurugram",
     lat: 28.4089,
     lng: 77.0454,
   },
   {
-    city: "Gurugram",
+    city: "gurugram",
     area: "MG Road",
     query: "popular restaurants in MG Road Gurugram",
     lat: 28.4726,
     lng: 77.0632,
   },
   {
-    city: "Gurugram",
+    city: "gurugram",
     area: "Sector 29",
     query: "popular restaurants in Sector 29 Gurugram",
     lat: 28.4744,
@@ -362,8 +325,7 @@ async function main() {
     ],
     _stats: {
       totalRestaurants: allRestaurants.length,
-      bengaluru: allRestaurants.filter((r) => r.city === "Bengaluru").length,
-      gurugram: allRestaurants.filter((r) => r.city === "Gurugram").length,
+      gurugram: allRestaurants.filter((r) => r.city === "gurugram").length,
       fetchedAt: new Date().toISOString(),
     },
     restaurants: allRestaurants,
@@ -373,8 +335,7 @@ async function main() {
 
   console.log("\n==================================");
   console.log(`✅ Done! ${allRestaurants.length} unique restaurants fetched`);
-  console.log(`   Bengaluru: ${output._stats.bengaluru}`);
-  console.log(`   Gurugram:  ${output._stats.gurugram}`);
+  console.log(`   Gurugram: ${output._stats.gurugram}`);
   console.log(`\n📄 Output: scripts/data/restaurants-raw.json`);
   console.log("\nNext steps:");
   console.log("  1. Open scripts/data/restaurants-raw.json");

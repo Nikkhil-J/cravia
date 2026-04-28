@@ -9,7 +9,7 @@ export const createReviewSchema = z.object({
   tasteRating: ratingField,
   portionRating: ratingField,
   valueRating: ratingField,
-  tags: z.array(z.enum(TAG_LIST)).default([]),
+  tags: z.array(z.enum(TAG_LIST)).min(1, 'Select at least one tag'),
   text: z.string().min(30, 'Review must be at least 30 characters'),
   photoUrl: z.string().min(1).optional(),
   billUrl: z.string().min(1).optional(),
@@ -21,8 +21,8 @@ export const updateReviewSchema = z.object({
   tasteRating: ratingField.optional(),
   portionRating: ratingField.optional(),
   valueRating: ratingField.optional(),
-  tags: z.array(z.enum(TAG_LIST)).optional(),
-  text: z.string().optional(),
+  tags: z.array(z.enum(TAG_LIST)).min(1, 'Select at least one tag').optional(),
+  text: z.string().min(30, 'Review must be at least 30 characters').optional(),
 }).strip()
 
 export type UpdateReviewInput = z.infer<typeof updateReviewSchema>

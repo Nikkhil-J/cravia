@@ -494,7 +494,7 @@ Strings appearing in 3+ distinct files — highest-priority extraction candidate
 | String | Files | Note |
 |--------|------:|------|
 | `dishes` | 10 | 1 in `config.ts` (definition), rest in tests |
-| `Bengaluru` | 10 | Default city — used in tests, components, context |
+| `Gurugram` | — | Single city — used in services, components |
 | `wishlist` | 9 | 1 in `config.ts`, rest in tests |
 | `users` | 7 | 1 in `config.ts`, rest in tests |
 | `reviews` | 8 | 1 in `config.ts`, rest in tests |

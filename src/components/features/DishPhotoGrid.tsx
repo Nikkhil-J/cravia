@@ -110,7 +110,7 @@ export function DishPhotoGrid({
   return (
     <>
       <div
-        className="grid h-[180px] grid-cols-1 grid-rows-[1fr] gap-[4px] overflow-hidden rounded-[12px] border border-border sm:h-[240px] sm:grid-cols-[60%_40%] sm:grid-rows-[1fr_1fr]"
+        className="grid h-[220px] grid-cols-1 grid-rows-[1fr] gap-[4px] overflow-hidden rounded-[12px] border border-border sm:h-[280px] sm:grid-cols-[60%_40%] sm:grid-rows-[1fr_1fr]"
       >
         {/* Left panel — spans both rows */}
         {totalPhotos === 0 ? (

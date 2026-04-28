@@ -2,16 +2,11 @@
 
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
-import { useState, useEffect, useRef, Suspense } from 'react'
-import { Search, Bell, User, Heart, Settings, LogOut, MapPin, ChevronDown } from 'lucide-react'
+import { useState, useEffect, Suspense } from 'react'
+import { Search, Bell, User, Heart, Settings, LogOut } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { useAuth, logout } from '@/lib/hooks/useAuth'
-import { useAuthStore } from '@/lib/store/authStore'
-import { updateUser } from '@/lib/services/users'
-import { useCityContext } from '@/lib/context/CityContext'
-import { SUPPORTED_CITIES } from '@/lib/constants'
-import type { City } from '@/lib/constants'
 import { UserAvatar } from '@/components/ui/Avatar'
 import { Logo } from '@/components/ui/Logo'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
@@ -26,74 +21,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-
-function CitySelector() {
-  const { city, setCity } = useCityContext()
-  const cityRouter = useRouter()
-  const storeUser = useAuthStore((s) => s.user)
-  const [open, setOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  function handleCityChange(c: City) {
-    setCity(c)
-    setOpen(false)
-    if (storeUser?.id) {
-      updateUser(storeUser.id, { city: c }).catch(() => {})
-    }
-    cityRouter.refresh()
-  }
-
-  const trigger = (
-    <button
-      type="button"
-      onClick={() => setOpen((prev) => !prev)}
-      className="flex items-center gap-1.5 rounded-pill border border-border bg-card px-3 py-1.5 text-sm font-medium text-text-primary transition-colors hover:border-primary"
-    >
-      <MapPin size={13} className="text-primary" />
-      <span className="hidden sm:inline">{city}</span>
-      <ChevronDown
-        size={13}
-        className={cn('text-text-muted transition-transform duration-200', open && 'rotate-180')}
-      />
-    </button>
-  )
-
-  const menu = open && (
-    <div className="absolute left-0 top-full z-50 mt-2 min-w-[160px] overflow-hidden rounded-xl border border-border bg-popover shadow-lg">
-      {SUPPORTED_CITIES.map((c) => (
-        <button
-          key={c}
-          type="button"
-          onClick={() => handleCityChange(c)}
-          className={cn(
-            'flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-muted',
-            c === city ? 'font-semibold text-primary' : 'text-text-primary'
-          )}
-        >
-          <span className={cn('h-1.5 w-1.5 rounded-full', c === city ? 'bg-primary' : 'bg-transparent')} />
-          {c}
-        </button>
-      ))}
-    </div>
-  )
-
-  return (
-    <div ref={dropdownRef} className="relative">
-      {trigger}
-      {menu}
-    </div>
-  )
-}
 
 export function Navbar() {
   const router = useRouter()
@@ -141,8 +68,6 @@ export function Navbar() {
         </div>
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2.5">
-          <CitySelector />
-
           {showMobileSearchIcon && (
             <Button
               variant="ghost"

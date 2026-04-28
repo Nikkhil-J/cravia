@@ -14,6 +14,7 @@ interface LoadMoreReviewsProps {
   initialCursorId?: string | null
   dishId: string
   currentUserId?: string
+  pinnedReview?: Review | null
 }
 
 interface DishReviewsApiResult {
@@ -22,12 +23,19 @@ interface DishReviewsApiResult {
   nextCursorId: string | null
 }
 
+function hybridScore(review: Review): number {
+  const recencyDays = (Date.now() - new Date(review.createdAt).getTime()) / 86_400_000
+  const recencyBoost = Math.max(0, 1 - recencyDays / 30)
+  return Math.log(1 + review.helpfulVotes) * 3 + recencyBoost
+}
+
 export function LoadMoreReviews({
   initialReviews,
   initialHasMore,
   initialCursorId = null,
   dishId,
   currentUserId: externalUserId,
+  pinnedReview,
 }: LoadMoreReviewsProps) {
   const { user } = useAuth()
   const currentUserId = externalUserId ?? user?.id
@@ -46,7 +54,7 @@ export function LoadMoreReviews({
 
       const result = (await res.json()) as DishReviewsApiResult
       const newItems = result.items.filter((r) => !reviews.some((existing) => existing.id === r.id))
-      setReviews((prev) => [...prev, ...newItems])
+      setReviews((prev) => [...prev, ...newItems].sort((a, b) => hybridScore(b) - hybridScore(a)))
       setNextCursorId(result.nextCursorId)
       setHasMore(result.hasMore)
     })
@@ -54,6 +62,16 @@ export function LoadMoreReviews({
 
   return (
     <>
+      {pinnedReview && (
+        <div className="mb-4">
+          <p className="mb-2 text-xs font-semibold text-brand-gold">Most helpful review</p>
+          <ReviewCardV2
+            review={pinnedReview}
+            variant="dish"
+            currentUserId={currentUserId}
+          />
+        </div>
+      )}
       <div className="mt-5 flex flex-col gap-4">
         {reviews.map((review) => (
           <ReviewCardV2 key={review.id} review={review} variant="dish" currentUserId={currentUserId} />

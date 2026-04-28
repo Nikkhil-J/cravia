@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { API_ERRORS } from '@/lib/constants/errors'
+import { captureError } from '@/lib/monitoring/sentry'
 
 // ── Tier definitions ────────────────────────────────────
 
@@ -93,9 +94,9 @@ let _upstashWarningLogged = false
 function logUpstashWarningOnce(): void {
   if (_upstashWarningLogged) return
   _upstashWarningLogged = true
-  console.error(
-    'WARNING: UPSTASH_REDIS_REST_URL is not set. Rate limiting is disabled in this instance. ' +
-    'Configure Upstash for production rate limiting.',
+  captureError(
+    new Error('UPSTASH_REDIS_REST_URL is not set. Rate limiting uses in-memory fallback.'),
+    { route: 'rate-limit' },
   )
 }
 
@@ -121,8 +122,8 @@ export async function rateLimit(identifier: string, tier: RateLimitTier): Promis
       remaining: result.remaining,
       resetAt: result.reset,
     }
-  } catch {
-    console.error(`Rate limit check failed for ${tier}, falling back to in-memory limiter`)
+  } catch (err) {
+    captureError(err, { route: 'rate-limit', extra: { tier } })
     return checkMemory(key, config)
   }
 }

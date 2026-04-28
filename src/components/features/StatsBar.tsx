@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
 import { cn } from '@/lib/utils'
+import { env } from '@/lib/env'
 
 interface StatDef {
   value: string
@@ -12,14 +13,48 @@ interface StatDef {
 interface StatsBarProps {
   restaurantCount: number
   reviewCount: number
-  cityCount: number
+  dishCount?: number
 }
 
-export function StatsBar({ restaurantCount, reviewCount, cityCount }: StatsBarProps) {
+function roundStat(n: number): { display: string; showPlus: boolean } {
+  if (n < 10) return { display: n.toLocaleString('en-IN'), showPlus: false }
+  let step: number
+  if (n < 100) step = 5
+  else if (n < 1_000) step = 50
+  else if (n < 10_000) step = 100
+  else step = 1_000
+  const rounded = Math.floor(n / step) * step
+  return { display: rounded.toLocaleString('en-IN'), showPlus: true }
+}
+
+export function StatsBar({ restaurantCount, reviewCount, dishCount }: StatsBarProps) {
+  const isSeedingComplete = env.NEXT_PUBLIC_SEEDING_COMPLETE === 'true'
+  const badgeText = isSeedingComplete && reviewCount >= 50 ? 'Growing fast' : 'Just launched'
+
+  const reviewStat = roundStat(reviewCount)
+  const dishStat = roundStat(dishCount ?? 0)
+  const restStat = roundStat(restaurantCount)
+
   const stats: StatDef[] = [
-    { value: `${restaurantCount}`, suffix: '+', label: 'Restaurants', badge: 'Growing fast' },
-    { value: `${reviewCount}`, suffix: '+', label: 'Dish Reviews', sub: 'from real diners' },
-    { value: `${cityCount}`, label: 'Cities', sub: 'and counting' },
+    {
+      value: reviewStat.display,
+      suffix: reviewStat.showPlus ? '+' : undefined,
+      label: 'Dish Reviews',
+      sub: 'from real diners',
+      badge: badgeText,
+    },
+    {
+      value: dishStat.display,
+      suffix: dishStat.showPlus ? '+' : undefined,
+      label: 'Dishes',
+      sub: 'across Gurugram',
+    },
+    {
+      value: restStat.display,
+      suffix: restStat.showPlus ? '+' : undefined,
+      label: 'Restaurants',
+      sub: 'in Gurugram',
+    },
   ]
 
   return (

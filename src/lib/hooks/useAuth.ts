@@ -4,7 +4,8 @@ import { useEffect, type ReactNode } from 'react'
 import { FirebaseClientAuthProvider } from '@/lib/auth/firebase-provider'
 import { userRepository } from '@/lib/repositories'
 import { useAuthStore } from '@/lib/store/authStore'
-import { SUPPORTED_CITIES, CONFIG } from '@/lib/constants'
+import { CONFIG } from '@/lib/constants'
+import { captureError } from '@/lib/monitoring/sentry'
 
 const authProvider = new FirebaseClientAuthProvider()
 
@@ -17,17 +18,6 @@ function setSessionCookie(): void {
 
 function clearSessionCookie(): void {
   document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0; SameSite=Lax`
-}
-
-function syncCityCookieFromProfile(profileCity: string): void {
-  const existing = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('cravia-city='))
-    ?.split('=')[1]
-  if (existing) return
-  if (!(SUPPORTED_CITIES as readonly string[]).includes(profileCity)) return
-  document.cookie = `cravia-city=${profileCity}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`
-  localStorage.setItem('cravia-city', profileCity)
 }
 
 export async function signInWithGoogle() {
@@ -97,9 +87,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
           setUser(user, authUser)
           setSessionCookie()
-          if (user?.city) syncCityCookieFromProfile(user.city)
         } catch (err) {
-          console.error('[useAuth] Failed to load user profile:', err)
+          captureError(err, { route: 'useAuth' })
           if (!cancelled) {
             clearUser()
           }

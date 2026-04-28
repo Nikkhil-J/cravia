@@ -34,6 +34,19 @@ export function RestaurantCard({ restaurant, index = 0 }: RestaurantCardProps) {
         {restaurant.cuisines.length > 0 && (
           <p className="mt-1.5 text-xs text-text-secondary line-clamp-1">{restaurant.cuisines.join(' · ')}</p>
         )}
+        <div className="mt-1.5 flex items-center gap-2 text-xs text-text-muted">
+          {restaurant.dishCount ? (
+            <span>{restaurant.dishCount} dish{restaurant.dishCount !== 1 ? 'es' : ''}</span>
+          ) : null}
+          {restaurant.dishCount && restaurant.totalReviews ? (
+            <span className="text-border">·</span>
+          ) : null}
+          {restaurant.totalReviews ? (
+            <span>{restaurant.totalReviews} dish review{restaurant.totalReviews !== 1 ? 's' : ''}</span>
+          ) : !restaurant.dishCount ? (
+            <span>Be the first to review a dish here</span>
+          ) : null}
+        </div>
       </div>
     </Link>
   )

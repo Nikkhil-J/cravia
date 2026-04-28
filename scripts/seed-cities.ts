@@ -127,15 +127,12 @@ function normalizeCuisines(raw?: string): string[] {
 }
 
 function getDefaultArea(city: string): string {
-  if (city === 'Bengaluru') return 'Koramangala'
-  if (city === 'Gurugram') return 'Cyber City'
+  if (city === 'gurugram') return 'Cyber City'
   return city
 }
 
 function getFallbackRestaurants(city: string): OSMNode[] {
-  const areas = city === 'Bengaluru'
-    ? ['Indiranagar', 'Koramangala', 'HSR Layout', 'Whitefield', 'Jayanagar']
-    : ['Cyber City', 'Sector 29', 'Golf Course Road', 'DLF Phase 1', 'Sohna Road']
+  const areas = ['Cyber City', 'Sector 29', 'Golf Course Road', 'DLF Phase 1', 'Sohna Road']
 
   const cuisines = ['North Indian', 'South Indian', 'Chinese', 'Biryani', 'Fast Food']
 
@@ -233,8 +230,7 @@ async function seedCity(cityName: string) {
 
 async function main() {
   console.log(`Cravia seed script starting...${DRY_RUN ? ' (DRY RUN)' : ''}`)
-  await seedCity('Bengaluru')
-  await seedCity('Gurugram')
+  await seedCity('gurugram')
   console.log(`\n✅ ${DRY_RUN ? 'Dry run' : 'Seeding'} complete!`)
   process.exit(0)
 }

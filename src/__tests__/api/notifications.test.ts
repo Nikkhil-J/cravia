@@ -79,7 +79,7 @@ describe('POST /api/notifications/[id]/read', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(notificationRepository.getById).mockResolvedValue(null)
 
@@ -92,7 +92,7 @@ describe('POST /api/notifications/[id]/read', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(notificationRepository.getById).mockResolvedValue({
       id: 'notif-1',
@@ -115,7 +115,7 @@ describe('POST /api/notifications/[id]/read', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(notificationRepository.getById).mockResolvedValue({
       id: 'notif-1',

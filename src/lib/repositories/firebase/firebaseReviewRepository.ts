@@ -71,6 +71,22 @@ export class FirebaseReviewRepository implements ReviewRepository {
     }
   }
 
+  async getRecent(count: number): Promise<Review[]> {
+    try {
+      const snap = await getDocs(
+        query(
+          collection(db, COLLECTIONS.REVIEWS),
+          orderBy('createdAt', 'desc'),
+          firestoreLimit(count),
+        ),
+      )
+      return snap.docs.map((doc) => mapReview({ id: doc.id, ...doc.data() } as Review))
+    } catch (e) {
+      logError('getRecent', e)
+      return []
+    }
+  }
+
   async getRecentByUser(userId: string, count: number): Promise<Review[]> {
     try {
       const snap = await getDocs(

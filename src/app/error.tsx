@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ROUTES } from '@/lib/constants/routes'
 import { CLIENT_ERRORS } from '@/lib/constants/errors'
+import { captureError } from '@/lib/monitoring/sentry'
 
 interface ErrorProps {
   error: Error & { digest?: string }
@@ -13,7 +14,7 @@ interface ErrorProps {
 
 export default function GlobalError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    console.error('Unhandled error:', error)
+    captureError(error, { route: 'GlobalError' })
   }, [error])
 
   return (

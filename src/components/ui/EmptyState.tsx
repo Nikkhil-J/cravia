@@ -8,9 +8,10 @@ interface EmptyStateProps {
   ctaLabel?: string
   ctaHref?: string
   onCta?: () => void
+  children?: ReactNode
 }
 
-export function EmptyState({ icon, title, description, ctaLabel, ctaHref, onCta }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, ctaLabel, ctaHref, onCta, children }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-10 text-center sm:gap-4 sm:py-16">
       {icon && <div className="text-4xl sm:text-6xl">{icon}</div>}
@@ -34,6 +35,7 @@ export function EmptyState({ icon, title, description, ctaLabel, ctaHref, onCta 
           {ctaLabel}
         </button>
       )}
+      {children}
     </div>
   )
 }

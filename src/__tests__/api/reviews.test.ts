@@ -102,7 +102,7 @@ const MOCK_USER: User = {
   displayName: 'Test User',
   email: 'test@example.com',
   avatarUrl: null,
-  city: 'Bengaluru',
+  city: 'gurugram',
   isAdmin: false,
   isPremium: false,
   premiumSince: null,
@@ -157,7 +157,7 @@ describe('POST /api/reviews', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(userRepository.getById).mockResolvedValue(MOCK_USER)
 
@@ -175,7 +175,7 @@ describe('POST /api/reviews', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(userRepository.getById).mockResolvedValue(MOCK_USER)
 
@@ -194,7 +194,7 @@ describe('POST /api/reviews', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(userRepository.getById).mockResolvedValue(null)
 
@@ -214,7 +214,7 @@ describe('POST /api/reviews', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(userRepository.getById).mockResolvedValue(MOCK_USER)
     vi.mocked(reviewRepository.create).mockResolvedValue({
@@ -262,7 +262,7 @@ describe('POST /api/reviews', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(userRepository.getById).mockResolvedValue(MOCK_USER)
     vi.mocked(reviewRepository.create).mockResolvedValue({
@@ -300,7 +300,7 @@ describe('POST /api/reviews', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
 
     const { NextResponse: RealNextResponse } = await import('next/server')
@@ -333,7 +333,7 @@ describe('POST /api/reviews', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(userRepository.getById).mockResolvedValue(MOCK_USER)
     vi.mocked(reviewRepository.findByUserAndDish).mockResolvedValue({
@@ -364,7 +364,7 @@ describe('POST /api/reviews', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(userRepository.getById).mockResolvedValue(MOCK_USER)
     vi.mocked(reviewRepository.create).mockResolvedValue({
@@ -411,7 +411,7 @@ describe('PATCH /api/reviews/:id', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
 
     const req = makeRequest('PATCH', { tasteRating: 100 })
@@ -423,7 +423,7 @@ describe('PATCH /api/reviews/:id', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(reviewRepository.update).mockResolvedValue({
       id: 'review-1',
@@ -451,7 +451,7 @@ describe('DELETE /api/reviews/:id', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
 
     const req = makeRequest('DELETE', undefined, 'http://localhost/api/reviews/review-1')
@@ -465,7 +465,7 @@ describe('DELETE /api/reviews/:id', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(reviewRepository.delete).mockResolvedValue(true)
 
@@ -490,7 +490,7 @@ describe('POST /api/reviews/:id/helpful', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(reviewRepository.getById).mockResolvedValue(null)
     vi.mocked(reviewRepository.voteHelpful).mockResolvedValue(true)
@@ -516,7 +516,7 @@ describe('POST /api/reviews/:id/flag', () => {
     vi.mocked(getRequestAuth).mockResolvedValue({
       userId: 'user-1',
       isAdmin: false,
-      userCity: 'Bengaluru',
+      userCity: 'gurugram',
     })
     vi.mocked(reviewRepository.flag).mockResolvedValue('ok')
 

@@ -8,6 +8,7 @@ export interface GetDishesParams {
   dietary?: DietaryType | null
   priceRange?: PriceRange | null
   sortBy?: 'newest' | 'highest-rated' | 'most-helpful'
+  maxReviewCount?: number
   limit?: number
   cursor?: string
 }

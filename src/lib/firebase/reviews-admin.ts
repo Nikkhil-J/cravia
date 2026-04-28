@@ -7,6 +7,7 @@ import type { Review, User, ReviewFormData } from '../types'
 import { computeOverall, computeTopTags, canEditReview } from '../utils/index'
 import { computeLevel, computeEarnedBadges } from '../gamification'
 import { logError } from '../logger'
+import { logIntegrityEvent } from '../monitoring/integrity'
 
 /**
  * Creates a review atomically using the Admin SDK (bypasses security rules).
@@ -28,6 +29,22 @@ export async function createReview(
     .limit(1)
     .get()
   if (!dupeSnap.empty) throw new Error('You have already reviewed this dish')
+
+  const thirtyMinAgo = Timestamp.fromDate(new Date(Date.now() - 30 * 60 * 1000))
+  const burstSnap = await adminDb
+    .collection(COLLECTIONS.REVIEWS)
+    .where('userId', '==', user.id)
+    .where('restaurantId', '==', data.restaurantId)
+    .where('createdAt', '>=', thirtyMinAgo)
+    .get()
+  if (burstSnap.size >= 3) {
+    logIntegrityEvent('same_restaurant_burst', {
+      userId: user.id,
+      restaurantId: data.restaurantId,
+      reviewCount: burstSnap.size + 1,
+      windowMinutes: 30,
+    })
+  }
 
   try {
     const reviewRef = adminDb.collection(COLLECTIONS.REVIEWS).doc()

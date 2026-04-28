@@ -91,6 +91,9 @@ function buildFilterBy(params: GetDishesParams): string {
   if (params.priceRange) {
     filters.push(`priceRange:=${params.priceRange}`)
   }
+  if (params.maxReviewCount !== undefined && params.maxReviewCount !== null) {
+    filters.push(`reviewCount:<=${params.maxReviewCount}`)
+  }
 
   return filters.join(' && ')
 }

@@ -5,7 +5,8 @@ import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import { getUser } from '@/lib/services/users'
 import { getReviewsByUser } from '@/lib/services/reviews'
-import { BADGE_DEFINITIONS } from '@/lib/constants'
+import { BADGE_DEFINITIONS, CITY_DISPLAY_NAME } from '@/lib/constants'
+import type { City } from '@/lib/constants'
 import { ReviewCardV2 } from '@/components/features/ReviewCardV2'
 import { useReviewDishContexts } from '@/lib/hooks/useReviewDishContexts'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -49,7 +50,7 @@ export default function UserProfilePage() {
         )}
         <div>
           <h1 className="font-display text-lg font-bold text-heading sm:text-xl">{profile.displayName}</h1>
-          <p className="text-sm text-text-muted">{profile.city || 'Bengaluru'}</p>
+          <p className="text-sm text-text-muted">{CITY_DISPLAY_NAME[profile.city as City] ?? profile.city ?? 'Gurugram'}</p>
           <span className="mt-1 inline-block rounded-full bg-primary-light px-2.5 py-0.5 text-xs font-semibold text-primary-dark">
             {profile.level}
           </span>

@@ -230,4 +230,9 @@ export async function getPointsHistory(
   return pointsRepository.getTransactions(userId, limit, cursor)
 }
 
+export async function getUserStreak(userId: string): Promise<{ currentStreak: number; bonusEligible: boolean }> {
+  const streak = await computeStreak(pointsRepository, userId)
+  return { currentStreak: streak, bonusEligible: streak >= 7 }
+}
+
 export { computeReviewPoints as _computeReviewPoints }

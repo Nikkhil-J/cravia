@@ -1,16 +1,18 @@
 'use client'
 
 import { Suspense, useState } from 'react'
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { updateUser } from '@/lib/services/users'
 import { useAuthStore } from '@/lib/store/authStore'
-import { CUISINE_TYPES, CITY_AREAS, CUISINE_EMOJI, SUPPORTED_CITIES, type City } from '@/lib/constants'
+import { CUISINE_TYPES, CITY_AREAS, CUISINE_EMOJI, GURUGRAM } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { ROUTES } from '@/lib/constants/routes'
 import { CLIENT_ERRORS } from '@/lib/constants/errors'
+import { captureError } from '@/lib/monitoring/sentry'
 
 export default function OnboardingPage() {
   return (
@@ -29,7 +31,6 @@ function OnboardingContent() {
   const setUser = useAuthStore((s) => s.setUser)
   const [step, setStep] = useState(1)
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>([])
-  const [selectedCity, setSelectedCity] = useState<City | null>(null)
   const [selectedArea, setSelectedArea] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -46,9 +47,8 @@ function OnboardingContent() {
     setSaveError(null)
 
     try {
-      const updates: Parameters<typeof updateUser>[1] = {}
+      const updates: Parameters<typeof updateUser>[1] = { city: GURUGRAM }
       if (selectedCuisines.length > 0) updates.favoriteCuisines = selectedCuisines
-      if (selectedCity) updates.city = selectedCity
       if (selectedArea) updates.area = selectedArea
 
       const success = await updateUser(user.id, updates)
@@ -59,17 +59,17 @@ function OnboardingContent() {
         return
       }
 
-      setUser({ ...user, city: selectedCity ?? user.city }, authUser)
+      setUser({ ...user, city: GURUGRAM }, authUser)
       router.push(redirectTo)
     } catch (err) {
-      console.error('[Onboarding] Failed to save preferences:', err)
+      captureError(err, { route: 'OnboardingPage' })
       setSaveError(CLIENT_ERRORS.SOMETHING_WENT_WRONG_RETRY)
     } finally {
       setSaving(false)
     }
   }
 
-  const areas: readonly string[] = selectedCity ? CITY_AREAS[selectedCity] ?? [] : []
+  const areas: readonly string[] = CITY_AREAS[GURUGRAM] ?? []
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
@@ -125,52 +125,31 @@ function OnboardingContent() {
           </div>
         )}
 
-        {/* Step 2: City/Area */}
+        {/* Step 2: Area selection */}
         {step === 2 && (
           <div>
             <h1 className="font-display text-2xl font-bold text-heading">
-              Where are you based?
+              What area are you in?
             </h1>
             <p className="mt-2 text-sm text-text-secondary">
-              We&apos;ll show you dishes near you.
+              We&apos;ll show you dishes near you in Gurugram.
             </p>
-            <div className="mt-6 space-y-4">
-              <div className="flex gap-2">
-                {SUPPORTED_CITIES.map((city) => (
-                  <Button
-                    key={city}
-                    variant="outline"
-                    onClick={() => { setSelectedCity(city); setSelectedArea(null) }}
-                    className={cn(
-                      'flex-1 h-auto rounded-lg border-2 py-3 text-center text-sm font-semibold',
-                      selectedCity === city
-                        ? 'border-primary bg-primary text-white hover:bg-primary hover:text-white'
-                        : 'border-border bg-card text-text-primary hover:border-primary'
-                    )}
-                  >
-                    {city}
-                  </Button>
-                ))}
-              </div>
-              {areas.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {areas.map((area) => (
-                    <Button
-                      key={area}
-                      variant="outline"
-                      onClick={() => setSelectedArea(area)}
-                      className={cn(
-                        'h-auto min-h-[44px] rounded-pill border px-3 text-xs font-medium',
-                        selectedArea === area
-                          ? 'border-primary bg-primary text-white hover:bg-primary hover:text-white'
-                          : 'border-border bg-card text-text-secondary hover:border-primary'
-                      )}
-                    >
-                      {area}
-                    </Button>
-                  ))}
-                </div>
-              )}
+            <div className="mt-6 flex flex-wrap gap-2">
+              {areas.map((a) => (
+                <Button
+                  key={a}
+                  variant="outline"
+                  onClick={() => setSelectedArea(a)}
+                  className={cn(
+                    'h-auto min-h-[44px] rounded-pill border px-3 text-xs font-medium',
+                    selectedArea === a
+                      ? 'border-primary bg-primary text-white hover:bg-primary hover:text-white'
+                      : 'border-border bg-card text-text-secondary hover:border-primary'
+                  )}
+                >
+                  {a}
+                </Button>
+              ))}
             </div>
             <div className="mt-8 flex gap-3">
               <Button
@@ -182,7 +161,6 @@ function OnboardingContent() {
               </Button>
               <Button
                 onClick={() => setStep(3)}
-                disabled={!selectedCity}
                 className="flex-1 h-auto rounded-pill py-3 text-sm font-semibold hover:bg-primary-dark"
               >
                 Continue
@@ -201,6 +179,14 @@ function OnboardingContent() {
             <p className="mt-3 text-text-secondary">
               Welcome{user ? `, ${user.displayName.split(' ')[0]}` : ''}! Start discovering amazing dishes.
             </p>
+
+            <div className="mx-auto mt-6 max-w-xs rounded-xl border border-brand-gold/30 bg-bg-cream p-4 text-left">
+              <p className="text-sm font-semibold text-heading">🏆 Earn DishPoints</p>
+              <p className="mt-1 text-xs text-text-secondary">
+                Every review you write earns DishPoints. Earn 500 points to unlock real restaurant coupons.
+              </p>
+            </div>
+
             {saveError && (
               <div className="mt-6 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
                 <p>{saveError}</p>
@@ -216,6 +202,12 @@ function OnboardingContent() {
             >
               {saving ? 'Saving...' : saveError ? 'Try Again' : 'Start Exploring'}
             </Button>
+            <Link
+              href={ROUTES.WRITE_REVIEW}
+              className="mt-3 inline-flex w-full items-center justify-center rounded-pill border-2 border-border py-3 text-sm font-semibold text-text-primary transition-colors hover:border-primary hover:text-primary"
+            >
+              Write your first review
+            </Link>
           </div>
         )}
       </div>

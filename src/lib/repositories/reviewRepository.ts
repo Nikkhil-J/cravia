@@ -11,6 +11,7 @@ export interface GetReviewsParams {
 export interface ReviewRepository {
   getById(reviewId: string): Promise<Review | null>
   getCount(): Promise<number>
+  getRecent(limit: number): Promise<Review[]>
   getMany(params: GetReviewsParams): Promise<PaginatedData<Review>>
   findByUserAndDish(userId: string, dishId: string): Promise<Review | null>
   getRecentByUser(userId: string, limit: number): Promise<Review[]>

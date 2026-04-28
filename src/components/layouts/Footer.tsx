@@ -4,18 +4,17 @@ import Link from 'next/link'
 import { Logo } from '@/components/ui/Logo'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { ROUTES } from '@/lib/constants/routes'
-import { SUPPORTED_CITIES } from '@/lib/constants'
 
 const EXPLORE_LINKS = [
-  { label: 'Browse Dishes', href: ROUTES.EXPLORE },
-  { label: 'Browse Cuisines', href: '/explore?tab=cuisines' },
-  { label: 'Top Rated', href: '/explore?sort=top' },
-  { label: 'New This Week', href: '/explore?sort=new' },
+  { label: 'Browse Dishes', href: '/explore?tab=dishes' },
+  { label: 'Browse Cuisines', href: '/explore?tab=dishes' },
+  { label: 'Top Rated', href: '/explore?tab=dishes&sortBy=highest-rated' },
+  { label: 'New This Week', href: '/explore?tab=dishes&sortBy=newest' },
 ] as const
 
 const ACCOUNT_LINKS_AUTH = [
   { label: 'Your Profile', href: ROUTES.MY_PROFILE },
-  { label: 'Your Wishlist', href: '/my-profile?tab=wishlist' },
+  { label: 'Your Wishlist', href: ROUTES.WISHLIST },
   { label: 'Write a Review', href: ROUTES.WRITE_REVIEW },
 ] as const
 
@@ -58,7 +57,7 @@ export function Footer() {
   return (
     <footer className="bg-footer-bg pt-10 pb-[70px] text-white sm:pt-16 md:pb-0">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-8">
-        <div className="grid grid-cols-1 gap-9 md:grid-cols-2 md:gap-x-12 md:gap-y-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-12">
+        <div className="grid grid-cols-1 gap-9 md:grid-cols-2 md:gap-x-12 md:gap-y-10 lg:grid-cols-[1.4fr_1fr_1fr] lg:gap-12">
 
           {/* Brand */}
           <div>
@@ -79,21 +78,6 @@ export function Footer() {
           {/* Account */}
           <FooterColumn heading="Account">
             <FooterLinkList links={isAuthenticated ? ACCOUNT_LINKS_AUTH : ACCOUNT_LINKS_GUEST} />
-          </FooterColumn>
-
-          {/* Cities */}
-          <FooterColumn heading="Cities">
-            <ul className="flex flex-col gap-3">
-              {SUPPORTED_CITIES.map((city) => (
-                <li key={city} className="flex items-center gap-2 text-sm text-white/45">
-                  <span className="size-[7px] shrink-0 rounded-full bg-success shadow-[0_0_6px_var(--color-success)]" />
-                  {city}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 text-[0.8125rem] italic text-white/25">
-              More coming soon&hellip;
-            </p>
           </FooterColumn>
 
         </div>

@@ -4,7 +4,7 @@ import { reviewRepository } from '@/lib/repositories/server'
 import { getRequestAuth } from '@/lib/services/request-auth'
 import { parseBody } from '@/lib/validation'
 import { createReviewSchema } from '@/lib/validation/review.schema'
-import { rewardPointsForReview } from '@/lib/services/rewards'
+import { rewardPointsForReview, getUserStreak } from '@/lib/services/rewards'
 import { REVIEW_FULL_MIN_TEXT_LENGTH } from '@/lib/types/rewards'
 import { captureError, addBreadcrumb, logRouteDuration } from '@/lib/monitoring/sentry'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -119,12 +119,21 @@ export async function POST(req: Request) {
       captureError(err, { route: '/api/reviews', extra: { phase: 'analytics-cache-invalidation' } }),
     )
 
+    let currentStreak = 0
+    try {
+      const streakResult = await getUserStreak(auth.userId)
+      currentStreak = streakResult.currentStreak
+    } catch (streakErr) {
+      captureError(streakErr, { route: '/api/reviews', extra: { phase: 'streak-fetch' } })
+    }
+
     logRouteDuration('/api/reviews', Date.now() - start, auth.userId)
     return NextResponse.json({
       item: result,
       pointsAwarded,
       newBalance,
       isFullReview: !!body.photoUrl && body.tags.length > 0 && body.text.length >= REVIEW_FULL_MIN_TEXT_LENGTH,
+      currentStreak,
     }, { status: 201 })
   } catch (e) {
     const message = e instanceof Error ? e.message : API_ERRORS.FAILED_TO_CREATE_REVIEW

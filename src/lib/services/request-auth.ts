@@ -1,6 +1,7 @@
 import { cache } from 'react'
 import { FirebaseAuthProvider } from '@/lib/auth/firebase-auth-provider'
 import { userRepository } from '@/lib/repositories'
+import { GURUGRAM } from '@/lib/constants'
 
 export interface RequestAuthContext {
   userId: string
@@ -39,7 +40,7 @@ export async function getRequestAuth(req: Request): Promise<RequestAuthContext |
   return {
     userId: verified.userId,
     isAdmin: !!user.isAdmin,
-    userCity: user.city || 'Bengaluru',
+    userCity: user.city || GURUGRAM,
   }
 }
 

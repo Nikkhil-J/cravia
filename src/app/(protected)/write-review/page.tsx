@@ -3,7 +3,6 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
-import Link from 'next/link'
 import { toast } from 'sonner'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useReviewFormStore } from '@/lib/store/reviewFormStore'
@@ -28,6 +27,8 @@ import type { Dish, ReviewFormData } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants/routes'
 import { API_ENDPOINTS } from '@/lib/constants/api'
+import { RewardsPreview } from '@/components/features/RewardsPreview'
+import { DishPicker } from '@/components/features/DishPicker'
 
 const RATING_FIELDS = [
   { label: SUB_RATING_LABELS[0], field: 'tasteRating' as const, emoji: '😋', hint: 'How did it taste?' },
@@ -46,7 +47,7 @@ function WriteReviewContent() {
   const fromParam = searchParams.get('from')
 
   const { user, authUser } = useAuth()
-  const { data, updateField, reset } = useReviewFormStore()
+  const { data, updateField, reset, activeDishId, setActiveDishId } = useReviewFormStore()
 
   const hasUnsavedChanges = useCallback(() => {
     return !!(data.photoFile || data.billFile || data.tasteRating || data.portionRating || data.valueRating || data.tags.length > 0 || data.text)
@@ -93,6 +94,16 @@ function WriteReviewContent() {
     }
     getDish(dishId).then(setDish)
   }, [dishId, restaurantId, data.dishId, updateField, reset])
+
+  useEffect(() => {
+    if (!dishId) return
+    if (activeDishId === dishId && (data.tasteRating || data.tags.length > 0 || data.text)) {
+      toast.info('Draft restored', { duration: 2000 })
+    } else if (activeDishId !== dishId) {
+      setActiveDishId(dishId)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dishId])
 
   const resetRef = useRef(reset)
   resetRef.current = reset
@@ -151,6 +162,9 @@ function WriteReviewContent() {
   const tagsComplete = data.tags.length >= 1
   const textComplete = data.text.length >= REVIEW_TEXT_MIN_CHARS
   const canSubmit = ratingsComplete && tagsComplete && textComplete
+
+  const [ratingsTouched, setRatingsTouched] = useState(false)
+  const [tagsTouched, setTagsTouched] = useState(false)
 
   const completedCount = useMemo(() => {
     let count = 0
@@ -242,8 +256,19 @@ function WriteReviewContent() {
         pointsAwarded?: number
         newBalance?: number
         isFullReview?: boolean
+        currentStreak?: number
       }
 
+      if (res.status === 409) {
+        toast.error("You've already reviewed this dish. Edit your existing review instead.")
+        router.push(ROUTES.dish(dishId))
+        return
+      }
+      if (res.status === 429) {
+        const retryAfter = res.headers.get('Retry-After') ?? '60'
+        toast.error(`You're reviewing too fast. Try again in ${retryAfter} seconds.`)
+        return
+      }
       if (!res.ok || !payload.item) {
         const msg = payload.message ?? 'Failed to save your review. Please try again.'
         setSubmitError(msg)
@@ -261,11 +286,14 @@ function WriteReviewContent() {
         dishId,
         dishName: displayName,
         restaurantName: displayRestaurant,
+        restaurantId,
         newBadges,
         newReviewCount: user.reviewCount + 1,
         pointsAwarded: payload.pointsAwarded ?? 0,
         newBalance: payload.newBalance ?? 0,
         isFullReview: payload.isFullReview ?? false,
+        helpfulVotesReceived: user.helpfulVotesReceived,
+        currentStreak: payload.currentStreak ?? 0,
       }))
       reset()
       router.push(ROUTES.REVIEW_SUCCESS)
@@ -280,17 +308,17 @@ function WriteReviewContent() {
 
   if (!dishId) {
     return (
-      <div className="mx-auto max-w-xl px-4 py-16 text-center sm:px-6">
-        <span className="text-5xl">🍽️</span>
-        <h1 className="mt-4 font-display text-xl font-bold text-heading">Which dish are you reviewing?</h1>
-        <p className="mt-2 text-sm text-text-secondary">Find a dish first, then tap &quot;Write a Review&quot; from its page.</p>
-        <Button
-          render={<Link href={ROUTES.EXPLORE} />}
-          className="mt-6 h-auto rounded-pill px-6 py-3 text-sm font-semibold hover:bg-primary-dark"
-        >
-          Explore Dishes
-        </Button>
-      </div>
+      <DishPicker
+        onSelect={(selectedDish) => {
+          const params = new URLSearchParams({
+            dishId: selectedDish.id,
+            restaurantId: selectedDish.restaurantId,
+            dishName: selectedDish.name,
+            restaurantName: selectedDish.restaurantName,
+          })
+          router.push(`${ROUTES.WRITE_REVIEW}?${params.toString()}`)
+        }}
+      />
     )
   }
 
@@ -342,10 +370,26 @@ function WriteReviewContent() {
         {/* Main form */}
         <div className="space-y-10">
 
+          {/* Rewards Preview */}
+          {!isEditMode && (
+            <RewardsPreview currentBalance={user?.dishPointsBalance ?? 0} />
+          )}
+
           {/* Section 1: Ratings */}
           <section>
             <SectionHeader num={1} done={ratingsComplete} title="How was this dish?" desc="Tap the stars. Be honest — it helps everyone decide better." />
-            <div className="mt-5 flex flex-col gap-3">
+            <div className="mt-3 mb-4 flex flex-wrap justify-center gap-1.5">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <span
+                  key={n}
+                  className="inline-flex items-center gap-1 rounded-pill border border-border bg-surface-2 px-2.5 py-1 text-[11px]"
+                >
+                  <span className="text-brand-gold">{'★'.repeat(n)}</span>
+                  <span className="text-text-muted">{RATING_LABELS[n]}</span>
+                </span>
+              ))}
+            </div>
+            <div className="flex flex-col gap-3">
               {RATING_FIELDS.map(({ label, field, emoji, hint }) => {
                 const value = data[field] ?? 0
                 const isRated = value > 0
@@ -373,12 +417,15 @@ function WriteReviewContent() {
                       </p>
                     </div>
                     <div className="w-full sm:w-auto">
-                      <StarRating value={value} onChange={(v) => updateField(field, v)} size="lg" />
+                      <StarRating value={value} onChange={(v) => { updateField(field, v); setRatingsTouched(true) }} size="lg" />
                     </div>
                   </div>
                 )
               })}
             </div>
+            {ratingsTouched && !ratingsComplete && (
+              <p className="text-xs text-destructive/80 mt-1">Rate all three categories to continue</p>
+            )}
           </section>
 
           {/* Section 2: Tags */}
@@ -398,6 +445,7 @@ function WriteReviewContent() {
                         label={tag}
                         selected={data.tags.includes(tag)}
                         onClick={() => {
+                          setTagsTouched(true)
                           const next = data.tags.includes(tag)
                             ? data.tags.filter((t) => t !== tag)
                             : [...data.tags, tag]
@@ -411,6 +459,9 @@ function WriteReviewContent() {
               <p className={cn('text-xs font-medium', tagsComplete ? 'text-success' : 'text-text-muted')}>
                 <span className="font-bold">{data.tags.length}</span> / 1 minimum selected
               </p>
+              {tagsTouched && !tagsComplete && (
+                <p className="text-xs text-destructive/80 mt-1">Select at least one tag</p>
+              )}
             </div>
           </section>
 
@@ -436,14 +487,17 @@ function WriteReviewContent() {
                 )}
               </div>
             </div>
+            {data.text.length > 0 && data.text.length < 30 && (
+              <p className="text-xs text-brand-orange mt-1">{30 - data.text.length} more characters needed</p>
+            )}
           </section>
 
-          {/* Optional dish photo */}
-          <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5">
+          {/* Dish photo — incentivized */}
+          <div className="flex items-center gap-4 rounded-2xl border-2 border-dashed border-brand-gold/40 bg-gradient-to-br from-brand-gold-light/30 to-transparent p-5">
             <span className="text-3xl">📸</span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-heading">Got a photo of the dish?</p>
-              <p className="text-xs text-text-muted">Optional — but photos make reviews way more helpful</p>
+              <p className="text-sm font-semibold text-heading">Add a photo of the dish</p>
+              <p className="text-xs text-text-secondary">Photo reviews earn <strong className="text-brand-gold">25 pts</strong> vs <strong className="text-text-muted">10 pts</strong> without</p>
               {photoError && <p className="mt-1 text-xs font-medium text-destructive">{photoError}</p>}
             </div>
             {data.photoPreviewUrl ? (

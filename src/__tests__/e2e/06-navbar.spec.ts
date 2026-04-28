@@ -74,13 +74,6 @@ test.describe('Navbar — logged in', () => {
     }
   })
 
-  test('city selector is visible', async ({ page }) => {
-    await page.goto('/home')
-    await expect(
-      page.getByText(/bengaluru|gurugram/i).first()
-    ).toBeVisible({ timeout: 8000 })
-  })
-
   test('mobile review FAB is visible', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 })
     await page.goto('/home')

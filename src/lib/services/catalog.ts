@@ -92,7 +92,8 @@ export interface SearchDishesParams {
   cuisine?: string | null
   dietary?: DietaryType | null
   priceRange?: PriceRange | null
-  sortBy?: SearchFilters['sortBy']
+  sortBy?: SearchFilters['sortBy'] | 'needs-review'
+  maxReviewCount?: number | null
   cursorId?: string | null
 }
 
@@ -108,6 +109,7 @@ export async function listDishes(params?: SearchDishesParams): Promise<SearchDis
   const city = resolveCity({ requestedCity: params?.city, userCity: params?.userCity })
   const area = params?.area?.trim() || null
   const queryText = params?.query?.trim() ?? ''
+  const sortBy = params?.sortBy === 'needs-review' ? SORT_OPTIONS.NEWEST : (params?.sortBy ?? SORT_OPTIONS.HIGHEST_RATED)
   const result = await dishRepository.search({
     query: queryText,
     city,
@@ -115,14 +117,20 @@ export async function listDishes(params?: SearchDishesParams): Promise<SearchDis
     area,
     dietary: params?.dietary ?? null,
     priceRange: params?.priceRange ?? null,
-    sortBy: params?.sortBy ?? SORT_OPTIONS.HIGHEST_RATED,
+    sortBy,
+    maxReviewCount: params?.maxReviewCount ?? undefined,
     cursor: params?.cursorId ?? undefined,
   })
+
+  let items = result.data
+  if (params?.sortBy === 'needs-review') {
+    items = [...items].sort((a, b) => a.reviewCount - b.reviewCount || new Date(b.createdAt ?? '').getTime() - new Date(a.createdAt ?? '').getTime())
+  }
 
   return {
     city,
     areas: listCityAreas(city),
-    items: result.data,
+    items,
     hasMore: result.hasMore,
     nextCursorId: result.nextCursor ?? null,
   }

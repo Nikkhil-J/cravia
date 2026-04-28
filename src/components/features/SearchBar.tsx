@@ -1,12 +1,21 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { ROUTES } from "@/lib/constants/routes";
+
+const SEARCH_PLACEHOLDERS = [
+  "Search for a dish... e.g. Butter Chicken",
+  "Search for a dish... e.g. Margherita Pizza",
+  "Search for a dish... e.g. Hyderabadi Biryani",
+  "Search for a dish... e.g. Masala Dosa",
+  "Search for a dish... e.g. Momos",
+  "Search for a dish... e.g. Pasta Alfredo",
+];
 
 interface SearchBarProps {
   variant: "navbar" | "hero";
@@ -24,6 +33,15 @@ export function SearchBar({
   const router = useRouter();
   const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [placeholderIndex, setPlaceholderIndex] = useState(0)
+  const rotatePlaceholder = useCallback(() => {
+    setPlaceholderIndex((i) => (i + 1) % SEARCH_PLACEHOLDERS.length)
+  }, [])
+  useEffect(() => {
+    const id = setInterval(rotatePlaceholder, 3500)
+    return () => clearInterval(id)
+  }, [rotatePlaceholder])
 
   const urlQuery = variant === "navbar" ? (searchParams.get("q") ?? "") : "";
   const [query, setQuery] = useState(initialQuery || urlQuery);
@@ -53,7 +71,10 @@ export function SearchBar({
   useEffect(() => {
     if (variant !== "navbar") return;
     if (debouncedQuery.length >= 2) {
-      router.push(`${ROUTES.EXPLORE}?q=${encodeURIComponent(debouncedQuery)}`);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("q", debouncedQuery);
+      if (!params.has("tab")) params.set("tab", "dishes");
+      router.push(`${ROUTES.EXPLORE}?${params.toString()}`);
     } else if (debouncedQuery.length === 0 && searchParams.get("q")) {
       const params = new URLSearchParams(searchParams.toString());
       params.delete("q");
@@ -67,7 +88,7 @@ export function SearchBar({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (query.trim()) {
-      router.push(`${ROUTES.EXPLORE}?q=${encodeURIComponent(query.trim())}`);
+      router.push(`${ROUTES.EXPLORE}?q=${encodeURIComponent(query.trim())}&tab=dishes`);
     }
   }
 
@@ -75,8 +96,8 @@ export function SearchBar({
     return (
       <div className="flex items-center gap-3 rounded-pill border border-border bg-card py-4 px-6 text-left shadow-lg">
         <Search className="h-5 w-5 shrink-0 text-text-muted" />
-        <span className="flex-1 text-base text-text-muted">
-          Search restaurants or dishes...
+        <span className="flex-1 text-base text-text-muted transition-opacity duration-300">
+          {SEARCH_PLACEHOLDERS[placeholderIndex]}
         </span>
       </div>
     );
@@ -94,7 +115,7 @@ export function SearchBar({
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search restaurants or dishes..."
+          placeholder={SEARCH_PLACEHOLDERS[placeholderIndex]}
           autoFocus={autoFocus}
           className={cn(
             "h-auto w-full rounded-pill border border-border bg-card/50 py-2 pl-10 pr-4 text-sm font-body",

@@ -24,19 +24,46 @@ import {
   SelectItem,
 } from '@/components/ui/select'
 
+type ExploreTab = 'dishes' | 'restaurants'
+type DishSortOption = 'highest-rated' | 'newest' | 'most-helpful'
+type AnySortOption = RestaurantSortOption | DishSortOption
+
 interface ExploreFiltersProps {
   query: string
+  activeTab: ExploreTab
   selectedCuisine: string | null
   selectedArea: string | null
-  selectedSortBy: RestaurantSortOption
+  selectedDietary: string | null
+  selectedPriceRange: string | null
+  selectedSortBy: AnySortOption
   cuisines: string[]
   areas: string[]
 }
 
-const SORT_OPTIONS: { value: RestaurantSortOption; label: string }[] = [
+const DIETARY_OPTIONS = [
+  { value: 'veg', label: 'Veg' },
+  { value: 'non-veg', label: 'Non-veg' },
+  { value: 'egg', label: 'Egg' },
+]
+
+const PRICE_RANGE_OPTIONS = [
+  { value: 'under-100', label: 'Under ₹100' },
+  { value: '100-200', label: '₹100–200' },
+  { value: '200-400', label: '₹200–400' },
+  { value: '400-600', label: '₹400–600' },
+  { value: 'above-600', label: '₹600+' },
+]
+
+const RESTAURANT_SORT_OPTIONS: { value: RestaurantSortOption; label: string }[] = [
   { value: 'most-reviewed', label: 'Most Reviewed' },
   { value: 'newest', label: 'Newest' },
   { value: 'alphabetical', label: 'A–Z' },
+]
+
+const DISH_SORT_OPTIONS: { value: DishSortOption; label: string }[] = [
+  { value: 'highest-rated', label: 'Highest Rated' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'most-helpful', label: 'Most Reviewed' },
 ]
 
 const scrollRowClass =
@@ -89,15 +116,17 @@ function FilterChip({ group, active, onClick, children, className }: {
 function SortSegmented({
   value,
   onChange,
+  options,
 }: {
-  value: RestaurantSortOption
-  onChange: (v: RestaurantSortOption) => void
+  value: string
+  onChange: (v: string) => void
+  options: { value: string; label: string }[]
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const itemRefs = useRef<Map<RestaurantSortOption, HTMLButtonElement>>(new Map())
+  const itemRefs = useRef<Map<string, HTMLButtonElement>>(new Map())
   const [pill, setPill] = useState<{ left: number; width: number } | null>(null)
 
-  function measure(active: RestaurantSortOption) {
+  function measure(active: string) {
     const container = containerRef.current
     const el = itemRefs.current.get(active)
     if (!container || !el) return
@@ -122,7 +151,7 @@ function SortSegmented({
           transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
         />
       )}
-      {SORT_OPTIONS.map((opt) => (
+      {options.map((opt) => (
         <button
           key={opt.value}
           ref={(el) => { if (el) itemRefs.current.set(opt.value, el) }}
@@ -141,8 +170,11 @@ function SortSegmented({
 }
 
 function FiltersInner({
+  activeTab,
   selectedCuisine: serverCuisine,
   selectedArea: serverArea,
+  selectedDietary: serverDietary,
+  selectedPriceRange: serverPriceRange,
   selectedSortBy: serverSortBy,
   cuisines,
   areas,
@@ -152,21 +184,27 @@ function FiltersInner({
 
   const [optimisticCuisine, setOptimisticCuisine] = useState<string | null>(null)
   const [optimisticArea, setOptimisticArea] = useState<string | null>(null)
-  const [optimisticSort, setOptimisticSort] = useState<RestaurantSortOption | null>(null)
+  const [optimisticDietary, setOptimisticDietary] = useState<string | null>(null)
+  const [optimisticPriceRange, setOptimisticPriceRange] = useState<string | null>(null)
+  const [optimisticSort, setOptimisticSort] = useState<string | null>(null)
 
   const selectedCuisine = optimisticCuisine ?? serverCuisine
   const selectedArea = optimisticArea ?? serverArea
+  const selectedDietary = optimisticDietary ?? serverDietary
+  const selectedPriceRange = optimisticPriceRange ?? serverPriceRange
   const selectedSortBy = optimisticSort ?? serverSortBy
 
   const [lastServerKey, setLastServerKey] = useState(
-    `${serverCuisine}-${serverArea}-${serverSortBy}`
+    `${serverCuisine}-${serverArea}-${serverDietary}-${serverPriceRange}-${serverSortBy}`
   )
   const currentServerKey =
-    `${serverCuisine}-${serverArea}-${serverSortBy}`
+    `${serverCuisine}-${serverArea}-${serverDietary}-${serverPriceRange}-${serverSortBy}`
   if (currentServerKey !== lastServerKey) {
     setLastServerKey(currentServerKey)
     setOptimisticCuisine(null)
     setOptimisticArea(null)
+    setOptimisticDietary(null)
+    setOptimisticPriceRange(null)
     setOptimisticSort(null)
   }
 
@@ -183,26 +221,40 @@ function FiltersInner({
     window.dispatchEvent(new CustomEvent('explore-filter-change'))
   }
 
+  function handleTabChange(tab: ExploreTab) {
+    signalFilterChange()
+    const params = new URLSearchParams()
+    const q = searchParams.get('q')
+    if (q) params.set('q', q)
+    if (tab !== 'dishes') params.set('tab', tab)
+    router.push(`${ROUTES.EXPLORE}?${params.toString()}`)
+  }
+
   function toggleFilter(key: string, value: string | null) {
     const current = searchParams.get(key)
     const newVal = current === value ? null : value
 
     if (key === 'cuisine') setOptimisticCuisine(newVal)
     else if (key === 'area') setOptimisticArea(newVal)
+    else if (key === 'dietary') setOptimisticDietary(newVal)
+    else if (key === 'priceRange') setOptimisticPriceRange(newVal)
 
     signalFilterChange()
     router.push(buildUrl({ [key]: newVal }))
   }
 
-  function handleSort(value: RestaurantSortOption) {
+  function handleSort(value: string) {
     setOptimisticSort(value)
     signalFilterChange()
-    router.push(buildUrl({ sortBy: value === 'most-reviewed' ? null : value }))
+    const defaultSort = activeTab === 'dishes' ? 'highest-rated' : 'most-reviewed'
+    router.push(buildUrl({ sortBy: value === defaultSort ? null : value }))
   }
 
   const filterCount = [
     selectedCuisine,
     selectedArea,
+    selectedDietary,
+    selectedPriceRange,
   ].filter(Boolean).length
 
   const cuisineChips = cuisines.map((c) => (
@@ -233,23 +285,43 @@ function FiltersInner({
     </>
   )
 
+  const dietaryChips = DIETARY_OPTIONS.map((d) => (
+    <FilterChip key={d.value} group="dietary" active={selectedDietary === d.value} onClick={() => toggleFilter('dietary', d.value)}>
+      {d.label}
+    </FilterChip>
+  ))
+
+  const priceRangeChips = PRICE_RANGE_OPTIONS.map((p) => (
+    <FilterChip key={p.value} group="priceRange" active={selectedPriceRange === p.value} onClick={() => toggleFilter('priceRange', p.value)}>
+      {p.label}
+    </FilterChip>
+  ))
+
   const filterGroups = (
     <div className="space-y-5">
       <FilterSection label="Cuisine">{cuisineChips}</FilterSection>
       {areas.length > 0 && <FilterSection label="Area">{areaChips}</FilterSection>}
+      {activeTab === 'dishes' && (
+        <>
+          <FilterSection label="Dietary">{dietaryChips}</FilterSection>
+          <FilterSection label="Price Range">{priceRangeChips}</FilterSection>
+        </>
+      )}
     </div>
   )
+
+  const sortOptions = activeTab === 'dishes' ? DISH_SORT_OPTIONS : RESTAURANT_SORT_OPTIONS
 
   const sortSelectMobile = (
     <Select
       value={selectedSortBy}
-      onValueChange={(val) => handleSort(val as RestaurantSortOption)}
+      onValueChange={(val) => { if (val) handleSort(val) }}
     >
       <SelectTrigger className="h-auto min-w-0 flex-1 rounded-pill border-2 border-border bg-card px-3.5 py-2.5 text-sm font-semibold text-text-primary">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {SORT_OPTIONS.map((opt) => (
+        {sortOptions.map((opt) => (
           <SelectItem key={opt.value} value={opt.value}>
             {opt.label}
           </SelectItem>
@@ -284,12 +356,32 @@ function FiltersInner({
             <X className="h-3 w-3 text-text-muted" aria-hidden />
           </Badge>
         )}
+        {selectedDietary && (
+          <Badge
+            variant="secondary"
+            className="cursor-pointer gap-1"
+            render={<button type="button" onClick={() => toggleFilter('dietary', selectedDietary)} />}
+          >
+            {DIETARY_OPTIONS.find((d) => d.value === selectedDietary)?.label ?? selectedDietary}
+            <X className="h-3 w-3 text-text-muted" aria-hidden />
+          </Badge>
+        )}
+        {selectedPriceRange && (
+          <Badge
+            variant="secondary"
+            className="cursor-pointer gap-1"
+            render={<button type="button" onClick={() => toggleFilter('priceRange', selectedPriceRange)} />}
+          >
+            {PRICE_RANGE_OPTIONS.find((p) => p.value === selectedPriceRange)?.label ?? selectedPriceRange}
+            <X className="h-3 w-3 text-text-muted" aria-hidden />
+          </Badge>
+        )}
         <Button
           variant="link"
           size="xs"
           onClick={() => {
             signalFilterChange()
-            router.push(buildUrl({ cuisine: null, area: null }))
+            router.push(buildUrl({ cuisine: null, area: null, dietary: null, priceRange: null }))
           }}
           className="text-xs font-semibold"
         >
@@ -300,6 +392,34 @@ function FiltersInner({
 
   return (
     <div>
+      {/* Tab toggle */}
+      <div className="mb-4 flex items-center gap-1 rounded-pill bg-surface-3 p-1 w-fit">
+        <button
+          type="button"
+          onClick={() => handleTabChange('dishes')}
+          className={cn(
+            'relative rounded-pill px-4 py-1.5 text-sm font-semibold transition-colors duration-200',
+            activeTab === 'dishes'
+              ? 'bg-primary text-white shadow-sm'
+              : 'text-text-secondary hover:text-text-primary'
+          )}
+        >
+          Dishes
+        </button>
+        <button
+          type="button"
+          onClick={() => handleTabChange('restaurants')}
+          className={cn(
+            'relative rounded-pill px-4 py-1.5 text-sm font-medium transition-colors duration-200',
+            activeTab === 'restaurants'
+              ? 'bg-primary text-white shadow-sm'
+              : 'text-text-muted hover:text-text-secondary'
+          )}
+        >
+          Restaurants
+        </button>
+      </div>
+
       {/* Mobile: filters + sort inline row */}
       <div className="flex gap-2 md:hidden">
         <Sheet>
@@ -339,7 +459,7 @@ function FiltersInner({
         <span className="text-xs font-semibold uppercase tracking-wide text-text-muted">
           Sort by
         </span>
-        <SortSegmented value={selectedSortBy} onChange={handleSort} />
+        <SortSegmented value={selectedSortBy} onChange={handleSort} options={sortOptions} />
       </div>
     </div>
   )

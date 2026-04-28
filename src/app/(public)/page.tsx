@@ -2,43 +2,54 @@ import Link from 'next/link'
 import { RestaurantCard } from '@/components/features/RestaurantCard'
 import { LandingCTA } from '@/components/features/LandingCTA'
 import { HeroSection } from '@/components/features/HeroSection'
-import { CUISINE_TYPES, CUISINE_EMOJI, SUPPORTED_CITIES, CONFIG } from '@/lib/constants'
+import { CUISINE_TYPES, CUISINE_EMOJI, GURUGRAM } from '@/lib/constants'
 import { StatsBar } from '@/components/features/StatsBar'
 import { PersonalStatsBanner } from '@/components/features/PersonalStatsBanner'
 import { searchRestaurants } from '@/lib/services/catalog'
 import { getRestaurantCount } from '@/lib/services/restaurants'
-import { getReviewCount } from '@/lib/services/reviews'
+import { getReviewCount, getRecentFeaturedReviews } from '@/lib/services/reviews'
+import { getTopDishes, getDishCount } from '@/lib/services/dishes'
+import { DishCard } from '@/components/features/DishCard'
+import { ReviewCardV2 } from '@/components/features/ReviewCardV2'
 import { Reveal, RevealGrid } from '@/components/ui/AnimateReveal'
-import { getCityFromCookie } from '@/lib/utils/get-city-from-cookie'
 import { captureError } from '@/lib/monitoring/sentry'
-import type { Restaurant } from '@/lib/types'
+import type { Restaurant, Dish, Review } from '@/lib/types'
 import { ROUTES } from '@/lib/constants/routes'
 
 export const revalidate = 3600
 
 const HOW_IT_WORKS = [
-  { icon: '🏪', title: 'Find a restaurant', desc: 'Search by name, cuisine, or a dish you\'re craving.' },
-  { icon: '📋', title: 'Browse their menu', desc: 'See every reviewed dish with photos, ratings, and tags.' },
-  { icon: '⭐', title: 'Read dish reviews', desc: 'Real diners rate taste, portion, and value for each dish.' },
-  { icon: '✍️', title: 'Share your experience', desc: 'Rate a dish you tried and help others decide.' },
+  { icon: '🔍', title: 'Search for a dish', desc: 'Look up a dish you\'re craving or browse top-rated picks.' },
+  { icon: '⭐', title: 'See real ratings', desc: 'Every dish has taste, portion, and value scores from real diners.' },
+  { icon: '📸', title: 'Read reviews with photos', desc: 'See exactly what you\'ll get before you order.' },
+  { icon: '✍️', title: 'Share your experience', desc: 'Review dishes you\'ve tried. Earn DishPoints and unlock rewards.' },
 ]
 
 export default async function LandingPage() {
-  const selectedCity = await getCityFromCookie()
+  const city = GURUGRAM
 
   let restaurants: Restaurant[] = []
   let restaurantCount = 0
   let reviewCount = 0
+  let topDishes: Dish[] = []
+  let dishCount = 0
+  let recentReviews: Review[] = []
 
   try {
-    const [restResult, rCount, revCount] = await Promise.all([
-      searchRestaurants({ city: selectedCity, limit: 12, sortBy: 'most-reviewed' }),
-      getRestaurantCount(selectedCity ?? undefined),
+    const [restResult, rCount, revCount, topDishResult, dCount, recentRevResult] = await Promise.all([
+      searchRestaurants({ city, limit: 8, sortBy: 'most-reviewed' }),
+      getRestaurantCount(city),
       getReviewCount(),
+      getTopDishes(6, city),
+      getDishCount(),
+      getRecentFeaturedReviews(4),
     ])
     restaurants = restResult.items
     restaurantCount = rCount
     reviewCount = revCount
+    topDishes = topDishResult
+    dishCount = dCount
+    recentReviews = recentRevResult
   } catch (error) {
     captureError(error, { route: 'LandingPage', extra: { context: 'data fetching' } })
   }
@@ -53,7 +64,7 @@ export default async function LandingPage() {
       {/* Social proof stats */}
       <Reveal>
         <section className="mx-auto mt-2 max-w-5xl px-4 py-4 sm:mt-5 sm:px-6 sm:py-8">
-          <StatsBar restaurantCount={restaurantCount} reviewCount={reviewCount} cityCount={SUPPORTED_CITIES.length} />
+          <StatsBar restaurantCount={restaurantCount} reviewCount={reviewCount} dishCount={dishCount} />
         </section>
       </Reveal>
 
@@ -61,6 +72,52 @@ export default async function LandingPage() {
       <div className="mt-4">
         <PersonalStatsBanner />
       </div>
+
+      {/* Top-rated dishes */}
+      {topDishes.length > 0 && (
+        <section className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-xl font-bold text-heading sm:text-2xl">
+              Top-rated dishes
+            </h2>
+            <Link href="/explore?tab=dishes" className="flex items-center gap-1 text-sm font-semibold text-primary transition-all hover:gap-2">
+              See all <span>&rsaquo;</span>
+            </Link>
+          </div>
+          <RevealGrid className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+            {topDishes.slice(0, 6).map((d, i) => (
+              <div key={d.id} data-reveal="" style={{ '--reveal-index': i } as React.CSSProperties}>
+                <DishCard dish={d} index={i} />
+              </div>
+            ))}
+          </RevealGrid>
+        </section>
+      )}
+
+      {/* Recent featured reviews */}
+      {recentReviews.length > 0 && (
+        <section className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-xl font-bold text-heading sm:text-2xl">
+              Recent reviews
+            </h2>
+            <Link href="/explore?tab=dishes" className="flex items-center gap-1 text-sm font-semibold text-primary transition-all hover:gap-2">
+              See all <span>&rsaquo;</span>
+            </Link>
+          </div>
+          <RevealGrid className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4">
+            {recentReviews.slice(0, 4).map((r, i) => (
+              <div key={r.id} data-reveal="" style={{ '--reveal-index': i } as React.CSSProperties}>
+                <ReviewCardV2
+                  review={r}
+                  variant="profile"
+                  dishContext={{ dishName: r.dishName ?? 'Dish', restaurantName: r.restaurantName ?? '' }}
+                />
+              </div>
+            ))}
+          </RevealGrid>
+        </section>
+      )}
 
       {/* Browse by cuisine */}
       <Reveal>
@@ -90,7 +147,7 @@ export default async function LandingPage() {
             <h2 className="font-display text-xl font-bold text-heading sm:text-2xl">
               Restaurants near you
             </h2>
-            <Link href={ROUTES.EXPLORE} className="flex items-center gap-1 text-sm font-semibold text-primary transition-all hover:gap-2">
+            <Link href={`${ROUTES.EXPLORE}?tab=restaurants`} className="flex items-center gap-1 text-sm font-semibold text-primary transition-all hover:gap-2">
               See all <span>&rsaquo;</span>
             </Link>
           </div>

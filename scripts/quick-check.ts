@@ -27,7 +27,7 @@ async function main() {
   });
 
   console.log("\n=== DISHES (first 5 per city) ===");
-  for (const city of ["Bengaluru", "Gurugram"]) {
+  for (const city of ["gurugram"]) {
     const snap = await db
       .collection("dishes")
       .where("city", "==", city)

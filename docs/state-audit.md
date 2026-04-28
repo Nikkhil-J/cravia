@@ -30,7 +30,7 @@
 
 | Context | File | Data | Provider mount | Consumers |
 |---------|------|------|---------------|-----------|
-| `CityContext` | `src/lib/context/CityContext.tsx` (L12) | `city: City`, `setCity: (city: City) => void` | `src/app/providers.tsx` (L55–57) via `<CityProvider>` | `Navbar.tsx` → `CitySelector` (L30), `CityPills.tsx` (L13), `settings/page.tsx` (L37) |
+| _(CityContext removed — single city: Gurugram)_ | — | — | — | — |
 
 Third-party contexts (not app-defined): `ThemeProvider` from `next-themes` (providers.tsx L39), `QueryClientProvider` from TanStack (providers.tsx L54).
 
@@ -83,7 +83,7 @@ Third-party contexts (not app-defined): `ThemeProvider` from `next-themes` (prov
 | `src/components/features/HeroSearchBar.tsx` | `isExiting` | Exit animation |
 | `src/components/features/PersonalStatsBanner.tsx` | `animate` | Entrance animation flag |
 | `src/components/features/WishlistButton.tsx` | `isSaved` | Synced from Zustand `savedIds` |
-| `src/components/layouts/Navbar.tsx` | `scrolled`, `unreadCount` (Navbar); `open` (CitySelector) | Scroll state, notification count, dropdown |
+| `src/components/layouts/Navbar.tsx` | `scrolled`, `unreadCount` (Navbar) | Scroll state, notification count |
 | `src/components/ui/StarRating.tsx` | `hoverValue` | Hovered star index |
 | `src/components/ui/TagCloud.tsx` | `expanded` | Show all / collapse tags |
 | `src/app/(public)/explore/explore-filters.tsx` | `optimisticCuisine`, `optimisticArea`, `optimisticDietary`, `optimisticPriceRange`, `optimisticSort`, `lastServerKey`, `showAllAreas` (FiltersInner); `pill` (SortSegmented) | Optimistic filter state before URL catches up |
@@ -94,7 +94,7 @@ Third-party contexts (not app-defined): `ThemeProvider` from `next-themes` (prov
 |------|-----------|-----------------|
 | `src/lib/hooks/useReviewDishContexts.ts` | `map` | `Record<dishId, { dishName, restaurantName }>` |
 | `src/lib/hooks/useDebounce.ts` | `debouncedValue` | Debounced copy of input |
-| `src/lib/context/CityContext.tsx` | `city` | Selected city (lazy-init from cookie/localStorage) |
+| _(CityContext removed)_ | — | — |
 
 ### 1.5 useRef (non-DOM, mutable state)
 
@@ -146,7 +146,7 @@ Third-party contexts (not app-defined): `ThemeProvider` from `next-themes` (prov
 | Route | File | What is fetched | Trigger |
 |-------|------|-----------------|---------|
 | `/` | `src/app/(public)/page.tsx` L37–43 | `getTopDishes`, `listRestaurants`, `getDishCount`, `getRestaurantCount`, `getReviewCount` — 5 parallel calls | Navigation / ISR revalidation (3600s) |
-| `/explore` | `src/app/(public)/explore/page.tsx` | `getCityFromCookie`, `listDishes` | Navigation + filter changes (server re-render) |
+| `/explore` | `src/app/(public)/explore/page.tsx` | `listDishes` (hardcoded Gurugram) | Navigation + filter changes (server re-render) |
 | `/dish/[id]` | `src/app/(public)/dish/[id]/page.tsx` L27, L44, L47–49, L213 | `getDish` (×2 — metadata + page), `getRelatedDishes`, `listDishReviews` (×2 — photos + reviews section) | Navigation / ISR (3600s) |
 | `/restaurant/[id]` | `src/app/(public)/restaurant/[id]/page.tsx` L18, L28–30 | `getRestaurantDetails` (×2 — metadata + page), `listRestaurantDishes` | Navigation / ISR (3600s) |
 | `/review/[id]` | `src/app/(public)/review/[id]/page.tsx` L13–15, L23–26 | `getReview` (×2), `getDish` (×2) — metadata + page | Navigation |
@@ -569,7 +569,7 @@ This is fine because `useAuth()` reads from Zustand (no network call). Each call
 - `src/lib/store/reviewFormStore.ts`
 
 **Context:**
-- `src/lib/context/CityContext.tsx`
+- _(CityContext removed — single city mode)_
 
 **Hooks:**
 - `src/lib/hooks/useAuth.ts`
