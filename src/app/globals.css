@@ -212,6 +212,8 @@ html.theme-transitioning *::after {
     @apply bg-background text-foreground;
   }
   html {
+    /* APPROVED HARDCODED COLOR — matches manifest background_color to prevent white flash on PWA launch */
+    background-color: #2C1810;
     @apply font-body;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

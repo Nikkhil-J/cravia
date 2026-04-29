@@ -2,10 +2,24 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { Restaurant } from '@/lib/types'
 import { ROUTES } from '@/lib/constants/routes'
+import { getPlaceholderGradient } from '@/lib/utils'
 
 interface RestaurantCardProps {
   restaurant: Restaurant
   index?: number
+}
+
+function PlaceholderCover({ name }: { name: string }) {
+  const { from, to } = getPlaceholderGradient(name)
+
+  return (
+    <div
+      className="flex h-full w-full items-center justify-center"
+      style={{ background: `linear-gradient(135deg, ${from}20, ${to}40)` }}
+    >
+      <span className="text-3xl opacity-60">🍽️</span>
+    </div>
+  )
 }
 
 export function RestaurantCard({ restaurant, index = 0 }: RestaurantCardProps) {
@@ -25,7 +39,7 @@ export function RestaurantCard({ restaurant, index = 0 }: RestaurantCardProps) {
             className="object-cover transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-[1.06]"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-4xl">🏪</div>
+          <PlaceholderCover name={restaurant.name} />
         )}
       </div>
       <div className="p-3.5">

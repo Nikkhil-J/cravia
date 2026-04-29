@@ -20,7 +20,8 @@
     "agent:step1": "dotenv -e .env.local -- npx tsx scripts/gurgaon/step1-fetch-restaurants.ts",
     "agent:step2": "dotenv -e .env.local -- npx tsx scripts/gurgaon/step2-scrape-menus.ts",
     "agent:step3": "dotenv -e .env.local -- npx tsx scripts/gurgaon/step3-dry-run.ts",
-    "agent:step4": "dotenv -e .env.local -- npx tsx scripts/gurgaon/step4-push.ts"
+    "agent:step4": "dotenv -e .env.local -- npx tsx scripts/gurgaon/step4-push.ts",
+    "agent:step5": "dotenv -e .env.local -- npx tsx scripts/gurgaon/step5-fetch-photos.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",
@@ -62,6 +63,7 @@
     "@types/node": "^20.19.37",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cloudinary": "^2.10.0",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",

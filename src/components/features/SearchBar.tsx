@@ -1,12 +1,17 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { ROUTES } from "@/lib/constants/routes";
+import {
+  setExploreQuery,
+  getExploreQuery,
+  subscribeExploreQuery,
+} from "@/lib/stores/explore-search";
 
 const SEARCH_PLACEHOLDERS = [
   "Search for a dish... e.g. Butter Chicken",
@@ -31,8 +36,9 @@ export function SearchBar({
   className,
 }: SearchBarProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const inputRef = useRef<HTMLInputElement>(null);
+  const isOnExplorePage = pathname === ROUTES.EXPLORE;
 
   const [placeholderIndex, setPlaceholderIndex] = useState(0)
   const rotatePlaceholder = useCallback(() => {
@@ -43,52 +49,55 @@ export function SearchBar({
     return () => clearInterval(id)
   }, [rotatePlaceholder])
 
-  const urlQuery = variant === "navbar" ? (searchParams.get("q") ?? "") : "";
-  const [query, setQuery] = useState(initialQuery || urlQuery);
-  const [lastUrlQuery, setLastUrlQuery] = useState(urlQuery);
-  if (urlQuery !== lastUrlQuery) {
-    setLastUrlQuery(urlQuery);
-    setQuery(urlQuery);
+  const storeQuery = useSyncExternalStore(
+    subscribeExploreQuery,
+    getExploreQuery,
+    () => ""
+  );
+  const [query, setQuery] = useState(initialQuery);
+  const [lastStoreQuery, setLastStoreQuery] = useState(storeQuery);
+  if (storeQuery !== lastStoreQuery) {
+    setLastStoreQuery(storeQuery);
+    if (storeQuery !== query) {
+      setQuery(storeQuery);
+    }
   }
 
   useEffect(() => {
-    if (variant !== "navbar" || searchParams.get("focus") !== "1") return;
+    if (variant !== "navbar" || !isOnExplorePage) return;
+    const params = new URLSearchParams(window.location.search);
+    const urlQ = params.get("q")?.trim();
+    if (urlQ && !query) {
+      setQuery(urlQ);
+    }
+    if (!params.has("focus")) return;
 
     const timer = setTimeout(() => {
       inputRef.current?.focus();
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("focus");
-      const newUrl = params.toString()
-        ? `${ROUTES.EXPLORE}?${params.toString()}`
-        : ROUTES.EXPLORE;
-      router.replace(newUrl, { scroll: false });
+      const url = new URL(window.location.href);
+      url.searchParams.delete("focus");
+      window.history.replaceState(null, "", url.pathname + (url.search || ""));
     }, 300);
     return () => clearTimeout(timer);
-  }, [variant, searchParams, router]);
+  }, [variant, isOnExplorePage]);
 
   const debouncedQuery = useDebounce(query, 400);
 
   useEffect(() => {
     if (variant !== "navbar") return;
-    if (debouncedQuery.length >= 2) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("q", debouncedQuery);
-      if (!params.has("tab")) params.set("tab", "dishes");
-      router.push(`${ROUTES.EXPLORE}?${params.toString()}`);
-    } else if (debouncedQuery.length === 0 && searchParams.get("q")) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("q");
-      const newUrl = params.toString()
-        ? `${ROUTES.EXPLORE}?${params.toString()}`
-        : ROUTES.EXPLORE;
-      router.push(newUrl);
-    }
-  }, [debouncedQuery, variant, router, searchParams]);
+    if (!isOnExplorePage) return;
+    setExploreQuery(debouncedQuery.length >= 2 ? debouncedQuery : "");
+  }, [debouncedQuery, variant, isOnExplorePage]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`${ROUTES.EXPLORE}?q=${encodeURIComponent(query.trim())}&tab=dishes`);
+    const trimmed = query.trim();
+    if (!trimmed) return;
+
+    setExploreQuery(trimmed);
+
+    if (!isOnExplorePage) {
+      router.push(ROUTES.EXPLORE);
     }
   }
 

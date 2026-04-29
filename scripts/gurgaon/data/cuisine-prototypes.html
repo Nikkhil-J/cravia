@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse by Cuisine — Prototypes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0f1117;
+    color: #e8e8ed;
+    padding: 40px 0;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .page-subtitle {
+    text-align: center;
+    color: #6b6f80;
+    font-size: 14px;
+    margin-bottom: 60px;
+  }
+
+  .prototype {
+    margin-bottom: 80px;
+    border: 1px solid #2a2d38;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #181a22;
+  }
+  .proto-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #2a2d38;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .proto-number {
+    background: #E23744;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .proto-label { font-weight: 600; font-size: 15px; }
+  .proto-desc { font-size: 12px; color: #6b6f80; margin-left: auto; }
+  .proto-body { padding: 32px 24px; }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  /* ─── Prototype 1: Circular Icons (Swiggy style) ─── */
+  .p1-scroll {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .p1-scroll::-webkit-scrollbar { display: none; }
+  .p1-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .p1-item:hover { transform: translateY(-4px); }
+  .p1-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .p1-circle::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+  .p1-item:hover .p1-circle::after {
+    border-color: rgba(226, 55, 68, 0.5);
+  }
+  .p1-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #b0b3c0;
+    white-space: nowrap;
+  }
+  .p1-item:hover .p1-name { color: #e8e8ed; }
+
+  /* ─── Prototype 2: Gradient Pills ─── */
+  .p2-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    flex-wrap: wrap;
+    scrollbar-width: none;
+  }
+  .p2-scroll::-webkit-scrollbar { display: none; }
+  .p2-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s;
+    border: 1px solid #2a2d38;
+    background: #22242e;
+    color: #b0b3c0;
+  }
+  .p2-pill:hover {
+    border-color: transparent;
+    transform: translateY(-2px);
+    color: white;
+  }
+  .p2-pill span:first-child { font-size: 20px; }
+
+  /* ─── Prototype 3: Big Cards with Gradient BG ─── */
+  .p3-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .p3-card {
+    border-radius: 14px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .p3-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .p3-card .emoji {
+    font-size: 42px;
+    display: block;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+  .p3-card .name {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+  }
+
+  /* ─── Prototype 4: Horizontal Scroll Big Tiles ─── */
+  .p4-scroll {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .p4-scroll::-webkit-scrollbar { display: none; }
+  .p4-tile {
+    flex-shrink: 0;
+    width: 160px;
+    height: 120px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .p4-tile:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+  .p4-tile .emoji {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 36px;
+    opacity: 0.9;
+  }
+  .p4-tile .name {
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .p4-tile .count {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 2px;
+  }
+
+  /* ─── Prototype 5: Minimal List with Accent Lines ─── */
+  .p5-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .p5-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 1px solid #22242e;
+    position: relative;
+  }
+  .p5-item:hover {
+    background: #22242e;
+  }
+  .p5-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    border-radius: 2px;
+    transition: height 0.2s;
+  }
+  .p5-item:hover::before {
+    height: 60%;
+  }
+  .p5-emoji {
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #22242e;
+    flex-shrink: 0;
+  }
+  .p5-item:hover .p5-emoji {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+  }
+  .p5-text .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e8e8ed;
+  }
+  .p5-text .sub {
+    font-size: 11px;
+    color: #6b6f80;
+    margin-top: 2px;
+  }
+  .p5-arrow {
+    margin-left: auto;
+    color: #6b6f80;
+    font-size: 14px;
+    transition: transform 0.2s;
+  }
+  .p5-item:hover .p5-arrow {
+    transform: translateX(4px);
+    color: #E23744;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="page-title">Browse by Cuisine — Prototypes</h1>
+  <p class="page-subtitle">5 different design approaches. Pick the one that feels right.</p>
+
+  <!-- ─── PROTOTYPE 1 ─── -->
+  <div class="prototype">
+    <div class="proto-header">
+      <div class="proto-number">1</div>
+      <div class="proto-label">Circular Icons (Swiggy / Zomato style)</div>
+      <div class="proto-desc">Horizontal scroll, warm gradient circles, proven food-app pattern</div>
+    </div>
+    <div class="proto-body">
+      <h2 class="section-title">Browse by cuisine</h2>
+      <div class="p1-scroll" id="p1"></div>
+    </div>
+  </div>
+
+  <!-- ─── PROTOTYPE 2 ─── -->
+  <div class="prototype">
+    <div class="proto-header">
+      <div class="proto-number">2</div>
+      <div class="proto-label">Wrapped Gradient Pills</div>
+      <div class="proto-desc">Compact, modern, wraps to multiple rows, minimal vertical space</div>
+    </div>
+    <div class="proto-body">
+      <h2 class="section-title">Browse by cuisine</h2>
+      <div class="p2-scroll" id="p2"></div>
+    </div>
+  </div>
+
+  <!-- ─── PROTOTYPE 3 ─── -->
+  <div class="prototype">
+    <div class="proto-header">
+      <div class="proto-number">3</div>
+      <div class="proto-label">Gradient Cards (Bold Grid)</div>
+      <div class="proto-desc">Each cuisine has a unique warm gradient, large emoji, 5-column grid</div>
+    </div>
+    <div class="proto-body">
+      <h2 class="section-title">Browse by cuisine</h2>
+      <div class="p3-grid" id="p3"></div>
+    </div>
+  </div>
+
+  <!-- ─── PROTOTYPE 4 ─── -->
+  <div class="prototype">
+    <div class="proto-header">
+      <div class="proto-number">4</div>
+      <div class="proto-label">Horizontal Scroll Tiles</div>
+      <div class="proto-desc">Wide gradient tiles, emoji top-right, name bottom-left, scroll sideways</div>
+    </div>
+    <div class="proto-body">
+      <h2 class="section-title">Browse by cuisine</h2>
+      <div class="p4-scroll" id="p4"></div>
+    </div>
+  </div>
+
+  <!-- ─── PROTOTYPE 5 ─── -->
+  <div class="prototype">
+    <div class="proto-header">
+      <div class="proto-number">5</div>
+      <div class="proto-label">Minimal List with Accent</div>
+      <div class="proto-desc">Clean 2-column list, accent bar on hover, understated elegance</div>
+    </div>
+    <div class="proto-body">
+      <h2 class="section-title">Browse by cuisine</h2>
+      <div class="p5-grid" id="p5"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const cuisines = [
+  { name: 'North Indian', emoji: '🍛',  gradient: ['#E23744','#FF6B35'], desc: '42 restaurants' },
+  { name: 'South Indian', emoji: '🫓',  gradient: ['#FF6B35','#FFB800'], desc: '28 restaurants' },
+  { name: 'Bengali',      emoji: '🐟',  gradient: ['#3B82F6','#06B6D4'], desc: '8 restaurants' },
+  { name: 'Punjabi',      emoji: '🧈',  gradient: ['#FFB800','#F59E0B'], desc: '15 restaurants' },
+  { name: 'Rajasthani',   emoji: '🏜️', gradient: ['#D97706','#E23744'], desc: '5 restaurants' },
+  { name: 'Gujarati',     emoji: '🥘',  gradient: ['#10B981','#059669'], desc: '6 restaurants' },
+  { name: 'Maharashtrian',emoji: '🍲',  gradient: ['#8B5CF6','#6366F1'], desc: '7 restaurants' },
+  { name: 'Kerala',       emoji: '🥥',  gradient: ['#059669','#10B981'], desc: '4 restaurants' },
+  { name: 'Hyderabadi',   emoji: '🍗',  gradient: ['#E23744','#BE185D'], desc: '12 restaurants' },
+  { name: 'Mughlai',      emoji: '🥘',  gradient: ['#92400E','#D97706'], desc: '18 restaurants' },
+];
+
+// P1: Circular
+document.getElementById('p1').innerHTML = cuisines.map(c => `
+  <div class="p1-item">
+    <div class="p1-circle" style="background: linear-gradient(135deg, ${c.gradient[0]}30, ${c.gradient[1]}50)">
+      ${c.emoji}
+    </div>
+    <span class="p1-name">${c.name}</span>
+  </div>
+`).join('');
+
+// P2: Pills
+const pillColors = [
+  ['#E23744','#FF6B35'], ['#FF6B35','#FFB800'], ['#3B82F6','#06B6D4'],
+  ['#FFB800','#F59E0B'], ['#D97706','#E23744'], ['#10B981','#059669'],
+  ['#8B5CF6','#6366F1'], ['#059669','#10B981'], ['#E23744','#BE185D'],
+  ['#92400E','#D97706'],
+];
+document.getElementById('p2').innerHTML = cuisines.map((c, i) => `
+  <div class="p2-pill" onmouseenter="this.style.background='linear-gradient(135deg, ${pillColors[i][0]}, ${pillColors[i][1]})'" onmouseleave="this.style.background='#22242e'">
+    <span>${c.emoji}</span>
+    <span>${c.name}</span>
+  </div>
+`).join('');
+
+// P3: Gradient Cards
+document.getElementById('p3').innerHTML = cuisines.map(c => `
+  <div class="p3-card" style="background: linear-gradient(135deg, ${c.gradient[0]}25, ${c.gradient[1]}40)">
+    <span class="emoji">${c.emoji}</span>
+    <span class="name">${c.name}</span>
+  </div>
+`).join('');
+
+// P4: Horizontal Tiles
+document.getElementById('p4').innerHTML = cuisines.map(c => `
+  <div class="p4-tile" style="background: linear-gradient(135deg, ${c.gradient[0]}CC, ${c.gradient[1]}AA)">
+    <span class="emoji">${c.emoji}</span>
+    <span class="name">${c.name}</span>
+    <span class="count">${c.desc}</span>
+  </div>
+`).join('');
+
+// P5: Minimal List
+const accentColors = ['#E23744','#FF6B35','#3B82F6','#FFB800','#D97706','#10B981','#8B5CF6','#059669','#E23744','#92400E'];
+document.getElementById('p5').innerHTML = cuisines.map((c, i) => `
+  <div class="p5-item" style="--accent: ${accentColors[i]}" onmouseenter="this.querySelector('.p5-emoji').style.background='${accentColors[i]}22'" onmouseleave="this.querySelector('.p5-emoji').style.background='#22242e'">
+    <style>.p5-item:nth-child(${i+1}):hover::before { background: ${accentColors[i]}; }</style>
+    <div class="p5-emoji">${c.emoji}</div>
+    <div class="p5-text">
+      <div class="name">${c.name}</div>
+      <div class="sub">${c.desc}</div>
+    </div>
+    <div class="p5-arrow">→</div>
+  </div>
+`).join('');
+</script>
+
+</body>
+</html>

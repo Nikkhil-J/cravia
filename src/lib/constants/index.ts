@@ -150,6 +150,24 @@ export const LEVEL_COLORS: Record<UserLevel, string> = {
   Legend: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
 }
 
+export const CUISINE_GRADIENT: Record<string, [string, string]> = {
+  'North Indian': ['#E23744', '#FF6B35'],
+  'South Indian': ['#FF6B35', '#FFB800'],
+  Bengali: ['#3B82F6', '#06B6D4'],
+  Punjabi: ['#FFB800', '#F59E0B'],
+  Rajasthani: ['#D97706', '#E23744'],
+  Gujarati: ['#10B981', '#059669'],
+  Maharashtrian: ['#8B5CF6', '#6366F1'],
+  Kerala: ['#059669', '#10B981'],
+  Hyderabadi: ['#E23744', '#BE185D'],
+  Mughlai: ['#92400E', '#D97706'],
+  Chinese: ['#EF4444', '#F59E0B'],
+  Japanese: ['#F43F5E', '#EC4899'],
+  Italian: ['#16A34A', '#EF4444'],
+  Cafe: ['#92400E', '#D97706'],
+  Bakery: ['#F59E0B', '#D97706'],
+}
+
 export const CUISINE_EMOJI: Record<string, string> = {
   'North Indian': '🍛',
   'South Indian': '🫓',

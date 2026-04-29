@@ -10,6 +10,7 @@ import { LoadMoreRestaurants } from '@/components/features/LoadMoreRestaurants'
 import { LoadMoreDishes } from '@/components/features/LoadMoreDishes'
 import { ExploreResultsWrapper } from '@/components/features/ExploreResultsWrapper'
 import { ExploreEntranceWrapper } from '@/components/features/ExploreEntranceWrapper'
+import { ExploreSearchResults, ExploreDefaultContent } from '@/components/features/ExploreSearchResults'
 import { CUISINE_TYPES, SORT_OPTIONS, HERO_TAGS, GURUGRAM } from '@/lib/constants'
 import { listCityAreas } from '@/lib/services/city'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
@@ -319,7 +320,6 @@ async function RestaurantExploreResults({
 
 export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const params = await searchParams
-  const query = params.q?.trim() ?? ''
   const tab: ExploreTab = params.tab === 'restaurants' ? 'restaurants' : 'dishes'
   const cuisine = params.cuisine ?? null
   const city: string | null = GURUGRAM
@@ -345,14 +345,14 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           <Suspense fallback={<div className="h-[44px] animate-pulse rounded-pill bg-border" />}>
             <SearchBar
               variant="navbar"
-              initialQuery={query}
+              initialQuery=""
               className="block w-full max-w-none"
             />
           </Suspense>
         </div>
 
         <ExploreFilters
-          query={query}
+          query=""
           activeTab={tab}
           selectedCuisine={cuisine}
           selectedArea={area}
@@ -363,31 +363,37 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           areas={[...areas]}
         />
 
-        <Suspense key={paramsKey} fallback={<ResultsSkeleton />}>
-          <ExploreResultsWrapper>
-            {tab === 'dishes' && !query && !cuisine && !area && !dietary && !priceRange ? (
-              <CuratedDishExplore city={city} sortBy={dishSortBy} />
-            ) : tab === 'dishes' ? (
-              <DishExploreResults
-                query={query}
-                city={city}
-                area={area}
-                cuisine={cuisine}
-                dietary={dietary}
-                priceRange={priceRange}
-                sortBy={dishSortBy}
-              />
-            ) : (
-              <RestaurantExploreResults
-                query={query}
-                city={city}
-                area={area}
-                cuisine={cuisine}
-                sortBy={restaurantSortBy}
-              />
-            )}
-          </ExploreResultsWrapper>
+        <Suspense>
+          <ExploreSearchResults />
         </Suspense>
+
+        <ExploreDefaultContent>
+          <Suspense key={paramsKey} fallback={<ResultsSkeleton />}>
+            <ExploreResultsWrapper>
+              {tab === 'dishes' && !cuisine && !area && !dietary && !priceRange ? (
+                <CuratedDishExplore city={city} sortBy={dishSortBy} />
+              ) : tab === 'dishes' ? (
+                <DishExploreResults
+                  query=""
+                  city={city}
+                  area={area}
+                  cuisine={cuisine}
+                  dietary={dietary}
+                  priceRange={priceRange}
+                  sortBy={dishSortBy}
+                />
+              ) : (
+                <RestaurantExploreResults
+                  query=""
+                  city={city}
+                  area={area}
+                  cuisine={cuisine}
+                  sortBy={restaurantSortBy}
+                />
+              )}
+            </ExploreResultsWrapper>
+          </Suspense>
+        </ExploreDefaultContent>
       </div>
     </ExploreEntranceWrapper>
   )

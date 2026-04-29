@@ -1,21 +1,10 @@
 'use client'
 
 import { Suspense } from 'react'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants/routes'
-
-function getSafeAuthDismissHref(redirect: string | null | undefined): string {
-  if (redirect == null || typeof redirect !== 'string') return ROUTES.HOME
-  const t = redirect.trim()
-  if (t === '' || !t.startsWith('/')) return ROUTES.HOME
-  if (t.startsWith('//')) return ROUTES.HOME
-  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(t)) return ROUTES.HOME
-  if (/[\r\n<>]/.test(t)) return ROUTES.HOME
-  return t
-}
 
 const dismissClassName = cn(
   'absolute right-4 top-4 z-10 flex min-h-11 min-w-11 items-center justify-center rounded-full',
@@ -24,28 +13,44 @@ const dismissClassName = cn(
   'lg:right-8 lg:top-8'
 )
 
-function DismissLink({ href }: { href: string }) {
+function DismissButton() {
+  const router = useRouter()
+
+  function handleDismiss() {
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      router.push(ROUTES.HOME)
+    }
+  }
+
   return (
-    <Link
-      href={href}
+    <button
+      type="button"
+      onClick={handleDismiss}
       className={dismissClassName}
       aria-label="Close and go back"
     >
       <X className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
-    </Link>
+    </button>
   )
-}
-
-function AuthScreenDismissInner() {
-  const searchParams = useSearchParams()
-  const href = getSafeAuthDismissHref(searchParams.get('redirect'))
-  return <DismissLink href={href} />
 }
 
 export function AuthScreenDismiss() {
   return (
-    <Suspense fallback={<DismissLink href={ROUTES.HOME} />}>
-      <AuthScreenDismissInner />
+    <Suspense
+      fallback={
+        <button
+          type="button"
+          className={dismissClassName}
+          aria-label="Close and go back"
+          disabled
+        >
+          <X className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+        </button>
+      }
+    >
+      <DismissButton />
     </Suspense>
   )
 }

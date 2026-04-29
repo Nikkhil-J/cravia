@@ -210,6 +210,7 @@ function FiltersInner({
 
   const buildUrl = useCallback((overrides: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString())
+    params.delete('q')
     Object.entries(overrides).forEach(([key, val]) => {
       if (val) params.set(key, val)
       else params.delete(key)
@@ -224,8 +225,6 @@ function FiltersInner({
   function handleTabChange(tab: ExploreTab) {
     signalFilterChange()
     const params = new URLSearchParams()
-    const q = searchParams.get('q')
-    if (q) params.set('q', q)
     if (tab !== 'dishes') params.set('tab', tab)
     router.push(`${ROUTES.EXPLORE}?${params.toString()}`)
   }

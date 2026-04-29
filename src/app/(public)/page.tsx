@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { RestaurantCard } from '@/components/features/RestaurantCard'
 import { LandingCTA } from '@/components/features/LandingCTA'
 import { HeroSection } from '@/components/features/HeroSection'
-import { CUISINE_TYPES, CUISINE_EMOJI, GURUGRAM } from '@/lib/constants'
+import { CUISINE_TYPES, CUISINE_EMOJI, CUISINE_GRADIENT, GURUGRAM } from '@/lib/constants'
 import { StatsBar } from '@/components/features/StatsBar'
 import { PersonalStatsBanner } from '@/components/features/PersonalStatsBanner'
 import { searchRestaurants } from '@/lib/services/catalog'
@@ -124,22 +124,28 @@ export default async function LandingPage() {
 
       {/* Browse by cuisine */}
       <Reveal>
-        <section className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 sm:py-12">
-          <h2 className="font-display text-xl font-bold text-heading sm:text-2xl">Browse by cuisine</h2>
-          <RevealGrid className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5">
-            {CUISINE_TYPES.slice(0, 10).map((cuisine, i) => (
-              <Link
-                key={cuisine}
-                href={`${ROUTES.EXPLORE}?cuisine=${encodeURIComponent(cuisine)}`}
-                data-reveal=""
-                style={{ '--reveal-index': i } as React.CSSProperties}
-                className="flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-4 text-center transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-md"
-              >
-                <span className="text-3xl">{CUISINE_EMOJI[cuisine] ?? '🍴'}</span>
-                <span className="text-sm font-medium text-text-primary">{cuisine}</span>
-              </Link>
-            ))}
-          </RevealGrid>
+        <section className="mx-auto max-w-[1200px] py-8 sm:py-12">
+          <h2 className="px-4 font-display text-xl font-bold text-heading sm:px-6 sm:text-2xl">Browse by cuisine</h2>
+          <div className="scrollbar-hide -mx-1 mt-4 flex gap-3 overflow-x-auto px-5 pt-2 pb-4 sm:mt-6 sm:gap-3.5 sm:px-7">
+            {CUISINE_TYPES.slice(0, 10).map((cuisine) => {
+              const [from, to] = CUISINE_GRADIENT[cuisine] ?? ['#E23744', '#FF6B35']
+              return (
+                <Link
+                  key={cuisine}
+                  href={`${ROUTES.EXPLORE}?cuisine=${encodeURIComponent(cuisine)}`}
+                  className="group relative flex h-[110px] w-[140px] shrink-0 flex-col justify-end overflow-hidden rounded-2xl p-3.5 shadow-sm transition-all duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1.5 hover:shadow-xl sm:h-[120px] sm:w-[160px] sm:p-4 sm:hover:scale-[1.03]"
+                  style={{ background: `linear-gradient(135deg, ${from}CC, ${to}AA)` }}
+                >
+                  <span className="absolute top-3 right-3 text-[32px] opacity-90 transition-transform duration-300 group-hover:scale-110 sm:text-4xl">
+                    {CUISINE_EMOJI[cuisine] ?? '🍴'}
+                  </span>
+                  <span className="text-[13px] font-bold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)] sm:text-sm">
+                    {cuisine}
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
         </section>
       </Reveal>
 
