@@ -10,7 +10,7 @@ import { subscribeExploreQuery, getExploreQuery, setExploreQuery } from '@/lib/s
 import { useAuth } from '@/lib/hooks/useAuth'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { GURUGRAM } from '@/lib/constants'
-import type { Dish, Restaurant } from '@/lib/types'
+import type { Dish, Restaurant, SortOrder } from '@/lib/types'
 
 interface DishesApiResult {
   items: Dish[]
@@ -129,7 +129,7 @@ export function ExploreSearchResults() {
     area,
     dietary: dietary as 'veg' | 'non-veg' | 'egg' | null,
     priceRange: priceRange as 'under-100' | '100-200' | '200-400' | '400-600' | 'above-600' | null,
-    sortBy: sortBy ?? undefined,
+    sortBy: sortBy as SortOrder | undefined,
   }
 
   if (tab === 'dishes') {

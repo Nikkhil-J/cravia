@@ -18,6 +18,7 @@ import type { Review } from '@/lib/types'
 import { ROUTES } from '@/lib/constants/routes'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { CLIENT_ERRORS } from '@/lib/constants/errors'
+import { Reveal } from '@/components/ui/AnimateReveal'
 
 const QUICK_LINKS = [
   { label: 'Wishlist', desc: 'Saved dishes', icon: Star, href: ROUTES.WISHLIST },
@@ -156,7 +157,7 @@ export default function MyProfilePage() {
       <div className="mt-7 grid grid-cols-1 items-start gap-6 md:grid-cols-[1fr_280px]">
 
         {/* ── Main: Reviews ───────────────────────────── */}
-        <div className="min-w-0">
+        <Reveal className="min-w-0">
           <div className="flex items-baseline gap-2">
             <h2 className="font-display text-[17px] font-extrabold text-heading">My Reviews</h2>
             <span className="text-xs font-medium text-text-muted">
@@ -191,10 +192,13 @@ export default function MyProfilePage() {
               ))}
             </div>
           )}
-        </div>
+        </Reveal>
 
         {/* ── Sidebar ─────────────────────────────────── */}
-        <div className="flex flex-col gap-3.5 md:sticky md:top-20 md:order-none max-md:order-last">
+        <Reveal
+          delay={0.08}
+          className="flex flex-col gap-3.5 md:sticky md:top-20 md:order-none max-md:order-last"
+        >
 
           {/* Level progress */}
           <div className="rounded-xl border border-border bg-card p-4">
@@ -282,7 +286,7 @@ export default function MyProfilePage() {
               </Button>
             </div>
           )}
-        </div>
+        </Reveal>
       </div>
     </div>
   )

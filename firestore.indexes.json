@@ -102,6 +102,16 @@
       ]
     },
     {
+      "_comment": "reviews-admin.ts — burst detection: reviews where userId==X and restaurantId==Y and createdAt>=30min",
+      "collectionGroup": "reviews",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "restaurantId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
       "_comment": "admin/restaurant-claims GET — restaurantClaims where status=='pending' orderBy createdAt asc",
       "collectionGroup": "restaurantClaims",
       "queryScope": "COLLECTION",

@@ -20,6 +20,7 @@ import { ROUTES } from '@/lib/constants/routes'
 import { EarlyStageCard } from '@/components/features/EarlyStageCard'
 import { TrackDishView } from '@/components/features/TrackDishView'
 import { StreakCTA } from '@/components/features/StreakCTA'
+import { Reveal } from '@/components/ui/AnimateReveal'
 
 export const revalidate = 3600
 
@@ -250,26 +251,28 @@ export default async function DishPage({ params }: PageProps) {
       </div>
 
       {/* Reviews — full width for 2-up grid */}
-      <div className="mt-8 sm:mt-12">
+      <Reveal className="mt-8 sm:mt-12">
         <h2 className="font-display text-xl font-bold text-heading">
           Reviews ({dish.reviewCount})
         </h2>
         <Suspense fallback={<div className="mt-4 flex flex-col gap-2">{Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}</div>}>
           <DishReviewsSection dishId={dish.id} />
         </Suspense>
-      </div>
+      </Reveal>
 
       {relatedDishes.length > 0 && (
-        <section className="mt-8">
-          <h2 className="mb-4 text-lg font-bold text-text-primary">
-            More from {dish.restaurantName}
-          </h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {relatedDishes.map((d, i) => (
-              <DishCard key={d.id} dish={d} index={i} />
-            ))}
-          </div>
-        </section>
+        <Reveal>
+          <section className="mt-8">
+            <h2 className="mb-4 text-lg font-bold text-text-primary">
+              More from {dish.restaurantName}
+            </h2>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {relatedDishes.map((d, i) => (
+                <DishCard key={d.id} dish={d} index={i} />
+              ))}
+            </div>
+          </section>
+        </Reveal>
       )}
     </div>
     </>

@@ -7,7 +7,7 @@ import { ROUTES } from '@/lib/constants/routes'
 
 const EXPLORE_LINKS = [
   { label: 'Browse Dishes', href: '/explore?tab=dishes' },
-  { label: 'Browse Cuisines', href: '/explore?tab=dishes' },
+  { label: 'Browse Cuisines', href: '/explore?tab=restaurants' },
   { label: 'Top Rated', href: '/explore?tab=dishes&sortBy=highest-rated' },
   { label: 'New This Week', href: '/explore?tab=dishes&sortBy=newest' },
 ] as const
@@ -38,7 +38,7 @@ function FooterLinkList({ links }: { links: ReadonlyArray<{ label: string; href:
   return (
     <ul className="flex flex-col gap-3">
       {links.map((link) => (
-        <li key={link.href}>
+        <li key={link.label}>
           <Link
             href={link.href}
             className="text-sm text-white/45 transition-colors hover:text-white"

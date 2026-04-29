@@ -1,200 +1,80 @@
-import { Suspense } from 'react'
-import Link from 'next/link'
-import { RestaurantCard } from '@/components/features/RestaurantCard'
-import { LandingCTA } from '@/components/features/LandingCTA'
-import { HeroSection } from '@/components/features/HeroSection'
-import { CUISINE_TYPES, CUISINE_EMOJI, CUISINE_GRADIENT, GURUGRAM } from '@/lib/constants'
-import { StatsBar } from '@/components/features/StatsBar'
-import { PersonalStatsBanner } from '@/components/features/PersonalStatsBanner'
-import { searchRestaurants } from '@/lib/services/catalog'
-import { getRestaurantCount } from '@/lib/services/restaurants'
-import { getReviewCount, getRecentFeaturedReviews } from '@/lib/services/reviews'
-import { getTopDishes, getDishCount } from '@/lib/services/dishes'
-import { DishCard } from '@/components/features/DishCard'
-import { ReviewCardV2 } from '@/components/features/ReviewCardV2'
-import { Reveal, RevealGrid } from '@/components/ui/AnimateReveal'
-import { captureError } from '@/lib/monitoring/sentry'
-import type { Restaurant, Dish, Review } from '@/lib/types'
-import { ROUTES } from '@/lib/constants/routes'
+import { LandingHero } from "@/components/features/LandingHero";
+import { TopRatedStrip } from "@/components/features/TopRatedStrip";
+import { WhyCravia } from "@/components/features/WhyCravia";
+import { LandingStatsRow } from "@/components/features/LandingStatsRow";
+import { BrowseCuisines } from "@/components/features/BrowseCuisines";
+import { NearbyRestaurants } from "@/components/features/NearbyRestaurants";
+import { LandingHowItWorks } from "@/components/features/LandingHowItWorks";
+import { LandingCTABlock } from "@/components/features/LandingCTABlock";
+import { PersonalStatsBanner } from "@/components/features/PersonalStatsBanner";
+import { GURUGRAM } from "@/lib/constants";
+import { getRestaurantCount } from "@/lib/services/restaurants";
+import { searchRestaurants } from "@/lib/services/catalog";
+import { getTopDishes, getDishCount } from "@/lib/services/dishes";
+import { captureError } from "@/lib/monitoring/sentry";
+import type { Dish, Restaurant } from "@/lib/types";
 
-export const revalidate = 3600
-
-const HOW_IT_WORKS = [
-  { icon: '🔍', title: 'Search for a dish', desc: 'Look up a dish you\'re craving or browse top-rated picks.' },
-  { icon: '⭐', title: 'See real ratings', desc: 'Every dish has taste, portion, and value scores from real diners.' },
-  { icon: '📸', title: 'Read reviews with photos', desc: 'See exactly what you\'ll get before you order.' },
-  { icon: '✍️', title: 'Share your experience', desc: 'Review dishes you\'ve tried. Earn DishPoints and unlock rewards.' },
-]
+export const revalidate = 3600;
 
 export default async function LandingPage() {
-  const city = GURUGRAM
+  const city = GURUGRAM;
 
-  let restaurants: Restaurant[] = []
-  let restaurantCount = 0
-  let reviewCount = 0
-  let topDishes: Dish[] = []
-  let dishCount = 0
-  let recentReviews: Review[] = []
+  let topDishes: Dish[] = [];
+  let dishCount = 0;
+  let restaurantCount = 0;
+  let restaurants: Restaurant[] = [];
 
   try {
-    const [restResult, rCount, revCount, topDishResult, dCount, recentRevResult] = await Promise.all([
-      searchRestaurants({ city, limit: 8, sortBy: 'most-reviewed' }),
+    const [topDishesResult, dCount, rCount, restResult] = await Promise.all([
+      getTopDishes(8, city, { minReviewCount: 1 }),
+      getDishCount(city),
       getRestaurantCount(city),
-      getReviewCount(),
-      getTopDishes(6, city),
-      getDishCount(),
-      getRecentFeaturedReviews(4),
-    ])
-    restaurants = restResult.items
-    restaurantCount = rCount
-    reviewCount = revCount
-    topDishes = topDishResult
-    dishCount = dCount
-    recentReviews = recentRevResult
+      searchRestaurants({ city, limit: 8, sortBy: "most-reviewed" }),
+    ]);
+    topDishes = topDishesResult;
+    dishCount = dCount;
+    restaurantCount = rCount;
+    restaurants = restResult.items;
   } catch (error) {
-    captureError(error, { route: 'LandingPage', extra: { context: 'data fetching' } })
+    captureError(error, {
+      route: "LandingPage",
+      extra: { context: "data fetching" },
+    });
   }
+
+  const heroDishes = topDishes.slice(0, 3);
+  const stripDishes = topDishes.slice(3, 7);
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-bg-cream via-bg-warm to-surface px-4 pt-12 pb-10 text-center sm:px-6 sm:pt-[101px] sm:pb-24">
-        <Suspense>
-          <HeroSection />
-        </Suspense>
-      </section>
+      <LandingHero
+        topDishes={heroDishes}
+        city={city}
+      />
 
-      {/* Social proof stats */}
-      <Reveal>
-        <section className="mx-auto mt-2 max-w-5xl px-4 py-4 sm:mt-5 sm:px-6 sm:py-8">
-          <StatsBar restaurantCount={restaurantCount} reviewCount={reviewCount} dishCount={dishCount} />
-        </section>
-      </Reveal>
-
-      {/* Personal stats (auth users with reviews only) */}
-      <div className="mt-4">
+      <div className="mt-8">
         <PersonalStatsBanner />
       </div>
 
-      {/* Top-rated dishes */}
-      {topDishes.length > 0 && (
-        <section className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-xl font-bold text-heading sm:text-2xl">
-              Top-rated dishes
-            </h2>
-            <Link href="/explore?tab=dishes" className="flex items-center gap-1 text-sm font-semibold text-primary transition-all hover:gap-2">
-              See all <span>&rsaquo;</span>
-            </Link>
-          </div>
-          <RevealGrid className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
-            {topDishes.slice(0, 6).map((d, i) => (
-              <div key={d.id} data-reveal="" style={{ '--reveal-index': i } as React.CSSProperties}>
-                <DishCard dish={d} index={i} />
-              </div>
-            ))}
-          </RevealGrid>
-        </section>
+      {stripDishes.length > 0 && (
+        <TopRatedStrip dishes={stripDishes} city={city} />
       )}
 
-      {/* Recent featured reviews */}
-      {recentReviews.length > 0 && (
-        <section className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-xl font-bold text-heading sm:text-2xl">
-              Recent reviews
-            </h2>
-            <Link href="/explore?tab=dishes" className="flex items-center gap-1 text-sm font-semibold text-primary transition-all hover:gap-2">
-              See all <span>&rsaquo;</span>
-            </Link>
-          </div>
-          <RevealGrid className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4">
-            {recentReviews.slice(0, 4).map((r, i) => (
-              <div key={r.id} data-reveal="" style={{ '--reveal-index': i } as React.CSSProperties}>
-                <ReviewCardV2
-                  review={r}
-                  variant="profile"
-                  dishContext={{ dishName: r.dishName ?? 'Dish', restaurantName: r.restaurantName ?? '' }}
-                />
-              </div>
-            ))}
-          </RevealGrid>
-        </section>
-      )}
+      <LandingStatsRow
+        dishCount={dishCount}
+        restaurantCount={restaurantCount}
+        city={city}
+      />
 
-      {/* Browse by cuisine */}
-      <Reveal>
-        <section className="mx-auto max-w-[1200px] py-8 sm:py-12">
-          <h2 className="px-4 font-display text-xl font-bold text-heading sm:px-6 sm:text-2xl">Browse by cuisine</h2>
-          <div className="scrollbar-hide -mx-1 mt-4 flex gap-3 overflow-x-auto px-5 pt-2 pb-4 sm:mt-6 sm:gap-3.5 sm:px-7">
-            {CUISINE_TYPES.slice(0, 10).map((cuisine) => {
-              const [from, to] = CUISINE_GRADIENT[cuisine] ?? ['#E23744', '#FF6B35']
-              return (
-                <Link
-                  key={cuisine}
-                  href={`${ROUTES.EXPLORE}?cuisine=${encodeURIComponent(cuisine)}`}
-                  className="group relative flex h-[110px] w-[140px] shrink-0 flex-col justify-end overflow-hidden rounded-2xl p-3.5 shadow-sm transition-all duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1.5 hover:shadow-xl sm:h-[120px] sm:w-[160px] sm:p-4 sm:hover:scale-[1.03]"
-                  style={{ background: `linear-gradient(135deg, ${from}CC, ${to}AA)` }}
-                >
-                  <span className="absolute top-3 right-3 text-[32px] opacity-90 transition-transform duration-300 group-hover:scale-110 sm:text-4xl">
-                    {CUISINE_EMOJI[cuisine] ?? '🍴'}
-                  </span>
-                  <span className="text-[13px] font-bold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)] sm:text-sm">
-                    {cuisine}
-                  </span>
-                </Link>
-              )
-            })}
-          </div>
-        </section>
-      </Reveal>
+      <WhyCravia />
 
-      {/* Restaurants near you */}
-      {restaurants.length > 0 && (
-        <section className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-xl font-bold text-heading sm:text-2xl">
-              Restaurants near you
-            </h2>
-            <Link href={`${ROUTES.EXPLORE}?tab=restaurants`} className="flex items-center gap-1 text-sm font-semibold text-primary transition-all hover:gap-2">
-              See all <span>&rsaquo;</span>
-            </Link>
-          </div>
-          <RevealGrid className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
-            {restaurants.map((r, i) => (
-              <div key={r.id} data-reveal="" style={{ '--reveal-index': i } as React.CSSProperties}>
-                <RestaurantCard restaurant={r} index={i} />
-              </div>
-            ))}
-          </RevealGrid>
-        </section>
-      )}
+      <BrowseCuisines />
 
-      {/* How it works */}
-      <section className="bg-bg-cream px-4 py-10 sm:px-6 sm:py-16">
-        <div className="mx-auto max-w-[1200px]">
-          <Reveal>
-            <h2 className="text-center font-display text-xl font-bold text-heading sm:text-2xl">How it works</h2>
-          </Reveal>
-          <RevealGrid className="mt-6 grid gap-6 sm:mt-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
-            {HOW_IT_WORKS.map((step, i) => (
-              <div key={step.title} data-reveal="" style={{ '--reveal-index': i } as React.CSSProperties} className="flex flex-col items-center text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-card text-3xl shadow-sm">
-                  {step.icon}
-                </div>
-                <div className="mt-2 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-                  {i + 1}
-                </div>
-                <h3 className="mt-3 font-display text-lg font-semibold text-heading">{step.title}</h3>
-                <p className="mt-1 text-sm text-text-secondary">{step.desc}</p>
-              </div>
-            ))}
-          </RevealGrid>
-        </div>
-      </section>
+      <LandingHowItWorks />
 
-      {/* CTA */}
-      <LandingCTA />
+      <NearbyRestaurants restaurants={restaurants} city={city} />
+
+      <LandingCTABlock />
     </>
-  )
+  );
 }

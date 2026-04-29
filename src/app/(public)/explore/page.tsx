@@ -45,7 +45,7 @@ function ResultsSkeleton() {
   return (
     <div className="mt-6">
       <div className="mb-4 h-4 w-32 animate-pulse rounded bg-border" />
-      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}

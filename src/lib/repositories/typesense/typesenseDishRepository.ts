@@ -1,6 +1,11 @@
 import type { Client } from 'typesense'
 import type { SearchResponseHit } from 'typesense/lib/Typesense/Documents'
-import type { DishRepository, GetDishesParams, PaginatedData } from '@/lib/repositories/dishRepository'
+import type {
+  DishRepository,
+  GetDishesParams,
+  GetTopDishesOptions,
+  PaginatedData,
+} from '@/lib/repositories/dishRepository'
 import type { Dish, DietaryType, PriceRange } from '@/lib/types'
 import { captureError } from '@/lib/monitoring/sentry'
 import { SORT_OPTIONS } from '@/lib/constants'
@@ -121,16 +126,16 @@ export class TypesenseDishRepository implements DishRepository {
     return this.fallback.getById(id)
   }
 
-  getCount() {
-    return this.fallback.getCount()
+  getCount(city?: string | null) {
+    return this.fallback.getCount(city)
   }
 
   getByRestaurant(restaurantId: string) {
     return this.fallback.getByRestaurant(restaurantId)
   }
 
-  getTop(limit?: number, city?: string | null) {
-    return this.fallback.getTop(limit, city)
+  getTop(limit?: number, city?: string | null, options?: GetTopDishesOptions) {
+    return this.fallback.getTop(limit, city, options)
   }
 
   compare(id1: string, id2: string) {

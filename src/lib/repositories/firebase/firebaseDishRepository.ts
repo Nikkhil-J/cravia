@@ -8,7 +8,11 @@ import {
   searchDishes,
 } from '@/lib/firebase/dishes'
 import type { DishRepository } from '@/lib/repositories/dishRepository'
-import type { GetDishesParams, PaginatedData } from '@/lib/repositories/dishRepository'
+import type {
+  GetDishesParams,
+  GetTopDishesOptions,
+  PaginatedData,
+} from '@/lib/repositories/dishRepository'
 import type { Dish } from '@/lib/types'
 import { SORT_OPTIONS } from '@/lib/constants'
 import { mapDish } from './mappers'
@@ -29,8 +33,8 @@ export class FirebaseDishRepository implements DishRepository {
     return dish ? mapDish(dish) : null
   }
 
-  getCount(): Promise<number> {
-    return getDishCount()
+  getCount(city?: string | null): Promise<number> {
+    return getDishCount(city)
   }
 
   async getByRestaurant(restaurantId: string): Promise<Dish[]> {
@@ -67,8 +71,12 @@ export class FirebaseDishRepository implements DishRepository {
     }
   }
 
-  async getTop(limit?: number, city?: string | null): Promise<Dish[]> {
-    const dishes = await getTopDishes(limit, city)
+  async getTop(
+    limit?: number,
+    city?: string | null,
+    options?: GetTopDishesOptions,
+  ): Promise<Dish[]> {
+    const dishes = await getTopDishes(limit, city, options)
     return dishes.map(mapDish)
   }
 

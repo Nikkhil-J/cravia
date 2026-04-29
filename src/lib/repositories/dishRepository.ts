@@ -19,11 +19,19 @@ export interface PaginatedData<T> {
   nextCursor?: string
 }
 
+export interface GetTopDishesOptions {
+  minReviewCount?: number
+}
+
 export interface DishRepository {
   getById(id: string): Promise<Dish | null>
-  getCount(): Promise<number>
+  getCount(city?: string | null): Promise<number>
   getByRestaurant(restaurantId: string): Promise<Dish[]>
   search(params: GetDishesParams): Promise<PaginatedData<Dish>>
-  getTop(limit?: number, city?: string | null): Promise<Dish[]>
+  getTop(
+    limit?: number,
+    city?: string | null,
+    options?: GetTopDishesOptions,
+  ): Promise<Dish[]>
   compare(id1: string, id2: string): Promise<[Dish, Dish] | null>
 }

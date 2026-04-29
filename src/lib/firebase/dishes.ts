@@ -40,11 +40,13 @@ export async function getDishSnapshot(id: string): Promise<DocumentSnapshot | nu
   }
 }
 
-/** Returns the total number of dishes using an aggregation query (no full scan). */
-export async function getDishCount(): Promise<number> {
+/** Returns the total number of active dishes, optionally scoped to a city. */
+export async function getDishCount(city?: string | null): Promise<number> {
   try {
+    const constraints: QueryConstraint[] = [where('isActive', '==', true)]
+    if (city) constraints.push(where('city', '==', city))
     const snap = await getCountFromServer(
-      query(collection(db, COLLECTIONS.DISHES), where('isActive', '==', true))
+      query(collection(db, COLLECTIONS.DISHES), ...constraints)
     )
     return snap.data().count
   } catch (e) {
@@ -189,18 +191,39 @@ export async function getAllActiveDishes(): Promise<Dish[]> {
   }
 }
 
-/** Returns the top-rated active dishes, optionally filtered by city. */
-export async function getTopDishes(limitCount = 20, city?: string | null): Promise<Dish[]> {
+/**
+ * Returns the top-rated active dishes, optionally filtered by city.
+ *
+ * When `minReviewCount` is provided, dishes with fewer reviews are excluded.
+ * Firestore requires the first orderBy to match any range filter, so we keep
+ * `orderBy('avgOverall', 'desc')` and over-fetch + filter in memory rather
+ * than using `where('reviewCount', '>=', n)` (which would force an asc sort
+ * on reviewCount and change the semantics of "top rated").
+ */
+export async function getTopDishes(
+  limitCount = 20,
+  city?: string | null,
+  options?: { minReviewCount?: number },
+): Promise<Dish[]> {
   try {
+    const minReviewCount = options?.minReviewCount
+    const needsFilter = typeof minReviewCount === 'number' && minReviewCount > 0
+    const fetchLimit = needsFilter ? Math.max(limitCount * 5, 50) : limitCount
+
     const ref = collection(db, COLLECTIONS.DISHES)
     const constraints: QueryConstraint[] = [where('isActive', '==', true)]
     if (city) {
       constraints.push(where('city', '==', city))
     }
     constraints.push(orderBy('avgOverall', 'desc'))
-    constraints.push(limit(limitCount))
+    constraints.push(limit(fetchLimit))
     const snap = await getDocs(query(ref, ...constraints))
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Dish)
+    const all = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Dish)
+
+    const filtered = needsFilter
+      ? all.filter((d) => (d.reviewCount ?? 0) >= minReviewCount!)
+      : all
+    return filtered.slice(0, limitCount)
   } catch (e) {
     logError('getTopDishes', e)
     return []

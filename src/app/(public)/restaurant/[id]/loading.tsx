@@ -49,7 +49,7 @@ export default function RestaurantLoading() {
           {/* Dishes section */}
           <div className="mt-10 pb-12">
             <div className="h-6 w-36 animate-pulse rounded-lg bg-border" />
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="overflow-hidden rounded-lg border border-border bg-card">
                   <div className="h-36 w-full animate-pulse bg-surface-3" />

@@ -8,16 +8,20 @@ export const getDish = cache(async (id: string) => {
   return dishRepository.getById(id)
 })
 
-export function getDishCount() {
-  return dishRepository.getCount()
+export function getDishCount(city?: string | null) {
+  return dishRepository.getCount(city)
 }
 
 export function getDishComparison(id1: string, id2: string) {
   return dishRepository.compare(id1, id2)
 }
 
-export function getTopDishes(limit?: number, city?: string | null) {
-  return dishRepository.getTop(limit, city)
+export function getTopDishes(
+  limit?: number,
+  city?: string | null,
+  options?: { minReviewCount?: number },
+) {
+  return dishRepository.getTop(limit, city, options)
 }
 
 export function searchDishes(

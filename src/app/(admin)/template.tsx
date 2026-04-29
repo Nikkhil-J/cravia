@@ -1,3 +1,5 @@
+import { PageTransition } from '@/components/ui/PageTransition'
+
 export default function AdminTemplate({ children }: { children: React.ReactNode }) {
-  return <div className="animate-page-enter">{children}</div>
+  return <PageTransition>{children}</PageTransition>
 }

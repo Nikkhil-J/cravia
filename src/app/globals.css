@@ -13,6 +13,30 @@
   --color-surface-dark: #0f1117;
   --color-footer-bg: #0a0c12;
 
+  /*
+   * Brand coral palette (landing page accents).
+   * `coral`, `coral-mid`, `coral-light` are static — they read well on both
+   * light and dark surfaces. `coral-bg`, `coral-deep`, `coral-deeper` are
+   * dynamic via --dc-* so the warm tint on the landing page does not become
+   * a harsh near-white panel in dark mode.
+   */
+  --color-coral: #D85A30;
+  --color-coral-mid: #F0997B;
+  --color-coral-light: #F5C4B3;
+  --color-coral-bg: var(--dc-coral-bg);
+  --color-coral-deep: var(--dc-coral-deep);
+  --color-coral-deeper: var(--dc-coral-deeper);
+
+  /* ── Sub-rating bar colors (taste / portion / value) ── */
+  --color-rating-taste: #D85A30;
+  --color-rating-portion: #BA7517;
+  --color-rating-value: #3B6D11;
+
+  /* ── Decorative dish-placeholder tints ── */
+  --color-placeholder-warm: #FAECE7;
+  --color-placeholder-sage: #EAF3DE;
+  --color-placeholder-sky: #E6F1FB;
+
   /* ── Dynamic colors (resolve at runtime via --dc-* custom properties) ── */
   --color-primary-light: var(--dc-primary-light);
   --color-brand-gold-light: var(--dc-brand-gold-light);
@@ -103,6 +127,9 @@
   --dc-brand-orange: #FF6B35;
   --dc-success: #48C479;
   --dc-brand-light: #FEE2E5;
+  --dc-coral-bg: #FAECE7;
+  --dc-coral-deep: #993C1D;
+  --dc-coral-deeper: #712B13;
 
   /*
    * CSS custom properties for var(--color-*) references in components.
@@ -134,6 +161,12 @@
   --color-surface-dark: #0f1117;
   --color-footer-bg: #0a0c12;
   --color-destructive: var(--destructive);
+  --color-coral: #D85A30;
+  --color-coral-mid: #F0997B;
+  --color-coral-light: #F5C4B3;
+  --color-coral-bg: var(--dc-coral-bg);
+  --color-coral-deep: var(--dc-coral-deep);
+  --color-coral-deeper: var(--dc-coral-deeper);
 
   /* ── Shimmer ── */
   --shimmer-from: var(--dc-border);
@@ -194,6 +227,9 @@
   --dc-brand-orange: #FF6B35;
   --dc-success: #4ADE80;
   --dc-brand-light: #3D1A1D;
+  --dc-coral-bg: #2a1810;
+  --dc-coral-deep: #F0997B;
+  --dc-coral-deeper: #F5C4B3;
 }
 
 html.theme-transitioning *,
@@ -305,13 +341,18 @@ html.theme-transitioning *::after {
   animation: scale-in var(--duration-normal) var(--ease-out-expo) both;
 }
 
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
 /* Page enter animation for template.tsx */
 @keyframes page-enter {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-page-enter {
-  animation: page-enter var(--duration-normal) var(--ease-out-expo) both;
+  animation: page-enter 420ms var(--ease-out-expo) both;
 }
 
 /* Stagger children utility: set --stagger-index via style prop */
@@ -327,21 +368,3 @@ html.theme-transitioning *::after {
   display: none;
 }
 
-/* ── Scroll-reveal (driven by IntersectionObserver) ────── */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity var(--duration-slow) var(--ease-out-expo),
-    transform var(--duration-slow) var(--ease-out-expo);
-  will-change: opacity, transform;
-}
-[data-reveal="visible"] {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Staggered children within a reveal container */
-[data-reveal-stagger] > [data-reveal] {
-  transition-delay: calc(var(--reveal-index, 0) * 80ms);
-}

@@ -14,6 +14,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
 import { useAuth } from '@/lib/hooks/useAuth'
 import type { User, Review } from '@/lib/types'
+import { Reveal } from '@/components/ui/AnimateReveal'
 
 export default function UserProfilePage() {
   const { userId } = useParams<{ userId: string }>()
@@ -71,7 +72,7 @@ export default function UserProfilePage() {
       </div>
 
       {earnedBadges.length > 0 && (
-        <div className="mt-6">
+        <Reveal className="mt-6">
           <h2 className="text-sm font-semibold text-text-primary">Badges</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {earnedBadges.map((badge) => (
@@ -81,10 +82,10 @@ export default function UserProfilePage() {
               </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       )}
 
-      <div className="mt-8">
+      <Reveal className="mt-8">
         <h2 className="font-display text-lg font-semibold text-heading">Reviews</h2>
         {reviews.length === 0 ? (
           <EmptyState icon="📝" title="No reviews yet" description="This user hasn't reviewed anything yet." />
@@ -101,7 +102,7 @@ export default function UserProfilePage() {
             ))}
           </div>
         )}
-      </div>
+      </Reveal>
     </div>
   )
 }

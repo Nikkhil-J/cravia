@@ -69,7 +69,7 @@ export function LoadMoreRestaurants({
 
   return (
     <>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {restaurants.map((restaurant, i) => (
           <RestaurantCard key={restaurant.id} restaurant={restaurant} index={i} />
         ))}

@@ -69,7 +69,7 @@ export function RestaurantMenu({ dishes }: RestaurantMenuProps) {
           <p className="mt-1 text-sm text-text-muted">Try a different search term.</p>
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
           {visibleDishes.map((dish, i) => (
             <DishCard key={dish.id} dish={dish} index={i} />
           ))}
