@@ -43,14 +43,15 @@ export default async function LandingPage() {
     });
   }
 
-  const heroDishes = topDishes.slice(0, 3);
-  const stripDishes = topDishes.slice(3, 7);
+  const heroDishes = topDishes.slice(0, 5);
+  const stripDishes = topDishes.slice(5, 8);
 
   return (
     <>
       <LandingHero
         topDishes={heroDishes}
         city={city}
+        dishCount={dishCount}
       />
 
       <div className="mt-8">

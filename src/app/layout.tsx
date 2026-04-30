@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fredoka, DM_Sans } from "next/font/google";
+import { Fredoka, DM_Sans, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -12,6 +12,13 @@ const fredoka = Fredoka({
 const dmSans = DM_Sans({
   variable: "--font-body",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const barlowCondensed = Barlow_Condensed({
+  variable: "--font-headline",
+  subsets: ["latin"],
+  weight: ["800", "900"],
   display: "swap",
 });
 
@@ -97,6 +104,8 @@ export const viewport: Viewport = {
   ],
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: 'cover',
 };
 
@@ -110,7 +119,7 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${fredoka.variable} ${dmSans.variable} h-full`}
+      className={`${fredoka.variable} ${dmSans.variable} ${barlowCondensed.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>

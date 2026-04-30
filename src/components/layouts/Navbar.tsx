@@ -44,7 +44,7 @@ export function Navbar() {
       )}
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
-      <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-2 px-3 sm:h-[68px] sm:gap-5 sm:px-6">
+      <div className="flex h-14 items-center gap-2 px-3 sm:h-[68px] sm:gap-5 sm:px-[60px]">
         <Link href={ROUTES.HOME} className="shrink-0">
           <Logo size="md" wordmarkClassName="hidden sm:inline" />
         </Link>
