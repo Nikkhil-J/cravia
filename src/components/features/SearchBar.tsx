@@ -54,7 +54,7 @@ export function SearchBar({
     getExploreQuery,
     () => ""
   );
-  const [query, setQuery] = useState(initialQuery);
+  const [query, setQuery] = useState(() => initialQuery || getExploreQuery());
   const [lastStoreQuery, setLastStoreQuery] = useState(storeQuery);
   if (storeQuery !== lastStoreQuery) {
     setLastStoreQuery(storeQuery);
@@ -127,7 +127,7 @@ export function SearchBar({
           placeholder={SEARCH_PLACEHOLDERS[placeholderIndex]}
           autoFocus={autoFocus}
           className={cn(
-            "h-auto w-full rounded-pill border border-border bg-card/50 py-2 pl-10 pr-4 text-sm font-body",
+            "h-auto w-full rounded-pill border border-border bg-card/50 py-2 pl-10 pr-4 text-base md:text-sm font-body",
             "placeholder:text-text-muted focus-visible:border-primary focus-visible:ring-0",
           )}
         />

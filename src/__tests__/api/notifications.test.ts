@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+const { mockDocRef, mockDoc, mockCollection } = vi.hoisted(() => {
+  const mockDocRef = { get: vi.fn(), update: vi.fn() }
+  const mockDoc = vi.fn(() => mockDocRef)
+  const mockCollection = vi.fn(() => ({ doc: mockDoc }))
+  return { mockDocRef, mockDoc, mockCollection }
+})
+
 vi.mock('@/lib/firebase/config', () => ({
   auth: {},
   db: {},
@@ -21,7 +28,7 @@ vi.mock('@/lib/firebase/config', () => ({
 
 vi.mock('@/lib/firebase/admin-server', () => ({
   adminAuth: {},
-  adminDb: {},
+  adminDb: { collection: mockCollection },
 }))
 
 vi.mock('@/lib/auth/firebase-auth-provider', () => ({
@@ -34,20 +41,18 @@ vi.mock('@/lib/services/request-auth', () => ({
   getRequestAuth: vi.fn(),
 }))
 
-vi.mock('@/lib/repositories', () => ({
-  notificationRepository: {
-    getById: vi.fn(),
-    markRead: vi.fn(),
-  },
-}))
-
 vi.mock('@/lib/repositories/typesense/typesenseClient', () => ({
   isTypesenseConfigured: vi.fn().mockReturnValue(false),
   getTypesenseClient: vi.fn(),
 }))
 
+vi.mock('@/lib/monitoring/sentry', () => ({
+  captureError: vi.fn(),
+  addBreadcrumb: vi.fn(),
+  logRouteDuration: vi.fn(),
+}))
+
 import { getRequestAuth } from '@/lib/services/request-auth'
-import { notificationRepository } from '@/lib/repositories'
 import { POST as markNotificationRead } from '@/app/api/notifications/[id]/read/route'
 
 function makeRequest(method: string): Request {
@@ -64,6 +69,8 @@ function makeContext<T>(params: T) {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  mockDoc.mockReturnValue(mockDocRef)
+  mockCollection.mockReturnValue({ doc: mockDoc })
 })
 
 describe('POST /api/notifications/[id]/read', () => {
@@ -81,7 +88,7 @@ describe('POST /api/notifications/[id]/read', () => {
       isAdmin: false,
       userCity: 'gurugram',
     })
-    vi.mocked(notificationRepository.getById).mockResolvedValue(null)
+    mockDocRef.get.mockResolvedValue({ exists: false, data: () => null })
 
     const req = makeRequest('POST')
     const res = await markNotificationRead(req, makeContext({ id: 'notif-missing' }))
@@ -94,21 +101,15 @@ describe('POST /api/notifications/[id]/read', () => {
       isAdmin: false,
       userCity: 'gurugram',
     })
-    vi.mocked(notificationRepository.getById).mockResolvedValue({
-      id: 'notif-1',
-      userId: 'user-other',
-      type: 'helpful_vote',
-      title: 'Helpful vote',
-      message: 'Someone found your review helpful',
-      linkUrl: null,
-      isRead: false,
-      createdAt: '2025-01-01T00:00:00Z',
+    mockDocRef.get.mockResolvedValue({
+      exists: true,
+      data: () => ({ userId: 'user-other', isRead: false }),
     })
 
     const req = makeRequest('POST')
     const res = await markNotificationRead(req, makeContext({ id: 'notif-1' }))
     expect(res.status).toBe(403)
-    expect(notificationRepository.markRead).not.toHaveBeenCalled()
+    expect(mockDocRef.update).not.toHaveBeenCalled()
   })
 
   it('returns 200 when caller owns the notification', async () => {
@@ -117,21 +118,15 @@ describe('POST /api/notifications/[id]/read', () => {
       isAdmin: false,
       userCity: 'gurugram',
     })
-    vi.mocked(notificationRepository.getById).mockResolvedValue({
-      id: 'notif-1',
-      userId: 'user-1',
-      type: 'helpful_vote',
-      title: 'Helpful vote',
-      message: 'Someone found your review helpful',
-      linkUrl: null,
-      isRead: false,
-      createdAt: '2025-01-01T00:00:00Z',
+    mockDocRef.get.mockResolvedValue({
+      exists: true,
+      data: () => ({ userId: 'user-1', isRead: false }),
     })
-    vi.mocked(notificationRepository.markRead).mockResolvedValue(true)
+    mockDocRef.update.mockResolvedValue(undefined)
 
     const req = makeRequest('POST')
     const res = await markNotificationRead(req, makeContext({ id: 'notif-1' }))
     expect(res.status).toBe(200)
-    expect(notificationRepository.markRead).toHaveBeenCalledWith('notif-1')
+    expect(mockDocRef.update).toHaveBeenCalledWith({ isRead: true })
   })
 })

@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { PWAInstallBanner } from '@/components/features/PWAInstallBanner'
 import { searchRestaurants } from '@/lib/services/catalog'
 import type { RestaurantSortOption } from '@/lib/services/catalog'
 import { searchDishes, getTopDishes } from '@/lib/services/dishes'
@@ -11,7 +12,7 @@ import { LoadMoreDishes } from '@/components/features/LoadMoreDishes'
 import { ExploreResultsWrapper } from '@/components/features/ExploreResultsWrapper'
 import { ExploreEntranceWrapper } from '@/components/features/ExploreEntranceWrapper'
 import { ExploreSearchResults, ExploreDefaultContent } from '@/components/features/ExploreSearchResults'
-import { CUISINE_TYPES, SORT_OPTIONS, HERO_TAGS, GURUGRAM } from '@/lib/constants'
+import { CUISINE_TYPES, FEATURED_CUISINES, SORT_OPTIONS, HERO_TAGS, GURUGRAM } from '@/lib/constants'
 import { listCityAreas } from '@/lib/services/city'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { SearchBar } from '@/components/features/SearchBar'
@@ -359,11 +360,11 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           selectedDietary={dietary}
           selectedPriceRange={priceRange}
           selectedSortBy={tab === 'dishes' ? dishSortBy : restaurantSortBy}
-          cuisines={[...CUISINE_TYPES.slice(0, 12)]}
+          cuisines={[...FEATURED_CUISINES]}
           areas={[...areas]}
         />
 
-        <Suspense>
+        <Suspense fallback={<ResultsSkeleton />}>
           <ExploreSearchResults />
         </Suspense>
 
@@ -395,6 +396,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           </Suspense>
         </ExploreDefaultContent>
       </div>
+      <PWAInstallBanner />
     </ExploreEntranceWrapper>
   )
 }

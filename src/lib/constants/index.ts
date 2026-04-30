@@ -80,6 +80,12 @@ export const CUISINE_TYPES = [
   'Fusion', 'Pan-Indian',
 ] as const
 
+export const FEATURED_CUISINES = [
+  'North Indian', 'South Indian', 'Mughlai', 'Biryani',
+  'Chinese', 'Italian', 'Continental', 'Cafe',
+  'Street Food', 'Bakery', 'Desserts', 'Beverages',
+] as const satisfies ReadonlyArray<(typeof CUISINE_TYPES)[number]>
+
 // ── City (single source of truth) ────────────────────────
 export const SUPPORTED_CITIES = ['gurugram'] as const
 export type City = (typeof SUPPORTED_CITIES)[number]

@@ -51,7 +51,7 @@ describe('createReviewSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('defaults tags to empty array if missing', () => {
+  it('rejects when tags array is missing or empty', () => {
     const input = {
       dishId: 'dish-1',
       restaurantId: 'rest-1',
@@ -61,10 +61,7 @@ describe('createReviewSchema', () => {
       text: 'This is a detailed review with at least 30 characters.',
     }
     const result = createReviewSchema.safeParse(input)
-    expect(result.success).toBe(true)
-    if (result.success) {
-      expect(result.data.tags).toEqual([])
-    }
+    expect(result.success).toBe(false)
   })
 
   it('rejects text shorter than 30 characters', () => {
@@ -74,6 +71,7 @@ describe('createReviewSchema', () => {
       tasteRating: 4,
       portionRating: 3,
       valueRating: 5,
+      tags: ['Spicy'],
       text: 'Too short',
     }
     const result = createReviewSchema.safeParse(input)
@@ -87,6 +85,7 @@ describe('createReviewSchema', () => {
       tasteRating: 4,
       portionRating: 3,
       valueRating: 5,
+      tags: ['Spicy'],
       text: 'This is a detailed review with at least 30 characters.',
       maliciousField: 'drop-me',
     }
@@ -129,6 +128,7 @@ describe('createReviewSchema', () => {
       tasteRating: 4,
       portionRating: 3,
       valueRating: 5,
+      tags: ['Spicy'],
       text: 'This is a detailed review with at least 30 characters.',
     }
     const result = createReviewSchema.safeParse(input)
@@ -138,7 +138,7 @@ describe('createReviewSchema', () => {
 
 describe('updateReviewSchema', () => {
   it('accepts partial update', () => {
-    const result = updateReviewSchema.safeParse({ text: 'Updated review' })
+    const result = updateReviewSchema.safeParse({ text: 'Updated review with enough characters to pass.' })
     expect(result.success).toBe(true)
   })
 

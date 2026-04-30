@@ -1,22 +1,7 @@
 import Link from 'next/link'
-import { CUISINE_TYPES, CUISINE_EMOJI } from '@/lib/constants'
+import { FEATURED_CUISINES, CUISINE_EMOJI } from '@/lib/constants'
 import { ROUTES } from '@/lib/constants/routes'
 import { Reveal, RevealGrid, RevealItem } from '@/components/ui/AnimateReveal'
-
-const FEATURED_CUISINES: ReadonlyArray<(typeof CUISINE_TYPES)[number]> = [
-  'North Indian',
-  'South Indian',
-  'Mughlai',
-  'Biryani',
-  'Chinese',
-  'Italian',
-  'Continental',
-  'Cafe',
-  'Street Food',
-  'Bakery',
-  'Desserts',
-  'Beverages',
-] as const
 
 export function BrowseCuisines() {
   return (

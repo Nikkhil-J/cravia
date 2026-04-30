@@ -13,6 +13,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { Button } from '@/components/ui/button'
 import type { User, Review } from '@/lib/types'
 import { Reveal } from '@/components/ui/AnimateReveal'
 
@@ -22,18 +23,41 @@ export default function UserProfilePage() {
   const [profile, setProfile] = useState<User | null>(null)
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
   const dishContexts = useReviewDishContexts(reviews)
 
   useEffect(() => {
     if (!userId) return
-    Promise.all([getUser(userId), getReviewsByUser(userId)]).then(([u, r]) => {
-      setProfile(u)
-      setReviews(r.items)
-      setLoading(false)
-    })
-  }, [userId])
+    Promise.all([getUser(userId), getReviewsByUser(userId)])
+      .then(([u, r]) => {
+        setProfile(u)
+        setReviews(r.items)
+      })
+      .catch(() => {
+        setError(true)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [userId, retryCount])
 
   if (loading) return <div className="flex justify-center py-20"><LoadingSpinner /></div>
+  if (error) return (
+    <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+      <p className="text-text-secondary">Couldn&apos;t load this profile. Try again.</p>
+      <Button
+        onClick={() => {
+          setLoading(true)
+          setError(false)
+          setRetryCount((c) => c + 1)
+        }}
+        className="rounded-pill px-6 font-semibold hover:bg-primary-dark"
+      >
+        Retry
+      </Button>
+    </div>
+  )
   if (!profile) return <div className="py-20 text-center text-text-muted">User not found.</div>
 
   const earnedBadges = BADGE_DEFINITIONS.filter((b) => profile.badges.includes(b.id))

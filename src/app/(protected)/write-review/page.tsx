@@ -228,8 +228,13 @@ function WriteReviewContent() {
       }
 
       let billUrl: string | undefined
-      if (data.billFile) {
-        billUrl = await uploadBillPhoto(data.billFile, dishId)
+      try {
+        if (data.billFile) {
+          billUrl = await uploadBillPhoto(data.billFile, dishId)
+        }
+      } catch (err) {
+        console.error('Bill upload failed, submitting without bill', err)
+        billUrl = undefined
       }
 
       const res = await fetch(API_ENDPOINTS.REVIEWS, {
@@ -256,7 +261,13 @@ function WriteReviewContent() {
         pointsAwarded?: number
         newBalance?: number
         isFullReview?: boolean
+        isVerified?: boolean
         currentStreak?: number
+        pointsBreakdown?: {
+          base: number
+          photoBonus: number
+          billBonus: number
+        }
       }
 
       if (res.status === 409) {
@@ -292,8 +303,12 @@ function WriteReviewContent() {
         pointsAwarded: payload.pointsAwarded ?? 0,
         newBalance: payload.newBalance ?? 0,
         isFullReview: payload.isFullReview ?? false,
+        isVerified: payload.isVerified ?? false,
+        pointsBreakdown: payload.pointsBreakdown ?? null,
         helpfulVotesReceived: user.helpfulVotesReceived,
         currentStreak: payload.currentStreak ?? 0,
+        hadPhoto: !!photoUrl,
+        hadBill: !!billUrl,
       }))
       reset()
       router.push(ROUTES.REVIEW_SUCCESS)
@@ -326,24 +341,24 @@ function WriteReviewContent() {
     <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
 
       {/* Dish hero card */}
-      <div className="mb-8 flex items-center gap-4 rounded-2xl border border-border bg-card p-5 sm:p-7">
+      <div className="mb-8 flex items-center gap-3 rounded-2xl border border-border bg-card p-4 sm:gap-4 sm:p-7">
         {dish?.coverImage ? (
-          <Image src={dish.coverImage} alt={displayName} width={72} height={72} className="h-16 w-16 rounded-xl object-cover sm:h-[72px] sm:w-[72px]" />
+          <Image src={dish.coverImage} alt={displayName} width={72} height={72} className="h-14 w-14 shrink-0 rounded-xl object-cover sm:h-[72px] sm:w-[72px]" />
         ) : displayName ? (
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-3xl sm:h-[72px] sm:w-[72px]">🍽️</div>
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-2xl sm:h-[72px] sm:w-[72px] sm:text-3xl">🍽️</div>
         ) : (
-          <div className="h-16 w-16 shrink-0 animate-pulse rounded-xl bg-border sm:h-[72px] sm:w-[72px]" />
+          <div className="h-14 w-14 shrink-0 animate-pulse rounded-xl bg-border sm:h-[72px] sm:w-[72px]" />
         )}
         <div className="min-w-0 flex-1">
-          <h1 className="font-display text-xl font-bold text-heading sm:text-2xl">
+          <h1 className="font-display text-lg font-bold leading-snug text-heading">
             {isEditMode ? `Editing review` : displayName || <span className="inline-block h-6 w-48 animate-pulse rounded bg-border" />}
           </h1>
-          <p className="mt-0.5 text-sm text-text-secondary">
+          <p className="mt-0.5 truncate text-sm text-text-secondary">
             {isEditMode && displayName ? displayName + ' · ' : ''}
             {displayRestaurant || <span className="inline-block h-4 w-32 animate-pulse rounded bg-border" />}
           </p>
           {dish && (
-            <div className="mt-2 flex flex-wrap gap-3 text-xs text-text-muted">
+            <div className="mt-1.5 flex flex-wrap gap-2 text-xs text-text-muted sm:gap-3">
               <span>⭐ {dish.avgOverall.toFixed(1)} ({dish.reviewCount} reviews)</span>
               {dish.priceRange && <span>💰 {dish.priceRange}</span>}
               <span>🍽️ {dish.category}</span>
@@ -353,9 +368,11 @@ function WriteReviewContent() {
         <button
           type="button"
           onClick={handleCancel}
-          className="shrink-0 rounded-pill border-[1.5px] border-border px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary"
+          className="shrink-0 rounded-full border-[1.5px] border-border p-2 text-text-secondary transition-colors hover:border-primary hover:text-primary sm:rounded-pill sm:px-4 sm:py-2"
+          aria-label="Cancel"
         >
-          Cancel
+          <svg className="h-4 w-4 sm:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          <span className="hidden text-sm font-semibold sm:inline">Cancel</span>
         </button>
       </div>
 
@@ -497,7 +514,7 @@ function WriteReviewContent() {
             <span className="text-3xl">📸</span>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-heading">Add a photo of the dish</p>
-              <p className="text-xs text-text-secondary">Photo reviews earn <strong className="text-brand-gold">25 pts</strong> vs <strong className="text-text-muted">10 pts</strong> without</p>
+              <p className="text-xs text-text-secondary">Photo reviews earn <strong className="text-brand-gold">20 pts</strong> vs <strong className="text-text-muted">10 pts</strong> without</p>
               {photoError && <p className="mt-1 text-xs font-medium text-destructive">{photoError}</p>}
             </div>
             {data.photoPreviewUrl ? (
@@ -536,7 +553,7 @@ function WriteReviewContent() {
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-text-secondary">
-                  Upload your bill or receipt and your review gets a <strong className="text-heading">Verified</strong> badge. Verified reviews rank higher and earn more trust.
+                  Upload your bill for proof of visit. Your review gets a <strong className="text-heading">Bill attached</strong> badge and you earn <strong className="text-success">+5 DishPoints</strong> on top of your photo bonus.
                 </p>
               </div>
             </div>

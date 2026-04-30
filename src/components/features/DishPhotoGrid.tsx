@@ -47,10 +47,10 @@ function FoodIllustration({ width = 80, height = 80, className }: { width?: numb
 function EmptySlot() {
   return (
     <div
-      className="flex items-center justify-center bg-surface-2"
+      className="flex h-full w-full items-center justify-center bg-surface-2"
       style={{ border: '0.5px dashed var(--border)' }}
     >
-      <FoodIllustration width={43} height={43} />
+      <FoodIllustration width={64} height={64} className="opacity-15 text-text-muted" />
     </div>
   )
 }

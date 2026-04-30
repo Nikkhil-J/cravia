@@ -99,7 +99,7 @@ function OnboardingContent() {
                   className={cn(
                     'h-auto justify-start gap-2 rounded-lg border-2 px-3 py-2.5 text-left text-sm font-medium',
                     selectedCuisines.includes(c)
-                      ? 'border-primary bg-primary-light text-primary-dark hover:bg-primary-light'
+                      ? 'border-primary bg-primary-light text-primary-dark hover:bg-primary-light dark:bg-primary-light dark:hover:bg-primary-light'
                       : 'border-border bg-card text-text-secondary hover:border-primary/50'
                   )}
                 >
@@ -143,7 +143,7 @@ function OnboardingContent() {
                   className={cn(
                     'h-auto min-h-[44px] rounded-pill border px-3 text-xs font-medium',
                     selectedArea === a
-                      ? 'border-primary bg-primary text-white hover:bg-primary hover:text-white'
+                      ? 'border-primary bg-primary text-white hover:bg-primary hover:text-white dark:bg-primary dark:hover:bg-primary'
                       : 'border-border bg-card text-text-secondary hover:border-primary'
                   )}
                 >

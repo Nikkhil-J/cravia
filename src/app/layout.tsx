@@ -27,6 +27,40 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'Cravia',
+    startupImage: [
+      {
+        url: '/splashscreens/iphone5_splash.png',
+        media: '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)',
+      },
+      {
+        url: '/splashscreens/iphone6_splash.png',
+        media: '(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)',
+      },
+      {
+        url: '/splashscreens/iphoneplus_splash.png',
+        media: '(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)',
+      },
+      {
+        url: '/splashscreens/iphonex_splash.png',
+        media: '(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)',
+      },
+      {
+        url: '/splashscreens/iphonexr_splash.png',
+        media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)',
+      },
+      {
+        url: '/splashscreens/iphonexsmax_splash.png',
+        media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)',
+      },
+      {
+        url: '/splashscreens/iphone14pro_splash.png',
+        media: '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)',
+      },
+      {
+        url: '/splashscreens/iphone14promax_splash.png',
+        media: '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)',
+      },
+    ],
   },
   icons: {
     icon: [
@@ -63,7 +97,7 @@ export const viewport: Viewport = {
   ],
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({

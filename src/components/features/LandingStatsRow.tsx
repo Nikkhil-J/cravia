@@ -1,7 +1,21 @@
+'use client'
+
 import { CITY_DISPLAY_NAME, type City } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { Reveal } from '@/components/ui/AnimateReveal'
 import { CountUp } from '@/components/ui/CountUp'
+
+/** Round down to the nearest "step" and return a formatted string with "+". */
+function roundedPlus(value: number, locale = 'en-IN'): {
+  rounded: number
+  formatter: (n: number) => string
+} {
+  const step = value >= 1000 ? 100 : value >= 100 ? 10 : 5
+  const rounded = Math.floor(value / step) * step
+  const formatter = (n: number) =>
+    `${Math.round(n).toLocaleString(locale)}+`
+  return { rounded, formatter }
+}
 
 interface LandingStatsRowProps {
   dishCount: number
@@ -18,9 +32,17 @@ interface Stat {
 export function LandingStatsRow({ dishCount, restaurantCount, city }: LandingStatsRowProps) {
   const cityName = CITY_DISPLAY_NAME[city]
 
+  const dishes = roundedPlus(dishCount)
+  const restaurants = roundedPlus(restaurantCount)
+
   const stats: Stat[] = [
     {
-      value: <CountUp value={dishCount} />,
+      value: (
+        <CountUp
+          value={dishes.rounded}
+          formatter={dishes.formatter}
+        />
+      ),
       label: (
         <>
           dishes rated
@@ -31,7 +53,12 @@ export function LandingStatsRow({ dishCount, restaurantCount, city }: LandingSta
       accent: true,
     },
     {
-      value: <CountUp value={restaurantCount} />,
+      value: (
+        <CountUp
+          value={restaurants.rounded}
+          formatter={restaurants.formatter}
+        />
+      ),
       label: (
         <>
           restaurants

@@ -6,6 +6,7 @@ import { Heart } from 'lucide-react'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { captureError } from '@/lib/monitoring/sentry'
 import { useWishlist } from '@/lib/hooks/useWishlist'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -21,15 +22,22 @@ export default function WishlistPage() {
 
   async function handleRemove(dishId: string) {
     if (!user || !authUser) return
-    const token = await authUser.getIdToken()
-    const res = await fetch(
-      API_ENDPOINTS.wishlistItem(encodeURIComponent(user.id), encodeURIComponent(dishId)),
-      { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }
-    )
-    if (!res.ok) {
-      toast.error('Could not remove dish from wishlist')
+    try {
+      const token = await authUser.getIdToken()
+      const res = await fetch(
+        API_ENDPOINTS.wishlistItem(encodeURIComponent(user.id), encodeURIComponent(dishId)),
+        { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }
+      )
+      if (!res.ok) {
+        toast.error('Could not remove dish from wishlist')
+        return
+      }
+      await queryClient.invalidateQueries({ queryKey: ['wishlist'] })
+      toast.success('Removed from wishlist')
+    } catch (err) {
+      toast.error('Failed to remove. Please try again.')
+      captureError(err)
     }
-    await queryClient.invalidateQueries({ queryKey: ['wishlist'] })
   }
 
   return (

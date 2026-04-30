@@ -61,7 +61,7 @@ export default async function RestaurantPage({ params }: PageProps) {
       />
       <div>
         {/* Hero */}
-        <div className="relative h-56 w-full overflow-hidden bg-gradient-to-r from-bg-cream via-accent-light to-primary-light sm:h-64">
+        <div className="relative h-56 w-full overflow-hidden bg-gradient-to-r from-bg-cream via-coral-light to-primary-light sm:h-64">
           <MobileBackButton variant="floating" />
           {restaurant.coverImage && (
             <Image
@@ -77,7 +77,7 @@ export default async function RestaurantPage({ params }: PageProps) {
         </div>
 
         {/* Info */}
-        <div className="relative -mt-8 rounded-t-xl bg-surface">
+        <div className="relative -mt-8 rounded-t-xl border-t border-glass-border bg-glass-surface backdrop-blur-xl">
           <div className="mx-auto max-w-[1000px] px-4 pt-6 sm:px-6 sm:pt-8">
             {/* Breadcrumb */}
             <nav className="mb-4 flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm">
@@ -174,7 +174,7 @@ export default async function RestaurantPage({ params }: PageProps) {
             )}
 
             {/* Stats */}
-            <div className="mt-8 flex gap-0 overflow-hidden rounded-lg bg-bg-cream">
+            <div className="mt-8 flex gap-0 overflow-hidden rounded-lg border border-glass-border bg-glass-surface backdrop-blur-sm">
               {[
                 {
                   num: dishes.filter((d) => d.reviewCount > 0).length,
@@ -213,7 +213,7 @@ export default async function RestaurantPage({ params }: PageProps) {
             </div>
 
             {!restaurant.ownerId && (
-              <div className="mt-8 rounded-xl border border-border bg-card p-4 text-center">
+              <div className="mt-8 rounded-xl border border-glass-border bg-glass-surface p-4 text-center backdrop-blur-sm">
                 <p className="text-sm text-text-muted">
                   Is this your restaurant?
                 </p>

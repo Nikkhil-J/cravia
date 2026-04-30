@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getDish, getRelatedDishes } from '@/lib/services/dishes'
-import { listDishReviews } from '@/lib/services/catalog'
+import { listDishReviews, type DishReviewsResult } from '@/lib/services/catalog'
 import { DishCard } from '@/components/features/DishCard'
 import { DishPhotoGrid } from '@/components/features/DishPhotoGrid'
 import { LoadMoreReviews } from '@/components/features/LoadMoreReviews'
@@ -50,11 +50,11 @@ export default async function DishPage({ params }: PageProps) {
   const dish = await getDish(id)
   if (!dish) notFound()
 
-  const [relatedDishes, reviewsForPhotos] = await Promise.all([
+  const [relatedDishes, reviews] = await Promise.all([
     getRelatedDishes(dish.restaurantId, dish.id, CONFIG.RELATED_DISHES_COUNT),
     listDishReviews(dish.id),
   ])
-  const dishPhotos: DishPhoto[] = reviewsForPhotos.items
+  const dishPhotos: DishPhoto[] = reviews.items
     .filter((r): r is typeof r & { photoUrl: string } => !!r.photoUrl)
     .map((r) => ({ url: r.photoUrl, createdAt: r.createdAt }))
   const dietaryInfo = dish.dietary ? DIETARY_BADGE[dish.dietary] : null
@@ -96,7 +96,7 @@ export default async function DishPage({ params }: PageProps) {
       <MobileBackButton />
       {/* Breadcrumb */}
       <nav className="mb-4 flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:mb-6 sm:gap-2 sm:text-sm">
-        <Link href={ROUTES.EXPLORE} className="shrink-0 transition-colors hover:text-primary">Restaurants</Link>
+        <Link href={ROUTES.EXPLORE} className="shrink-0 transition-colors hover:text-primary">Explore</Link>
         <span className="shrink-0">/</span>
         <Link href={ROUTES.restaurant(dish.restaurantId)} className="min-w-0 shrink truncate transition-colors hover:text-primary">{dish.restaurantName}</Link>
         <span className="shrink-0">/</span>
@@ -140,8 +140,8 @@ export default async function DishPage({ params }: PageProps) {
             </span>
             <span className="text-text-muted">
               {dish.reviewCount} reviews
-              {reviewsForPhotos.items.length > 0 && (
-                <> · Last reviewed {formatRelativeTime(reviewsForPhotos.items[0].createdAt)}</>
+              {reviews.items.length > 0 && (
+                <> · Last reviewed {formatRelativeTime(reviews.items[0].createdAt)}</>
               )}
             </span>
             {dish.priceRange && (
@@ -256,7 +256,7 @@ export default async function DishPage({ params }: PageProps) {
           Reviews ({dish.reviewCount})
         </h2>
         <Suspense fallback={<div className="mt-4 flex flex-col gap-2">{Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}</div>}>
-          <DishReviewsSection dishId={dish.id} />
+          <DishReviewsSection dishId={dish.id} initialReviews={reviews} />
         </Suspense>
       </Reveal>
 
@@ -285,8 +285,8 @@ function hybridScore(review: { helpfulVotes: number; createdAt: string }): numbe
   return Math.log(1 + review.helpfulVotes) * 3 + recencyBoost
 }
 
-async function DishReviewsSection({ dishId }: { dishId: string }) {
-  const reviewsResult = await listDishReviews(dishId)
+function DishReviewsSection({ dishId, initialReviews }: { dishId: string; initialReviews: DishReviewsResult }) {
+  const reviewsResult = initialReviews
 
   if (reviewsResult.items.length === 0) {
     return (

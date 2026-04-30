@@ -5,7 +5,12 @@ import { getRequestAuth } from '@/lib/services/request-auth'
 import { parseBody } from '@/lib/validation'
 import { createReviewSchema } from '@/lib/validation/review.schema'
 import { rewardPointsForReview, getUserStreak } from '@/lib/services/rewards'
-import { REVIEW_FULL_MIN_TEXT_LENGTH } from '@/lib/types/rewards'
+import {
+  REVIEW_FULL_MIN_TEXT_LENGTH,
+  POINTS_BASIC_REVIEW,
+  POINTS_WITH_PHOTO,
+  POINTS_WITH_BILL,
+} from '@/lib/types/rewards'
 import { captureError, addBreadcrumb, logRouteDuration } from '@/lib/monitoring/sentry'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { isTypesenseConfigured, getTypesenseClient } from '@/lib/repositories/typesense/typesenseClient'
@@ -34,6 +39,9 @@ export async function POST(req: Request) {
   const user = await userRepository.getById(auth.userId)
   if (!user) return NextResponse.json({ message: API_ERRORS.USER_NOT_FOUND }, { status: 404 })
 
+  const hasBill  = !!body.billUrl
+  const hasPhoto = !!body.photoUrl
+
   try {
     const result = await reviewRepository.create(
       {
@@ -42,7 +50,8 @@ export async function POST(req: Request) {
         photoFile: null,
         photoPreviewUrl: body.photoUrl ?? null,
         billFile: null,
-        billPreviewUrl: body.billUrl ?? null,
+        billPreviewUrl: null,
+        billUrl: body.billUrl ?? null,
         tasteRating: body.tasteRating,
         portionRating: body.portionRating,
         valueRating: body.valueRating,
@@ -56,11 +65,18 @@ export async function POST(req: Request) {
 
     addBreadcrumb('Review created', { reviewId: result.id, dishId: body.dishId })
 
+    const pointsBreakdown = {
+      base: POINTS_BASIC_REVIEW,
+      photoBonus: hasPhoto ? POINTS_WITH_PHOTO - POINTS_BASIC_REVIEW : 0,
+      billBonus: hasBill ? POINTS_WITH_BILL - POINTS_WITH_PHOTO : 0,
+    }
+
     let pointsAwarded = 0
     let newBalance = user.dishPointsBalance
     try {
       const rewards = await rewardPointsForReview(auth.userId, result.id, {
-        hasPhoto: !!body.photoUrl,
+        hasPhoto,
+        hasBill,
         hasTags: body.tags.length > 0,
         textLength: body.text.length,
         text: body.text,
@@ -132,7 +148,9 @@ export async function POST(req: Request) {
       item: result,
       pointsAwarded,
       newBalance,
-      isFullReview: !!body.photoUrl && body.tags.length > 0 && body.text.length >= REVIEW_FULL_MIN_TEXT_LENGTH,
+      pointsBreakdown,
+      isVerified: hasBill,
+      isFullReview: hasPhoto && body.tags.length > 0 && body.text.length >= REVIEW_FULL_MIN_TEXT_LENGTH,
       currentStreak,
     }, { status: 201 })
   } catch (e) {
@@ -145,6 +163,6 @@ export async function POST(req: Request) {
       route: '/api/reviews',
       requestBody: { dishId: body.dishId, restaurantId: body.restaurantId },
     })
-    return NextResponse.json({ message }, { status: 400 })
+    return NextResponse.json({ message }, { status: 500 })
   }
 }

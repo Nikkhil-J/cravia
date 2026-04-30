@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { searchDishes } from '@/lib/services/dishes'
 import { DishCard } from '@/components/features/DishCard'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { CUISINE_TYPES, CUISINE_EMOJI, SORT_OPTIONS } from '@/lib/constants'
+import { CUISINE_TYPES, CUISINE_EMOJI, SORT_OPTIONS, GURUGRAM } from '@/lib/constants'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
 import { ROUTES } from '@/lib/constants/routes'
 
@@ -38,6 +38,7 @@ export default async function CuisinePage({ params }: PageProps) {
 
   const result = await searchDishes('', {
     cuisine: cuisineName,
+    city: GURUGRAM,
     area: null,
     dietary: null,
     priceRange: null,

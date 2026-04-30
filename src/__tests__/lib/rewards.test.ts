@@ -65,33 +65,36 @@ beforeEach(() => {
 })
 
 describe('_computeReviewPoints', () => {
-  it('returns REVIEW_FULL (25 pts) for photo + tags + text >= 30 chars with quality text', async () => {
+  it('returns REVIEW_WITH_BILL (25 pts) for bill upload with quality text', async () => {
     const result = await _computeReviewPoints({
       hasPhoto: true,
+      hasBill: true,
       hasTags: true,
       textLength: 52,
       text: 'This butter chicken was absolutely amazing and fresh',
       userId: 'user-1',
     })
-    expect(result.type).toBe('REVIEW_FULL')
+    expect(result.type).toBe('REVIEW_WITH_BILL')
     expect(result.points).toBe(25)
   })
 
-  it('returns REVIEW_BASIC (10 pts) for photo + tags only', async () => {
+  it('returns REVIEW_WITH_PHOTO (20 pts) for photo with quality text', async () => {
     const result = await _computeReviewPoints({
       hasPhoto: true,
+      hasBill: false,
       hasTags: true,
-      textLength: 10,
-      text: 'Great dish',
+      textLength: 52,
+      text: 'This butter chicken was absolutely amazing and fresh',
       userId: 'user-1',
     })
-    expect(result.type).toBe('REVIEW_BASIC')
-    expect(result.points).toBe(10)
+    expect(result.type).toBe('REVIEW_WITH_PHOTO')
+    expect(result.points).toBe(20)
   })
 
   it('returns REVIEW_BASIC (10 pts) for minimal review', async () => {
     const result = await _computeReviewPoints({
       hasPhoto: false,
+      hasBill: false,
       hasTags: false,
       textLength: 0,
       text: '',
@@ -101,21 +104,23 @@ describe('_computeReviewPoints', () => {
     expect(result.points).toBe(10)
   })
 
-  it('returns REVIEW_BASIC if photo but no tags', async () => {
+  it('returns REVIEW_WITH_PHOTO (20 pts) for photo regardless of tags', async () => {
     const result = await _computeReviewPoints({
       hasPhoto: true,
+      hasBill: false,
       hasTags: false,
       textLength: 50,
       text: 'This was a decent meal with interesting flavors overall',
       userId: 'user-1',
     })
-    expect(result.type).toBe('REVIEW_BASIC')
-    expect(result.points).toBe(10)
+    expect(result.type).toBe('REVIEW_WITH_PHOTO')
+    expect(result.points).toBe(20)
   })
 
-  it('returns REVIEW_BASIC if tags but no photo', async () => {
+  it('returns REVIEW_BASIC (10 pts) for tags but no photo and no bill', async () => {
     const result = await _computeReviewPoints({
       hasPhoto: false,
+      hasBill: false,
       hasTags: true,
       textLength: 50,
       text: 'This was a decent meal with interesting flavors overall',
@@ -151,6 +156,7 @@ describe('rewardPointsForReview', () => {
 
     const result = await rewardPointsForReview('user-1', 'review-1', {
       hasPhoto: false,
+      hasBill: false,
       hasTags: false,
       textLength: 0,
       text: '',
@@ -162,14 +168,14 @@ describe('rewardPointsForReview', () => {
     expect(pointsRepository.appendTransaction).toHaveBeenCalledTimes(1)
   })
 
-  it('creates a single transaction for a full review (25 pts)', async () => {
+  it('creates a single transaction for a photo review (20 pts)', async () => {
     const mockTx: DishPointTransaction = {
       id: 'tx-1',
       userId: 'user-1',
-      type: 'REVIEW_FULL',
-      points: 25,
+      type: 'REVIEW_WITH_PHOTO',
+      points: 20,
       refId: 'review-1',
-      description: 'Full review: photo + tags + text (35 chars)',
+      description: 'Photo review (52 chars)',
       createdAt: '2025-06-01T00:00:00Z',
     }
 
@@ -179,13 +185,14 @@ describe('rewardPointsForReview', () => {
       nextCursor: null,
     })
     vi.mocked(pointsRepository.getBalance).mockResolvedValue({
-      balance: 25,
-      totalEarned: 25,
+      balance: 20,
+      totalEarned: 20,
       totalRedeemed: 0,
     })
 
     const result = await rewardPointsForReview('user-1', 'review-1', {
       hasPhoto: true,
+      hasBill: false,
       hasTags: true,
       textLength: 52,
       text: 'This butter chicken was absolutely amazing and fresh',
@@ -193,7 +200,7 @@ describe('rewardPointsForReview', () => {
     })
 
     expect(result.transactions).toHaveLength(1)
-    expect(result.totalPointsAwarded).toBe(25)
+    expect(result.totalPointsAwarded).toBe(20)
   })
 
   it('adds streak bonus when 7 consecutive days detected', async () => {
@@ -246,6 +253,7 @@ describe('rewardPointsForReview', () => {
 
     const result = await rewardPointsForReview('user-1', 'review-1', {
       hasPhoto: false,
+      hasBill: false,
       hasTags: false,
       textLength: 0,
       text: '',
@@ -288,6 +296,7 @@ describe('rewardPointsForReview', () => {
 
     await rewardPointsForReview('user-1', 'review-1', {
       hasPhoto: false,
+      hasBill: false,
       hasTags: false,
       textLength: 0,
       text: '',
@@ -303,10 +312,11 @@ describe('rewardPointsForReview', () => {
   })
 })
 
-describe('text quality check for REVIEW_FULL', () => {
-  it('downgrades to REVIEW_BASIC for text with <5 distinct words', async () => {
+describe('text quality check', () => {
+  it('downgrades photo review to REVIEW_BASIC for text with <5 distinct words', async () => {
     const result = await _computeReviewPoints({
       hasPhoto: true,
+      hasBill: false,
       hasTags: true,
       textLength: 35,
       text: 'aaaaaaaaaaaaaaaaaaaaa aaaaaaaaa bbbb',
@@ -317,15 +327,43 @@ describe('text quality check for REVIEW_FULL', () => {
     expect(result.description).toContain('quality')
   })
 
-  it('awards REVIEW_FULL for legitimate text with 5+ distinct words', async () => {
+  it('downgrades bill review to REVIEW_BASIC for text with <5 distinct words', async () => {
     const result = await _computeReviewPoints({
       hasPhoto: true,
+      hasBill: true,
+      hasTags: true,
+      textLength: 35,
+      text: 'aaaaaaaaaaaaaaaaaaaaa aaaaaaaaa bbbb',
+      userId: 'user-1',
+    })
+    expect(result.type).toBe('REVIEW_BASIC')
+    expect(result.points).toBe(10)
+    expect(result.description).toContain('quality')
+  })
+
+  it('awards REVIEW_WITH_PHOTO for photo review with 5+ distinct words', async () => {
+    const result = await _computeReviewPoints({
+      hasPhoto: true,
+      hasBill: false,
       hasTags: true,
       textLength: 52,
       text: 'This butter chicken was absolutely amazing and fresh',
       userId: 'user-1',
     })
-    expect(result.type).toBe('REVIEW_FULL')
+    expect(result.type).toBe('REVIEW_WITH_PHOTO')
+    expect(result.points).toBe(20)
+  })
+
+  it('awards REVIEW_WITH_BILL for bill review with 5+ distinct words', async () => {
+    const result = await _computeReviewPoints({
+      hasPhoto: true,
+      hasBill: true,
+      hasTags: true,
+      textLength: 52,
+      text: 'This butter chicken was absolutely amazing and fresh',
+      userId: 'user-1',
+    })
+    expect(result.type).toBe('REVIEW_WITH_BILL')
     expect(result.points).toBe(25)
   })
 })

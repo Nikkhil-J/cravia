@@ -16,13 +16,16 @@ export default function NotificationsPage() {
   const { user, authUser } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
 
   useEffect(() => {
     if (!user) return
     getNotifications(user.id)
       .then(setNotifications)
+      .catch(() => setError(true))
       .finally(() => setLoading(false))
-  }, [user?.id])
+  }, [user?.id, retryCount])
 
   async function handleMarkAllRead() {
     if (!user || !authUser) return
@@ -56,6 +59,20 @@ export default function NotificationsPage() {
 
       {loading ? (
         <div className="mt-10 flex justify-center"><LoadingSpinner /></div>
+      ) : error ? (
+        <div className="mt-10 flex flex-col items-center gap-4 text-center">
+          <p className="text-text-secondary">Couldn&apos;t load your notifications. Try again.</p>
+          <Button
+            onClick={() => {
+              setLoading(true)
+              setError(false)
+              setRetryCount((c) => c + 1)
+            }}
+            className="rounded-pill px-6 font-semibold hover:bg-primary-dark"
+          >
+            Retry
+          </Button>
+        </div>
       ) : notifications.length === 0 ? (
         <div className="mt-8">
           <EmptyState icon="🔔" title="No notifications yet" description="You'll be notified about helpful votes and new badges here." />

@@ -3,9 +3,8 @@ import {
   REVIEW_EDIT_WINDOW_MS,
   REVIEW_PHOTO_MAX_MB,
   REVIEW_PHOTO_ALLOWED_TYPES,
-  REVIEW_TEXT_MIN_CHARS,
 } from '../constants'
-import type { Dish, DishCategory, ReviewFormData } from '../types'
+import type { Dish, DishCategory } from '../types'
 
 /**
  * Formats a numeric rating to 1 decimal place.
@@ -49,30 +48,6 @@ export function canEditReview(createdAt: string): boolean {
   if (Number.isNaN(createdAtMs)) return false
   const ageMs = Date.now() - createdAtMs
   return ageMs < REVIEW_EDIT_WINDOW_MS
-}
-
-/**
- * Validates a ReviewFormData object. Returns valid flag and field-level errors.
- */
-export function validateReviewForm(data: ReviewFormData): {
-  valid: boolean
-  errors: Record<string, string>
-} {
-  const errors: Record<string, string> = {}
-
-  if (!data.dishId)        errors.dishId        = 'Dish is required'
-  if (!data.restaurantId)  errors.restaurantId  = 'Restaurant is required'
-  if (!data.photoFile && !data.photoPreviewUrl) errors.photo = 'A photo is required'
-  if (data.tasteRating   === null) errors.tasteRating   = 'Taste rating is required'
-  if (data.portionRating === null) errors.portionRating = 'Portion rating is required'
-  if (data.valueRating   === null) errors.valueRating   = 'Value rating is required'
-  if (data.tags.length === 0)      errors.tags          = 'Select at least one tag'
-
-  if (data.text && data.text.length > 0 && data.text.length < REVIEW_TEXT_MIN_CHARS) {
-    errors.text = `Text must be at least ${REVIEW_TEXT_MIN_CHARS} characters if provided`
-  }
-
-  return { valid: Object.keys(errors).length === 0, errors }
 }
 
 /**

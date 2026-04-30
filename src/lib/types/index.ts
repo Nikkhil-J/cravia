@@ -181,6 +181,8 @@ export interface ReviewFormData {
   photoPreviewUrl: string | null
   billFile: File | null
   billPreviewUrl: string | null
+  /** Permanent Cloudinary URL set after a successful bill upload. */
+  billUrl: string | null
   tasteRating: number | null
   portionRating: number | null
   valueRating: number | null

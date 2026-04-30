@@ -12,6 +12,7 @@ import type { Coupon, CouponClaim, PointsBalance } from '@/lib/types/rewards'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { CLIENT_ERRORS } from '@/lib/constants/errors'
 import { HTTP_HEADERS } from '@/lib/constants'
+import { captureError } from '@/lib/monitoring/sentry'
 
 type Tab = 'coupons' | 'claims'
 
@@ -21,6 +22,7 @@ export default function RewardsPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([])
   const [claims, setClaims] = useState<CouponClaim[]>([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState<string | null>(null)
   const [redeeming, setRedeeming] = useState<string | null>(null)
   const [redeemError, setRedeemError] = useState<string | null>(null)
   const [redeemSuccess, setRedeemSuccess] = useState<string | null>(null)
@@ -28,25 +30,33 @@ export default function RewardsPage() {
 
   const fetchAll = useCallback(async () => {
     if (!authUser) return
-    const token = await authUser.getIdToken()
-    const headers = { authorization: `Bearer ${token}` }
+    setLoading(true)
+    setFetchError(null)
+    try {
+      const token = await authUser.getIdToken()
+      const headers = { authorization: `Bearer ${token}` }
 
-    const [balRes, coupRes, claimRes] = await Promise.all([
-      fetch(API_ENDPOINTS.REWARDS_BALANCE, { headers }),
-      fetch(API_ENDPOINTS.REWARDS_COUPONS, { headers }),
-      fetch(API_ENDPOINTS.REWARDS_CLAIMS, { headers }),
-    ])
+      const [balRes, coupRes, claimRes] = await Promise.all([
+        fetch(API_ENDPOINTS.REWARDS_BALANCE, { headers }),
+        fetch(API_ENDPOINTS.REWARDS_COUPONS, { headers }),
+        fetch(API_ENDPOINTS.REWARDS_CLAIMS, { headers }),
+      ])
 
-    if (balRes.ok) setBalance(await balRes.json() as PointsBalance)
-    if (coupRes.ok) {
-      const data = await coupRes.json() as { items: Coupon[] }
-      setCoupons(data.items)
+      if (balRes.ok) setBalance(await balRes.json() as PointsBalance)
+      if (coupRes.ok) {
+        const data = await coupRes.json() as { items: Coupon[] }
+        setCoupons(data.items)
+      }
+      if (claimRes.ok) {
+        const data = await claimRes.json() as { items: CouponClaim[] }
+        setClaims(data.items)
+      }
+    } catch (err) {
+      setFetchError("Couldn't load your rewards. Please try again.")
+      captureError(err)
+    } finally {
+      setLoading(false)
     }
-    if (claimRes.ok) {
-      const data = await claimRes.json() as { items: CouponClaim[] }
-      setClaims(data.items)
-    }
-    setLoading(false)
   }, [authUser])
 
   useEffect(() => {
@@ -99,6 +109,17 @@ export default function RewardsPage() {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (fetchError) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-4 text-center">
+        <p className="text-text-secondary">{fetchError}</p>
+        <Button onClick={fetchAll} className="rounded-pill px-6 font-semibold hover:bg-primary-dark">
+          Try again
+        </Button>
       </div>
     )
   }

@@ -22,6 +22,14 @@ interface SuccessData {
   pointsAwarded: number
   newBalance: number
   isFullReview: boolean
+  isVerified?: boolean
+  hadPhoto?: boolean
+  hadBill?: boolean
+  pointsBreakdown?: {
+    base: number
+    photoBonus: number
+    billBonus: number
+  } | null
   helpfulVotesReceived?: number
   currentStreak?: number
 }
@@ -96,9 +104,11 @@ export default function ReviewSuccessPage() {
                 +{data.pointsAwarded} DishPoints
               </p>
               <p className="mt-1 text-xs text-text-secondary">
-                {data.isFullReview
-                  ? 'Full review bonus: photo + tags + detailed text'
-                  : 'Keep adding photos, tags, and longer text for more points!'}
+                {data.hadBill
+                  ? 'Includes bill verification bonus'
+                  : data.hadPhoto
+                  ? 'Add your bill next time to earn 25'
+                  : 'Add a photo next time to earn 20'}
               </p>
 
               <div className="mt-4">

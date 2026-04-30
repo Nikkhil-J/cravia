@@ -2,6 +2,8 @@
 
 export type PointTransactionType =
   | 'REVIEW_BASIC'
+  | 'REVIEW_WITH_PHOTO'
+  | 'REVIEW_WITH_BILL'
   | 'REVIEW_FULL'
   | 'STREAK_BONUS'
   | 'REDEMPTION'
@@ -61,8 +63,16 @@ export interface CouponClaim {
 
 // ── Points constants ────────────────────────────────────
 
-export const POINTS_REVIEW_BASIC = 10
-export const POINTS_REVIEW_FULL = 25
+/** Tiered review points — not additive; each tier supersedes the previous. */
+export const POINTS_BASIC_REVIEW = 10    // no photo, no bill
+export const POINTS_WITH_PHOTO   = 20    // dish photo uploaded
+export const POINTS_WITH_BILL    = 25    // bill uploaded (maximum tier)
+export const POINTS_MAX_PER_REVIEW = 25
+
+/** Keep legacy aliases so older transaction type names resolve correctly. */
+export const POINTS_REVIEW_BASIC = POINTS_BASIC_REVIEW
+export const POINTS_REVIEW_FULL  = POINTS_WITH_BILL
+
 export const POINTS_STREAK_MULTIPLIER = 2
 export const STREAK_DAYS_REQUIRED = 7
 export const REVIEW_FULL_MIN_TEXT_LENGTH = 30

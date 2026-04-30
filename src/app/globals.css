@@ -37,6 +37,10 @@
   --color-placeholder-sage: #EAF3DE;
   --color-placeholder-sky: #E6F1FB;
 
+  /* ── Glass surface tokens ── */
+  --color-glass-surface: var(--dc-glass-surface);
+  --color-glass-border: var(--dc-glass-border);
+
   /* ── Dynamic colors (resolve at runtime via --dc-* custom properties) ── */
   --color-primary-light: var(--dc-primary-light);
   --color-brand-gold-light: var(--dc-brand-gold-light);
@@ -161,12 +165,18 @@
   --color-surface-dark: #0f1117;
   --color-footer-bg: #0a0c12;
   --color-destructive: var(--destructive);
+  --color-glass-surface: var(--dc-glass-surface);
+  --color-glass-border: var(--dc-glass-border);
   --color-coral: #D85A30;
   --color-coral-mid: #F0997B;
   --color-coral-light: #F5C4B3;
   --color-coral-bg: var(--dc-coral-bg);
   --color-coral-deep: var(--dc-coral-deep);
   --color-coral-deeper: var(--dc-coral-deeper);
+
+  /* ── Glass ── */
+  --dc-glass-surface: rgba(255, 255, 255, 0.72);
+  --dc-glass-border: rgba(255, 255, 255, 0.55);
 
   /* ── Shimmer ── */
   --shimmer-from: var(--dc-border);
@@ -204,6 +214,10 @@
   --sidebar-primary: #E23744;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-ring: #E23744;
+
+  /* ── Glass ── */
+  --dc-glass-surface: rgba(255, 255, 255, 0.06);
+  --dc-glass-border: rgba(255, 255, 255, 0.10);
 
   /* ── Shimmer ── */
   --shimmer-from: #22242e;

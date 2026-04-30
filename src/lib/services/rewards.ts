@@ -3,11 +3,11 @@ import { pointsRepository } from '@/lib/repositories/server'
 import type { PointsRepository } from '@/lib/repositories/pointsRepository'
 import type { DishPointTransaction, PointsBalance, PointTransactionType } from '@/lib/types/rewards'
 import {
-  POINTS_REVIEW_BASIC,
-  POINTS_REVIEW_FULL,
+  POINTS_BASIC_REVIEW,
+  POINTS_WITH_PHOTO,
+  POINTS_WITH_BILL,
   POINTS_STREAK_MULTIPLIER,
   STREAK_DAYS_REQUIRED,
-  REVIEW_FULL_MIN_TEXT_LENGTH,
 } from '@/lib/types/rewards'
 import { createServerNotification } from '@/lib/services/notifications-server'
 import { sendPointsMilestoneEmail } from '@/lib/services/email'
@@ -19,6 +19,7 @@ const MILESTONE_450 = 450
 
 export interface ReviewDataForRewards {
   hasPhoto: boolean
+  hasBill: boolean
   hasTags: boolean
   textLength: number
   text: string
@@ -63,37 +64,42 @@ async function computeReviewPoints(data: ReviewDataForRewards): Promise<{
   points: number
   description: string
 }> {
-  const meetsLengthRequirement =
-    data.hasPhoto && data.hasTags && data.textLength >= REVIEW_FULL_MIN_TEXT_LENGTH
-
-  if (meetsLengthRequirement) {
+  // Bill is the highest tier — quality check still applies to prevent spam
+  if (data.hasBill) {
     const qualityOk = await passesTextQualityCheck(data.text, data.userId)
     if (qualityOk) {
       return {
-        type: 'REVIEW_FULL',
-        points: POINTS_REVIEW_FULL,
-        description: `Full review: photo + tags + text (${data.textLength} chars)`,
+        type: 'REVIEW_WITH_BILL',
+        points: POINTS_WITH_BILL,
+        description: `Bill-verified review (+5 bill bonus, ${data.textLength} chars)`,
       }
     }
-
     return {
       type: 'REVIEW_BASIC',
-      points: POINTS_REVIEW_BASIC,
+      points: POINTS_BASIC_REVIEW,
       description: 'Review downgraded: text failed quality check',
     }
   }
 
-  if (data.hasPhoto && data.hasTags) {
+  if (data.hasPhoto) {
+    const qualityOk = await passesTextQualityCheck(data.text, data.userId)
+    if (qualityOk) {
+      return {
+        type: 'REVIEW_WITH_PHOTO',
+        points: POINTS_WITH_PHOTO,
+        description: `Photo review (${data.textLength} chars)`,
+      }
+    }
     return {
       type: 'REVIEW_BASIC',
-      points: POINTS_REVIEW_BASIC,
-      description: 'Basic review: photo + tags',
+      points: POINTS_BASIC_REVIEW,
+      description: 'Review downgraded: text failed quality check',
     }
   }
 
   return {
     type: 'REVIEW_BASIC',
-    points: POINTS_REVIEW_BASIC,
+    points: POINTS_BASIC_REVIEW,
     description: 'Review submitted',
   }
 }
@@ -123,7 +129,11 @@ async function computeStreak(
   const { items } = await repo.getTransactions(userId, 50)
 
   const reviewTxs = items.filter(
-    (tx) => tx.type === 'REVIEW_BASIC' || tx.type === 'REVIEW_FULL',
+    (tx) =>
+      tx.type === 'REVIEW_BASIC' ||
+      tx.type === 'REVIEW_WITH_PHOTO' ||
+      tx.type === 'REVIEW_WITH_BILL' ||
+      tx.type === 'REVIEW_FULL',
   )
 
   if (reviewTxs.length === 0) return 0

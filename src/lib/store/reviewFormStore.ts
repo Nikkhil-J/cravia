@@ -17,6 +17,7 @@ const defaultData: ReviewFormData = {
   photoPreviewUrl: null,
   billFile: null,
   billPreviewUrl: null,
+  billUrl: null,
   tasteRating: null,
   portionRating: null,
   valueRating: null,

@@ -7,6 +7,7 @@ import { NearbyRestaurants } from "@/components/features/NearbyRestaurants";
 import { LandingHowItWorks } from "@/components/features/LandingHowItWorks";
 import { LandingCTABlock } from "@/components/features/LandingCTABlock";
 import { PersonalStatsBanner } from "@/components/features/PersonalStatsBanner";
+import { PWAInstallBanner } from "@/components/features/PWAInstallBanner";
 import { GURUGRAM } from "@/lib/constants";
 import { getRestaurantCount } from "@/lib/services/restaurants";
 import { searchRestaurants } from "@/lib/services/catalog";
@@ -75,6 +76,7 @@ export default async function LandingPage() {
       <NearbyRestaurants restaurants={restaurants} city={city} />
 
       <LandingCTABlock />
+      <PWAInstallBanner />
     </>
   );
 }

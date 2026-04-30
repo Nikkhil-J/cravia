@@ -26,7 +26,7 @@ export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const showSearchInNavbar = pathname !== ROUTES.HOME && !pathname.startsWith('/restaurant/')
-  const showMobileSearchIcon = showSearchInNavbar && !pathname.startsWith('/explore')
+  const showMobileSearchIcon = showSearchInNavbar && !pathname.startsWith('/explore') && !pathname.startsWith('/my-profile') && !pathname.startsWith('/profile/')
   const [scrolled, setScrolled] = useState(false)
   const { user, isAuthenticated, isLoading } = useAuth()
 
@@ -42,6 +42,7 @@ export function Navbar() {
         'sticky top-0 z-40 border-b bg-background/92 backdrop-blur-xl transition-all duration-200',
         scrolled ? 'border-border shadow-sm' : 'border-transparent'
       )}
+      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
       <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-2 px-3 sm:h-[68px] sm:gap-5 sm:px-6">
         <Link href={ROUTES.HOME} className="shrink-0">
@@ -116,6 +117,7 @@ export function Navbar() {
 
               <NotificationPopover />
 
+              <div className="hidden md:block">
               <DropdownMenu>
                 <DropdownMenuTrigger
                   className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-2 border-background bg-gradient-to-br from-primary to-brand-orange shadow-sm outline-none sm:h-[38px] sm:w-[38px]"
@@ -175,6 +177,7 @@ export function Navbar() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              </div>
             </>
           )}
         </div>
