@@ -65,6 +65,11 @@ vi.mock('@/lib/repositories/server', () => ({
 
 vi.mock('@/lib/services/rewards', () => ({
   rewardPointsForReview: vi.fn(),
+  getUserStreak: vi.fn().mockResolvedValue({
+    currentStreak: 0,
+    longestStreak: 0,
+    lastReviewDate: null,
+  }),
 }))
 
 vi.mock('@/lib/rate-limit', () => ({
@@ -204,6 +209,7 @@ describe('POST /api/reviews', () => {
       tasteRating: 4,
       portionRating: 3,
       valueRating: 5,
+      tags: ['Spicy'],
       text: VALID_TEXT,
     })
     const res = await createReview(req)
@@ -247,6 +253,7 @@ describe('POST /api/reviews', () => {
       tasteRating: 4,
       portionRating: 3,
       valueRating: 5,
+      tags: ['Spicy'],
       text: VALID_TEXT,
     })
     const res = await createReview(req)
@@ -281,6 +288,7 @@ describe('POST /api/reviews', () => {
       tasteRating: 4,
       portionRating: 3,
       valueRating: 5,
+      tags: ['Spicy'],
       text: VALID_TEXT,
     })
     const res = await createReview(req)
@@ -336,12 +344,9 @@ describe('POST /api/reviews', () => {
       userCity: 'gurugram',
     })
     vi.mocked(userRepository.getById).mockResolvedValue(MOCK_USER)
-    vi.mocked(reviewRepository.findByUserAndDish).mockResolvedValue({
-      id: 'existing-review-1',
-      dishId: 'dish-1',
-      restaurantId: 'rest-1',
-      userId: 'user-1',
-    } as never)
+    vi.mocked(reviewRepository.create).mockRejectedValue(
+      new Error('You have already reviewed this dish'),
+    )
 
     const req = makeRequest('POST', {
       dishId: 'dish-1',
@@ -349,15 +354,13 @@ describe('POST /api/reviews', () => {
       tasteRating: 4,
       portionRating: 3,
       valueRating: 5,
+      tags: ['Spicy'],
       text: VALID_TEXT,
     })
     const res = await createReview(req)
     expect(res.status).toBe(409)
     const body = await res.json()
     expect(body.message).toBe('You have already reviewed this dish')
-    expect(body.existingReviewId).toBe('existing-review-1')
-
-    vi.mocked(reviewRepository.findByUserAndDish).mockResolvedValue(null)
   })
 
   it('returns isFullReview=true when photo+tags+text>=30', async () => {
@@ -427,10 +430,10 @@ describe('PATCH /api/reviews/:id', () => {
     })
     vi.mocked(reviewRepository.update).mockResolvedValue({
       id: 'review-1',
-      text: 'Updated review',
+      text: 'Updated review with enough characters to pass validation.',
     } as never)
 
-    const req = makeRequest('PATCH', { text: 'Updated review' })
+    const req = makeRequest('PATCH', { text: 'Updated review with enough characters to pass validation.' })
     const res = await updateReview(req, makeContext({ id: 'review-1' }))
     expect(res.status).toBe(200)
   })

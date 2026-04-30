@@ -1,6 +1,6 @@
 export default function RootLoading() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-heading">
+    <div className="flex min-h-screen items-center justify-center bg-surface-dark">
       <div className="flex flex-col items-center gap-4 animate-pulse">
         <svg
           width={56}
