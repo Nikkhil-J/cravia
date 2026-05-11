@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Star, Gift, Settings, ChevronRight } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -14,11 +15,13 @@ import { useReviewDishContexts } from '@/lib/hooks/useReviewDishContexts'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import type { Review } from '@/lib/types'
 import { ROUTES } from '@/lib/constants/routes'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { CLIENT_ERRORS } from '@/lib/constants/errors'
 import { Reveal } from '@/components/ui/AnimateReveal'
+import { toast } from 'sonner'
 
 const QUICK_LINKS = [
   { label: 'Wishlist', desc: 'Saved dishes', icon: Star, href: ROUTES.WISHLIST },
@@ -32,6 +35,7 @@ export default function MyProfilePage() {
   const queryClient = useQueryClient()
   const { data: reviews = [], isLoading: loading } = useMyReviews()
   const dishContexts = useReviewDishContexts(reviews)
+  const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null)
 
   function handleEdit(review: Review) {
     const ctx = dishContexts[review.dishId]
@@ -44,21 +48,20 @@ export default function MyProfilePage() {
     router.push(ROUTES.writeReviewForDish(params.toString()))
   }
 
-  async function handleDelete(review: Review) {
-    if (!user || !authUser) return
+  async function confirmDelete() {
+    if (!reviewToDelete || !user || !authUser) return
     const token = await authUser.getIdToken()
-    const confirmed = window.confirm('Delete this review? This cannot be undone.')
-    if (!confirmed) return
-
     try {
-      const res = await fetch(`${API_ENDPOINTS.review(encodeURIComponent(review.id))}?dishId=${encodeURIComponent(review.dishId)}`, {
+      const res = await fetch(`${API_ENDPOINTS.review(encodeURIComponent(reviewToDelete.id))}?dishId=${encodeURIComponent(reviewToDelete.dishId)}`, {
         method: 'DELETE',
         headers: { authorization: `Bearer ${token}` },
       })
       if (!res.ok) throw new Error(CLIENT_ERRORS.DELETE_FAILED)
       await queryClient.invalidateQueries({ queryKey: ['my-reviews'] })
     } catch {
-      alert('Failed to delete review. Please try again.')
+      toast.error('Failed to delete review. Please try again.')
+    } finally {
+      setReviewToDelete(null)
     }
   }
 
@@ -93,6 +96,17 @@ export default function MyProfilePage() {
   ]
 
   return (
+    <>
+    <ConfirmDialog
+      open={reviewToDelete !== null}
+      onOpenChange={(open) => { if (!open) setReviewToDelete(null) }}
+      title="Delete review?"
+      description="This action cannot be undone."
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
+      destructive
+      onConfirm={confirmDelete}
+    />
     <div className="mx-auto max-w-[1080px] px-4 pb-20 sm:px-6">
       {/* ── Hero Banner ─────────────────────────────────── */}
       <div className="rounded-b-xl border border-t-0 border-border bg-card p-6 sm:p-8"
@@ -187,7 +201,7 @@ export default function MyProfilePage() {
                   currentUserId={user.id}
                   dishContext={dishContexts[review.dishId] ?? null}
                   onEdit={() => handleEdit(review)}
-                  onDelete={() => handleDelete(review)}
+                  onDelete={() => setReviewToDelete(review)}
                 />
               ))}
             </div>
@@ -289,5 +303,6 @@ export default function MyProfilePage() {
         </Reveal>
       </div>
     </div>
+    </>
   )
 }

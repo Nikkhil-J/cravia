@@ -24,8 +24,8 @@ export default function RootLoading() {
         </svg>
         {/* APPROVED HARDCODED COLOR — splash wordmark on dark bg */}
         <span
-          className="text-2xl text-[#FAC775]"
-          style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 700 }}
+          className="text-2xl text-white uppercase tracking-wide"
+          style={{ fontFamily: 'var(--font-headline)', fontWeight: 800 }}
         >
           Cravia
         </span>

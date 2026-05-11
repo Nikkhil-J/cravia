@@ -76,7 +76,7 @@ export function AdminShell({ children }: AdminShellProps) {
         <Button variant="ghost" size="icon" onClick={() => setMobileOpen(true)} aria-label="Open menu">
           <Menu className="h-5 w-5" />
         </Button>
-        <Link href={ROUTES.HOME} className="font-display font-bold text-primary">
+        <Link href={ROUTES.HOME} className="font-headline font-extrabold uppercase tracking-wide text-primary">
           <span>🍽️</span> Cravia
         </Link>
       </div>
@@ -87,7 +87,7 @@ export function AdminShell({ children }: AdminShellProps) {
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
           <aside className="relative flex h-full w-64 flex-col bg-background shadow-xl">
             <div className="flex items-center justify-between border-b border-border px-5 py-4">
-              <Link href={ROUTES.HOME} className="font-display font-bold text-primary">
+              <Link href={ROUTES.HOME} className="font-headline font-extrabold uppercase tracking-wide text-primary">
                 🍽️ Cravia
               </Link>
               <Button variant="ghost" size="icon" onClick={() => setMobileOpen(false)} aria-label="Close menu">
@@ -101,7 +101,7 @@ export function AdminShell({ children }: AdminShellProps) {
 
       {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-screen w-56 shrink-0 flex-col border-r border-border bg-background md:flex">
-        <Link href={ROUTES.HOME} className="flex items-center gap-1.5 border-b border-border px-5 py-4 font-display font-bold text-primary">
+        <Link href={ROUTES.HOME} className="flex items-center gap-1.5 border-b border-border px-5 py-4 font-headline font-extrabold uppercase tracking-wide text-primary">
           <span>🍽️</span>
           <span>Cravia</span>
         </Link>

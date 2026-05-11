@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import type { Review } from '@/lib/types'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 
@@ -13,6 +14,7 @@ export default function AdminReviewsPage() {
   const { user, authUser } = useAuth()
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
+  const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null)
 
   useEffect(() => {
     getFlaggedReviews()
@@ -29,23 +31,35 @@ export default function AdminReviewsPage() {
     }
   }
 
-  async function handleDelete(review: Review) {
-    if (!user || !authUser || !confirm('Delete this review?')) return
+  async function confirmDelete() {
+    if (!reviewToDelete || !user || !authUser) return
     const token = await authUser.getIdToken()
-    const res = await fetch(API_ENDPOINTS.adminReview(encodeURIComponent(review.id)), {
+    const res = await fetch(API_ENDPOINTS.adminReview(encodeURIComponent(reviewToDelete.id)), {
       method: 'DELETE',
       headers: {
         authorization: `Bearer ${token}`,
       },
     })
     if (res.ok) {
-      setReviews((prev) => prev.filter((r) => r.id !== review.id))
+      setReviews((prev) => prev.filter((r) => r.id !== reviewToDelete.id))
     }
+    setReviewToDelete(null)
   }
 
   if (loading) return <div className="flex justify-center py-20"><LoadingSpinner /></div>
 
   return (
+    <>
+    <ConfirmDialog
+      open={reviewToDelete !== null}
+      onOpenChange={(open) => { if (!open) setReviewToDelete(null) }}
+      title="Delete review?"
+      description="This action cannot be undone."
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
+      destructive
+      onConfirm={confirmDelete}
+    />
     <div>
       <h1 className="font-display text-xl font-bold text-heading">Flagged Reviews</h1>
       <p className="mt-1 text-sm text-text-muted">{reviews.length} flagged</p>
@@ -78,7 +92,7 @@ export default function AdminReviewsPage() {
                 </Button>
                 <Button
                   variant="destructive"
-                  onClick={() => handleDelete(review)}
+                  onClick={() => setReviewToDelete(review)}
                   size="xs"
                   className="rounded-lg bg-transparent border border-destructive/30 px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10"
                 >
@@ -90,5 +104,6 @@ export default function AdminReviewsPage() {
         </div>
       )}
     </div>
+    </>
   )
 }

@@ -222,6 +222,10 @@ export async function deleteReview(
       const review = reviewSnap.data()!
       if (!isAdmin && (review.userId as string) !== callerId) throw new Error('Not authorized')
 
+      const authorId = review.userId as string
+      const userRef = adminDb.collection(COLLECTIONS.USERS).doc(authorId)
+      const userSnap = await tx.get(userRef)
+
       const dish = dishSnap.data()!
       const prevCount = dish.reviewCount as number
       const newCount = Math.max(prevCount - 1, 0)
@@ -238,9 +242,6 @@ export async function deleteReview(
       tx.delete(reviewRef)
       tx.update(dishRef, { avgTaste, avgPortion, avgValue, avgOverall, reviewCount: newCount })
 
-      const authorId = review.userId as string
-      const userRef = adminDb.collection(COLLECTIONS.USERS).doc(authorId)
-      const userSnap = await tx.get(userRef)
       if (userSnap.exists) {
         const userData = userSnap.data()!
         const newReviewCount = Math.max((userData.reviewCount as number) - 1, 0)
@@ -288,13 +289,14 @@ export async function voteHelpful(reviewId: string, voterId: string): Promise<bo
       const votedBy = review.helpfulVotedBy as string[]
       if (votedBy.includes(voterId)) return
 
+      const userRef = adminDb.collection(COLLECTIONS.USERS).doc(authorId)
+      const userSnap = await tx.get(userRef)
+
       tx.update(reviewRef, {
         helpfulVotedBy: FieldValue.arrayUnion(voterId),
         helpfulVotes: FieldValue.increment(1),
       })
 
-      const userRef = adminDb.collection(COLLECTIONS.USERS).doc(authorId)
-      const userSnap = await tx.get(userRef)
       if (!userSnap.exists) return
 
       const userData = userSnap.data()!
@@ -307,6 +309,51 @@ export async function voteHelpful(reviewId: string, voterId: string): Promise<bo
     return true
   } catch (e) {
     logError('voteHelpful [admin]', e)
+    return false
+  }
+}
+
+/**
+ * Removes userId from helpfulVotedBy, decrements helpfulVotes on the review,
+ * and decrements the author's helpfulVotesReceived + recomputes badges.
+ * Idempotent — returns true if the vote was already absent.
+ * Uses Admin SDK.
+ */
+export async function unvoteHelpful(reviewId: string, voterId: string): Promise<boolean> {
+  try {
+    const reviewRef = adminDb.collection(COLLECTIONS.REVIEWS).doc(reviewId)
+
+    await adminDb.runTransaction(async (tx) => {
+      const reviewSnap = await tx.get(reviewRef)
+      if (!reviewSnap.exists) throw new Error('Review not found')
+
+      const review = reviewSnap.data()!
+      const authorId = review.userId as string
+      if (authorId === voterId) return
+
+      const votedBy = review.helpfulVotedBy as string[]
+      if (!votedBy.includes(voterId)) return
+
+      const userRef = adminDb.collection(COLLECTIONS.USERS).doc(authorId)
+      const userSnap = await tx.get(userRef)
+
+      tx.update(reviewRef, {
+        helpfulVotedBy: FieldValue.arrayRemove(voterId),
+        helpfulVotes: FieldValue.increment(-1),
+      })
+
+      if (!userSnap.exists) return
+
+      const userData = userSnap.data()!
+      const newHelpfulVotes = Math.max((userData.helpfulVotesReceived as number) - 1, 0)
+      const reviewCount = userData.reviewCount as number
+      const newBadges = computeEarnedBadges(reviewCount, newHelpfulVotes)
+      tx.update(userRef, { helpfulVotesReceived: newHelpfulVotes, badges: newBadges })
+    })
+
+    return true
+  } catch (e) {
+    logError('unvoteHelpful [admin]', e)
     return false
   }
 }

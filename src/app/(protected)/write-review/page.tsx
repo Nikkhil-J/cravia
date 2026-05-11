@@ -368,7 +368,7 @@ function WriteReviewContent() {
         <button
           type="button"
           onClick={handleCancel}
-          className="shrink-0 rounded-full border-[1.5px] border-border p-2 text-text-secondary transition-colors hover:border-primary hover:text-primary sm:rounded-pill sm:px-4 sm:py-2"
+          className="shrink-0 rounded-full border-[1.5px] border-primary p-2 text-primary transition-colors hover:bg-primary hover:text-white sm:rounded-pill sm:px-4 sm:py-2"
           aria-label="Cancel"
         >
           <svg className="h-4 w-4 sm:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>

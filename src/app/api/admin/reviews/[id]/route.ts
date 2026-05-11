@@ -48,8 +48,11 @@ export async function DELETE(req: Request, context: RouteContext) {
       if (!dishId || !authorId) throw new Error('INVALID_REVIEW')
 
       const dishRef = adminDb.collection(COLLECTIONS.DISHES).doc(dishId)
+      const userRef = adminDb.collection(COLLECTIONS.USERS).doc(authorId)
+
       const dishSnap = await tx.get(dishRef)
       if (!dishSnap.exists) throw new Error('DISH_NOT_FOUND')
+      const userSnap = await tx.get(userRef)
 
       const dish = dishSnap.data()
       const prevCount = Number(dish?.reviewCount ?? 0)
@@ -76,8 +79,6 @@ export async function DELETE(req: Request, context: RouteContext) {
         reviewCount: newCount,
       })
 
-      const userRef = adminDb.collection(COLLECTIONS.USERS).doc(authorId)
-      const userSnap = await tx.get(userRef)
       if (userSnap.exists) {
         const userData = userSnap.data()
         const newReviewCount = Math.max(Number(userData?.reviewCount ?? 0) - 1, 0)

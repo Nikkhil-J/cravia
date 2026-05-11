@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helpful Button — Creative Directions</title>
+<style>
+/* ── Design tokens (matching DishCheck dark theme) ── */
+:root {
+  --bg:        #121009;
+  --card:      #252018;
+  --s2:        #1e1a17;
+  --s3:        #302820;
+  --border:    #302820;
+  --tp:        #f5f0eb;
+  --ts:        #9a9080;
+  --tm:        #5a5248;
+  --primary:   #e8571a;
+  --primary2:  #c94e14;
+  --orange:    #FF6B35;
+  --gold:      #FFB800;
+  --success:   #4ADE80;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { background: var(--bg); color: var(--tp); padding: 28px 20px 64px; }
+
+/* ── Layout ── */
+.page-header { max-width: 900px; margin: 0 auto 32px; }
+.page-title  { font-size: 22px; font-weight: 800; color: var(--tp); line-height: 1.2; }
+.page-sub    { font-size: 12px; color: var(--tm); margin-top: 6px; line-height: 1.6; max-width: 560px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Option wrapper ── */
+.opt {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.opt-head {
+  padding: 12px 14px 10px;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+}
+.opt-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--tm);
+  margin-bottom: 6px;
+}
+.opt-tag .num {
+  width: 16px; height: 16px;
+  background: var(--s3);
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800; color: var(--ts);
+}
+.rec-tag {
+  font-size: 8px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--success);
+  background: rgba(74,222,128,.1); border: 1px solid rgba(74,222,128,.2);
+  border-radius: 4px; padding: 1px 5px;
+}
+.opt-name  { font-size: 13px; font-weight: 700; color: var(--tp); line-height: 1.2; margin-bottom: 4px; }
+.opt-desc  { font-size: 11px; color: var(--ts); line-height: 1.5; }
+
+/* ── Card shell ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  transition: border-color 150ms;
+}
+.card-body { padding: 14px; }
+
+/* Photo strip */
+.photo {
+  height: 110px;
+  background: linear-gradient(160deg, #2a1f14, #1a1209);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--s3);
+  position: relative; overflow: hidden;
+}
+.photo::after {
+  content: '↕ Expand';
+  position: absolute; bottom: 7px; right: 8px;
+  background: rgba(0,0,0,.55); backdrop-filter: blur(4px);
+  padding: 2px 7px; border-radius: 5px;
+  font-size: 9px; font-weight: 600; color: rgba(255,255,255,.7);
+}
+
+/* User row */
+.user-row {
+  display: flex; align-items: center; gap: 6px;
+  padding-bottom: 9px; border-bottom: 1px solid var(--border); margin-bottom: 9px;
+}
+.av {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg,#3d2010,#5a3a1a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800; color: var(--gold);
+}
+.uname { font-size: 12px; font-weight: 600; color: var(--tp); }
+.ulevel {
+  font-size: 8px; font-weight: 700;
+  padding: 1px 5px; border-radius: 999px;
+  background: linear-gradient(135deg,#3d2010,#5a3a1a); color: var(--gold);
+}
+.score {
+  margin-left: auto;
+  background: linear-gradient(135deg, var(--primary), var(--orange));
+  color: #fff; font-size: 12px; font-weight: 800;
+  padding: 3px 8px; border-radius: 7px; line-height: 1;
+  display: flex; align-items: baseline; gap: 2px;
+}
+.score small { font-size: 9px; font-weight: 500; opacity: .7; }
+
+/* Sub-rating pills */
+.pills { display: flex; gap: 4px; margin-bottom: 7px; }
+.spill {
+  display: inline-flex; align-items: baseline; gap: 3px;
+  padding: 2px 7px; border-radius: 5px;
+  border: 1px solid var(--border); background: var(--s2); font-size: 10px;
+}
+.sl { color: var(--tm); }
+.sv { font-weight: 700; color: var(--orange); }
+
+/* Review text */
+.rtext {
+  font-size: 11px; line-height: 1.55; color: var(--ts);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; margin-bottom: 3px;
+}
+.seemore { font-size: 10px; font-weight: 700; color: var(--orange); cursor: pointer; margin-bottom: 7px; display: block; }
+
+/* Tags */
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 9px; }
+.tag {
+  font-size: 9px; color: var(--tm);
+  border: 1px solid var(--border); border-radius: 999px; padding: 2px 7px;
+}
+
+/* Meta row */
+.meta { display: flex; align-items: center; gap: 8px; }
+.ts-  { font-size: 10px; color: var(--tm); flex-shrink: 0; }
+.rpt  { font-size: 10px; color: var(--tm); background: none; border: none; cursor: pointer; padding: 0; flex-shrink: 0; }
+.rpt:hover { color: #F87171; }
+
+
+/* ════════════════════════════════════════════
+   OPTION 1 — GitHub-style segmented pill
+   [👍 icon | thin divider | 3]
+   Two clickable zones: icon triggers vote,
+   count is just display. On vote: entire pill
+   fills with brand colour.
+════════════════════════════════════════════ */
+.gh-pill {
+  display: inline-flex; align-items: stretch; flex-shrink: 0;
+  border: 1px solid var(--border); border-radius: 999px;
+  overflow: hidden; cursor: pointer; transition: border-color 180ms;
+  font-size: 11px; font-weight: 600;
+}
+.gh-pill:hover { border-color: rgba(232,87,26,.45); }
+.gh-pill.voted { border-color: rgba(232,87,26,.5); }
+
+.gh-icon {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 9px;
+  color: var(--ts); background: transparent;
+  border: none; cursor: pointer;
+  transition: background 150ms, color 150ms;
+  border-radius: 999px 0 0 999px;
+}
+.gh-icon svg { width: 13px; height: 13px; flex-shrink: 0; transition: transform 200ms; }
+.gh-pill:not(.voted) .gh-icon:hover { background: rgba(232,87,26,.1); color: var(--orange); }
+.gh-pill:not(.voted) .gh-icon:hover svg { transform: translateY(-1px); }
+.gh-pill.voted .gh-icon { background: rgba(232,87,26,.15); color: var(--primary); }
+
+.gh-div { width: 1px; background: var(--border); }
+.gh-pill.voted .gh-div { background: rgba(232,87,26,.3); }
+
+.gh-count {
+  display: flex; align-items: center;
+  padding: 5px 10px; min-width: 28px; justify-content: center;
+  color: var(--ts); background: transparent;
+  font-size: 11px; font-weight: 700; tabular-nums: true;
+  transition: background 150ms, color 150ms;
+}
+.gh-pill.voted .gh-count { background: rgba(232,87,26,.1); color: var(--primary); }
+
+
+/* ════════════════════════════════════════════
+   OPTION 2 — Particle burst (Medium-clap style)
+   Thumb icon that explodes with dots on click.
+   Count badge floats beside it.
+════════════════════════════════════════════ */
+.burst-wrap {
+  position: relative; display: inline-flex;
+  align-items: center; gap: 6px; flex-shrink: 0;
+}
+.burst-btn {
+  position: relative; width: 34px; height: 34px;
+  border-radius: 50%; background: none; border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 150ms;
+  overflow: visible;
+}
+.burst-btn svg { width: 15px; height: 15px; color: var(--ts); transition: color 200ms, transform 200ms; z-index: 1; position: relative; }
+.burst-btn:not(.voted):hover { background: rgba(232,87,26,.1); }
+.burst-btn:not(.voted):hover svg { color: var(--orange); transform: scale(1.15); }
+.burst-btn.voted svg { color: var(--primary); transform: scale(1.1); }
+.burst-btn.voted { background: rgba(232,87,26,.12); }
+
+/* Particles */
+.particle {
+  position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--primary); pointer-events: none; opacity: 0; z-index: 0;
+  top: 50%; left: 50%; margin: -2.5px;
+}
+.burst-btn.pop .particle { animation: burst 500ms ease-out forwards; }
+.particle:nth-child(1) { --dx:22px;  --dy:-22px; animation-delay:0ms;   background: var(--orange); }
+.particle:nth-child(2) { --dx:28px;  --dy:0px;   animation-delay:30ms;  background: var(--gold); }
+.particle:nth-child(3) { --dx:22px;  --dy:22px;  animation-delay:15ms;  background: var(--primary); }
+.particle:nth-child(4) { --dx:0px;   --dy:28px;  animation-delay:45ms;  background: var(--orange); }
+.particle:nth-child(5) { --dx:-22px; --dy:22px;  animation-delay:10ms;  background: var(--gold); }
+.particle:nth-child(6) { --dx:-28px; --dy:0px;   animation-delay:35ms;  background: var(--primary); }
+.particle:nth-child(7) { --dx:-22px; --dy:-22px; animation-delay:20ms;  background: var(--orange); }
+.particle:nth-child(8) { --dx:0px;   --dy:-28px; animation-delay:25ms;  background: var(--gold); }
+@keyframes burst {
+  0%   { opacity: 1; transform: translate(0,0) scale(1); }
+  80%  { opacity: .6; transform: translate(var(--dx),var(--dy)) scale(.6); }
+  100% { opacity: 0; transform: translate(calc(var(--dx)*1.3),calc(var(--dy)*1.3)) scale(0); }
+}
+
+.burst-text {
+  font-size: 11px; font-weight: 600; color: var(--ts);
+  transition: color 150ms;
+}
+.burst-btn.voted ~ .burst-text { color: var(--primary); }
+
+
+/* ════════════════════════════════════════════
+   OPTION 3 — Warm sweep fill
+   A bordered pill whose background sweeps in
+   from the left like a progress bar on click.
+   Smooth, satisfying, very branded.
+════════════════════════════════════════════ */
+.sweep-btn {
+  position: relative; display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 8px;
+  border: 1px solid var(--border); background: transparent;
+  font-size: 11px; font-weight: 600; color: var(--ts);
+  cursor: pointer; overflow: hidden; transition: border-color 200ms, color 200ms;
+  flex-shrink: 0;
+}
+.sweep-btn svg { width: 13px; height: 13px; flex-shrink: 0; position: relative; z-index: 1; }
+.sweep-btn span { position: relative; z-index: 1; }
+.sweep-btn::before {
+  content: '';
+  position: absolute; inset: 0; left: -100%;
+  background: linear-gradient(90deg, rgba(232,87,26,.18), rgba(255,107,53,.1));
+  transition: left 350ms cubic-bezier(.16,1,.3,1);
+}
+.sweep-btn:hover { border-color: rgba(232,87,26,.35); color: var(--orange); }
+.sweep-btn.voted { border-color: rgba(232,87,26,.4); color: var(--primary); font-weight: 700; }
+.sweep-btn.voted::before { left: 0; }
+.sweep-btn:not(.voted):hover::before { left: -60%; }
+
+
+/* ════════════════════════════════════════════
+   OPTION 4 — Stacked vertical (Product Hunt ▲)
+   Icon stacked above count, tight and compact.
+   Fits perfectly when space is very limited.
+   On vote: fills with brand gradient.
+════════════════════════════════════════════ */
+.stack-btn {
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1px; padding: 5px 10px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: none; cursor: pointer;
+  transition: border-color 150ms, background 150ms;
+  min-width: 44px; flex-shrink: 0;
+}
+.stack-btn svg { width: 12px; height: 12px; color: var(--ts); transition: color 150ms, transform 200ms; }
+.stack-btn .scount { font-size: 10px; font-weight: 700; color: var(--ts); transition: color 150ms; line-height: 1; }
+.stack-btn:not(.voted):hover { border-color: rgba(232,87,26,.4); background: rgba(232,87,26,.06); }
+.stack-btn:not(.voted):hover svg { color: var(--orange); transform: translateY(-2px); }
+.stack-btn:not(.voted):hover .scount { color: var(--orange); }
+.stack-btn.voted { border-color: rgba(232,87,26,.4); background: rgba(232,87,26,.12); }
+.stack-btn.voted svg { color: var(--primary); transform: translateY(-1px); }
+.stack-btn.voted .scount { color: var(--primary); }
+
+
+/* ════════════════════════════════════════════
+   OPTION 5 — Floating +1 toast
+   Minimal ghost text. On click, a +1 floats up
+   and fades out above the button.
+   The label swaps to "Helpful · N" with a
+   count that "ticks" up.
+════════════════════════════════════════════ */
+.float-wrap {
+  position: relative; display: inline-flex; align-items: center; gap: 5px;
+  flex-shrink: 0;
+}
+.float-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 8px; border-radius: 6px;
+  border: 1px solid transparent; background: none;
+  font-size: 11px; font-weight: 600; color: var(--ts);
+  cursor: pointer; transition: color 150ms, background 150ms;
+}
+.float-btn svg { width: 13px; height: 13px; flex-shrink: 0; transition: color 150ms; }
+.float-btn:hover { background: rgba(232,87,26,.08); color: var(--orange); }
+.float-btn.voted { color: var(--primary); background: rgba(232,87,26,.1); }
+
+.plus-one {
+  position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; font-weight: 800; color: var(--primary);
+  pointer-events: none; opacity: 0; white-space: nowrap;
+}
+.plus-one.pop { animation: floatUp 700ms cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-22px); }
+}
+
+
+/* ════════════════════════════════════════════
+   OPTION 6 — Pill with count badge overlay
+   Compact rounded rectangle. Count is a
+   superscript badge clipped to the top-right
+   corner of the pill. Clean & informational.
+════════════════════════════════════════════ */
+.badge-wrap {
+  position: relative; display: inline-flex; flex-shrink: 0; align-self: center;
+}
+.badge-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px; border-radius: 8px;
+  border: 1px solid var(--border); background: none;
+  font-size: 11px; font-weight: 600; color: var(--ts);
+  cursor: pointer; transition: all 150ms;
+}
+.badge-btn svg { width: 13px; height: 13px; flex-shrink: 0; transition: color 150ms; }
+.badge-btn:not(.voted):hover { border-color: rgba(232,87,26,.4); color: var(--orange); background: rgba(232,87,26,.06); }
+.badge-btn.voted { border-color: rgba(232,87,26,.35); color: var(--primary); background: rgba(232,87,26,.1); }
+
+.badge-count {
+  position: absolute; top: -6px; right: -6px;
+  min-width: 16px; height: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--orange));
+  border-radius: 999px;
+  font-size: 9px; font-weight: 800; color: #fff;
+  display: none; align-items: center; justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 1px 4px rgba(232,87,26,.4);
+  animation: popBadge 300ms cubic-bezier(.34,1.56,.64,1) both;
+}
+.badge-count.show { display: flex; }
+@keyframes popBadge {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+
+/* ── State toggle buttons ── */
+.toggles { display: flex; gap: 5px; padding: 8px 14px 12px; background: var(--s2); border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; }
+.tbtn {
+  font-size: 9px; font-weight: 700; padding: 3px 8px;
+  border-radius: 4px; border: 1px solid var(--border);
+  background: none; color: var(--tm); cursor: pointer; transition: all 100ms;
+}
+.tbtn:hover { border-color: var(--ts); color: var(--ts); }
+.tbtn.on { background: var(--s3); color: var(--tp); border-color: var(--s3); }
+
+
+/* ── Tick number animation ── */
+.tick-num {
+  display: inline-block;
+  transition: opacity 150ms, transform 150ms;
+}
+.tick-num.ticking {
+  animation: tick 250ms cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes tick {
+  0%   { transform: translateY(4px); opacity: 0; }
+  100% { transform: translateY(0);   opacity: 1; }
+}
+
+
+/* ── Summary table ── */
+.summary {
+  max-width: 900px; margin: 28px auto 0;
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px 18px;
+}
+.sum-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--tm); margin-bottom: 12px; }
+.sum-grid  { display: grid; grid-template-columns: repeat(auto-fill,minmax(120px,1fr)); gap: 8px; }
+.sum-item  { padding: 9px 10px; background: var(--s2); border-radius: 8px; border: 1px solid var(--border); }
+.sum-item.pick { background: rgba(232,87,26,.07); border-color: rgba(232,87,26,.25); }
+.sum-name  { font-size: 10px; font-weight: 700; color: var(--ts); margin-bottom: 3px; }
+.sum-item.pick .sum-name { color: var(--primary); }
+.sum-body  { font-size: 10px; color: var(--tm); line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <p style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--tm);margin-bottom:8px">DishCheck · Prototype v2</p>
+  <h1 class="page-title">Helpful Button — 6 Creative Directions</h1>
+  <p class="page-sub">Each option is shown inside a full ReviewCardV2 shell. Use the state toggles to see default, voted, and count states. Interactions are live.</p>
+</div>
+
+<div class="grid">
+
+  <!-- ═══════════════════════════════════════
+       1  GitHub-style segmented pill
+  ═══════════════════════════════════════ -->
+  <div class="opt">
+    <div class="opt-head">
+      <div class="opt-tag"><span class="num">1</span> Segmented pill</div>
+      <div class="opt-name">GitHub-style split button</div>
+      <p class="opt-desc">Icon zone + divider + count. Clicking the icon votes; count zone is read-only. Entire pill tints on vote. Familiar, efficient, clear.</p>
+    </div>
+    <div class="card">
+      <div class="photo"></div>
+      <div class="card-body">
+        <div class="user-row">
+          <div class="av">RK</div>
+          <span class="uname">Ravi Kumar</span>
+          <span class="ulevel">Foodie</span>
+          <div class="score">4.3<small>/5</small></div>
+        </div>
+        <div class="pills">
+          <span class="spill"><span class="sl">Taste</span><span class="sv">4.5</span></span>
+          <span class="spill"><span class="sl">Portion</span><span class="sv">4.0</span></span>
+          <span class="spill"><span class="sl">Value</span><span class="sv">4.3</span></span>
+        </div>
+        <p class="rtext">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated.</p>
+        <span class="see-more">See more</span>
+        <div class="tags"><span class="tag">Savoury</span><span class="tag">Generous portion</span></div>
+        <div class="meta">
+          <span class="ts-">19 hours ago</span>
+          <div class="gh-pill" id="gh1" onclick="vote1()">
+            <button class="gh-icon" type="button" aria-label="Mark helpful">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+              </svg>
+              Helpful
+            </button>
+            <div class="gh-div"></div>
+            <div class="gh-count"><span class="tick-num" id="cnt1">0</span></div>
+          </div>
+          <button class="rpt">Report</button>
+        </div>
+      </div>
+    </div>
+    <div class="toggles">
+      <button class="tbtn on" id="t1-0" onclick="setState1(0)">Default</button>
+      <button class="tbtn"    id="t1-1" onclick="setState1(1)">Voted · 1</button>
+      <button class="tbtn"    id="t1-3" onclick="setState1(3)">3 votes</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       2  Particle burst
+  ═══════════════════════════════════════ -->
+  <div class="opt">
+    <div class="opt-head">
+      <div class="opt-tag"><span class="num">2</span> <span class="rec-tag">★ Recommended</span></div>
+      <div class="opt-name">Particle burst (Medium-clap)</div>
+      <p class="opt-desc">Clicking the thumb fires a burst of branded dots — orange, gold, red. Delightful micro-interaction. The count appears as plain text beside it.</p>
+    </div>
+    <div class="card">
+      <div class="photo"></div>
+      <div class="card-body">
+        <div class="user-row">
+          <div class="av">RK</div>
+          <span class="uname">Ravi Kumar</span>
+          <span class="ulevel">Foodie</span>
+          <div class="score">4.3<small>/5</small></div>
+        </div>
+        <div class="pills">
+          <span class="spill"><span class="sl">Taste</span><span class="sv">4.5</span></span>
+          <span class="spill"><span class="sl">Portion</span><span class="sv">4.0</span></span>
+          <span class="spill"><span class="sl">Value</span><span class="sv">4.3</span></span>
+        </div>
+        <p class="rtext">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated.</p>
+        <span class="see-more">See more</span>
+        <div class="tags"><span class="tag">Savoury</span><span class="tag">Generous portion</span></div>
+        <div class="meta">
+          <span class="ts-">19 hours ago</span>
+          <div class="burst-wrap">
+            <button class="burst-btn" id="burst2" type="button" onclick="vote2()" aria-label="Mark helpful">
+              <div class="particle"></div><div class="particle"></div>
+              <div class="particle"></div><div class="particle"></div>
+              <div class="particle"></div><div class="particle"></div>
+              <div class="particle"></div><div class="particle"></div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+              </svg>
+            </button>
+            <span class="burst-text" id="btxt2">Helpful</span>
+          </div>
+          <button class="rpt">Report</button>
+        </div>
+      </div>
+    </div>
+    <div class="toggles">
+      <button class="tbtn on" id="t2-0" onclick="setState2(0)">Default</button>
+      <button class="tbtn"    id="t2-1" onclick="setState2(1)">Voted · 1</button>
+      <button class="tbtn"    id="t2-3" onclick="setState2(3)">3 votes</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       3  Warm sweep fill
+  ═══════════════════════════════════════ -->
+  <div class="opt">
+    <div class="opt-head">
+      <div class="opt-tag"><span class="num">3</span> Sweep fill</div>
+      <div class="opt-name">Background sweep transition</div>
+      <p class="opt-desc">Clicking causes the warm brand gradient to sweep in from the left — like a progress bar filling. Satisfying, smooth, and uniquely branded to the DishCheck palette.</p>
+    </div>
+    <div class="card">
+      <div class="photo"></div>
+      <div class="card-body">
+        <div class="user-row">
+          <div class="av">RK</div>
+          <span class="uname">Ravi Kumar</span>
+          <span class="ulevel">Foodie</span>
+          <div class="score">4.3<small>/5</small></div>
+        </div>
+        <div class="pills">
+          <span class="spill"><span class="sl">Taste</span><span class="sv">4.5</span></span>
+          <span class="spill"><span class="sl">Portion</span><span class="sv">4.0</span></span>
+          <span class="spill"><span class="sl">Value</span><span class="sv">4.3</span></span>
+        </div>
+        <p class="rtext">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated.</p>
+        <span class="see-more">See more</span>
+        <div class="tags"><span class="tag">Savoury</span><span class="tag">Generous portion</span></div>
+        <div class="meta">
+          <span class="ts-">19 hours ago</span>
+          <button class="sweep-btn" id="swp3" onclick="vote3()" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+              <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+            </svg>
+            <span id="stxt3">Helpful</span>
+          </button>
+          <button class="rpt">Report</button>
+        </div>
+      </div>
+    </div>
+    <div class="toggles">
+      <button class="tbtn on" id="t3-0" onclick="setState3(0)">Default</button>
+      <button class="tbtn"    id="t3-1" onclick="setState3(1)">Voted · 1</button>
+      <button class="tbtn"    id="t3-3" onclick="setState3(3)">3 votes</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       4  Stacked vertical (Product Hunt ▲)
+  ═══════════════════════════════════════ -->
+  <div class="opt">
+    <div class="opt-head">
+      <div class="opt-tag"><span class="num">4</span> Stacked vertical</div>
+      <div class="opt-name">Product Hunt–style upvote</div>
+      <p class="opt-desc">Icon above count, stacked vertically in a tight rectangle. Extremely compact. The thumb lifts up on hover, giving a physical sense of "pushing up". Very recognisable pattern.</p>
+    </div>
+    <div class="card">
+      <div class="photo"></div>
+      <div class="card-body">
+        <div class="user-row">
+          <div class="av">RK</div>
+          <span class="uname">Ravi Kumar</span>
+          <span class="ulevel">Foodie</span>
+          <div class="score">4.3<small>/5</small></div>
+        </div>
+        <div class="pills">
+          <span class="spill"><span class="sl">Taste</span><span class="sv">4.5</span></span>
+          <span class="spill"><span class="sl">Portion</span><span class="sv">4.0</span></span>
+          <span class="spill"><span class="sl">Value</span><span class="sv">4.3</span></span>
+        </div>
+        <p class="rtext">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated.</p>
+        <span class="see-more">See more</span>
+        <div class="tags"><span class="tag">Savoury</span><span class="tag">Generous portion</span></div>
+        <div class="meta">
+          <span class="ts-">19 hours ago</span>
+          <button class="stack-btn" id="stk4" onclick="vote4()" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+              <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+            </svg>
+            <span class="scount tick-num" id="cnt4">0</span>
+          </button>
+          <button class="rpt">Report</button>
+        </div>
+      </div>
+    </div>
+    <div class="toggles">
+      <button class="tbtn on" id="t4-0" onclick="setState4(0)">Default</button>
+      <button class="tbtn"    id="t4-1" onclick="setState4(1)">Voted · 1</button>
+      <button class="tbtn"    id="t4-3" onclick="setState4(3)">3 votes</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       5  Floating +1 ghost
+  ═══════════════════════════════════════ -->
+  <div class="opt">
+    <div class="opt-head">
+      <div class="opt-tag"><span class="num">5</span> Float +1</div>
+      <div class="opt-name">Ghost button with floating toast</div>
+      <p class="opt-desc">No border at rest. On click a "+1" floats up and disappears above the button — a gentle, game-like reward. Then the text updates to show the count. Very understated.</p>
+    </div>
+    <div class="card">
+      <div class="photo"></div>
+      <div class="card-body">
+        <div class="user-row">
+          <div class="av">RK</div>
+          <span class="uname">Ravi Kumar</span>
+          <span class="ulevel">Foodie</span>
+          <div class="score">4.3<small>/5</small></div>
+        </div>
+        <div class="pills">
+          <span class="spill"><span class="sl">Taste</span><span class="sv">4.5</span></span>
+          <span class="spill"><span class="sl">Portion</span><span class="sv">4.0</span></span>
+          <span class="spill"><span class="sl">Value</span><span class="sv">4.3</span></span>
+        </div>
+        <p class="rtext">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated.</p>
+        <span class="see-more">See more</span>
+        <div class="tags"><span class="tag">Savoury</span><span class="tag">Generous portion</span></div>
+        <div class="meta">
+          <span class="ts-">19 hours ago</span>
+          <div class="float-wrap">
+            <button class="float-btn" id="flt5" onclick="vote5()" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+              </svg>
+              <span id="ftxt5">Helpful</span>
+            </button>
+            <div class="plus-one" id="plus5">+1</div>
+          </div>
+          <button class="rpt">Report</button>
+        </div>
+      </div>
+    </div>
+    <div class="toggles">
+      <button class="tbtn on" id="t5-0" onclick="setState5(0)">Default</button>
+      <button class="tbtn"    id="t5-1" onclick="setState5(1)">Voted · 1</button>
+      <button class="tbtn"    id="t5-3" onclick="setState5(3)">3 votes</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       6  Count badge overlay
+  ═══════════════════════════════════════ -->
+  <div class="opt">
+    <div class="opt-head">
+      <div class="opt-tag"><span class="num">6</span> Badge overlay</div>
+      <div class="opt-name">Pill + superscript count badge</div>
+      <p class="opt-desc">The "Helpful" pill sits clean at rest. Once there are votes, a small branded badge pops onto the top-right corner — like a notification dot. Count lives outside the button chrome.</p>
+    </div>
+    <div class="card">
+      <div class="photo"></div>
+      <div class="card-body">
+        <div class="user-row">
+          <div class="av">RK</div>
+          <span class="uname">Ravi Kumar</span>
+          <span class="ulevel">Foodie</span>
+          <div class="score">4.3<small>/5</small></div>
+        </div>
+        <div class="pills">
+          <span class="spill"><span class="sl">Taste</span><span class="sv">4.5</span></span>
+          <span class="spill"><span class="sl">Portion</span><span class="sv">4.0</span></span>
+          <span class="spill"><span class="sl">Value</span><span class="sv">4.3</span></span>
+        </div>
+        <p class="rtext">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated.</p>
+        <span class="see-more">See more</span>
+        <div class="tags"><span class="tag">Savoury</span><span class="tag">Generous portion</span></div>
+        <div class="meta">
+          <span class="ts-">19 hours ago</span>
+          <div class="badge-wrap">
+            <button class="badge-btn" id="bdg6" onclick="vote6()" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+              </svg>
+              <span id="btxt6">Helpful</span>
+            </button>
+            <div class="badge-count" id="bcnt6"></div>
+          </div>
+          <button class="rpt">Report</button>
+        </div>
+      </div>
+    </div>
+    <div class="toggles">
+      <button class="tbtn on" id="t6-0" onclick="setState6(0)">Default</button>
+      <button class="tbtn"    id="t6-1" onclick="setState6(1)">Voted · 1</button>
+      <button class="tbtn"    id="t6-3" onclick="setState6(3)">3 votes</button>
+    </div>
+  </div>
+
+</div><!-- /grid -->
+
+<!-- ── Summary ── -->
+<div class="summary">
+  <p class="sum-title">Design brief — which fits DishCheck best?</p>
+  <div class="sum-grid">
+    <div class="sum-item">
+      <div class="sum-name">1 · Segmented</div>
+      <div class="sum-body">Clear, professional. Familiar from GitHub. Two info zones in one widget.</div>
+    </div>
+    <div class="sum-item pick">
+      <div class="sum-name">2 · Burst ★</div>
+      <div class="sum-body">Most delightful. Brand colours in the burst. Memorable. Works great for a food app.</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-name">3 · Sweep</div>
+      <div class="sum-body">Warm, branded, smooth. Unique to DishCheck. Subtle and satisfying.</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-name">4 · Stacked</div>
+      <div class="sum-body">Minimal footprint. Good when space is tight. PH pattern is well-understood.</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-name">5 · Float +1</div>
+      <div class="sum-body">Playful reward feeling. Almost no chrome — disappears into the meta row.</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-name">6 · Badge</div>
+      <div class="sum-body">Clean at rest. Badge pop is a nice reveal. Count feels like social proof.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Tick helper ── */
+function tickNum(el, val) {
+  el.textContent = val;
+  el.classList.remove('ticking');
+  void el.offsetWidth;
+  el.classList.add('ticking');
+}
+
+/* ══════════ OPTION 1 ══════════ */
+let v1 = 0, voted1 = false;
+function vote1() {
+  if (voted1) return;
+  voted1 = true;
+  v1++;
+  document.getElementById('gh1').classList.add('voted');
+  tickNum(document.getElementById('cnt1'), v1);
+  setActive1(1);
+}
+function setState1(n) {
+  voted1 = n === 1;
+  v1 = n;
+  document.getElementById('gh1').classList.toggle('voted', n > 0);
+  tickNum(document.getElementById('cnt1'), n);
+  setActive1(n);
+}
+function setActive1(n) {
+  ['t1-0','t1-1','t1-3'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById(n === 0 ? 't1-0' : n === 1 ? 't1-1' : 't1-3').classList.add('on');
+}
+
+/* ══════════ OPTION 2 ══════════ */
+let v2 = 0, voted2 = false;
+function vote2() {
+  if (voted2) return;
+  voted2 = true; v2++;
+  const btn = document.getElementById('burst2');
+  btn.classList.add('voted');
+  btn.classList.remove('pop');
+  void btn.offsetWidth;
+  btn.classList.add('pop');
+  setTimeout(() => btn.classList.remove('pop'), 600);
+  document.getElementById('btxt2').textContent = `Helpful · ${v2}`;
+  setActive2(1);
+}
+function setState2(n) {
+  voted2 = n === 1;
+  v2 = n;
+  document.getElementById('burst2').classList.toggle('voted', n === 1);
+  document.getElementById('btxt2').textContent = n === 0 ? 'Helpful' : n === 1 ? 'Helpful · 1' : `Helpful · ${n}`;
+  setActive2(n);
+}
+function setActive2(n) {
+  ['t2-0','t2-1','t2-3'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById(n === 0 ? 't2-0' : n === 1 ? 't2-1' : 't2-3').classList.add('on');
+}
+
+/* ══════════ OPTION 3 ══════════ */
+let v3 = 0, voted3 = false;
+function vote3() {
+  if (voted3) return;
+  voted3 = true; v3++;
+  document.getElementById('swp3').classList.add('voted');
+  document.getElementById('stxt3').textContent = `Helpful · ${v3}`;
+  setActive3(1);
+}
+function setState3(n) {
+  voted3 = n === 1;
+  v3 = n;
+  document.getElementById('swp3').classList.toggle('voted', n === 1);
+  document.getElementById('stxt3').textContent = n === 0 ? 'Helpful' : n === 1 ? 'Helpful · 1' : `Helpful · ${n}`;
+  setActive3(n);
+}
+function setActive3(n) {
+  ['t3-0','t3-1','t3-3'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById(n === 0 ? 't3-0' : n === 1 ? 't3-1' : 't3-3').classList.add('on');
+}
+
+/* ══════════ OPTION 4 ══════════ */
+let v4 = 0, voted4 = false;
+function vote4() {
+  if (voted4) return;
+  voted4 = true; v4++;
+  document.getElementById('stk4').classList.add('voted');
+  tickNum(document.getElementById('cnt4'), v4);
+  setActive4(1);
+}
+function setState4(n) {
+  voted4 = n === 1;
+  v4 = n;
+  document.getElementById('stk4').classList.toggle('voted', n === 1);
+  tickNum(document.getElementById('cnt4'), n);
+  setActive4(n);
+}
+function setActive4(n) {
+  ['t4-0','t4-1','t4-3'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById(n === 0 ? 't4-0' : n === 1 ? 't4-1' : 't4-3').classList.add('on');
+}
+
+/* ══════════ OPTION 5 ══════════ */
+let v5 = 0, voted5 = false;
+function vote5() {
+  if (voted5) return;
+  voted5 = true; v5++;
+  document.getElementById('flt5').classList.add('voted');
+  document.getElementById('ftxt5').textContent = `Helpful · ${v5}`;
+  // Float +1
+  const plus = document.getElementById('plus5');
+  plus.classList.remove('pop');
+  void plus.offsetWidth;
+  plus.classList.add('pop');
+  setActive5(1);
+}
+function setState5(n) {
+  voted5 = n === 1;
+  v5 = n;
+  document.getElementById('flt5').classList.toggle('voted', n === 1);
+  document.getElementById('ftxt5').textContent = n === 0 ? 'Helpful' : n === 1 ? 'Helpful · 1' : `Helpful · ${n}`;
+  setActive5(n);
+}
+function setActive5(n) {
+  ['t5-0','t5-1','t5-3'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById(n === 0 ? 't5-0' : n === 1 ? 't5-1' : 't5-3').classList.add('on');
+}
+
+/* ══════════ OPTION 6 ══════════ */
+let v6 = 0, voted6 = false;
+function vote6() {
+  if (voted6) return;
+  voted6 = true; v6++;
+  document.getElementById('bdg6').classList.add('voted');
+  document.getElementById('btxt6').textContent = 'Helpful';
+  const bc = document.getElementById('bcnt6');
+  bc.textContent = v6;
+  bc.classList.remove('show');
+  void bc.offsetWidth;
+  bc.classList.add('show');
+  setActive6(1);
+}
+function setState6(n) {
+  voted6 = n === 1;
+  v6 = n;
+  document.getElementById('bdg6').classList.toggle('voted', n === 1);
+  document.getElementById('btxt6').textContent = 'Helpful';
+  const bc = document.getElementById('bcnt6');
+  if (n > 0) {
+    bc.textContent = n;
+    bc.classList.add('show');
+  } else {
+    bc.classList.remove('show');
+  }
+  setActive6(n);
+}
+function setActive6(n) {
+  ['t6-0','t6-1','t6-3'].forEach(id => document.getElementById(id).classList.remove('on'));
+  document.getElementById(n === 0 ? 't6-0' : n === 1 ? 't6-1' : 't6-3').classList.add('on');
+}
+</script>
+</body>
+</html>

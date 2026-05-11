@@ -1,0 +1,276 @@
+{
+  "_instructions": [
+    "Thalairaj Biryani — Sector 52, Gurugram. Menu extracted from in-store menu photo.",
+    "Run: npx tsx scripts/seed-from-json.ts --file=scripts/data/thalairaj-biryani.json --dry-run",
+    "Then run: npx tsx scripts/seed-from-json.ts --file=scripts/data/thalairaj-biryani.json"
+  ],
+  "_stats": {
+    "totalRestaurants": 1,
+    "gurugram": 1,
+    "fetchedAt": "2026-05-11T00:00:00.000Z"
+  },
+  "restaurants": [
+    {
+      "googlePlaceId": "gurugram-thalairaj-sector52",
+      "name": "Thalairaj Biryani",
+      "city": "Gurugram",
+      "area": "Sector 52",
+      "address": "Unit 9, Third Floor, Ardee Mall, Sector 52, Ardee City, Gurugram",
+      "coordinates": { "lat": 28.4486, "lng": 77.0734 },
+      "googleRating": 4.4,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+918047192229",
+      "cuisines": ["Andhra", "Biryani", "Hyderabadi", "South Indian"],
+      "priceLevel": "100-400",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Dum Chicken Biryani",
+          "description": "Slow-cooked dum style chicken biryani with 21 spices.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Boneless Chicken Biryani",
+          "description": "Biryani made with tender boneless chicken and aromatic 21 spices.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Pepper Chicken Biryani",
+          "description": "Spicy pepper-marinated chicken biryani cooked with 21 spices.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Kebab Biryani",
+          "description": "Biryani layered with juicy minced kebabs and fragrant spices.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Egg Biryani",
+          "description": "Biryani served with 4 whole eggs cooked in spiced rice.",
+          "category": "Biryani",
+          "dietary": "egg",
+          "priceRange": "279-279"
+        },
+        {
+          "name": "Exotic Paneer Biryani",
+          "description": "Fragrant biryani with exotic spiced paneer cooked in 21-spice blend.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Pepper Paneer Biryani",
+          "description": "Biryani featuring pepper-marinated paneer in aromatic basmati rice.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Pepper Mushroom Biryani",
+          "description": "Spiced pepper mushroom biryani with fragrant basmati rice.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "339-339"
+        },
+        {
+          "name": "Potato Biryani",
+          "description": "Hearty biryani with spiced potatoes and aromatic rice.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "269-269"
+        },
+        {
+          "name": "Biryani Rice",
+          "description": "Plain biryani rice cooked with whole spices, served plain.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "209-209"
+        },
+        {
+          "name": "Pepper Paneer Fry",
+          "description": "Crispy paneer tossed in bold pepper and spice seasoning.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Neruppu Paneer 21",
+          "description": "Paneer cooked in fiery Neruppu-style spices with 21-spice blend.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Mushroom Pepper Fry",
+          "description": "Stir-fried mushrooms with cracked pepper and South Indian spices.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "259-259"
+        },
+        {
+          "name": "Chicken Pepper Fry Boneless",
+          "description": "Crispy boneless chicken tossed in pepper and spice coating.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "269-269"
+        },
+        {
+          "name": "Neruppu Chicken 21 Boneless",
+          "description": "Boneless chicken in fiery Neruppu sauce with signature 21-spice mix.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "269-269"
+        },
+        {
+          "name": "Chicken Kebab Boneless",
+          "description": "Tender boneless chicken kebab — available in half or full portion.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "169-319"
+        },
+        {
+          "name": "Chicken Curry with Parota",
+          "description": "2 parotas served with chicken curry and salad.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "219-219"
+        },
+        {
+          "name": "Paneer Curry with Parota",
+          "description": "2 parotas served with paneer curry and salad.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "209-209"
+        },
+        {
+          "name": "Egg Curry with Parota",
+          "description": "2 parotas served with egg curry and salad.",
+          "category": "Main Course",
+          "dietary": "egg",
+          "priceRange": "209-209"
+        },
+        {
+          "name": "Andhra Chicken Kebab Roll",
+          "description": "Andhra-style roll filled with spiced chicken kebab.",
+          "category": "Snack",
+          "dietary": "non-veg",
+          "priceRange": "179-179"
+        },
+        {
+          "name": "Andhra Crispy Chicken Roll",
+          "description": "Andhra-style roll with crispy fried chicken and spicy chutney.",
+          "category": "Snack",
+          "dietary": "non-veg",
+          "priceRange": "179-179"
+        },
+        {
+          "name": "Andhra Double Egg Roll",
+          "description": "Andhra-style roll with double egg filling.",
+          "category": "Snack",
+          "dietary": "egg",
+          "priceRange": "139-139"
+        },
+        {
+          "name": "Andhra Pepper Paneer Roll",
+          "description": "Andhra-style roll stuffed with pepper-spiced paneer.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "179-179"
+        },
+        {
+          "name": "Andhra Mushroom Roll",
+          "description": "Andhra-style roll filled with spiced mushrooms.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "175-175"
+        },
+        {
+          "name": "Andhra Potato Roll",
+          "description": "Andhra-style roll with spiced potato filling.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "129-129"
+        },
+        {
+          "name": "Pepper Chicken Biryani Bowl",
+          "description": "Biryani bowl with pepper chicken, served at ₹249.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Boneless Chicken Biryani Bowl",
+          "description": "Biryani bowl with boneless chicken, served at ₹249.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Kebab Chicken Biryani Bowl",
+          "description": "Biryani bowl with kebab chicken, served at ₹249.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Exotic Paneer Biryani Bowl",
+          "description": "Biryani bowl with exotic paneer, served at ₹249.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Pepper Mushroom Biryani Bowl",
+          "description": "Biryani bowl with pepper mushroom, served at ₹249.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Triple Egg Biryani Bowl",
+          "description": "Biryani bowl with triple egg, served at ₹249.",
+          "category": "Biryani",
+          "dietary": "egg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Egg",
+          "description": "Add-on boiled or fried egg.",
+          "category": "Side Dish",
+          "dietary": "egg",
+          "priceRange": "25-25"
+        },
+        {
+          "name": "Gulab Jamun",
+          "description": "Classic Indian dessert — soft milk-solid dumplings in sugar syrup.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "59-59"
+        },
+        {
+          "name": "Parota",
+          "description": "Flaky layered South Indian parota.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "30-30"
+        },
+        {
+          "name": "Butter Milk",
+          "description": "Chilled spiced buttermilk.",
+          "category": "Beverage",
+          "dietary": "veg",
+          "priceRange": "49-49"
+        }
+      ]
+    }
+  ]
+}

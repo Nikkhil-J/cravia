@@ -23,6 +23,7 @@ export interface ReviewRepository {
   ): Promise<Review | null>
   delete(reviewId: string, dishId: string, callerId: string, isAdmin?: boolean): Promise<boolean>
   voteHelpful(reviewId: string, voterId: string): Promise<boolean>
+  unvoteHelpful(reviewId: string, voterId: string): Promise<boolean>
   flag(reviewId: string, userId: string): Promise<'ok' | 'already_flagged' | null>
   getFlagged(limit?: number): Promise<Review[]>
 }

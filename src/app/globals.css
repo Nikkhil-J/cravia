@@ -375,6 +375,29 @@ html.theme-transitioning *::after {
   animation-delay: calc(var(--stagger-index, 0) * 60ms);
 }
 
+/* ── Helpful vote burst particles ──────────────────────── */
+/*
+ * 8 directional keyframes for the particle burst on the helpful button.
+ * Each bakes in translate(-50%,-50%) so the element only needs left-1/2 top-1/2.
+ */
+@keyframes burst-ne { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.2); } 100% { opacity:0; transform:translate(calc(-50% + 18px),calc(-50% - 18px)) scale(0); } }
+@keyframes burst-e  { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.2); } 100% { opacity:0; transform:translate(calc(-50% + 24px),calc(-50%)) scale(0); } }
+@keyframes burst-se { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.2); } 100% { opacity:0; transform:translate(calc(-50% + 18px),calc(-50% + 18px)) scale(0); } }
+@keyframes burst-s  { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.2); } 100% { opacity:0; transform:translate(calc(-50%),calc(-50% + 24px)) scale(0); } }
+@keyframes burst-sw { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.2); } 100% { opacity:0; transform:translate(calc(-50% - 18px),calc(-50% + 18px)) scale(0); } }
+@keyframes burst-w  { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.2); } 100% { opacity:0; transform:translate(calc(-50% - 24px),calc(-50%)) scale(0); } }
+@keyframes burst-nw { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.2); } 100% { opacity:0; transform:translate(calc(-50% - 18px),calc(-50% - 18px)) scale(0); } }
+@keyframes burst-n  { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.2); } 100% { opacity:0; transform:translate(calc(-50%),calc(-50% - 24px)) scale(0); } }
+
+.animate-burst-ne { animation: burst-ne 520ms ease-out forwards; }
+.animate-burst-e  { animation: burst-e  520ms ease-out forwards; animation-delay: 30ms; }
+.animate-burst-se { animation: burst-se 520ms ease-out forwards; animation-delay: 15ms; }
+.animate-burst-s  { animation: burst-s  520ms ease-out forwards; animation-delay: 45ms; }
+.animate-burst-sw { animation: burst-sw 520ms ease-out forwards; animation-delay: 10ms; }
+.animate-burst-w  { animation: burst-w  520ms ease-out forwards; animation-delay: 35ms; }
+.animate-burst-nw { animation: burst-nw 520ms ease-out forwards; animation-delay: 20ms; }
+.animate-burst-n  { animation: burst-n  520ms ease-out forwards; animation-delay: 25ms; }
+
 /* ── Scrollbar ──────────────────────────────────────────── */
 .scrollbar-hide {
   scrollbar-width: none;

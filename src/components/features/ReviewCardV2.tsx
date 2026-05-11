@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import type { Review } from '@/lib/types'
@@ -67,6 +67,7 @@ export function ReviewCardV2({
     currentUserId ? review.helpfulVotedBy.includes(currentUserId) : false,
   )
   const [helpfulCount, setHelpfulCount] = useState(review.helpfulVotes)
+  const [isBursting, setIsBursting] = useState(false)
   const [flagged, setFlagged] = useState(review.isFlagged)
 
   const isOwn = currentUserId === review.userId
@@ -94,27 +95,46 @@ export function ReviewCardV2({
       : 0
   )
 
-  async function handleVote() {
-    if (!currentUserId || isOwn || hasVoted) return
+  const handleVote = useCallback(async () => {
+    if (!currentUserId || isOwn) return
     const token = authUser ? await authUser.getIdToken() : null
     if (!token) return
-    setHasVoted(true)
-    setHelpfulCount((n) => n + 1)
-    helpfulVoteSessionCount.current += 1
-    sessionStorage.setItem('helpfulVoteCount', String(helpfulVoteSessionCount.current))
-    if (helpfulVoteSessionCount.current <= 3) {
-      toast.success('You helped highlight a great review', { duration: 2000 })
-    }
-    const res = await fetch(API_ENDPOINTS.reviewHelpful(encodeURIComponent(review.id)), {
-      method: 'POST',
-      headers: { authorization: `Bearer ${token}` },
-    })
-    if (!res.ok) {
+
+    if (hasVoted) {
+      // Un-vote: optimistic update, no animation
       setHasVoted(false)
       setHelpfulCount((n) => Math.max(n - 1, 0))
-      toast.error(CLIENT_ERRORS.COULD_NOT_MARK_HELPFUL)
+      const res = await fetch(API_ENDPOINTS.reviewHelpful(encodeURIComponent(review.id)), {
+        method: 'DELETE',
+        headers: { authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) {
+        setHasVoted(true)
+        setHelpfulCount((n) => n + 1)
+        toast.error(CLIENT_ERRORS.COULD_NOT_UNMARK_HELPFUL)
+      }
+    } else {
+      // Vote: optimistic update + burst animation
+      setHasVoted(true)
+      setHelpfulCount((n) => n + 1)
+      setIsBursting(true)
+      setTimeout(() => setIsBursting(false), 600)
+      helpfulVoteSessionCount.current += 1
+      sessionStorage.setItem('helpfulVoteCount', String(helpfulVoteSessionCount.current))
+      if (helpfulVoteSessionCount.current <= 3) {
+        toast.success('You helped highlight a great review', { duration: 2000 })
+      }
+      const res = await fetch(API_ENDPOINTS.reviewHelpful(encodeURIComponent(review.id)), {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) {
+        setHasVoted(false)
+        setHelpfulCount((n) => Math.max(n - 1, 0))
+        toast.error(CLIENT_ERRORS.COULD_NOT_MARK_HELPFUL)
+      }
     }
-  }
+  }, [authUser, currentUserId, hasVoted, isOwn, review.id])
 
   async function handleFlag() {
     if (!currentUserId || isOwn) return
@@ -276,26 +296,51 @@ export function ReviewCardV2({
             {formatRelativeTime(review.createdAt)}
           </span>
 
-          <button
-            type="button"
-            onClick={handleVote}
-            disabled={!currentUserId || isOwn}
-            className={cn(
-              'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-colors',
-              hasVoted
-                ? 'border-primary/30 bg-primary/10 font-bold text-primary'
-                : 'border-border text-text-muted hover:border-primary/40 hover:bg-primary/5',
-              'disabled:cursor-default disabled:opacity-100',
+          {/* Helpful button — burst variant */}
+          <div className="relative inline-flex shrink-0">
+            {/* Burst particles — only mounted while animating */}
+            {isBursting && (
+              <>
+                <span className="pointer-events-none absolute left-1/2 top-1/2 size-1.5 rounded-full bg-primary animate-burst-ne" />
+                <span className="pointer-events-none absolute left-1/2 top-1/2 size-1.5 rounded-full bg-brand-orange animate-burst-e" />
+                <span className="pointer-events-none absolute left-1/2 top-1/2 size-1.5 rounded-full bg-brand-gold animate-burst-se" />
+                <span className="pointer-events-none absolute left-1/2 top-1/2 size-1 rounded-full bg-primary animate-burst-s" />
+                <span className="pointer-events-none absolute left-1/2 top-1/2 size-1.5 rounded-full bg-brand-orange animate-burst-sw" />
+                <span className="pointer-events-none absolute left-1/2 top-1/2 size-1.5 rounded-full bg-brand-gold animate-burst-w" />
+                <span className="pointer-events-none absolute left-1/2 top-1/2 size-1 rounded-full bg-primary animate-burst-nw" />
+                <span className="pointer-events-none absolute left-1/2 top-1/2 size-1.5 rounded-full bg-brand-orange animate-burst-n" />
+              </>
             )}
-          >
-            {hasVoted
-              ? helpfulCount === 1
-                ? '👍 You found this helpful'
-                : `👍 You and ${helpfulCount - 1} other${helpfulCount - 1 !== 1 ? 's' : ''}`
-              : helpfulCount === 0
-                ? '👍 Helpful?'
-                : `👍 ${helpfulCount} found this helpful`}
-          </button>
+            <button
+              type="button"
+              onClick={handleVote}
+              disabled={!currentUserId || isOwn}
+              title={hasVoted ? 'Remove helpful vote' : 'Mark as helpful'}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-all duration-150',
+                hasVoted
+                  ? 'border-primary/30 bg-primary/10 text-primary'
+                  : 'border-border text-text-muted hover:border-primary/30 hover:bg-primary/5 hover:text-brand-orange',
+                'disabled:cursor-default disabled:opacity-100',
+              )}
+            >
+              <svg
+                className={cn('size-3.5 shrink-0 transition-all duration-150', hasVoted && 'scale-110')}
+                viewBox="0 0 24 24"
+                fill={hasVoted ? 'currentColor' : 'none'}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
+                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+              </svg>
+              <span>
+                {helpfulCount > 0 ? `Helpful · ${helpfulCount}` : 'Helpful'}
+              </span>
+            </button>
+          </div>
 
           {currentUserId && !isOwn && !flagged && (
             <button

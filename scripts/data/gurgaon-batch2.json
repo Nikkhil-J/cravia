@@ -1,0 +1,667 @@
+{
+  "_instructions": [
+    "Gurugram batch 2 — 2 restaurants extracted from menu photos + Zomato pages.",
+    "Restaurant 1: Kebabs And Curries By Art Of Spices (menu image + Zomato page — exact address match).",
+    "Restaurant 2: Alkauser (Zomato page: DLF Phase 4) — dishes sourced from Kakori Kabab® branded menu card",
+    "  provided alongside, cuisines match Alkauser's Zomato listing exactly.",
+    "Run: npx tsx scripts/seed-from-json.ts --file=scripts/data/gurgaon-batch2.json --dry-run",
+    "Then: npx tsx scripts/seed-from-json.ts --file=scripts/data/gurgaon-batch2.json"
+  ],
+  "_stats": {
+    "totalRestaurants": 2,
+    "gurugram": 2,
+    "fetchedAt": "2026-05-11T00:00:00.000Z"
+  },
+  "restaurants": [
+    {
+      "googlePlaceId": "gurugram-art-of-spices-sushant-lok",
+      "name": "Kebabs And Curries By Art Of Spices",
+      "city": "Gurugram",
+      "area": "Sushant Lok",
+      "address": "House 9, Palri 12, Lower Ground Floor, Shopping Arcade, Sushant Lok, Gurugram",
+      "coordinates": { "lat": 28.4638, "lng": 77.0765 },
+      "googleRating": 3.7,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+919873000616",
+      "cuisines": ["North Indian", "Biryani", "Mughlai"],
+      "priceLevel": "200-800",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Butter Chicken",
+          "description": "Classic North Indian butter chicken in rich tomato and cream gravy. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "300-790"
+        },
+        {
+          "name": "Kadai Chicken",
+          "description": "Chicken cooked in a kadai with onions, capsicum, and bold spices. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "300-790"
+        },
+        {
+          "name": "Patiala Chicken",
+          "description": "Rich and flavourful Patiala-style chicken curry. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "270-750"
+        },
+        {
+          "name": "Tawa Chicken",
+          "description": "Spiced chicken cooked on a flat iron tawa with peppers and onions. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "270-750"
+        },
+        {
+          "name": "Rara Chicken",
+          "description": "Mughlai-style chicken curry with minced meat base for extra depth. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "300-790"
+        },
+        {
+          "name": "Chicken Korma",
+          "description": "Mildly spiced chicken in a cashew and cream-based Mughlai korma. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "270-750"
+        },
+        {
+          "name": "Handi Chicken",
+          "description": "Slow-cooked chicken in a sealed handi pot for smoky, deep flavour. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "300-790"
+        },
+        {
+          "name": "Chicken Lababdar",
+          "description": "Tangy and aromatic chicken curry with a tomato-onion masala base. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "300-790"
+        },
+        {
+          "name": "Chicken Beli Ram",
+          "description": "Old-Delhi style chicken curry with whole spices and bold flavours. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "300-790"
+        },
+        {
+          "name": "Kali Mirch Chicken",
+          "description": "Black pepper-forward chicken curry with a smoky and aromatic finish. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "300-790"
+        },
+        {
+          "name": "Cream Chicken",
+          "description": "Mildly spiced chicken in a velvety cream sauce. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "270-750"
+        },
+        {
+          "name": "Chicken Curry",
+          "description": "Classic home-style chicken curry with everyday spices. Available in full, half, and quarter portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "270-750"
+        },
+        {
+          "name": "Chicken Seekh Masala",
+          "description": "Seekh kebab pieces simmered in a rich masala gravy.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "390-390"
+        },
+        {
+          "name": "Chicken Tikka Masala",
+          "description": "Tandoor-grilled chicken tikka folded into a creamy, spiced masala sauce.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "450-450"
+        },
+        {
+          "name": "Egg Curry",
+          "description": "Boiled eggs in a spiced onion-tomato masala gravy.",
+          "category": "Main Course",
+          "dietary": "egg",
+          "priceRange": "350-350"
+        },
+        {
+          "name": "Mutton Rogan Josh",
+          "description": "Kashmiri-style mutton curry with whole spices and deep red gravy. Available in full and half portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "340-510"
+        },
+        {
+          "name": "Rara Meat",
+          "description": "Mutton pieces cooked with minced meat in a rich, layered curry. Available in full and half portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "340-510"
+        },
+        {
+          "name": "Mutton Korma",
+          "description": "Slow-cooked mutton in a fragrant Mughlai korma with cream and cashews. Available in full and half portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "340-510"
+        },
+        {
+          "name": "Mutton Beli Ram",
+          "description": "Old-Delhi style mutton curry with robust whole spices. Available in full and half portions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "340-510"
+        },
+        {
+          "name": "Mutton Seekh Masala",
+          "description": "Seekh kebab pieces cooked in a rich mutton masala gravy.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "450-450"
+        },
+        {
+          "name": "Dal Makhani",
+          "description": "Overnight slow-cooked black lentils in a buttery tomato cream sauce. Available in full and half portions.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "260-410"
+        },
+        {
+          "name": "Shahi Paneer",
+          "description": "Paneer in a rich and creamy Mughlai royal gravy. Available in full and half portions.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "250-390"
+        },
+        {
+          "name": "Kadai Paneer",
+          "description": "Paneer cooked in a wok with onion, capsicum, and chunky tomato spice. Available in full and half portions.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "250-390"
+        },
+        {
+          "name": "Paneer Butter Masala",
+          "description": "Soft paneer cubes in a velvety butter and tomato masala. Available in full and half portions.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "250-390"
+        },
+        {
+          "name": "Paneer Lababdar",
+          "description": "Paneer in a tangy, aromatic tomato and onion-based gravy. Available in full and half portions.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "260-410"
+        },
+        {
+          "name": "Malai Kofta",
+          "description": "Soft paneer and potato dumplings in a creamy, mildly spiced gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "310-310"
+        },
+        {
+          "name": "Soya Tikka Masala",
+          "description": "Tandoor-grilled soya chunks simmered in a spiced tikka masala sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "290-290"
+        },
+        {
+          "name": "Paneer Tikka Masala",
+          "description": "Grilled paneer tikka in a bold, smoky masala gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "310-310"
+        },
+        {
+          "name": "Paneer Methi Malai",
+          "description": "Paneer in a fragrant fenugreek and cream sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "260-260"
+        },
+        {
+          "name": "Paneer Bhurji",
+          "description": "Crumbled paneer scrambled with onions, tomatoes, and spices.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "230-230"
+        },
+        {
+          "name": "Tandoori Roti",
+          "description": "Whole wheat flatbread baked fresh in a tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "25-25"
+        },
+        {
+          "name": "Butter Roti",
+          "description": "Soft tandoori roti finished with a generous slathering of butter.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "30-30"
+        },
+        {
+          "name": "Naan",
+          "description": "Classic leavened white flour bread baked in a tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "40-40"
+        },
+        {
+          "name": "Butter Naan",
+          "description": "Soft naan finished with butter and a hint of coriander.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "50-50"
+        },
+        {
+          "name": "Garlic Naan",
+          "description": "Naan topped with minced garlic and butter, baked in a tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "60-60"
+        },
+        {
+          "name": "Stuffed Naan",
+          "description": "Naan stuffed with spiced filling, baked to golden perfection.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "80-80"
+        },
+        {
+          "name": "Keema Naan with Gravy",
+          "description": "Naan stuffed with spiced minced meat, served with gravy.",
+          "category": "Bread",
+          "dietary": "non-veg",
+          "priceRange": "150-150"
+        },
+        {
+          "name": "Laccha Parantha",
+          "description": "Multi-layered flaky whole wheat parantha cooked on a tawa.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "40-40"
+        },
+        {
+          "name": "Chilli Parantha",
+          "description": "Parantha flavoured with pudina, red chilli, or green chilli — choose your heat.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "50-50"
+        },
+        {
+          "name": "Malabari Parantha",
+          "description": "Soft, layered tawa parantha in the Malabari style.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "40-40"
+        },
+        {
+          "name": "Rumali Roti",
+          "description": "Paper-thin handkerchief bread, light and soft.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "20-20"
+        },
+        {
+          "name": "Jeera Rice",
+          "description": "Basmati rice tempered with whole cumin seeds and ghee.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "190-190"
+        },
+        {
+          "name": "Veg Biryani",
+          "description": "Fragrant basmati rice cooked with seasonal vegetables and whole spices.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "310-310"
+        },
+        {
+          "name": "Chicken Biryani",
+          "description": "Aromatic dum biryani with chicken — available in regular or boneless.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "390-410"
+        },
+        {
+          "name": "Mutton Biryani",
+          "description": "Slow-cooked dum biryani with tender mutton and fragrant basmati.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "450-450"
+        },
+        {
+          "name": "Paneer Tikka",
+          "description": "Marinated paneer cubes grilled in a tandoor, served with mint chutney.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "260-260"
+        },
+        {
+          "name": "Malai Paneer Tikka",
+          "description": "Paneer marinated in malai and mild spices, grilled in a tandoor.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "280-280"
+        },
+        {
+          "name": "Achari Paneer Tikka",
+          "description": "Paneer tikka with a tangy pickle-spiced marinade.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "270-270"
+        },
+        {
+          "name": "Kali Mirch Paneer Tikka",
+          "description": "Paneer tikka with a bold black pepper and cream marinade.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "280-280"
+        },
+        {
+          "name": "Soya Chaap",
+          "description": "Soya chunks on a skewer, marinated and grilled in a tandoor.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "230-230"
+        },
+        {
+          "name": "Malai Soya Chaap",
+          "description": "Soya chaap with a creamy malai marinade, grilled till golden.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "250-250"
+        },
+        {
+          "name": "Achari Soya Chaap",
+          "description": "Soya chaap with a tangy pickle-spiced marinade, tandoor grilled.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "240-240"
+        },
+        {
+          "name": "Kali Mirch Soya Chaap",
+          "description": "Soya chaap with a spicy black pepper coating, grilled in a tandoor.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "260-260"
+        },
+        {
+          "name": "Chicken Malai Tikka",
+          "description": "Boneless chicken marinated in cream and mild spices, grilled in a tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "360-360"
+        },
+        {
+          "name": "Chicken Tikka",
+          "description": "Classic boneless tandoori chicken tikka with smoky char and spice.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "370-370"
+        },
+        {
+          "name": "Achari Chicken Tikka",
+          "description": "Chicken tikka marinated in a tangy pickle spice blend.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "370-370"
+        },
+        {
+          "name": "Tandoori Chicken",
+          "description": "Whole chicken marinated in yoghurt and spices, roasted in a tandoor. Available full or half.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "270-490"
+        },
+        {
+          "name": "Afghani Chicken",
+          "description": "Chicken marinated in cream cheese and aromatic Afghan spices, grilled in a tandoor. Available full or half.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "290-520"
+        },
+        {
+          "name": "Kali Mirch Tikka",
+          "description": "Chicken tikka with a punchy black pepper and herb marinade.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "380-380"
+        },
+        {
+          "name": "Garlic Chicken Tikka",
+          "description": "Chicken tikka with a bold garlic and spice marinade.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "370-370"
+        },
+        {
+          "name": "Chicken Seekh",
+          "description": "Minced chicken mixed with herbs and spices, skewered and grilled in a tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "250-250"
+        },
+        {
+          "name": "Mutton Seekh",
+          "description": "Minced mutton with fresh herbs and bold spices, grilled on a skewer.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "290-290"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "gurugram-alkauser-dlf-phase4",
+      "name": "Alkauser",
+      "city": "Gurugram",
+      "area": "DLF Phase 4",
+      "address": "A-131, Supermart 1, DLF Phase 4, Gurugram",
+      "coordinates": { "lat": 28.4699, "lng": 77.0724 },
+      "googleRating": 3.9,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+919911085550",
+      "cuisines": ["North Indian", "Mughlai", "Kebab", "Biryani"],
+      "priceLevel": "200-700",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Mutton Kakori Kabab",
+          "description": "Melt-in-the-mouth minced mutton kabab with saffron and aromatic spices, cooked on skewers over charcoal. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "249-479"
+        },
+        {
+          "name": "Mutton Kakori Wrap",
+          "description": "Mutton kakori kabab wrapped in a soft roti with mint chutney and onion. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "269-529"
+        },
+        {
+          "name": "Mutton Galauti Kabab",
+          "description": "Soft, melt-on-the-tongue minced mutton kabab with over 100 spices. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "259-509"
+        },
+        {
+          "name": "Mutton Shahi Tikka",
+          "description": "Royal mutton tikka in a rich, fragrant Mughlai marinade, grilled on skewers (10 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "629-629"
+        },
+        {
+          "name": "Mutton Barra",
+          "description": "Large mutton chops marinated in robust spices and slow-grilled. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "339-649"
+        },
+        {
+          "name": "Mutton Masala Raan",
+          "description": "Whole leg of mutton slow-cooked with bold Mughlai spices — a feast for the table (1 pc).",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "2259-2259"
+        },
+        {
+          "name": "Chicken Kakori Kabab",
+          "description": "Delicate minced chicken kabab with aromatic spices on skewers. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "219-419"
+        },
+        {
+          "name": "Chicken Kakori Wrap",
+          "description": "Chicken kakori kabab wrapped in soft roti with mint chutney and fresh onion. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "249-479"
+        },
+        {
+          "name": "Chicken Galauti Kabab",
+          "description": "Silky-smooth minced chicken kabab with a rich, spiced coating. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "239-459"
+        },
+        {
+          "name": "Chicken Seekh Kabab",
+          "description": "Classic minced chicken seekh kabab with herbs and spices, grilled on skewers. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "189-369"
+        },
+        {
+          "name": "Chicken Seekh Wrap",
+          "description": "Chicken seekh kabab rolled in a soft roti with chutneys and onion rings. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "209-419"
+        },
+        {
+          "name": "Chicken Gilafi Kabab",
+          "description": "Minced chicken kabab coated with chopped onion, capsicum, and coriander for a textured crust. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "229-439"
+        },
+        {
+          "name": "Chicken Tangri Kabab",
+          "description": "Chicken drumsticks marinated and grilled in a tandoor until smoky and charred. Available in half (2 pcs) or full (4 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "219-439"
+        },
+        {
+          "name": "Chicken Malai Tikka",
+          "description": "Boneless chicken marinated in cream and mild spices, grilled in a tandoor (8 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "499-499"
+        },
+        {
+          "name": "Chicken Barra Tikka",
+          "description": "Chicken pieces on the bone, marinated in bold spices and grilled to perfection (8 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "529-529"
+        },
+        {
+          "name": "Chicken Tandoori Tikka",
+          "description": "Classic tandoori chicken tikka with a smoky, spiced char (8 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "469-469"
+        },
+        {
+          "name": "Tandoori Chicken",
+          "description": "Whole chicken marinated in yoghurt and spices, roasted in a tandoor. Available in half (4 pcs) or full (8 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "279-529"
+        },
+        {
+          "name": "Afghani Chicken",
+          "description": "Chicken marinated in cream cheese and Afghan spices, grilled in a tandoor. Available in half (4 pcs) or full (8 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "289-559"
+        },
+        {
+          "name": "Chicken Barra",
+          "description": "Chicken chops marinated in robust spices, slow-grilled for deep smoky flavour. Available in half (4 pcs) or full (8 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "319-589"
+        },
+        {
+          "name": "Makhmali Tandoori Chicken",
+          "description": "Velvety-smooth tandoori chicken in a silky, aromatic marinade. Available in half (4 pcs) or full (8 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "359-679"
+        },
+        {
+          "name": "Fish Tikka",
+          "description": "Fish fillets marinated in spiced yoghurt and grilled in a tandoor. Available in half (3 pcs) or full (6 pcs).",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "459-909"
+        },
+        {
+          "name": "Paneer Tikka",
+          "description": "Marinated paneer cubes grilled in a tandoor, served with mint chutney (6 pcs).",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        },
+        {
+          "name": "Tandoori Veg Platter",
+          "description": "Assorted tandoori veg items — paneer, mushroom, and seasonal vegetables on a platter (6 pcs).",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "389-389"
+        },
+        {
+          "name": "Afgani Malai Chaap",
+          "description": "Soya chaap marinated in a creamy Afghani-style malai mixture, grilled in a tandoor (4 pcs).",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Soya Chaap Stuffed",
+          "description": "Soya chaap stuffed with spiced filling and grilled in a tandoor (4 pcs).",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "289-289"
+        },
+        {
+          "name": "Tandoori Stuffed Aloo",
+          "description": "Potatoes stuffed with a spiced filling and grilled in a tandoor (4 pcs).",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "299-299"
+        }
+      ]
+    }
+  ]
+}

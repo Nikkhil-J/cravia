@@ -6,6 +6,7 @@ import {
   updateReview as updateReviewAdmin,
   deleteReview as deleteReviewAdmin,
   voteHelpful as voteHelpfulAdmin,
+  unvoteHelpful as unvoteHelpfulAdmin,
   flagReview as flagReviewAdmin,
 } from '@/lib/firebase/reviews-admin'
 import { mapReview } from './mappers'
@@ -38,6 +39,10 @@ export class FirebaseReviewAdminRepository extends FirebaseReviewRepository {
 
   override voteHelpful(reviewId: string, voterId: string): Promise<boolean> {
     return voteHelpfulAdmin(reviewId, voterId)
+  }
+
+  override unvoteHelpful(reviewId: string, voterId: string): Promise<boolean> {
+    return unvoteHelpfulAdmin(reviewId, voterId)
   }
 
   override flag(reviewId: string, userId: string): Promise<'ok' | 'already_flagged' | null> {

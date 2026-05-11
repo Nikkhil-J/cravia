@@ -1,0 +1,669 @@
+{
+  "_instructions": [
+    "Dhaba - Estd 1986 Delhi — R-303A, 3rd Floor, Ambience Mall, Near Ambience Island, DLF Phase 3, Gurugram.",
+    "Menu extracted from 13 menu page photos: Shorba, Starters (veg+non-veg), Platters, Mains, Rice/Pulao, Sides, Breads.",
+    "Run: npx tsx scripts/seed-from-json.ts --file=scripts/data/dhaba-1986.json --dry-run",
+    "Then: npx tsx scripts/seed-from-json.ts --file=scripts/data/dhaba-1986.json"
+  ],
+  "_stats": {
+    "totalRestaurants": 1,
+    "gurugram": 1,
+    "fetchedAt": "2026-05-11T00:00:00.000Z"
+  },
+  "restaurants": [
+    {
+      "googlePlaceId": "gurugram-dhaba-1986-ambience-mall",
+      "name": "Dhaba - Estd 1986 Delhi",
+      "city": "Gurugram",
+      "area": "DLF Phase 3",
+      "address": "R-303A, 3rd Floor, Ambience Mall, Near Ambience Island, DLF Phase 3, Gurugram",
+      "coordinates": { "lat": 28.5032, "lng": 77.0933 },
+      "googleRating": 4.5,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+911244665761",
+      "cuisines": ["North Indian", "Mughlai", "Kebab"],
+      "priceLevel": "100-1000",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Bhune Tamatar Aur Dhaniya Shorba",
+          "description": "Roasted tomato soup flavored with fresh coriander.",
+          "category": "Soup",
+          "dietary": "veg",
+          "priceRange": "179-179"
+        },
+        {
+          "name": "Murgh Badami Shorba",
+          "description": "Saffron and almond flavored soup with chicken chunks.",
+          "category": "Soup",
+          "dietary": "non-veg",
+          "priceRange": "229-229"
+        },
+        {
+          "name": "Palak Patta Ki Chaat",
+          "description": "Deep fried spinach leaves coated with spiced gram flour drizzled with sweetened curd and mint sauce.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "469-469"
+        },
+        {
+          "name": "Karare Aloo",
+          "description": "Tandoor roasted baby potatoes, shallow fried and tossed with spices, onions and Saunth chutney.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "529-529"
+        },
+        {
+          "name": "Veg Galouti",
+          "description": "Slow cooked vegetarian version of the famous galouti kebab flavoured with cinnamon and black cardamom.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "529-529"
+        },
+        {
+          "name": "Dahi Ke Kebab",
+          "description": "Crumb fried hung curd cheese patties, served with green chili relish.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "529-529"
+        },
+        {
+          "name": "Mushroom Galouti",
+          "description": "Traditional smoked mushroom galouti kebab.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "549-549"
+        },
+        {
+          "name": "Malai Soya Chaap",
+          "description": "Soft chunks of soya chaap, marinated with cream, cheese and spices, finished in tandoor.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "619-619"
+        },
+        {
+          "name": "Tandoori Malai Broccoli",
+          "description": "Tender broccoli, marinated with cream, cheese and home ground spices, finished in tandoor & topped with almond slivers.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "619-619"
+        },
+        {
+          "name": "Palak Paneer Ki Seekh",
+          "description": "Minced cottage cheese and spinach blended with homemade spices and cashew nut, skewered and cooked in tandoor.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "639-639"
+        },
+        {
+          "name": "Dhaba Paneer Tikka",
+          "description": "Mildly spiced chunks of cottage cheese flavoured with premium saffron.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "639-639"
+        },
+        {
+          "name": "Lal Mirch Ka Paneer Tikka Shaslik",
+          "description": "Red chilli and yogurt marinated cottage cheese morsels cooked in tandoor with onion, tomato and capsicum cubes.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "639-639"
+        },
+        {
+          "name": "Fried Chicken Wings",
+          "description": "Masala coated deep fried chicken wings served with spicy tomato chutney.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "619-619"
+        },
+        {
+          "name": "Tawa Kukkad Masala",
+          "description": "Spicy chicken joints in thick tomato-onion gravy cooked on cast iron tawa.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "679-679"
+        },
+        {
+          "name": "Tawa Chicken",
+          "description": "Succulent boneless cubes of marinated chicken cooked with onions, tomatoes and home-blended spices.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "679-679"
+        },
+        {
+          "name": "Murgh Seekh Kebab",
+          "description": "Mildly spiced chicken seekh kebab, finished in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "699-699"
+        },
+        {
+          "name": "Murgh Malai Tikka",
+          "description": "Boneless chicken marinated with ginger, garlic, cream and cheese, finished in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "739-739"
+        },
+        {
+          "name": "Highway Chicken Tikka",
+          "description": "Boneless morsels of chicken with red chili flakes and pounded coriander seeds, finished in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "739-739"
+        },
+        {
+          "name": "Tandoori Chicken",
+          "description": "Roasted chicken, marinated in onion paste, hung curd and homemade spices.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "739-739"
+        },
+        {
+          "name": "Patiyala Murgh Ki Tangdi",
+          "description": "Chicken legs marinated in hung curd and spices, finished in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "739-739"
+        },
+        {
+          "name": "Kala Sha Kala Kukkad",
+          "description": "Boneless soft morsels of chicken marinated with blackened spices, finished in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "739-739"
+        },
+        {
+          "name": "Mutton Seekh Kebab",
+          "description": "Succulent and juicy minced mutton seekh skewered in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "819-819"
+        },
+        {
+          "name": "Galouti Kebab",
+          "description": "Slow-cooked, melt-in-your-mouth minced mutton kebabs infused with the chef's special blend of spices.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "819-819"
+        },
+        {
+          "name": "Mutton Barra Kebab",
+          "description": "Select cuts of mutton marinated in specially curated spice blend, finished in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "999-999"
+        },
+        {
+          "name": "Amritsari Machhi",
+          "description": "Gram flour coated fillet of fish with prominent flavour of ajwain seeds.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "949-949"
+        },
+        {
+          "name": "Sole Machhi Tikka",
+          "description": "Boneless chunks of sole fish, marinated with yogurt, ginger-garlic paste and a blend of spices.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1049-1049"
+        },
+        {
+          "name": "Tawa Prawn",
+          "description": "Shrimps tossed with onions, tomatoes and spices, finished on griddle.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "999-999"
+        },
+        {
+          "name": "Tandoori Prawn",
+          "description": "Succulent and juicy prawns with yellow chili and hung curd.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1749-1749"
+        },
+        {
+          "name": "Veg Kebab Platter",
+          "description": "12-piece platter: Achaari soya chaap, veg galouti, lal mirch ka paneer tikka, Dhaba da paneer tikka, palak paneer ki seekh.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "1269-1269"
+        },
+        {
+          "name": "Chicken Kebab Platter",
+          "description": "14-piece platter: Murgh Malai Tikka, Highway Chicken Tikka, Murgh Seekh, Fried Chicken Wings, Murgh Tangdi, Kala Sha Kala Kukkad.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1499-1499"
+        },
+        {
+          "name": "Non Veg Kebab Platter",
+          "description": "12-piece platter: Galouti kebab, mutton seekh, murgh malai tikka, highway chicken tikka, Amritsari machi.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1639-1639"
+        },
+        {
+          "name": "Peshawari Raan",
+          "description": "Slow triple cooked whole mutton leg served with gravy, sauteed potatoes and Dhabe di roti.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "2999-2999"
+        },
+        {
+          "name": "Aloo Gobhi Tamatar Masala",
+          "description": "Cauliflower florets and potato wedges tossed with onion, tomato and home blended spices.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "469-469"
+        },
+        {
+          "name": "Dadi Da Dhania Aloo",
+          "description": "Grandma's traditional recipe of potatoes tossed with cumin, turmeric, green chili and fresh coriander.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "469-469"
+        },
+        {
+          "name": "Bhindi Masala",
+          "description": "Lady fingers tossed with tomato, onion and spices.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "469-469"
+        },
+        {
+          "name": "Chitti Aloo Gobhi",
+          "description": "Cauliflower florets and potatoes simmered in light yogurt flavoured curry.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "499-499"
+        },
+        {
+          "name": "Subz Patiyala",
+          "description": "Spicy melange of assorted vegetables Patiala Style.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "499-499"
+        },
+        {
+          "name": "Pind Wali Dal Tadka",
+          "description": "Cumin and fresh chili tempered yellow lentils with fresh coriander.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "529-529"
+        },
+        {
+          "name": "Dal Dhaba",
+          "description": "Overnight soaked, slow-cooked black lentils with homemade spices finished with butter and cream.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "589-589"
+        },
+        {
+          "name": "Amritsari Chole",
+          "description": "Chickpeas cooked to perfection Amritsari style.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "589-589"
+        },
+        {
+          "name": "Kanastari Baigan Bharta",
+          "description": "Signature preparation of eggplants cooked in tandoor, mashed and finished with royal cumin, tomato, ginger and green chilies, served in a canister.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "589-589"
+        },
+        {
+          "name": "Lahsooni Palak",
+          "description": "Fresh spinach puree sauteed with garlic, finished with ghee and whole red chilies. Choice of corn, paneer or aloo.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "639-639"
+        },
+        {
+          "name": "Mushroom Matar Masala",
+          "description": "Fresh button mushrooms and green peas cooked with spices in onion tomato gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "639-639"
+        },
+        {
+          "name": "Kadhai Mushroom",
+          "description": "Sautéed button mushrooms cooked in a spicy, tangy kadhai gravy with capsicum.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "639-639"
+        },
+        {
+          "name": "Malai Kofta",
+          "description": "Cottage cheese dumplings filled with dry fruits, simmered in creamy cashewnut gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "639-639"
+        },
+        {
+          "name": "Hariyali Subz Kofta",
+          "description": "Fried mix vegetable dumplings in a light spinach gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "639-639"
+        },
+        {
+          "name": "Matar Paneer",
+          "description": "Soft paneer cubes simmered with sweet green peas steeped in a rich, flavorful curry.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "649-649"
+        },
+        {
+          "name": "Patiyala Da Kadhai Paneer",
+          "description": "Paneer cooked in a robust, spicy kadhai gravy and whole coriander seeds.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "649-649"
+        },
+        {
+          "name": "Dhabe Da Chilli Paneer",
+          "description": "Dhaba style spiced cottage cheese chunks with capsicum.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "649-649"
+        },
+        {
+          "name": "Tiffin Paneer",
+          "description": "Cottage cheese tossed with onion and capsicum in a light tomato gravy, served in a two-tiered tiffin with ajwaini parantha.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "649-649"
+        },
+        {
+          "name": "Dhabe Da Khaas Paneer",
+          "description": "Sauteed spinach filled cottage cheese rolls simmered in tomato and cashewnut curry.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "679-679"
+        },
+        {
+          "name": "Paneer Makhan Maar ke",
+          "description": "Cottage cheese simmered and finished in creamy tomato curry.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "679-679"
+        },
+        {
+          "name": "Paneer Tikka Lababdar",
+          "description": "Chunks of cottage cheese steeped in sweet and spicy chunky tomato curry.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "679-679"
+        },
+        {
+          "name": "Egg Curry",
+          "description": "Boiled eggs, simmered in an onion and tomato based gravy, flavoured with homemade special masala.",
+          "category": "Main Course",
+          "dietary": "egg",
+          "priceRange": "599-599"
+        },
+        {
+          "name": "Dhaba Da Chilli Chicken",
+          "description": "Dhaba style mildly spiced boneless chicken with capsicum.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "739-739"
+        },
+        {
+          "name": "Chitta Butter Chicken",
+          "description": "Tandoor roasted chicken joints simmered in rich white gravy — our version of white butter chicken.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "759-759"
+        },
+        {
+          "name": "Butter Chicken 1986",
+          "description": "Boneless morsels of chicken tikka simmered and finished in creamy tomato gravy.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "759-759"
+        },
+        {
+          "name": "Handi Murgh",
+          "description": "Joints of chicken cooked in aromatic mildly spiced gravy, served in an earthenware pot.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "759-759"
+        },
+        {
+          "name": "Bhatinda Chicken Curry",
+          "description": "The original chicken curry from the by-lanes of Punjab.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "759-759"
+        },
+        {
+          "name": "Tiffin Chicken",
+          "description": "Strips of chicken tikka, tossed with onion and capsicum in a light tomato gravy, served in a two-tiered tiffin with ajwaini paratha.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "759-759"
+        },
+        {
+          "name": "Balti Meat",
+          "description": "Quintessential famous mutton curry of Dhaba.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "1099-1099"
+        },
+        {
+          "name": "Rarha Gosht",
+          "description": "Joints of mutton and minced mutton cooked with onion, tomato and home ground spices.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "999-999"
+        },
+        {
+          "name": "Dhaba Mutton Curry",
+          "description": "Selective cuts of baby mutton, cooked in spiced gravy of brown onion & fresh tomato puree with ground spices.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "999-999"
+        },
+        {
+          "name": "Keema Matar",
+          "description": "A delicious blend of minced mutton and peas sauteed in a thick mixture of stimulating flavors.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "999-999"
+        },
+        {
+          "name": "Dilli Ki Nihari",
+          "description": "Age old mutton curry from the streets of Purani Delhi.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "999-999"
+        },
+        {
+          "name": "Punjabi Kadhai Jheenga",
+          "description": "Prawns tossed in onion-tomato masala with capsicum and coriander.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "999-999"
+        },
+        {
+          "name": "Steamed Rice",
+          "description": "Aromatic steamed basmati rice.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "319-319"
+        },
+        {
+          "name": "Jeera Dhania Pulao",
+          "description": "Aromatic basmati rice tossed with cumin seeds and fresh coriander.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Vegetable Pulao",
+          "description": "Diced melange of vegetables tossed with basmati rice.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "579-579"
+        },
+        {
+          "name": "Chicken Pulao",
+          "description": "Tawa chicken tossed with basmati rice and fresh mint, finished on griddle.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "789-789"
+        },
+        {
+          "name": "Mutton Pulao",
+          "description": "Tawa mutton tossed with basmati rice and fresh mint, finished on griddle.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "939-939"
+        },
+        {
+          "name": "Papad",
+          "description": "Plain papad.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "109-109"
+        },
+        {
+          "name": "Dahi",
+          "description": "Fresh yoghurt.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "109-109"
+        },
+        {
+          "name": "Masala Papad",
+          "description": "Papad topped with spiced onion and tomato mixture.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "169-169"
+        },
+        {
+          "name": "Green Salad",
+          "description": "Fresh garden salad.",
+          "category": "Salad",
+          "dietary": "veg",
+          "priceRange": "169-169"
+        },
+        {
+          "name": "Raita",
+          "description": "Choose from Boondi, Mix Veg, or Pineapple raita.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "169-169"
+        },
+        {
+          "name": "Tandoori Roti",
+          "description": "Whole wheat bread baked in a tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "109-109"
+        },
+        {
+          "name": "Roomali Roti",
+          "description": "Paper-thin handkerchief bread.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "109-109"
+        },
+        {
+          "name": "Butter Roti",
+          "description": "Whole wheat tandoori roti finished with butter.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "119-119"
+        },
+        {
+          "name": "Plain Naan",
+          "description": "Classic leavened white flour bread baked in a tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "119-119"
+        },
+        {
+          "name": "Butter Naan",
+          "description": "Soft naan finished with butter.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "139-139"
+        },
+        {
+          "name": "Garlic Naan",
+          "description": "Naan topped with minced garlic and butter.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "149-149"
+        },
+        {
+          "name": "Chilli Garlic Naan",
+          "description": "Naan with a spicy chilli garlic topping.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "149-149"
+        },
+        {
+          "name": "Garlic Tomato Cheese Naan",
+          "description": "Naan topped with garlic, tomato and cheese.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "159-159"
+        },
+        {
+          "name": "Laccha Paratha",
+          "description": "Multi-layered flaky whole wheat paratha.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "149-149"
+        },
+        {
+          "name": "Pudina Paratha",
+          "description": "Flaky paratha flavoured with fresh mint.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "149-149"
+        },
+        {
+          "name": "Laal HariMirchi Paratha",
+          "description": "Paratha with red chilli or green chilli flavouring.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "149-149"
+        },
+        {
+          "name": "Masala Laccha Paratha",
+          "description": "Multi-layered paratha spiced with masala seasoning.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "149-149"
+        },
+        {
+          "name": "Missi Tandoori Paratha",
+          "description": "Gram flour and whole wheat paratha baked in tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "149-149"
+        },
+        {
+          "name": "Dhabe Di Roti",
+          "description": "Signature rustic whole wheat roti from the Dhaba.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "159-159"
+        },
+        {
+          "name": "Tandoori Kulcha",
+          "description": "Stuffed kulcha baked in tandoor — choice of Aloo, Pyaaz, Paneer or Gobhi.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "159-159"
+        }
+      ]
+    }
+  ]
+}

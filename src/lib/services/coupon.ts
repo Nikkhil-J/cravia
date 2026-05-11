@@ -35,12 +35,6 @@ const ERROR_MAP: Record<string, { status: number; message: string }> = {
 export async function claimCoupon(userId: string, couponId: string): Promise<CouponClaim> {
   try {
     const claim = await adminDb.runTransaction(async (tx) => {
-      const { claim: couponClaim, pointsCost } = await couponRepository.claimCouponInTx(
-        tx,
-        userId,
-        couponId,
-      )
-
       const userRef = adminDb.collection(COLLECTIONS.USERS).doc(userId)
       const userSnap = await tx.get(userRef)
       if (!userSnap.exists) {
@@ -48,6 +42,13 @@ export async function claimCoupon(userId: string, couponId: string): Promise<Cou
       }
 
       const currentBalance = (userSnap.data()?.dishPointsBalance as number | undefined) ?? 0
+
+      const { claim: couponClaim, pointsCost } = await couponRepository.claimCouponInTx(
+        tx,
+        userId,
+        couponId,
+      )
+
       if (currentBalance < pointsCost) {
         throw new Error('INSUFFICIENT_BALANCE')
       }

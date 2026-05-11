@@ -11,6 +11,7 @@ import {
   startAfter,
   runTransaction,
   arrayUnion,
+  arrayRemove,
   increment,
   Timestamp,
   type DocumentSnapshot,
@@ -326,6 +327,10 @@ export async function deleteReview(reviewId: string, dishId: string, callerId: s
       const review = reviewSnap.data()
       if (!isAdmin && (review.userId as string) !== callerId) throw new Error('Not authorized')
 
+      const authorId = review.userId as string
+      const userRef  = doc(db, COLLECTIONS.USERS, authorId)
+      const userSnap = await tx.get(userRef)
+
       const dish   = dishSnap.data()
       const prevCount = dish.reviewCount as number
       const newCount  = Math.max(prevCount - 1, 0)
@@ -350,9 +355,6 @@ export async function deleteReview(reviewId: string, dishId: string, callerId: s
       tx.delete(reviewRef)
       tx.update(dishRef, { avgTaste, avgPortion, avgValue, avgOverall, reviewCount: newCount, tagCounts: newTagCounts, topTags })
 
-      const authorId = review.userId as string
-      const userRef  = doc(db, COLLECTIONS.USERS, authorId)
-      const userSnap = await tx.get(userRef)
       if (userSnap.exists()) {
         const userData       = userSnap.data()
         const newReviewCount = Math.max((userData.reviewCount as number) - 1, 0)
@@ -390,13 +392,14 @@ export async function voteHelpful(reviewId: string, voterId: string): Promise<bo
       const votedBy = review.helpfulVotedBy as string[]
       if (votedBy.includes(voterId)) return
 
+      const userRef  = doc(db, COLLECTIONS.USERS, authorId)
+      const userSnap = await tx.get(userRef)
+
       tx.update(reviewRef, {
         helpfulVotedBy: arrayUnion(voterId),
         helpfulVotes:   increment(1),
       })
 
-      const userRef  = doc(db, COLLECTIONS.USERS, authorId)
-      const userSnap = await tx.get(userRef)
       if (!userSnap.exists()) return
 
       const userData           = userSnap.data()
@@ -409,6 +412,50 @@ export async function voteHelpful(reviewId: string, voterId: string): Promise<bo
     return true
   } catch (e) {
     logError('voteHelpful', e)
+    return false
+  }
+}
+
+/**
+ * Removes userId from helpfulVotedBy, decrements helpfulVotes on the review,
+ * and decrements the author's helpfulVotesReceived + recomputes badges.
+ * Idempotent — returns true if the vote was already absent.
+ */
+export async function unvoteHelpful(reviewId: string, voterId: string): Promise<boolean> {
+  try {
+    const reviewRef = doc(db, COLLECTIONS.REVIEWS, reviewId)
+
+    await runTransaction(db, async (tx) => {
+      const reviewSnap = await tx.get(reviewRef)
+      if (!reviewSnap.exists()) throw new Error('Review not found')
+
+      const review = reviewSnap.data()
+      const authorId = review.userId as string
+      if (authorId === voterId) return
+
+      const votedBy = review.helpfulVotedBy as string[]
+      if (!votedBy.includes(voterId)) return
+
+      const userRef  = doc(db, COLLECTIONS.USERS, authorId)
+      const userSnap = await tx.get(userRef)
+
+      tx.update(reviewRef, {
+        helpfulVotedBy: arrayRemove(voterId),
+        helpfulVotes:   increment(-1),
+      })
+
+      if (!userSnap.exists()) return
+
+      const userData        = userSnap.data()
+      const newHelpfulVotes = Math.max((userData.helpfulVotesReceived as number) - 1, 0)
+      const reviewCount     = userData.reviewCount as number
+      const newBadges       = computeEarnedBadges(reviewCount, newHelpfulVotes)
+      tx.update(userRef, { helpfulVotesReceived: newHelpfulVotes, badges: newBadges })
+    })
+
+    return true
+  } catch (e) {
+    logError('unvoteHelpful', e)
     return false
   }
 }

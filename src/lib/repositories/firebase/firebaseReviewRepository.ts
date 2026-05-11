@@ -17,6 +17,7 @@ import {
   getReviewsByUser,
   updateReview,
   voteHelpful,
+  unvoteHelpful,
 } from '@/lib/firebase/reviews'
 import { getFlaggedReviews } from '@/lib/firebase/admin'
 import { db, COLLECTIONS } from '@/lib/firebase/config'
@@ -141,6 +142,10 @@ export class FirebaseReviewRepository implements ReviewRepository {
 
   voteHelpful(reviewId: string, voterId: string): Promise<boolean> {
     return voteHelpful(reviewId, voterId)
+  }
+
+  unvoteHelpful(reviewId: string, voterId: string): Promise<boolean> {
+    return unvoteHelpful(reviewId, voterId)
   }
 
   flag(reviewId: string, userId: string): Promise<'ok' | 'already_flagged' | null> {

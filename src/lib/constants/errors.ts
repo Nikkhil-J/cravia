@@ -58,6 +58,7 @@ export const CLIENT_ERRORS = {
   SOMETHING_WENT_WRONG_RETRY: 'Something went wrong. Please try again.',
   COULD_NOT_UPDATE_WISHLIST: 'Could not update wishlist',
   COULD_NOT_MARK_HELPFUL: 'Could not mark as helpful',
+  COULD_NOT_UNMARK_HELPFUL: 'Could not remove helpful vote',
   COULD_NOT_REPORT_REVIEW: 'Could not report review',
   FAILED_TO_LOAD_ANALYTICS: 'Failed to load analytics',
   DELETE_FAILED: 'Delete failed',

@@ -64,11 +64,11 @@ export function Logo({
         <span
           className={cn(
             // APPROVED HARDCODED COLOR — brand wordmark requires specific palette
-            'text-[#993C1D] dark:text-[#FAC775]',
+            'text-[#993C1D] dark:text-white uppercase tracking-wide',
             s.text,
             wordmarkClassName,
           )}
-          style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 700 }}
+          style={{ fontFamily: 'var(--font-headline)', fontWeight: 800 }}
         >
           Cravia
         </span>

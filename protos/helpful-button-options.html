@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helpful Button — Design Options</title>
+<style>
+  :root {
+    --background: #121009;
+    --card: #252018;
+    --surface-2: #1e1a17;
+    --surface-3: #302820;
+    --border: #302820;
+    --text-primary: #f5f0eb;
+    --text-secondary: #9a9080;
+    --text-muted: #5a5248;
+    --primary: #e8571a;
+    --primary-light: #2d1a10;
+    --brand-orange: #FF6B35;
+    --success: #4ADE80;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--background);
+    color: var(--text-primary);
+    padding: 24px 16px 48px;
+  }
+
+  h1 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .page-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+
+  /* ── Grid layout ──────────────────────────── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .option-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+  .option-label .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-secondary);
+  }
+
+  .option-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+
+  /* ── Review card shell ───────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 150ms;
+  }
+  .card:hover {
+    border-color: #5a5248;
+  }
+  .card-body {
+    padding: 14px;
+  }
+
+  /* Photo strip */
+  .photo-strip {
+    width: 100%;
+    height: 120px;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    position: relative;
+    overflow: hidden;
+  }
+  .photo-strip::after {
+    content: '↕ Expand';
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.55);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    backdrop-filter: blur(4px);
+  }
+
+  /* User row */
+  .user-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+  }
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3d2010, #5a3a1a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: #FFB800;
+    flex-shrink: 0;
+  }
+  .username {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .level-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #3d2010, #5a3a1a);
+    color: #FFB800;
+  }
+  .score-badge {
+    margin-left: auto;
+    background: linear-gradient(135deg, #e8571a, #FF6B35);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 8px;
+    line-height: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+  .score-badge small { font-size: 10px; font-weight: 500; opacity: 0.7; }
+
+  /* Sub-rating pills */
+  .sub-ratings {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .sub-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    font-size: 11px;
+  }
+  .sub-pill .sub-label { color: var(--text-muted); }
+  .sub-pill .sub-val { font-weight: 700; color: var(--brand-orange); }
+
+  /* Review text */
+  .review-text {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .see-more {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand-orange);
+    cursor: pointer;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* Tags row */
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+
+  /* Meta row (timestamp + helpful) */
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .timestamp {
+    font-size: 10px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .report-btn {
+    font-size: 10px;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .report-btn:hover { color: #F87171; }
+
+  /* ============================================
+     OPTION A — Current (for reference)
+     Large bordered pill, emoji + full text
+  ============================================= */
+  .helpful-current {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: none;
+    cursor: pointer;
+    transition: all 150ms;
+    flex-shrink: 0;
+  }
+  .helpful-current:hover {
+    border-color: rgba(232,87,26,0.4);
+    background: rgba(232,87,26,0.05);
+  }
+  .helpful-current.voted {
+    border-color: rgba(232,87,26,0.3);
+    background: rgba(232,87,26,0.1);
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* ============================================
+     OPTION B — Compact ghost icon-button
+     Thumbs SVG icon + count, no border, no bg
+  ============================================= */
+  .helpful-b {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 150ms;
+    flex-shrink: 0;
+  }
+  .helpful-b svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .helpful-b:hover {
+    background: rgba(232,87,26,0.08);
+    color: var(--brand-orange);
+  }
+  .helpful-b.voted {
+    color: var(--primary);
+    background: rgba(232,87,26,0.1);
+  }
+  .helpful-b.voted svg { color: var(--primary); }
+
+  /* ============================================
+     OPTION C — Tiny chip, just count
+     Small pill: icon + count, tight, secondary-style
+  ============================================= */
+  .helpful-c {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: all 150ms;
+    flex-shrink: 0;
+  }
+  .helpful-c svg { width: 11px; height: 11px; flex-shrink: 0; }
+  .helpful-c:hover {
+    border-color: rgba(232,87,26,0.35);
+    color: var(--brand-orange);
+  }
+  .helpful-c.voted {
+    border-color: rgba(232,87,26,0.3);
+    background: rgba(232,87,26,0.1);
+    color: var(--primary);
+  }
+
+  /* ============================================
+     OPTION D — Contextual text link
+     No button chrome at all, inline text action
+  ============================================= */
+  .helpful-d {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 0;
+    transition: color 150ms;
+    flex-shrink: 0;
+    border-bottom: 1px solid transparent;
+  }
+  .helpful-d svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .helpful-d:hover {
+    color: var(--brand-orange);
+    border-bottom-color: rgba(255,107,53,0.35);
+  }
+  .helpful-d.voted {
+    color: var(--primary);
+    border-bottom-color: transparent;
+  }
+  .helpful-d .count-pill {
+    font-size: 10px;
+    font-weight: 700;
+    background: rgba(232,87,26,0.15);
+    color: var(--primary);
+    padding: 1px 5px;
+    border-radius: 4px;
+    transition: background 150ms;
+  }
+  .helpful-d:hover .count-pill { background: rgba(232,87,26,0.2); }
+
+
+  /* ── Recommended pill ─────────────────────── */
+  .recommended {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--success);
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    border-radius: 4px;
+    padding: 2px 6px;
+  }
+
+  /* ── State toggle ────────────────────────── */
+  .state-toggle {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .state-btn {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 100ms;
+  }
+  .state-btn:hover { border-color: var(--text-muted); color: var(--text-secondary); }
+  .state-btn.active {
+    background: var(--surface-3);
+    color: var(--text-primary);
+    border-color: var(--surface-3);
+  }
+</style>
+</head>
+<body>
+
+<div style="max-width:1080px;margin:0 auto">
+  <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#5a5248;margin-bottom:6px">DishCheck · Prototype</p>
+  <h1 class="page-title" style="font-size:20px;font-weight:800;color:#f5f0eb;margin-bottom:4px">Helpful Button — Design Options</h1>
+  <p class="page-subtitle">All 4 options shown in context of the ReviewCardV2 shell. Toggle voted state with the buttons below each card.</p>
+
+  <div class="grid">
+
+    <!-- ══════════════════════════════════════════
+         OPTION A — Current (reference)
+    ══════════════════════════════════════════ -->
+    <div class="option-wrapper">
+      <div>
+        <div class="option-label"><span class="badge">A</span> Current — Large bordered pill</div>
+        <p class="option-desc" style="margin-top:6px">Existing design. Big rounded-full border, emoji + long text label. Visually dominant — feels heavier than the surrounding tags and timestamp.</p>
+      </div>
+      <div class="card" id="card-a">
+        <div class="photo-strip" style="background: linear-gradient(160deg, #2a1f14, #1a1209)">
+          <span style="font-size:10px;color:#3d3028">Review photo</span>
+        </div>
+        <div class="card-body">
+          <div class="user-row">
+            <div class="avatar">RK</div>
+            <span class="username">Ravi Kumar</span>
+            <span class="level-badge">Foodie</span>
+            <div class="score-badge">4.3<small>/5</small></div>
+          </div>
+          <div class="sub-ratings">
+            <span class="sub-pill"><span class="sub-label">Taste</span><span class="sub-val">4.5</span></span>
+            <span class="sub-pill"><span class="sub-label">Portion</span><span class="sub-val">4.0</span></span>
+            <span class="sub-pill"><span class="sub-label">Value</span><span class="sub-val">4.3</span></span>
+          </div>
+          <p class="review-text">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated and the spices were balanced.</p>
+          <span class="see-more">See more</span>
+          <div class="tags-row">
+            <span class="tag">Savoury</span>
+            <span class="tag">Generous portion</span>
+          </div>
+          <div class="meta-row">
+            <span class="timestamp">19 hours ago</span>
+            <button class="helpful-current" id="btn-a" onclick="toggleVote('a')">
+              👍 Helpful?
+            </button>
+            <button class="report-btn">Report</button>
+          </div>
+        </div>
+      </div>
+      <div class="state-toggle">
+        <button class="state-btn active" id="toggle-a-default" onclick="setState('a','default')">Default</button>
+        <button class="state-btn" id="toggle-a-voted" onclick="setState('a','voted')">After vote (1)</button>
+        <button class="state-btn" id="toggle-a-count" onclick="setState('a','count')">3 votes</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         OPTION B — Compact ghost icon-button
+    ══════════════════════════════════════════ -->
+    <div class="option-wrapper">
+      <div>
+        <div class="option-label"><span class="badge">B</span> Ghost icon-button <span class="recommended">Recommended</span></div>
+        <p class="option-desc" style="margin-top:6px">No border, no bg. Small SVG thumb icon + compact text. Blends into the meta row naturally. Hover reveals a subtle warm tint. Same info, much quieter.</p>
+      </div>
+      <div class="card" id="card-b">
+        <div class="photo-strip" style="background: linear-gradient(160deg, #2a1f14, #1a1209)">
+          <span style="font-size:10px;color:#3d3028">Review photo</span>
+        </div>
+        <div class="card-body">
+          <div class="user-row">
+            <div class="avatar">RK</div>
+            <span class="username">Ravi Kumar</span>
+            <span class="level-badge">Foodie</span>
+            <div class="score-badge">4.3<small>/5</small></div>
+          </div>
+          <div class="sub-ratings">
+            <span class="sub-pill"><span class="sub-label">Taste</span><span class="sub-val">4.5</span></span>
+            <span class="sub-pill"><span class="sub-label">Portion</span><span class="sub-val">4.0</span></span>
+            <span class="sub-pill"><span class="sub-label">Value</span><span class="sub-val">4.3</span></span>
+          </div>
+          <p class="review-text">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated and the spices were balanced.</p>
+          <span class="see-more">See more</span>
+          <div class="tags-row">
+            <span class="tag">Savoury</span>
+            <span class="tag">Generous portion</span>
+          </div>
+          <div class="meta-row">
+            <span class="timestamp">19 hours ago</span>
+            <button class="helpful-b" id="btn-b" onclick="toggleVote('b')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+              </svg>
+              <span id="text-b">Helpful</span>
+            </button>
+            <button class="report-btn">Report</button>
+          </div>
+        </div>
+      </div>
+      <div class="state-toggle">
+        <button class="state-btn active" id="toggle-b-default" onclick="setState('b','default')">Default</button>
+        <button class="state-btn" id="toggle-b-voted" onclick="setState('b','voted')">After vote (1)</button>
+        <button class="state-btn" id="toggle-b-count" onclick="setState('b','count')">3 votes</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         OPTION C — Tiny chip (icon + count)
+    ══════════════════════════════════════════ -->
+    <div class="option-wrapper">
+      <div>
+        <div class="option-label"><span class="badge">C</span> Tiny surface chip</div>
+        <p class="option-desc" style="margin-top:6px">Small filled chip matching sub-rating pill style. Consistent with the card's visual language. Count is always visible. More static, less interactive-feeling.</p>
+      </div>
+      <div class="card" id="card-c">
+        <div class="photo-strip" style="background: linear-gradient(160deg, #2a1f14, #1a1209)">
+          <span style="font-size:10px;color:#3d3028">Review photo</span>
+        </div>
+        <div class="card-body">
+          <div class="user-row">
+            <div class="avatar">RK</div>
+            <span class="username">Ravi Kumar</span>
+            <span class="level-badge">Foodie</span>
+            <div class="score-badge">4.3<small>/5</small></div>
+          </div>
+          <div class="sub-ratings">
+            <span class="sub-pill"><span class="sub-label">Taste</span><span class="sub-val">4.5</span></span>
+            <span class="sub-pill"><span class="sub-label">Portion</span><span class="sub-val">4.0</span></span>
+            <span class="sub-pill"><span class="sub-label">Value</span><span class="sub-val">4.3</span></span>
+          </div>
+          <p class="review-text">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated and the spices were balanced.</p>
+          <span class="see-more">See more</span>
+          <div class="tags-row">
+            <span class="tag">Savoury</span>
+            <span class="tag">Generous portion</span>
+          </div>
+          <div class="meta-row">
+            <span class="timestamp">19 hours ago</span>
+            <button class="helpful-c" id="btn-c" onclick="toggleVote('c')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+              </svg>
+              <span id="text-c">Helpful</span>
+            </button>
+            <button class="report-btn">Report</button>
+          </div>
+        </div>
+      </div>
+      <div class="state-toggle">
+        <button class="state-btn active" id="toggle-c-default" onclick="setState('c','default')">Default</button>
+        <button class="state-btn" id="toggle-c-voted" onclick="setState('c','voted')">After vote (1)</button>
+        <button class="state-btn" id="toggle-c-count" onclick="setState('c','count')">3 votes</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         OPTION D — Inline text action + count badge
+    ══════════════════════════════════════════ -->
+    <div class="option-wrapper">
+      <div>
+        <div class="option-label"><span class="badge">D</span> Inline text + count badge</div>
+        <p class="option-desc" style="margin-top:6px">Bare text link with a small count badge. Minimal chrome, maximum info density. After voting, the count badge fills in amber. Report sits neatly after.</p>
+      </div>
+      <div class="card" id="card-d">
+        <div class="photo-strip" style="background: linear-gradient(160deg, #2a1f14, #1a1209)">
+          <span style="font-size:10px;color:#3d3028">Review photo</span>
+        </div>
+        <div class="card-body">
+          <div class="user-row">
+            <div class="avatar">RK</div>
+            <span class="username">Ravi Kumar</span>
+            <span class="level-badge">Foodie</span>
+            <div class="score-badge">4.3<small>/5</small></div>
+          </div>
+          <div class="sub-ratings">
+            <span class="sub-pill"><span class="sub-label">Taste</span><span class="sub-val">4.5</span></span>
+            <span class="sub-pill"><span class="sub-label">Portion</span><span class="sub-val">4.0</span></span>
+            <span class="sub-pill"><span class="sub-label">Value</span><span class="sub-val">4.3</span></span>
+          </div>
+          <p class="review-text">Absolutely loved the biryani here. The dum cooking makes all the difference — each grain was perfectly separated and the spices were balanced.</p>
+          <span class="see-more">See more</span>
+          <div class="tags-row">
+            <span class="tag">Savoury</span>
+            <span class="tag">Generous portion</span>
+          </div>
+          <div class="meta-row">
+            <span class="timestamp">19 hours ago</span>
+            <button class="helpful-d" id="btn-d" onclick="toggleVote('d')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+                <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+              </svg>
+              <span id="text-d">Helpful</span>
+            </button>
+            <button class="report-btn">Report</button>
+          </div>
+        </div>
+      </div>
+      <div class="state-toggle">
+        <button class="state-btn active" id="toggle-d-default" onclick="setState('d','default')">Default</button>
+        <button class="state-btn" id="toggle-d-voted" onclick="setState('d','voted')">After vote (1)</button>
+        <button class="state-btn" id="toggle-d-count" onclick="setState('d','count')">3 votes</button>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+
+  <!-- ── Comparison summary ─── -->
+  <div style="max-width:1080px;margin:32px auto 0;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:12px">
+    <p style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:12px">At a glance</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+      <div style="padding:10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px">A — Current</div>
+        <div style="font-size:11px;color:var(--text-secondary);line-height:1.5">Large pill, emoji, full sentence. <span style="color:#F87171">Too dominant</span> in the meta row.</div>
+      </div>
+      <div style="padding:10px;background:rgba(232,87,26,0.07);border-radius:8px;border:1px solid rgba(232,87,26,0.25)">
+        <div style="font-size:11px;font-weight:700;color:var(--primary);margin-bottom:4px">B — Ghost button ★ Pick</div>
+        <div style="font-size:11px;color:var(--text-secondary);line-height:1.5">SVG icon + compact label. Feels native to the card. Good hover feedback. <span style="color:var(--success)">Best balance.</span></div>
+      </div>
+      <div style="padding:10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px">C — Surface chip</div>
+        <div style="font-size:11px;color:var(--text-secondary);line-height:1.5">Consistent with sub-rating pills. Good for showing counts, but feels a bit static.</div>
+      </div>
+      <div style="padding:10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px">D — Inline text</div>
+        <div style="font-size:11px;color:var(--text-secondary);line-height:1.5">Cleanest look, but the count badge can feel mismatched with the rest of the card chrome.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /max-width wrapper -->
+
+<script>
+  const states = {
+    a: 'default',
+    b: 'default',
+    c: 'default',
+    d: 'default',
+  };
+
+  const configs = {
+    a: {
+      default: { text: '👍 Helpful?', voted: false },
+      voted:   { text: '👍 You found this helpful', voted: true },
+      count:   { text: '👍 3 found this helpful', voted: false },
+    },
+    b: {
+      default: { text: 'Helpful', voted: false },
+      voted:   { text: 'You helped', voted: true },
+      count:   { text: 'Helpful · 3', voted: false },
+    },
+    c: {
+      default: { text: 'Helpful', voted: false },
+      voted:   { text: 'Helpful · 1', voted: true },
+      count:   { text: 'Helpful · 3', voted: false },
+    },
+    d: {
+      default: { text: 'Helpful', voted: false, count: null },
+      voted:   { text: 'Helpful', voted: true, count: '1' },
+      count:   { text: 'Helpful', voted: false, count: '3' },
+    },
+  };
+
+  function setState(card, newState) {
+    states[card] = newState;
+
+    // reset toggle buttons
+    ['default','voted','count'].forEach(s => {
+      const el = document.getElementById(`toggle-${card}-${s}`);
+      if (el) el.classList.toggle('active', s === newState);
+    });
+
+    const cfg = configs[card][newState];
+    const btn = document.getElementById(`btn-${card}`);
+    const textEl = document.getElementById(`text-${card}`);
+
+    if (card === 'a') {
+      btn.textContent = cfg.text;
+      btn.classList.toggle('voted', cfg.voted);
+    } else if (card === 'd') {
+      // rebuild inner html for D (has count pill)
+      let inner = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;flex-shrink:0"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>`;
+      inner += `<span>${cfg.text}</span>`;
+      if (cfg.count) inner += `<span class="count-pill">${cfg.count}</span>`;
+      btn.innerHTML = inner;
+      btn.classList.toggle('voted', cfg.voted);
+    } else {
+      if (textEl) textEl.textContent = cfg.text;
+      btn.classList.toggle('voted', cfg.voted);
+    }
+  }
+
+  function toggleVote(card) {
+    const next = states[card] === 'voted' ? 'default' : 'voted';
+    setState(card, next);
+  }
+</script>
+</body>
+</html>

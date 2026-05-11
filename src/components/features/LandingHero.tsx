@@ -12,44 +12,54 @@ import type { Dish } from "@/lib/types";
 // ── V2 "Bold Split" Design Tokens ────────────────────────
 // Values mirror the global CSS tokens in globals.css so both stay in sync.
 const DARK_C = {
-  bg:          "var(--color-surface-dark)",   // #121009
-  surface:     "var(--dc-surface)",           // #1e1a17
-  card:        "var(--card)",                 // #252018
-  border:      "var(--dc-border)",            // #302820
-  orange:      "var(--color-primary)",        // #e8571a
-  orangeDim:   "rgba(232,87,26,0.15)",
-  white:       "var(--dc-text-primary)",      // #f5f0eb
-  gray:        "var(--dc-text-secondary)",    // #9a9080
-  grayDim:     "var(--dc-text-muted)",        // #5a5248
-  scoreBg:     "rgba(255,255,255,0.08)",
-  cardShadow:  "0 8px 32px rgba(0,0,0,0.5)",
+  bg: "var(--color-surface-dark)", // #121009
+  surface: "var(--dc-surface)", // #1e1a17
+  card: "var(--card)", // #252018
+  border: "var(--dc-border)", // #302820
+  orange: "var(--color-primary)", // #e8571a
+  orangeDim: "rgba(232,87,26,0.15)",
+  white: "var(--dc-text-primary)", // #f5f0eb
+  gray: "var(--dc-text-secondary)", // #9a9080
+  grayDim: "var(--dc-text-muted)", // #5a5248
+  scoreBg: "rgba(255,255,255,0.08)",
+  cardShadow: "0 8px 32px rgba(0,0,0,0.5)",
   mCardShadow: "0 6px 24px rgba(0,0,0,0.45)",
-  stack1Bg:    "rgba(30,26,23,0.63)",
-  stack2Bg:    "rgba(30,26,23,0.41)",
+  stack1Bg: "rgba(30,26,23,0.63)",
+  stack2Bg: "rgba(30,26,23,0.41)",
 } as const;
 
 const LIGHT_C = {
-  bg:          "var(--background)",           // #faf7f4
-  surface:     "var(--dc-surface-2)",         // #f0ebe5
-  card:        "var(--card)",                 // #f0ebe5
-  border:      "var(--dc-border)",            // #e0d6ce
-  orange:      "var(--color-primary)",        // #e8571a
-  orangeDim:   "rgba(232,87,26,0.12)",
-  white:       "var(--dc-text-primary)",      // #1a1008
-  gray:        "var(--dc-text-secondary)",    // #6b5d52
-  grayDim:     "var(--dc-text-muted)",        // #9a8880
-  scoreBg:     "rgba(0,0,0,0.08)",
-  cardShadow:  "0 8px 32px rgba(0,0,0,0.12)",
+  bg: "var(--background)", // #faf7f4
+  surface: "var(--dc-surface-2)", // #f0ebe5
+  card: "var(--card)", // #f0ebe5
+  border: "var(--dc-border)", // #e0d6ce
+  orange: "var(--color-primary)", // #e8571a
+  orangeDim: "rgba(232,87,26,0.12)",
+  white: "var(--dc-text-primary)", // #1a1008
+  gray: "var(--dc-text-secondary)", // #6b5d52
+  grayDim: "var(--dc-text-muted)", // #9a8880
+  scoreBg: "rgba(0,0,0,0.08)",
+  cardShadow: "0 8px 32px rgba(0,0,0,0.12)",
   mCardShadow: "0 6px 24px rgba(0,0,0,0.10)",
-  stack1Bg:    "rgba(240,235,229,0.80)",
-  stack2Bg:    "rgba(240,235,229,0.55)",
+  stack1Bg: "rgba(240,235,229,0.80)",
+  stack2Bg: "rgba(240,235,229,0.55)",
 } as const;
 
 type HeroColors = {
-  bg: string; surface: string; card: string; border: string;
-  orange: string; orangeDim: string; white: string; gray: string; grayDim: string;
-  scoreBg: string; cardShadow: string; mCardShadow: string;
-  stack1Bg: string; stack2Bg: string;
+  bg: string;
+  surface: string;
+  card: string;
+  border: string;
+  orange: string;
+  orangeDim: string;
+  white: string;
+  gray: string;
+  grayDim: string;
+  scoreBg: string;
+  cardShadow: string;
+  mCardShadow: string;
+  stack1Bg: string;
+  stack2Bg: string;
 };
 
 const CAROUSEL_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -66,11 +76,51 @@ interface CarouselDish {
 }
 
 const FALLBACK_DISHES: CarouselDish[] = [
-  { id: "f1", name: "Butter Chicken",     restaurant: "Punjab Grill · Cyber Hub",       taste: 91, portion: 78, value: 82, tags: ["Rich & creamy", "Worth it"] },
-  { id: "f2", name: "Dosa Masala",        restaurant: "Saravana Bhavan · DLF Phase 4",  taste: 88, portion: 85, value: 94, tags: ["Crispy", "Best value"] },
-  { id: "f3", name: "Thai Basil Chicken", restaurant: "SOCA – Brewery · Sector 29",     taste: 72, portion: 48, value: 38, tags: ["Very sweet", "Overpriced"] },
-  { id: "f4", name: "Momos (Steamed)",    restaurant: "Local Street · Sector 14",       taste: 87, portion: 92, value: 96, tags: ["Generous", "Great value"] },
-  { id: "f5", name: "Paneer Tikka",       restaurant: "Dhaba By Claridges · NH8",       taste: 89, portion: 80, value: 77, tags: ["Smoky", "Generous"] },
+  {
+    id: "f1",
+    name: "Butter Chicken",
+    restaurant: "Punjab Grill · Cyber Hub",
+    taste: 91,
+    portion: 78,
+    value: 82,
+    tags: ["Rich & creamy", "Worth it"],
+  },
+  {
+    id: "f2",
+    name: "Dosa Masala",
+    restaurant: "Saravana Bhavan · DLF Phase 4",
+    taste: 88,
+    portion: 85,
+    value: 94,
+    tags: ["Crispy", "Best value"],
+  },
+  {
+    id: "f3",
+    name: "Thai Basil Chicken",
+    restaurant: "SOCA – Brewery · Sector 29",
+    taste: 72,
+    portion: 48,
+    value: 38,
+    tags: ["Very sweet", "Overpriced"],
+  },
+  {
+    id: "f4",
+    name: "Momos (Steamed)",
+    restaurant: "Local Street · Sector 14",
+    taste: 87,
+    portion: 92,
+    value: 96,
+    tags: ["Generous", "Great value"],
+  },
+  {
+    id: "f5",
+    name: "Paneer Tikka",
+    restaurant: "Dhaba By Claridges · NH8",
+    taste: 89,
+    portion: 80,
+    value: 77,
+    tags: ["Smoky", "Generous"],
+  },
 ];
 
 // Dish.avgTaste etc. are on a 0-5 scale; multiply × 20 → 0-100
@@ -79,15 +129,23 @@ function mapDishesToCarousel(dishes: Dish[]): CarouselDish[] {
     id: d.id,
     name: d.name,
     restaurant: d.restaurantName + (d.area ? ` · ${d.area}` : ""),
-    taste:   Math.round(d.avgTaste   * 20),
+    taste: Math.round(d.avgTaste * 20),
     portion: Math.round(d.avgPortion * 20),
-    value:   Math.round(d.avgValue   * 20),
+    value: Math.round(d.avgValue * 20),
     tags: (d.topTags ?? []).slice(0, 2),
   }));
 }
 
 // ── Category chips ────────────────────────────────────────
-const HERO_CHIPS = ["Biryani", "Butter Chicken", "Dosa", "Momos", "Pizza", "Rolls", "Pasta"] as const;
+const HERO_CHIPS = [
+  "Biryani",
+  "Butter Chicken",
+  "Dosa",
+  "Momos",
+  "Pizza",
+  "Rolls",
+  "Pasta",
+] as const;
 
 // ── Props ─────────────────────────────────────────────────
 interface LandingHeroProps {
@@ -106,9 +164,17 @@ function formatDishCount(n: number): string {
 // ── Sub-components ────────────────────────────────────────
 
 function ScoreBar({
-  label, value, fill, grayDim, trackBg,
+  label,
+  value,
+  fill,
+  grayDim,
+  trackBg,
 }: {
-  label: string; value: number; fill: string; grayDim: string; trackBg: string;
+  label: string;
+  value: number;
+  fill: string;
+  grayDim: string;
+  trackBg: string;
 }) {
   return (
     <div>
@@ -185,15 +251,35 @@ function CardContent({ dish, C }: { dish: CarouselDish; C: HeroColors }) {
             {dish.restaurant}
           </div>
         </div>
-        <span style={{ fontSize: 18, opacity: 0.6, flexShrink: 0, marginLeft: 8 }}>
+        <span
+          style={{ fontSize: 18, opacity: 0.6, flexShrink: 0, marginLeft: 8 }}
+        >
           🍽️
         </span>
       </div>
 
       <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
-        <ScoreBar label="Taste"   value={dish.taste}   fill="#e8571a" grayDim={C.grayDim} trackBg={C.scoreBg} />
-        <ScoreBar label="Portion" value={dish.portion} fill="#c94e14" grayDim={C.grayDim} trackBg={C.scoreBg} />
-        <ScoreBar label="Value"   value={dish.value}   fill="#a03a0e" grayDim={C.grayDim} trackBg={C.scoreBg} />
+        <ScoreBar
+          label="Taste"
+          value={dish.taste}
+          fill="#e8571a"
+          grayDim={C.grayDim}
+          trackBg={C.scoreBg}
+        />
+        <ScoreBar
+          label="Portion"
+          value={dish.portion}
+          fill="#c94e14"
+          grayDim={C.grayDim}
+          trackBg={C.scoreBg}
+        />
+        <ScoreBar
+          label="Value"
+          value={dish.value}
+          fill="#a03a0e"
+          grayDim={C.grayDim}
+          trackBg={C.scoreBg}
+        />
       </div>
 
       {dish.tags.length > 0 && (
@@ -220,9 +306,208 @@ function CardContent({ dish, C }: { dish: CarouselDish; C: HeroColors }) {
   );
 }
 
+// ── Cycling problems → solutions block ───────────────────
+
+const PROBLEMS = [
+  `Asking the waiter. "Sir, everything is good, sir."`,
+  `4.3 stars. 1,200 reviews. Zero about the food.`,
+  `Ordering paneer tikka. Again. Like always.`,
+] as const;
+
+const SOLUTIONS = [
+  `Cravia tells you exactly what to order.`,
+  `Real dish ratings. Not just the restaurant.`,
+  `Discover what's actually good here.`,
+] as const;
+
+type ItemPhase = "problem" | "striking" | "solved";
+
+function CyclingProblems({
+  C,
+  fontSize = 20,
+  gap = 16,
+}: {
+  C: HeroColors;
+  fontSize?: number;
+  gap?: number;
+}) {
+  const [phases, setPhases] = useState<ItemPhase[]>([
+    "problem",
+    "problem",
+    "problem",
+  ]);
+  const [cycle, setCycle] = useState(0);
+
+  useEffect(() => {
+    const t: ReturnType<typeof setTimeout>[] = [];
+    // How long all 3 problems are visible before striking starts
+    const READ_PAUSE = 1600;
+    // Gap between each item's strike (must be > strike draw duration so they don't overlap)
+    const STRIKE_INTERVAL = 1200;
+    // How long after strike starts before solution replaces it
+    const STRIKE_HOLD = 1000;
+    // Total cycle length before reset
+    const CYCLE_DURATION = 6200;
+
+    [0, 1, 2].forEach((i) => {
+      t.push(
+        setTimeout(
+          () =>
+            setPhases((p) => p.map((v, idx) => (idx === i ? "striking" : v))),
+          READ_PAUSE + i * STRIKE_INTERVAL,
+        ),
+      );
+      t.push(
+        setTimeout(
+          () => setPhases((p) => p.map((v, idx) => (idx === i ? "solved" : v))),
+          READ_PAUSE + i * STRIKE_INTERVAL + STRIKE_HOLD,
+        ),
+      );
+    });
+
+    t.push(
+      setTimeout(() => {
+        setPhases(["problem", "problem", "problem"]);
+        setCycle((c) => c + 1);
+      }, CYCLE_DURATION),
+    );
+
+    return () => t.forEach(clearTimeout);
+  }, [cycle]);
+
+  const iconSize = Math.round(fontSize * 1.3);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap }}>
+      {PROBLEMS.map((problem, i) => (
+        <motion.div
+          key={`row-${i}-${cycle}`}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.22, duration: 0.35, ease: "easeOut" }}
+          style={{ display: "flex", alignItems: "center", gap: 12 }}
+        >
+          {/* Icon: × for problems, ✓ for solved */}
+          <motion.span
+            animate={{
+              background: phases[i] === "solved" ? "transparent" : C.orange,
+              borderColor: phases[i] === "solved" ? C.orange : "transparent",
+            }}
+            transition={{ duration: 0.25 }}
+            style={{
+              width: iconSize,
+              height: iconSize,
+              borderRadius: 6,
+              border: "1px solid transparent",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              fontSize: Math.round(fontSize * 0.72),
+              fontWeight: 700,
+              lineHeight: 1,
+            }}
+          >
+            <AnimatePresence mode="wait">
+              {phases[i] === "solved" ? (
+                <motion.span
+                  key="check"
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.6 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ color: C.orange }}
+                >
+                  ✓
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="cross"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  style={{ color: "#fff" }}
+                >
+                  ×
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.span>
+
+          {/* Text: problem or solution */}
+          <div style={{ position: "relative", flex: 1 }}>
+            <AnimatePresence mode="wait">
+              {phases[i] !== "solved" ? (
+                <motion.span
+                  key={`prob-${i}-${cycle}`}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  style={{
+                    display: "inline-block",
+                    position: "relative",
+                    fontSize,
+                    fontWeight: 500,
+                    color: C.gray,
+                    fontFamily: "var(--font-body)",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {problem}
+                  {phases[i] === "striking" && (
+                    <motion.span
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: 0.8, ease: [0.77, 0, 0.18, 1] }}
+                      style={{
+                        position: "absolute",
+                        left: 0,
+                        top: "52%",
+                        width: "100%",
+                        height: 1.5,
+                        background: C.orange,
+                        transformOrigin: "left center",
+                        display: "block",
+                      }}
+                    />
+                  )}
+                </motion.span>
+              ) : (
+                <motion.span
+                  key={`sol-${i}-${cycle}`}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.32, ease: "easeOut" }}
+                  style={{
+                    display: "block",
+                    fontSize,
+                    fontWeight: 600,
+                    color: C.white,
+                    fontFamily: "var(--font-body)",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {SOLUTIONS[i]}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────
 
-export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps) {
+export function LandingHero({
+  topDishes,
+  city,
+  dishCount = 0,
+}: LandingHeroProps) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const C: HeroColors = resolvedTheme === "light" ? LIGHT_C : DARK_C;
@@ -233,7 +518,9 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
   // Use API dishes when there are at least 2 reviewed results; fall back to sample data
   const reviewedDishes = topDishes.filter((d) => d.reviewCount > 0).slice(0, 5);
   const dishes: CarouselDish[] =
-    reviewedDishes.length >= 2 ? mapDishesToCarousel(reviewedDishes) : FALLBACK_DISHES;
+    reviewedDishes.length >= 2
+      ? mapDishesToCarousel(reviewedDishes)
+      : FALLBACK_DISHES;
   const n = dishes.length;
 
   // Desktop: advance every 2.6s
@@ -286,9 +573,30 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
 
   // ── Desktop card stack visual config (theme-aware) ───
   const STACK = [
-    { tx: 0,  scale: 1.000, opacity: 1.00, bg: C.card,     border: "rgba(232,87,26,0.35)", shadow: C.cardShadow },
-    { tx: 6,  scale: 0.975, opacity: 0.72, bg: C.stack1Bg, border: C.border,               shadow: "none" },
-    { tx: 12, scale: 0.950, opacity: 0.44, bg: C.stack2Bg, border: C.border,               shadow: "none" },
+    {
+      tx: 0,
+      scale: 1.0,
+      opacity: 1.0,
+      bg: C.card,
+      border: "rgba(232,87,26,0.35)",
+      shadow: C.cardShadow,
+    },
+    {
+      tx: 6,
+      scale: 0.975,
+      opacity: 0.72,
+      bg: C.stack1Bg,
+      border: C.border,
+      shadow: "none",
+    },
+    {
+      tx: 12,
+      scale: 0.95,
+      opacity: 0.44,
+      bg: C.stack2Bg,
+      border: C.border,
+      shadow: "none",
+    },
   ];
 
   // ── Shared left-column content ────────────────────────
@@ -298,7 +606,7 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
-        marginBottom: 28,
+        marginBottom: 36,
       }}
     >
       <span
@@ -328,41 +636,8 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
   );
 
   const QuoteBlock = (
-    <div
-      style={{
-        background: C.surface,
-        borderRadius: 6,
-        padding: "14px 18px",
-        borderLeft: `3px solid ${C.orange}`,
-        marginBottom: 30,
-      }}
-    >
-      <div
-        style={{
-          fontSize: 8.5,
-          textTransform: "uppercase",
-          letterSpacing: "0.14em",
-          color: C.orange,
-          fontFamily: "var(--font-body)",
-          marginBottom: 8,
-        }}
-      >
-        Sound familiar?
-      </div>
-      <p
-        style={{
-          fontSize: 13,
-          fontStyle: "italic",
-          color: C.gray,
-          lineHeight: 1.7,
-          fontFamily: "var(--font-body)",
-          margin: 0,
-        }}
-      >
-        &ldquo;You&rsquo;re at a restaurant. Everything on the menu looks good.
-        You ask the waiter. He says everything is good. You guess. You regret
-        it.&rdquo;
-      </p>
+    <div style={{ marginBottom: 36 }}>
+      <CyclingProblems C={C} fontSize={20} gap={16} />
     </div>
   );
 
@@ -381,7 +656,7 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
           marginBottom: 4,
         }}
       >
-        That moment ends here.
+        Stop guessing.
       </h1>
       <h2
         style={{
@@ -393,10 +668,10 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
           letterSpacing: "-0.02em",
           textTransform: "uppercase",
           margin: 0,
-          marginBottom: 28,
+          marginBottom: 36,
         }}
       >
-        Know what to order.
+        Order right.
       </h2>
     </>
   );
@@ -408,12 +683,12 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
         color: C.gray,
         lineHeight: 1.65,
         maxWidth: 620,
-        marginBottom: 28,
+        marginBottom: 36,
         fontFamily: "var(--font-body)",
       }}
     >
-      Cravia rates every dish — not just the restaurant. Taste, portion, and
-      value scores from real diners.
+      Search any dish at any restaurant. See how real diners rated its taste,
+      portion, and value. Know what to order before you sit down.
     </p>
   );
 
@@ -434,7 +709,7 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
         padding: "10px 14px",
         maxWidth: 600,
         cursor: "pointer",
-        marginBottom: 12,
+        marginBottom: 20,
         transition: "border-color 0.15s ease",
       }}
       onMouseEnter={(e) =>
@@ -460,8 +735,59 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
     </div>
   );
 
+  const AVATAR_COLORS = [
+    "#7c5f3a",
+    "#3a5f5f",
+    "#5f3a7c",
+    "#5f5f3a",
+    "#3a4f7c",
+  ] as const;
+  const AVATAR_INITIALS = ["A", "M", "R", "S", "K"] as const;
+
+  const SocialProof = (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        marginBottom: 20,
+      }}
+    >
+      <div style={{ display: "flex" }}>
+        {AVATAR_INITIALS.map((initial, i) => (
+          <div
+            key={initial}
+            style={{
+              width: 26,
+              height: 26,
+              borderRadius: 6,
+              background: AVATAR_COLORS[i],
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 10,
+              fontWeight: 700,
+              color: "#fff",
+              fontFamily: "var(--font-body)",
+              marginLeft: i === 0 ? 0 : -6,
+              border: `2px solid ${C.bg}`,
+              position: "relative",
+              zIndex: AVATAR_INITIALS.length - i,
+            }}
+          >
+            {initial}
+          </div>
+        ))}
+      </div>
+      <div style={{ fontFamily: "var(--font-body)", fontSize: 12 }}>
+        <span style={{ color: C.white, fontWeight: 600 }}>Real diners</span>
+        <span style={{ color: C.grayDim }}> rating dishes in {cityName}</span>
+      </div>
+    </div>
+  );
+
   const Chips = (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 12 }}>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 20 }}>
       {HERO_CHIPS.map((chip) => (
         <button
           key={chip}
@@ -550,10 +876,11 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
             }}
           >
             {LivePill}
-            {QuoteBlock}
             {Headlines}
+            {QuoteBlock}
             {BodyCopy}
             {SearchBar}
+            {SocialProof}
             {Chips}
           </div>
 
@@ -580,8 +907,7 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              background:
-                `radial-gradient(ellipse 48% 38% at 62% 42%, rgba(232,87,26,0.05) 0%, transparent 100%),
+              background: `radial-gradient(ellipse 48% 38% at 62% 42%, rgba(232,87,26,0.05) 0%, transparent 100%),
                  radial-gradient(ellipse 24% 18% at 36% 72%, rgba(232,87,26,0.025) 0%, transparent 100%)`,
             }}
           >
@@ -596,7 +922,7 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
                 marginBottom: 16,
               }}
             >
-              Top rated right now
+              Live dish scores
             </div>
 
             {/* Card stack — all 3 visible simultaneously in a flex column */}
@@ -621,7 +947,10 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
                       transform: `translateX(${s.tx}px) scale(${s.scale})`,
                       transformOrigin: "left center",
                       boxShadow: s.shadow === "none" ? undefined : s.shadow,
-                      transition: slotIdx > 0 ? "all 0.45s cubic-bezier(0.22, 1, 0.36, 1)" : undefined,
+                      transition:
+                        slotIdx > 0
+                          ? "all 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
+                          : undefined,
                     }}
                   >
                     {slotIdx === 0 ? (
@@ -637,16 +966,51 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
                       </AnimatePresence>
                     ) : (
                       /* Peeking cards — name + restaurant only, no score bars */
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <div style={{ minWidth: 0, flex: 1 }}>
-                          <div style={{ fontSize: 13, fontWeight: 600, color: C.white, marginBottom: 2, fontFamily: "var(--font-body)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          <div
+                            style={{
+                              fontSize: 13,
+                              fontWeight: 600,
+                              color: C.white,
+                              marginBottom: 2,
+                              fontFamily: "var(--font-body)",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
                             {dish.name}
                           </div>
-                          <div style={{ fontSize: 10, color: C.gray, fontFamily: "var(--font-body)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          <div
+                            style={{
+                              fontSize: 10,
+                              color: C.gray,
+                              fontFamily: "var(--font-body)",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
                             {dish.restaurant}
                           </div>
                         </div>
-                        <span style={{ fontSize: 18, opacity: 0.6, flexShrink: 0, marginLeft: 8 }}>🍽️</span>
+                        <span
+                          style={{
+                            fontSize: 18,
+                            opacity: 0.6,
+                            flexShrink: 0,
+                            marginLeft: 8,
+                          }}
+                        >
+                          🍽️
+                        </span>
                       </div>
                     )}
                   </div>
@@ -662,8 +1026,13 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
                 fontFamily: "var(--font-body)",
               }}
             >
-              <span style={{ color: C.orange, fontWeight: 600 }}>{dishCountDisplay}</span>
-              <span style={{ color: C.grayDim }}> dishes rated in {cityName}</span>
+              <span style={{ color: C.orange, fontWeight: 600 }}>
+                {dishCountDisplay}
+              </span>
+              <span style={{ color: C.grayDim }}>
+                {" "}
+                dishes rated in {cityName}
+              </span>
             </div>
           </div>
         </div>
@@ -678,51 +1047,12 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
             {/* 1. Live pill */}
             {LivePill}
 
-            {/* 2. Quote block (above headline on mobile) */}
-            <div style={{ marginLeft: 0, marginBottom: 18 }}>
-              <div
-                style={{
-                  background: C.surface,
-                  borderLeft: `2px solid ${C.orange}`,
-                  borderRadius: "0 6px 6px 0",
-                  padding: "12px 16px",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 8.5,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.14em",
-                    color: C.orange,
-                    fontFamily: "var(--font-body)",
-                    marginBottom: 6,
-                  }}
-                >
-                  Sound familiar?
-                </div>
-                <p
-                  style={{
-                    fontSize: 12,
-                    fontStyle: "italic",
-                    color: C.gray,
-                    lineHeight: 1.7,
-                    fontFamily: "var(--font-body)",
-                    margin: 0,
-                  }}
-                >
-                  &ldquo;You&rsquo;re at a restaurant. Everything on the menu
-                  looks good. You ask the waiter. He says everything is good.
-                  You guess. You regret it.&rdquo;
-                </p>
-              </div>
-            </div>
-
-            {/* 3. H1 */}
+            {/* 2. H1 */}
             <h1
               style={{
                 fontFamily: "var(--font-headline)",
                 fontWeight: 900,
-                fontSize: 52,
+                fontSize: "clamp(38px, 10vw, 48px)",
                 color: C.white,
                 lineHeight: 0.9,
                 letterSpacing: "-0.02em",
@@ -731,15 +1061,15 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
                 marginBottom: 4,
               }}
             >
-              That moment ends here.
+              Stop guessing.
             </h1>
 
-            {/* 4. H2 */}
+            {/* 3. H2 */}
             <h2
               style={{
                 fontFamily: "var(--font-headline)",
                 fontWeight: 800,
-                fontSize: 52,
+                fontSize: "clamp(38px, 10vw, 48px)",
                 color: C.orange,
                 lineHeight: 0.9,
                 letterSpacing: "-0.02em",
@@ -748,8 +1078,13 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
                 marginBottom: 18,
               }}
             >
-              Know what to order.
+              Order right.
             </h2>
+
+            {/* 4. Cycling problems block (below headline on mobile) */}
+            <div style={{ marginBottom: 18 }}>
+              <CyclingProblems C={C} fontSize={16} gap={12} />
+            </div>
 
             {/* 5. Search bar */}
             <div
@@ -771,7 +1106,12 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
               }}
             >
               <Search
-                style={{ width: 14, height: 14, color: C.grayDim, flexShrink: 0 }}
+                style={{
+                  width: 14,
+                  height: 14,
+                  color: C.grayDim,
+                  flexShrink: 0,
+                }}
                 strokeWidth={1.5}
               />
               <span
@@ -784,6 +1124,9 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
                 Try &ldquo;Butter Chicken&rdquo;...
               </span>
             </div>
+
+            {/* 5b. Social proof */}
+            {SocialProof}
 
             {/* 6. Chips */}
             <div
@@ -829,7 +1172,7 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
                 paddingLeft: 16,
               }}
             >
-              Top rated right now
+              Live dish scores
             </div>
 
             <div
@@ -837,13 +1180,13 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
               aria-live="polite"
               aria-atomic="true"
             >
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="sync">
                 <motion.div
                   key={mobileIdx}
-                  initial={{ x: 60, opacity: 0 }}
+                  initial={{ x: 40, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -60, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: CAROUSEL_EASE }}
+                  exit={{ x: -40, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -867,8 +1210,13 @@ export function LandingHero({ topDishes, city, dishCount = 0 }: LandingHeroProps
                 paddingLeft: 16,
               }}
             >
-              <span style={{ color: C.orange, fontWeight: 600 }}>{dishCountDisplay}</span>
-              <span style={{ color: C.grayDim }}> dishes rated in {cityName}</span>
+              <span style={{ color: C.orange, fontWeight: 600 }}>
+                {dishCountDisplay}
+              </span>
+              <span style={{ color: C.grayDim }}>
+                {" "}
+                dishes rated in {cityName}
+              </span>
             </div>
           </div>
         </div>

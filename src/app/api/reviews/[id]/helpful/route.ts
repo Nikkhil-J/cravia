@@ -36,3 +36,17 @@ export async function POST(req: Request, context: RouteContext) {
   return NextResponse.json({ success: true })
 }
 
+export async function DELETE(req: Request, context: RouteContext) {
+  const auth = await getRequestAuth(req)
+  if (!auth) return NextResponse.json({ message: API_ERRORS.UNAUTHORIZED }, { status: 401 })
+
+  const rateLimited = await checkRateLimit(auth.userId, 'GENERAL')
+  if (rateLimited) return rateLimited
+
+  const { id } = await context.params
+  const ok = await reviewRepository.unvoteHelpful(id, auth.userId)
+  if (!ok) return NextResponse.json({ message: API_ERRORS.FAILED_TO_VOTE_HELPFUL }, { status: 400 })
+
+  return NextResponse.json({ success: true })
+}
+

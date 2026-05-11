@@ -1,0 +1,691 @@
+{
+  "_instructions": [
+    "Anardana — SCO 10 & 11, 1st Floor, Golf Avenue 42, Sector 42, DLF Phase 5, Gurugram.",
+    "Menu extracted from 5 menu page photos: Chaat, Small Plates/Appetizers, Large Plates/Pastas/Pizzas, Main Course, Biryani/Breads/Desserts.",
+    "Vegan [V] | Signature [आ] notations present on menu — dietary mapped accordingly.",
+    "Run: npx tsx scripts/seed-from-json.ts --file=scripts/data/anardana.json --dry-run",
+    "Then: npx tsx scripts/seed-from-json.ts --file=scripts/data/anardana.json"
+  ],
+  "_stats": {
+    "totalRestaurants": 1,
+    "gurugram": 1,
+    "fetchedAt": "2026-05-11T00:00:00.000Z"
+  },
+  "restaurants": [
+    {
+      "googlePlaceId": "gurugram-anardana-sector42-dlf-phase5",
+      "name": "Anardana",
+      "city": "Gurugram",
+      "area": "Sector 42",
+      "address": "SCO 10 & 11, 1st Floor, Golf Avenue 42, Sector 42, DLF Phase 5, Gurugram",
+      "coordinates": { "lat": 28.4595, "lng": 77.0848 },
+      "googleRating": 4.6,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+919205600715",
+      "cuisines": ["North Indian", "Chinese", "Italian", "Biryani", "Mughlai", "Modern Indian"],
+      "priceLevel": "400-1500",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Bombay Sev Puri Tart",
+          "description": "Crispy tart, boiled potato, pomegranate, ginger & imli chutney, spicy green chutney, topped with nylon sev.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "495-495"
+        },
+        {
+          "name": "Quinoa Gol Gappa",
+          "description": "Golgappa with quinoa, pomegranate seeds, spicy chili guava & jaljeera water.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "495-495"
+        },
+        {
+          "name": "Palak & Kale Patta Chaat",
+          "description": "Crispy baby spinach & kale leaves, flavored & sweetened yoghurt, imli chutney, sprinkled with house spice mix.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "495-495"
+        },
+        {
+          "name": "Ragda Chaat Ver 2.0",
+          "description": "Street style ragda chaat with a modern twist and robust flavours.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "495-495"
+        },
+        {
+          "name": "Moradabadi Daal Chaat",
+          "description": "Named after Prince Murad Baksh, Shah Jahan's son — it was accidentally created by a cook in Moradabad.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "515-515"
+        },
+        {
+          "name": "Avocado, Kale & Mexican Beans Salad",
+          "description": "Avocado, kale leaves, Mexican beans, multigrain seeds with lime dressing.",
+          "category": "Salad",
+          "dietary": "veg",
+          "priceRange": "535-535"
+        },
+        {
+          "name": "Guacamole & Sour Dough Toast",
+          "description": "Avocado salad served on toasted sour dough slices.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "535-535"
+        },
+        {
+          "name": "Yellow Beetroot, Roasted Peppers & Sour Dough Toast",
+          "description": "Our take on chilli cheese toast with yellow beetroot and roasted peppers.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "535-535"
+        },
+        {
+          "name": "Beetroot Salad",
+          "description": "Served with arugula & orange segment tossed in honey dressing.",
+          "category": "Salad",
+          "dietary": "veg",
+          "priceRange": "535-535"
+        },
+        {
+          "name": "Roast Tomato Dhaniya Shorba",
+          "description": "Roasted tomato & garlic puree with crushed fresh coriander, served with namakpara crouton.",
+          "category": "Soup",
+          "dietary": "veg",
+          "priceRange": "455-455"
+        },
+        {
+          "name": "Mushroom Chai Truffle Essence Fondue",
+          "description": "Hot broth of assorted mushrooms with a hint of truffle oil and parmesan fondue.",
+          "category": "Soup",
+          "dietary": "veg",
+          "priceRange": "485-485"
+        },
+        {
+          "name": "Murgh Badami Shorba",
+          "description": "A rich & creamy chicken stock made with tender chicken pieces cooked in a velvety almond based broth.",
+          "category": "Soup",
+          "dietary": "non-veg",
+          "priceRange": "495-495"
+        },
+        {
+          "name": "Boursin Cheese Stuffed Hara Bhara Kebab",
+          "description": "Hara bhara kebab stuffed with cheese mixed with assorted herbs.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "675-675"
+        },
+        {
+          "name": "Beetroot Shikampuri Kebab & Fennel Slaw",
+          "description": "A beetroot patty stuffed with goat cheese & spicy filling, pistachio crust.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "675-675"
+        },
+        {
+          "name": "Edamame Seekh Kebab",
+          "description": "Skewered mince of edamame beans, French beans, broccoli, apple, truffle mushroom oil & flavored with a blend of Indian spices.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Parmesan Malai Broccoli",
+          "description": "Broccoli florets marinated in hung curd, sour cream & tandoori seasoning, served with shaved almonds & parmesan crisp.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Tangra Chilli Paneer",
+          "description": "Stir fried chunks of cottage cheese tossed in a spicy sauce.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Mushroom Ki Galouti Kebab",
+          "description": "Blend of smoked mushrooms with Awadh spices, served over varqi paratha.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Nut Crusted Multani Paneer Tikka",
+          "description": "Paneer chunks stuffed with mint cheese & marinated with hung curd, spices and nuts, grilled in tandoor.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "715-715"
+        },
+        {
+          "name": "Ricotta Dahi Ke Kebab",
+          "description": "Delicious hung curd & ricotta cheese based patties, infused with herbs & spices. Perfectly crisp on outside & soft on inside.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "715-715"
+        },
+        {
+          "name": "Pulled Jackfruit Mini Sliders",
+          "description": "Pulled jackfruit in between mini sliders.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Lamb Neck Mini Sliders",
+          "description": "Braised lamb neck in between mini sliders.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "785-785"
+        },
+        {
+          "name": "Sweet Shitake Thepla Tacos",
+          "description": "Sweet shitake mushroom thepla tacos with smoked guacamole.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Prawn Thepla Tacos",
+          "description": "Prawn thepla tacos with smoked guacamole.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "805-805"
+        },
+        {
+          "name": "Caramel Chicken Slider",
+          "description": "Grilled chicken cooked with miso served on sour dough & topped with melted cheddar.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "725-725"
+        },
+        {
+          "name": "Murgh Malai Tikka",
+          "description": "Char-grilled yet creamy & tender chicken pieces marinated in hung curd, cream, cardamom & Indian spices.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "785-785"
+        },
+        {
+          "name": "Black Garlic Chicken Tikka",
+          "description": "Chicken morsels marinated with aged garlic, curd & spices, grilled in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "785-785"
+        },
+        {
+          "name": "Chilli Chicken Ver 2.0",
+          "description": "Stir fried chunks of chicken tossed in a spicy sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "785-785"
+        },
+        {
+          "name": "Anardana Chicken Tikka Scotch Flambeed",
+          "description": "Char-grilled chicken pieces marinated in hung curd, Kashmiri chili & spices, flambeed with scotch.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "785-915"
+        },
+        {
+          "name": "Chotemiyan Seekh Kebab",
+          "description": "Char-grilled mutton skewers, mixed with Persian spice mix, green chili, garlic, served with fermented batter.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "925-925"
+        },
+        {
+          "name": "Lamb Galouti",
+          "description": "Melt in mouth texture minced lamb patties, mixed with spices & herbs, grilled on tawa, served on varqi paratha.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "945-945"
+        },
+        {
+          "name": "Kolkata Bekti Varuval",
+          "description": "A traditional Indian speciality fish dish marinated with robust spices.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "965-965"
+        },
+        {
+          "name": "Pepperfry Lamb Chops",
+          "description": "Mangalorean delicacy lamb chops — it's a must try.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1075-1075"
+        },
+        {
+          "name": "Awadhi Fish Tikka",
+          "description": "Char-grilled fish chunks, marinated with hung curd, mustard oil, lemon juice & coarse homemade spices.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1095-1095"
+        },
+        {
+          "name": "Ajwaini Tiger Prawns",
+          "description": "Prawns marinated with ajwain & spices grilled in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1425-1425"
+        },
+        {
+          "name": "Sikandari Raan",
+          "description": "A discovery from The Great Alexander's era — whole leg of lamb slow-roasted with aromatic spices.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1895-1895"
+        },
+        {
+          "name": "Mix Vegetable Momos",
+          "description": "Dumplings filled with a flavorful blend of assorted vegetables & served with spicy dipping sauce. Available steamed, fried or tandoori.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "495-495"
+        },
+        {
+          "name": "Spicy Chicken Momos",
+          "description": "Dumpling filled with spicy chicken, chili & garlic mixed with house spice blend & served with spicy dipping sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "585-585"
+        },
+        {
+          "name": "Hummus Platter",
+          "description": "Assortment of plain, coriander & beetroot hummus with pickled salad, accompanied with lavash, falafel, squash cream, couscous & pita bread.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "855-855"
+        },
+        {
+          "name": "Bhara-Bhara Veg Kebab Platter",
+          "description": "Medley of ricotta dahi kebab, edamame seekh kebab, makhani paneer tikka, mushroom galouti.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "1755-1755"
+        },
+        {
+          "name": "Gabber Singh Non-Vegetarian Platter",
+          "description": "Black garlic chicken tikka, anardana chicken tikka, chotemiyan seekh kebab, Awadhi fish tikka.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "1865-1865"
+        },
+        {
+          "name": "Lotus Stem in Bloody Mary Sauce",
+          "description": "Crispy lotus stem tossed in a tangy Bloody Mary-style sauce.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "405-405"
+        },
+        {
+          "name": "Papad Sampler",
+          "description": "Assorted papads served with chutneys.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "355-355"
+        },
+        {
+          "name": "Plain Salted Fries",
+          "description": "Classic salted fries — also available as Peri Peri Fries.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "355-355"
+        },
+        {
+          "name": "Pull Apart Garlic Bread",
+          "description": "Soft pull-apart bread infused with garlic butter.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "425-425"
+        },
+        {
+          "name": "Rustic Margherita Pizza",
+          "description": "Classic pizza of Naples with cherry tomato, mozzarella cheese and fresh basil.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "725-725"
+        },
+        {
+          "name": "Ortolana Garden Pizza",
+          "description": "Sliced mushrooms & courgettes, julienne peppers, cherry tomatoes, red onions with mozzarella cheese.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "725-725"
+        },
+        {
+          "name": "Chicken & Jalapeno Pizza",
+          "description": "Diced peppery chicken, jalapenos, cherry tomato with mozzarella cheese.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "745-745"
+        },
+        {
+          "name": "Penne Arrabbiata",
+          "description": "Pasta cooked in red sauce made with tomatoes, assorted vegetables, olive oil, garlic, red chili & bell peppers with parmesan cheese. Available with chicken.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "625-725"
+        },
+        {
+          "name": "Penne Alfredo",
+          "description": "Pasta tossed in bechamel sauce made with sauteed mushroom, olive oil with parmesan cheese. Available with chicken.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "625-725"
+        },
+        {
+          "name": "Penne Rose Sauce",
+          "description": "Pasta tossed in cream cheese & arrabbiata sauce with assorted vegetables. Available with chicken.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "625-725"
+        },
+        {
+          "name": "Nizami Diwani Handi",
+          "description": "Assorted handpicked vegetables simmered into Chef's special handi masala.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "675-675"
+        },
+        {
+          "name": "Mushroom Hara Pyaaz Masala",
+          "description": "Mushroom & scallions cooked with masala gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "675-675"
+        },
+        {
+          "name": "Anardana Malai Kofta",
+          "description": "Stuffed cottage cheese dumpling cooked in smooth rich gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "735-735"
+        },
+        {
+          "name": "Anardana Shahi Paneer",
+          "description": "Cottage cheese chunks cooked with rich tomato & cashew nut gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "735-735"
+        },
+        {
+          "name": "Paneer Tikka Butter Masala",
+          "description": "Grilled cottage cheese chunks cooked in chop masala gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "735-735"
+        },
+        {
+          "name": "Anardana Chana Masala",
+          "description": "Chickpeas cooked in Indian spices & dried pomegranate seeds.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "675-675"
+        },
+        {
+          "name": "Lehsooni Palak Chenna",
+          "description": "Spinach cooked with mashed paneer and garlic, creamy & rich in taste.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "735-735"
+        },
+        {
+          "name": "Assorted Vegetables Peruvian Sauce",
+          "description": "Cooked in sweet & sour peruvian sauce accompanied with sushi rice.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "655-675"
+        },
+        {
+          "name": "Punjabi Dal Tadka",
+          "description": "Yellow lentils flavored with cumin & tomato, finished with white butter.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Gongura Khichdi",
+          "description": "Signature khichdi with gongura leaves, black garlic & khakra.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "725-725"
+        },
+        {
+          "name": "Dal Makhani",
+          "description": "Black urad lentils simmered in creamy gravy sauteed with tomato puree & mild spices.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "755-755"
+        },
+        {
+          "name": "Hakka Noodles",
+          "description": "Stir fried noodles with assorted vegetables & soy sauce. Available with chicken.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "565-645"
+        },
+        {
+          "name": "Chilli Garlic Noodles",
+          "description": "Noodles wok-tossed with garlic, chilli & soy sauce. Available with chicken.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "565-645"
+        },
+        {
+          "name": "Cottage Cheese In Soy Chilli Sauce",
+          "description": "Cottage cheese chunks wok tossed with assorted pepper & soy chilli sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "675-675"
+        },
+        {
+          "name": "Malabar Chicken Curry",
+          "description": "Bone-in chicken cooked in South Indian style with coconut and aromatic spices.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "785-785"
+        },
+        {
+          "name": "Anardana Special Butter Chicken",
+          "description": "Boneless chicken cooked in rich tomato gravy with cream, cashew nut paste, dollop of butter & fenugreek powder.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "805-805"
+        },
+        {
+          "name": "Chicken Changezi",
+          "description": "Roasted boneless chicken cooked in rich gravy with cream, ginger garlic paste, tomatoes & chef special blended spices.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "805-805"
+        },
+        {
+          "name": "Royal Kipti Murgh",
+          "description": "Char-grilled chicken tikka egg roll with cashew & makhani gravy on one side & spinach gravy on the other side.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "805-805"
+        },
+        {
+          "name": "Chicken In Hot Garlic Sauce",
+          "description": "Chicken chunks & assorted vegetables wok-tossed in hot garlic sauce.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Mutton Rogan Josh",
+          "description": "A traditional Kashmiri style mutton dish with whole spices and deep flavours.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "925-925"
+        },
+        {
+          "name": "Awadhi Nalli Nihari",
+          "description": "Heritage Mughlai delicacy where lamb shanks are cooked with selected spices on slow heat to reach the level of perfection.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "945-945"
+        },
+        {
+          "name": "Prawn & Fish Thai Mango Curry",
+          "description": "Coconut flavoured Thai mango curry — available with prawn or fish.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "965-1035"
+        },
+        {
+          "name": "Veg Dum Biryani",
+          "description": "Long grain basmati cooked on dum with choice vegetables, served with burani raita & Hyderabadi salan.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Chicken Dum Biryani",
+          "description": "Long grain basmati cooked on dum with chicken, served with burani raita & Hyderabadi salan.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "785-785"
+        },
+        {
+          "name": "Mutton Dum Biryani",
+          "description": "Long grain basmati cooked on dum with mutton, served with burani raita & Hyderabadi salan.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "895-895"
+        },
+        {
+          "name": "Raan Biryani",
+          "description": "Whole leg of lamb slow-cooked and served with fragrant dum biryani.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "1795-1795"
+        },
+        {
+          "name": "Steamed Rice",
+          "description": "Plain steamed basmati rice.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "275-275"
+        },
+        {
+          "name": "Jeera Rice",
+          "description": "Basmati rice tempered with cumin seeds.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "275-275"
+        },
+        {
+          "name": "Raita",
+          "description": "Choose from Boondi, Mixed Vegetable, Garlic, or Pineapple raita.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "315-315"
+        },
+        {
+          "name": "Tandoori Roti",
+          "description": "Whole wheat flour bread cooked in tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "115-115"
+        },
+        {
+          "name": "Buttered Roti",
+          "description": "Whole wheat flour bread cooked in tandoor, finished with butter.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "135-135"
+        },
+        {
+          "name": "Malabari Paratha",
+          "description": "Soft, layered Malabari-style paratha.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "155-155"
+        },
+        {
+          "name": "Plain Naan",
+          "description": "Fine flour bread cooked in tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "155-155"
+        },
+        {
+          "name": "Butter Naan",
+          "description": "Fine flour bread cooked in tandoor, finished with butter.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "165-165"
+        },
+        {
+          "name": "Laccha Paratha",
+          "description": "Multi-layered wheat flour bread. Also available as Pudina Paratha or Hari Mirch Paratha.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "165-165"
+        },
+        {
+          "name": "Garlic Coriander Naan",
+          "description": "Naan topped with garlic and fresh coriander, baked in tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "175-175"
+        },
+        {
+          "name": "Shahi Pesto Naan",
+          "description": "Fine flour bread topped with cashew & pesto sauce cooked in tandoor.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "195-195"
+        },
+        {
+          "name": "Bharwan Kulcha",
+          "description": "Stuffed kulcha — choose from Potato, Mixed Vegetable, Onion, or Paneer filling.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "215-215"
+        },
+        {
+          "name": "Assorted Kulfi",
+          "description": "Assorted Indian ice cream kulfi in seasonal flavours.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "525-525"
+        },
+        {
+          "name": "Hyderabadi Shahi Roll",
+          "description": "Coconut and dry-nuts rolls coated with sugar syrup.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Kunafa Bird Nest",
+          "description": "Kataifi nest filled with rabdi & topped with mini gulab jamun.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Jasmine Payasam",
+          "description": "Tapioca pearls cooked in jasmine infused milk and scented with saffron, served with stewed tapioca pearls and roasted almonds.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "625-625"
+        },
+        {
+          "name": "Bombay Kulfi",
+          "description": "Our take on saffron kulfi served on a bed of dry ice with chia seeds & crackling pops.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "645-645"
+        }
+      ]
+    }
+  ]
+}
