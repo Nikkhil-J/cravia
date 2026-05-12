@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getDish } from '@/lib/services/dishes'
 import { getReview } from '@/lib/services/reviews'
 import { ReviewCardV2 } from '@/components/features/ReviewCardV2'
@@ -31,7 +32,14 @@ export default async function ReviewPage({ params }: PageProps) {
       <MobileBackButton parentHref={`/dish/${review.dishId}`} />
       {dish && (
         <div className="mb-6">
-          <h1 className="font-display text-2xl font-bold text-heading">{dish.name}</h1>
+          <Link
+            href={`/dish/${review.dishId}`}
+            className="group inline-block"
+          >
+            <h1 className="font-display text-2xl font-bold text-heading underline-offset-4 group-hover:underline">
+              {dish.name}
+            </h1>
+          </Link>
           <p className="text-sm text-text-muted">{dish.restaurantName}</p>
         </div>
       )}
