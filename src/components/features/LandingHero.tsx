@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Search } from "lucide-react";
+import { ArrowRight, Check, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { setExploreQuery } from "@/lib/stores/explore-search";
 import { CITY_DISPLAY_NAME, type City } from "@/lib/constants";
@@ -135,6 +135,17 @@ function mapDishesToCarousel(dishes: Dish[]): CarouselDish[] {
     tags: (d.topTags ?? []).slice(0, 2),
   }));
 }
+
+// ── Search bar placeholder pool (one picked at random per load) ──────────
+const SEARCH_PLACEHOLDERS = [
+  "Butter Chicken at Punjab Grill...",
+  "Best biryani near me...",
+  "Dosa worth ordering...",
+  "Momos that aren't soggy...",
+  "Pizza with a good crust...",
+  "Paneer tikka, but actually smoky...",
+  "Something worth the money...",
+] as const;
 
 // ── Category chips ────────────────────────────────────────
 const HERO_CHIPS = [
@@ -337,18 +348,17 @@ function CyclingProblems({
     "problem",
   ]);
   const [cycle, setCycle] = useState(0);
+  const isResettingRef = useRef(false);
 
   useEffect(() => {
+    isResettingRef.current = false;
     const t: ReturnType<typeof setTimeout>[] = [];
-    // How long all 3 problems are visible before striking starts
-    const READ_PAUSE = 1600;
-    // Gap between each item's strike (must be > strike draw duration so they don't overlap)
-    const STRIKE_INTERVAL = 1200;
-    // How long after strike starts before solution replaces it
-    const STRIKE_HOLD = 1000;
-    // Total cycle length before reset
-    const CYCLE_DURATION = 6200;
+    const READ_PAUSE = 2400;
+    const STRIKE_INTERVAL = 1400;
+    const STRIKE_HOLD = 1200;
+    const RESET_PAUSE = 1000;
 
+    // Strike → solve each item
     [0, 1, 2].forEach((i) => {
       t.push(
         setTimeout(
@@ -365,11 +375,15 @@ function CyclingProblems({
       );
     });
 
+    const lastSolvedAt = READ_PAUSE + 2 * STRIKE_INTERVAL + STRIKE_HOLD;
+
+    // Reset all at once instantly, then start next cycle
     t.push(
       setTimeout(() => {
+        isResettingRef.current = true;
         setPhases(["problem", "problem", "problem"]);
         setCycle((c) => c + 1);
-      }, CYCLE_DURATION),
+      }, lastSolvedAt + RESET_PAUSE),
     );
 
     return () => t.forEach(clearTimeout);
@@ -379,126 +393,252 @@ function CyclingProblems({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap }}>
-      {PROBLEMS.map((problem, i) => (
-        <motion.div
-          key={`row-${i}-${cycle}`}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: i * 0.22, duration: 0.35, ease: "easeOut" }}
-          style={{ display: "flex", alignItems: "center", gap: 12 }}
-        >
-          {/* Icon: × for problems, ✓ for solved */}
-          <motion.span
-            animate={{
-              background: phases[i] === "solved" ? "transparent" : C.orange,
-              borderColor: phases[i] === "solved" ? C.orange : "transparent",
-            }}
-            transition={{ duration: 0.25 }}
-            style={{
-              width: iconSize,
-              height: iconSize,
-              borderRadius: 6,
-              border: "1px solid transparent",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              fontSize: Math.round(fontSize * 0.72),
-              fontWeight: 700,
-              lineHeight: 1,
-            }}
+      {PROBLEMS.map((problem, i) => {
+        const solved = phases[i] === "solved";
+        const striking = phases[i] === "striking";
+        const svgSize = Math.round(fontSize * 0.72);
+        const instant = isResettingRef.current;
+        return (
+          <div
+            key={i}
+            style={{ display: "flex", alignItems: "flex-start", gap: 12 }}
           >
-            <AnimatePresence mode="wait">
-              {phases[i] === "solved" ? (
-                <motion.span
-                  key="check"
-                  initial={{ opacity: 0, scale: 0.6 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.6 }}
-                  transition={{ duration: 0.2 }}
-                  style={{ color: C.orange }}
-                >
-                  ✓
-                </motion.span>
-              ) : (
-                <motion.span
-                  key="cross"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                  style={{ color: "#fff" }}
-                >
-                  ×
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.span>
+            {/* Icon — both glyphs always in DOM, opacity crossfade only */}
+            <motion.span
+              animate={{
+                background: solved ? "transparent" : C.orange,
+                borderColor: solved ? C.orange : "transparent",
+              }}
+              transition={{ duration: instant ? 0.15 : 0.25 }}
+              style={{
+                width: iconSize,
+                height: iconSize,
+                borderRadius: 6,
+                border: "1px solid transparent",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                position: "relative",
+              }}
+            >
+              <motion.span
+                animate={{ opacity: solved ? 0 : 1 }}
+                transition={{ duration: instant ? 0.15 : 0.2 }}
+                style={{
+                  position: "absolute",
+                  display: "flex",
+                  color: "#fff",
+                }}
+              >
+                <X size={svgSize} strokeWidth={2.5} />
+              </motion.span>
+              <motion.span
+                animate={{ opacity: solved ? 1 : 0 }}
+                transition={{ duration: instant ? 0.15 : 0.2 }}
+                style={{
+                  position: "absolute",
+                  display: "flex",
+                  color: C.orange,
+                }}
+              >
+                <Check size={svgSize} strokeWidth={2.5} />
+              </motion.span>
+            </motion.span>
 
-          {/* Text: problem or solution */}
-          <div style={{ position: "relative", flex: 1 }}>
-            <AnimatePresence mode="wait">
-              {phases[i] !== "solved" ? (
+            {/* Text — problem always in flow (reserves height), solution overlaid */}
+            <div style={{ position: "relative", flex: 1 }}>
+              {/* Problem text: always in flow; visibility:hidden when solved keeps height */}
+              <span
+                style={{
+                  display: "block",
+                  width: "fit-content",
+                  position: "relative",
+                  visibility: solved ? "hidden" : "visible",
+                  fontSize,
+                  fontWeight: 500,
+                  color: C.gray,
+                  fontFamily: "var(--font-body)",
+                  lineHeight: 1.4,
+                }}
+              >
+                {problem}
+                {/* Strike line — always in DOM, scaleX 0→1 */}
                 <motion.span
-                  key={`prob-${i}-${cycle}`}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  animate={{ scaleX: striking ? 1 : 0 }}
+                  transition={{ duration: instant ? 0 : 0.8, ease: [0.77, 0, 0.18, 1] }}
                   style={{
-                    display: "inline-block",
-                    position: "relative",
-                    fontSize,
-                    fontWeight: 500,
-                    color: C.gray,
-                    fontFamily: "var(--font-body)",
-                    lineHeight: 1.4,
-                  }}
-                >
-                  {problem}
-                  {phases[i] === "striking" && (
-                    <motion.span
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.8, ease: [0.77, 0, 0.18, 1] }}
-                      style={{
-                        position: "absolute",
-                        left: 0,
-                        top: "52%",
-                        width: "100%",
-                        height: 1.5,
-                        background: C.orange,
-                        transformOrigin: "left center",
-                        display: "block",
-                      }}
-                    />
-                  )}
-                </motion.span>
-              ) : (
-                <motion.span
-                  key={`sol-${i}-${cycle}`}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.32, ease: "easeOut" }}
-                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: "52%",
+                    width: "100%",
+                    height: 1.5,
+                    background: C.orange,
+                    transformOrigin: "left center",
                     display: "block",
-                    fontSize,
-                    fontWeight: 600,
-                    color: C.white,
-                    fontFamily: "var(--font-body)",
-                    lineHeight: 1.4,
+                    scaleX: 0,
                   }}
-                >
-                  {SOLUTIONS[i]}
-                </motion.span>
-              )}
-            </AnimatePresence>
+                />
+              </span>
+
+              {/* Solution text — absolutely on top, fades in when solved */}
+              <motion.span
+                animate={{ opacity: solved ? 1 : 0 }}
+                transition={{ duration: instant ? 0.15 : 0.28, ease: "easeOut" }}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  display: "block",
+                  fontSize,
+                  fontWeight: 600,
+                  color: C.white,
+                  fontFamily: "var(--font-body)",
+                  lineHeight: 1.4,
+                  pointerEvents: "none",
+                }}
+              >
+                {SOLUTIONS[i]}
+              </motion.span>
+            </div>
           </div>
-        </motion.div>
-      ))}
+        );
+      })}
     </div>
   );
+}
+
+// ── HangingTags ───────────────────────────────────────────
+
+const HANGING_TAGS = [
+  {
+    text: "yaar kya\norder\nkarein?",
+    stringHeight: "calc(30.4vh + 80px)",
+    delay: "0s",
+    swayDuration: "5.2s",
+    swayFrom: "-2deg",
+    swayTo: "1.5deg",
+    animName: "swayTag0",
+  },
+  {
+    text: "unki dish\nbetter\nlag rahi",
+    stringHeight: "calc(30.4vh + 120px)",
+    delay: "0.5s",
+    swayDuration: "6.8s",
+    swayFrom: "1.5deg",
+    swayTo: "-2deg",
+    animName: "swayTag1",
+  },
+  {
+    text: "kash\nreview\ndekha hota",
+    stringHeight: "calc(30.4vh + 64px)",
+    delay: "1s",
+    swayDuration: "4.8s",
+    swayFrom: "-1.5deg",
+    swayTo: "2deg",
+    animName: "swayTag2",
+  },
+] as const
+
+function HangingTags() {
+  const [litIdx, setLitIdx] = useState(1)
+  const { resolvedTheme } = useTheme()
+  const isLight = resolvedTheme === "light"
+
+  useEffect(() => {
+    const id = setInterval(() => setLitIdx((p) => (p + 1) % 3), 2400)
+    return () => clearInterval(id)
+  }, [])
+
+  const cardBgActive   = isLight ? "#f5ede5"             : "#1a1210"
+  const cardBgInactive = isLight ? LIGHT_C.surface       : "#131313"
+  const borderActive   = "rgba(232,69,10,0.35)"
+  const borderInactive = isLight ? "rgba(0,0,0,0.10)"   : "rgba(255,255,255,0.06)"
+  const textActive     = isLight ? LIGHT_C.white         : "rgba(255,255,255,0.85)"
+  const textInactive   = isLight ? LIGHT_C.grayDim       : "rgba(255,255,255,0.28)"
+  const stringGrad     = isLight
+    ? "linear-gradient(to bottom, rgba(0,0,0,0.18), rgba(0,0,0,0.04))"
+    : "linear-gradient(to bottom, rgba(255,255,255,0.10), rgba(255,255,255,0.02))"
+  const pinInactive    = isLight ? "rgba(0,0,0,0.12)"   : "rgba(255,255,255,0.08)"
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: -44,
+        left: "50%",
+        transform: "translateX(-68%)",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "flex-start",
+        gap: 28,
+        pointerEvents: "none",
+        zIndex: 41,
+      }}
+    >
+        {HANGING_TAGS.map((tag, i) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              transformOrigin: "top center",
+              animation: `${tag.animName} ${tag.swayDuration} ease-in-out infinite`,
+              animationDelay: tag.delay,
+            }}
+          >
+            {/* String */}
+            <div
+              style={{
+                width: 1.5,
+                height: tag.stringHeight,
+                background: stringGrad,
+              }}
+            />
+            {/* Tag card */}
+            <div
+              style={{
+                position: "relative",
+                background: litIdx === i ? cardBgActive : cardBgInactive,
+                border: `1px solid ${litIdx === i ? borderActive : borderInactive}`,
+                borderRadius: 10,
+                padding: "14px 12px",
+                fontSize: 14,
+                width: 96,
+                minHeight: 96,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: litIdx === i ? textActive : textInactive,
+                whiteSpace: "pre-line",
+                textAlign: "center",
+                lineHeight: 1.65,
+                transition:
+                  "border-color 0.5s ease, color 0.5s ease, background 0.5s ease",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              {/* Pin dot */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: -4,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: 5,
+                  height: 5,
+                  borderRadius: "50%",
+                  background: litIdx === i ? "#E8450A" : pinInactive,
+                  transition: "background 0.5s ease",
+                }}
+              />
+              {tag.text}
+            </div>
+          </div>
+        ))}
+    </div>
+  )
 }
 
 // ── Main component ────────────────────────────────────────
@@ -514,6 +654,12 @@ export function LandingHero({
   const [exiting, setExiting] = useState(false);
   const [desktopIdx, setDesktopIdx] = useState(0);
   const [mobileIdx, setMobileIdx] = useState(0);
+  const [searchPlaceholder] = useState(
+    () =>
+      SEARCH_PLACEHOLDERS[
+        Math.floor(Math.random() * SEARCH_PLACEHOLDERS.length)
+      ],
+  );
 
   // Use API dishes when there are at least 2 reviewed results; fall back to sample data
   const reviewedDishes = topDishes.filter((d) => d.reviewCount > 0).slice(0, 5);
@@ -523,15 +669,15 @@ export function LandingHero({
       : FALLBACK_DISHES;
   const n = dishes.length;
 
-  // Desktop: advance every 2.6s
+  // Desktop: advance every 4s
   useEffect(() => {
-    const id = setInterval(() => setDesktopIdx((i) => (i + 1) % n), 2600);
+    const id = setInterval(() => setDesktopIdx((i) => (i + 1) % n), 4000);
     return () => clearInterval(id);
   }, [n]);
 
-  // Mobile: advance every 2.8s
+  // Mobile: advance every 4.5s
   useEffect(() => {
-    const id = setInterval(() => setMobileIdx((i) => (i + 1) % n), 2800);
+    const id = setInterval(() => setMobileIdx((i) => (i + 1) % n), 4500);
     return () => clearInterval(id);
   }, [n]);
 
@@ -637,7 +783,7 @@ export function LandingHero({
 
   const QuoteBlock = (
     <div style={{ marginBottom: 36 }}>
-      <CyclingProblems C={C} fontSize={20} gap={16} />
+      <CyclingProblems C={C} fontSize={15} gap={12} />
     </div>
   );
 
@@ -676,22 +822,6 @@ export function LandingHero({
     </>
   );
 
-  const BodyCopy = (
-    <p
-      style={{
-        fontSize: 13.5,
-        color: C.gray,
-        lineHeight: 1.65,
-        maxWidth: 620,
-        marginBottom: 36,
-        fontFamily: "var(--font-body)",
-      }}
-    >
-      Search any dish at any restaurant. See how real diners rated its taste,
-      portion, and value. Know what to order before you sit down.
-    </p>
-  );
-
   const SearchBar = (
     <div
       role="button"
@@ -702,35 +832,53 @@ export function LandingHero({
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 10,
+        gap: 12,
         background: C.surface,
-        border: `1px solid ${C.border}`,
-        borderRadius: 8,
-        padding: "10px 14px",
+        border: `1px solid rgba(232,87,26,0.22)`,
+        borderRadius: 10,
+        padding: "13px 16px",
         maxWidth: 600,
         cursor: "pointer",
         marginBottom: 20,
         transition: "border-color 0.15s ease",
       }}
       onMouseEnter={(e) =>
-        ((e.currentTarget as HTMLDivElement).style.borderColor = C.orange)
+        ((e.currentTarget as HTMLDivElement).style.borderColor = "rgba(232,87,26,0.55)")
       }
       onMouseLeave={(e) =>
-        ((e.currentTarget as HTMLDivElement).style.borderColor = C.border)
+        ((e.currentTarget as HTMLDivElement).style.borderColor = "rgba(232,87,26,0.22)")
       }
     >
       <Search
-        style={{ width: 14, height: 14, color: C.grayDim, flexShrink: 0 }}
+        style={{ width: 15, height: 15, color: C.gray, flexShrink: 0 }}
         strokeWidth={1.5}
       />
       <span
         style={{
-          fontSize: 13,
-          color: C.grayDim,
+          fontSize: 14,
+          color: C.gray,
           fontFamily: "var(--font-body)",
+          flex: 1,
         }}
       >
-        Try &ldquo;Butter Chicken&rdquo;...
+        {searchPlaceholder}
+      </span>
+      <span
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 3,
+          fontSize: 12,
+          fontWeight: 500,
+          color: C.orange,
+          opacity: 0.8,
+          fontFamily: "var(--font-body)",
+          whiteSpace: "nowrap",
+          flexShrink: 0,
+        }}
+      >
+        Explore
+        <ArrowRight size={12} strokeWidth={2} />
       </span>
     </div>
   );
@@ -865,10 +1013,10 @@ export function LandingHero({
             paddingBottom: 44,
           }}
         >
-          {/* Left column — 68% */}
+          {/* Left column — 68% on md, 52% on xl+ */}
           <div
+            className="flex-[0_0_68%] xl:flex-[0_0_52%]"
             style={{
-              flex: "0 0 68%",
               paddingRight: 48,
               display: "flex",
               flexDirection: "column",
@@ -878,25 +1026,38 @@ export function LandingHero({
             {LivePill}
             {Headlines}
             {QuoteBlock}
-            {BodyCopy}
             {SearchBar}
             {SocialProof}
             {Chips}
           </div>
 
-          {/* Vertical divider */}
+          {/* Divider — visible md→xl only (when HangingTags is hidden) */}
           <div
-            aria-hidden="true"
+            className="block xl:hidden"
             style={{
               width: 1,
-              background: C.border,
-              opacity: 0.5,
-              flexShrink: 0,
               alignSelf: "stretch",
+              opacity: 0.5,
+              background: C.border,
             }}
           />
 
-          {/* Right column — ~32% */}
+          {/* HangingTags anchor column — 300px, xl+ only, in-flow so never overlaps left panel */}
+          <div
+            aria-hidden="true"
+            className="hidden xl:block"
+            style={{
+              width: 300,
+              flexShrink: 0,
+              position: "relative",
+              alignSelf: "stretch",
+              overflow: "visible",
+            }}
+          >
+            <HangingTags />
+          </div>
+
+          {/* Right column — ~32% (flex:1) */}
           <div
             style={{
               flex: 1,
@@ -954,16 +1115,21 @@ export function LandingHero({
                     }}
                   >
                     {slotIdx === 0 ? (
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={dish.id}
-                          initial={{ y: 18, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          transition={{ duration: 0.45, ease: CAROUSEL_EASE }}
-                        >
-                          <CardContent dish={dish} C={C} />
-                        </motion.div>
-                      </AnimatePresence>
+                      /* Active card — overlapping pass: both in/out visible simultaneously */
+                      <div style={{ position: "relative", minHeight: 128, overflow: "hidden" }}>
+                        <AnimatePresence mode="sync">
+                          <motion.div
+                            key={dish.id}
+                            initial={{ y: 28, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: -22, opacity: 0 }}
+                            transition={{ duration: 0.42, ease: CAROUSEL_EASE }}
+                            style={{ position: "absolute", inset: 0 }}
+                          >
+                            <CardContent dish={dish} C={C} />
+                          </motion.div>
+                        </AnimatePresence>
+                      </div>
                     ) : (
                       /* Peeking cards — name + restaurant only, no score bars */
                       <div
@@ -1040,7 +1206,7 @@ export function LandingHero({
         {/* ── Mobile layout (< md) ── */}
         <div
           className="md:hidden"
-          style={{ padding: "22px 20px", position: "relative" }}
+          style={{ padding: "32px 20px", position: "relative" }}
         >
           {/* Left edge indent for content */}
           <div style={{ paddingLeft: 16 }}>
@@ -1075,15 +1241,15 @@ export function LandingHero({
                 letterSpacing: "-0.02em",
                 textTransform: "uppercase",
                 margin: 0,
-                marginBottom: 18,
+                marginBottom: 28,
               }}
             >
               Order right.
             </h2>
 
             {/* 4. Cycling problems block (below headline on mobile) */}
-            <div style={{ marginBottom: 18 }}>
-              <CyclingProblems C={C} fontSize={16} gap={12} />
+            <div style={{ marginBottom: 28 }}>
+              <CyclingProblems C={C} fontSize={13} gap={12} />
             </div>
 
             {/* 5. Search bar */}
@@ -1096,32 +1262,50 @@ export function LandingHero({
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
+                gap: 12,
                 background: C.surface,
-                border: `1px solid ${C.border}`,
-                borderRadius: 8,
-                padding: "10px 14px",
+                border: `1px solid rgba(232,87,26,0.22)`,
+                borderRadius: 10,
+                padding: "13px 16px",
                 cursor: "pointer",
-                marginBottom: 8,
+                marginBottom: 16,
               }}
             >
               <Search
                 style={{
-                  width: 14,
-                  height: 14,
-                  color: C.grayDim,
+                  width: 15,
+                  height: 15,
+                  color: C.gray,
                   flexShrink: 0,
                 }}
                 strokeWidth={1.5}
               />
               <span
                 style={{
-                  fontSize: 13,
-                  color: C.grayDim,
+                  fontSize: 14,
+                  color: C.gray,
                   fontFamily: "var(--font-body)",
+                  flex: 1,
                 }}
               >
-                Try &ldquo;Butter Chicken&rdquo;...
+                {searchPlaceholder}
+              </span>
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 3,
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: C.orange,
+                  opacity: 0.8,
+                  fontFamily: "var(--font-body)",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
+                }}
+              >
+                Explore
+                <ArrowRight size={12} strokeWidth={2} />
               </span>
             </div>
 
@@ -1134,7 +1318,7 @@ export function LandingHero({
                 display: "flex",
                 flexWrap: "wrap",
                 gap: 6,
-                marginBottom: 24,
+                marginBottom: 32,
               }}
             >
               {HERO_CHIPS.map((chip) => (
@@ -1168,7 +1352,7 @@ export function LandingHero({
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 fontFamily: "var(--font-body)",
-                marginBottom: 10,
+                marginBottom: 14,
                 paddingLeft: 16,
               }}
             >
@@ -1183,10 +1367,10 @@ export function LandingHero({
               <AnimatePresence mode="sync">
                 <motion.div
                   key={mobileIdx}
-                  initial={{ x: 40, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -40, opacity: 0 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  initial={{ y: 28, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -22, opacity: 0 }}
+                  transition={{ duration: 0.42, ease: CAROUSEL_EASE }}
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -1204,7 +1388,7 @@ export function LandingHero({
 
             <div
               style={{
-                marginTop: 14,
+                marginTop: 20,
                 fontSize: 10,
                 fontFamily: "var(--font-body)",
                 paddingLeft: 16,

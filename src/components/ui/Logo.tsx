@@ -63,8 +63,7 @@ export function Logo({
       {renderWordmark && (
         <span
           className={cn(
-            // APPROVED HARDCODED COLOR — brand wordmark requires specific palette
-            'text-[#993C1D] dark:text-white uppercase tracking-wide',
+            'text-coral-deep uppercase tracking-wide',
             s.text,
             wordmarkClassName,
           )}

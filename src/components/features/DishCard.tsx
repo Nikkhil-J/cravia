@@ -2,8 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { Dish } from '@/lib/types'
 import { formatRating } from '@/lib/utils/index'
-import { cn } from '@/lib/utils'
-import { getCuisineEmoji, getCuisineGradient } from '@/lib/utils/dish-display'
+import { getCuisineEmoji } from '@/lib/utils/dish-display'
 import { PRICE_LABEL, DIETARY_ICON } from '@/lib/constants'
 import { ROUTES } from '@/lib/constants/routes'
 
@@ -29,21 +28,10 @@ export function DishCard({ dish, index = 0 }: DishCardProps) {
             className="object-cover transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-[1.06]"
           />
         ) : (
-          <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
-            <div className={cn("absolute inset-0", getCuisineGradient(dish.cuisines?.[0]))} />
-            <div
-              className="absolute inset-0 opacity-10"
-              style={{
-                backgroundImage: `radial-gradient(circle at 20% 50%, white 1px, transparent 1px),
-                                  radial-gradient(circle at 80% 50%, white 1px, transparent 1px)`,
-                backgroundSize: '30px 30px',
-              }}
-            />
-            <div className="relative flex flex-col items-center gap-2">
-              <span className="text-5xl drop-shadow-sm">
-                {getCuisineEmoji(dish.cuisines?.[0])}
-              </span>
-            </div>
+          <div className="flex h-full w-full items-center justify-center bg-primary/8">
+            <span className="text-5xl opacity-60">
+              {getCuisineEmoji(dish.cuisines?.[0])}
+            </span>
           </div>
         )}
         {dish.reviewCount > 0 && (

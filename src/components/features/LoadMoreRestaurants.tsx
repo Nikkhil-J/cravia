@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect, useRef } from 'react'
 import { RestaurantCard } from '@/components/features/RestaurantCard'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { Button } from '@/components/ui/button'
 import type { Restaurant } from '@/lib/types'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { API_ENDPOINTS } from '@/lib/constants/api'
@@ -40,7 +39,14 @@ export function LoadMoreRestaurants({
   const [nextCursorId, setNextCursorId] = useState<string | null>(initialCursorId)
   const [isPending, startTransition] = useTransition()
 
-  async function loadMore() {
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  // Always holds the latest loadMore so the observer never captures a stale closure
+  const loadMoreRef = useRef<() => void>(() => undefined)
+  const isPendingRef = useRef(isPending)
+  isPendingRef.current = isPending
+
+  function loadMore() {
+    if (isPendingRef.current) return
     startTransition(async () => {
       const params = new URLSearchParams()
       if (query) params.set('q', query)
@@ -67,6 +73,23 @@ export function LoadMoreRestaurants({
     })
   }
 
+  loadMoreRef.current = loadMore
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (!sentinel || !hasMore) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) loadMoreRef.current()
+      },
+      { rootMargin: '200px' }
+    )
+
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [hasMore])
+
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -74,16 +97,13 @@ export function LoadMoreRestaurants({
           <RestaurantCard key={restaurant.id} restaurant={restaurant} index={i} />
         ))}
       </div>
-      {hasMore && (
-        <div className="mt-8 flex justify-center">
-          <Button
-            variant="outline"
-            onClick={loadMore}
-            disabled={isPending}
-            className="h-auto gap-2 rounded-pill border-2 border-border px-6 py-3 text-sm font-semibold text-text-primary transition-all hover:border-primary hover:bg-transparent hover:text-primary"
-          >
-            {isPending ? <LoadingSpinner size="sm" /> : 'Load more restaurants'}
-          </Button>
+
+      {/* Sentinel — observed by IntersectionObserver to trigger next page */}
+      <div ref={sentinelRef} className="h-px" aria-hidden />
+
+      {isPending && (
+        <div className="mt-8 flex justify-center text-text-muted">
+          <LoadingSpinner size="md" />
         </div>
       )}
     </>

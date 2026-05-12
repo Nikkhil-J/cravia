@@ -375,6 +375,11 @@ html.theme-transitioning *::after {
   animation-delay: calc(var(--stagger-index, 0) * 60ms);
 }
 
+/* ── HangingTags sway animations ───────────────────────── */
+@keyframes swayTag0 { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(1.5deg); } }
+@keyframes swayTag1 { 0%, 100% { transform: rotate(1.5deg); } 50% { transform: rotate(-2deg); } }
+@keyframes swayTag2 { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(2deg); } }
+
 /* ── Helpful vote burst particles ──────────────────────── */
 /*
  * 8 directional keyframes for the particle burst on the helpful button.
