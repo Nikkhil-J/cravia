@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/useDebounce";
@@ -27,6 +27,7 @@ interface SearchBarProps {
   autoFocus?: boolean;
   initialQuery?: string;
   className?: string;
+  showBackArrow?: boolean;
 }
 
 export function SearchBar({
@@ -34,6 +35,7 @@ export function SearchBar({
   autoFocus,
   initialQuery = "",
   className,
+  showBackArrow = false,
 }: SearchBarProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -118,7 +120,18 @@ export function SearchBar({
       className={cn("hidden w-full max-w-[400px] md:block", className)}
     >
       <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-text-muted" />
+        {showBackArrow ? (
+          <button
+            type="button"
+            onClick={() => router.back()}
+            aria-label="Go back"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+        ) : (
+          <Search className="absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-text-muted" />
+        )}
         <Input
           ref={inputRef}
           type="search"

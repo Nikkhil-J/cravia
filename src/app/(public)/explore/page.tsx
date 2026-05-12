@@ -42,13 +42,18 @@ interface ExplorePageProps {
   }>
 }
 
-function ResultsSkeleton() {
+function ResultsSkeleton({ tab = 'dishes' }: { tab?: ExploreTab }) {
+  const gridClass =
+    tab === 'restaurants'
+      ? 'grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+      : 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3'
+
   return (
     <div className="mt-6">
       <div className="mb-4 h-4 w-32 animate-pulse rounded bg-border" />
-      <div className="grid gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+      <div className={gridClass}>
         {Array.from({ length: 8 }).map((_, i) => (
-          <SkeletonCard key={i} />
+          <SkeletonCard key={i} variant={tab === 'restaurants' ? 'restaurant' : 'dish'} />
         ))}
       </div>
     </div>
@@ -348,6 +353,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
               variant="navbar"
               initialQuery=""
               className="block w-full max-w-none"
+              showBackArrow
             />
           </Suspense>
         </div>
@@ -364,12 +370,12 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           areas={[...areas]}
         />
 
-        <Suspense fallback={<ResultsSkeleton />}>
+        <Suspense fallback={<ResultsSkeleton tab={tab} />}>
           <ExploreSearchResults />
         </Suspense>
 
         <ExploreDefaultContent>
-          <Suspense key={paramsKey} fallback={<ResultsSkeleton />}>
+          <Suspense key={paramsKey} fallback={<ResultsSkeleton tab={tab} />}>
             <ExploreResultsWrapper>
               {tab === 'dishes' && !cuisine && !area && !dietary && !priceRange ? (
                 <CuratedDishExplore city={city} sortBy={dishSortBy} />
