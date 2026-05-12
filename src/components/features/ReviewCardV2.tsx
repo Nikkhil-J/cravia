@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import type { Review } from '@/lib/types'
 import { canEditReview, computeOverall, formatRelativeTime, formatRating } from '@/lib/utils/index'
@@ -187,9 +188,15 @@ export function ReviewCardV2({
         {variant === 'profile' && dishContext && (
           <div className="flex items-start gap-2.5">
             <div className="min-w-0 flex-1">
-              <h3 className="truncate font-display text-sm font-bold text-heading">
-                {dishContext.dishName}
-              </h3>
+              <Link
+                href={`/dish/${review.dishId}`}
+                className="group inline-block max-w-full"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3 className="truncate font-display text-sm font-bold text-heading underline-offset-2 group-hover:underline">
+                  {dishContext.dishName}
+                </h3>
+              </Link>
               <p className="truncate text-[11px] text-text-muted">
                 at <span className="font-medium text-text-secondary">{dishContext.restaurantName}</span>
               </p>
