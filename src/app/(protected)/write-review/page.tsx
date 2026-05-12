@@ -4,6 +4,7 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { toast } from 'sonner'
+import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useReviewFormStore } from '@/lib/store/reviewFormStore'
 import { getDish } from '@/lib/services/dishes'
@@ -351,7 +352,12 @@ function WriteReviewContent() {
         )}
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-lg font-bold leading-snug text-heading">
-            {isEditMode ? `Editing review` : displayName || <span className="inline-block h-6 w-48 animate-pulse rounded bg-border" />}
+            {isEditMode
+              ? 'Editing review'
+              : dishId
+                ? <Link href={`/dish/${dishId}`} className="hover:underline underline-offset-2">{displayName || <span className="inline-block h-6 w-48 animate-pulse rounded bg-border" />}</Link>
+                : displayName || <span className="inline-block h-6 w-48 animate-pulse rounded bg-border" />
+            }
           </h1>
           <p className="mt-0.5 truncate text-sm text-text-secondary">
             {isEditMode && displayName ? displayName + ' · ' : ''}
