@@ -39,7 +39,7 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 border-b bg-background/92 backdrop-blur-xl transition-all duration-200',
+        'sticky top-0 z-50 border-b bg-background/92 backdrop-blur-xl transition-all duration-200',
         scrolled ? 'border-border shadow-sm' : 'border-border'
       )}
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
