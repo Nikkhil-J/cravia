@@ -93,7 +93,7 @@ export default async function DishPage({ params }: PageProps) {
         avgOverall: dish.avgOverall,
         cuisines: dish.cuisines,
       }} />
-      <MobileBackButton />
+      <MobileBackButton parentHref={ROUTES.restaurant(dish.restaurantId)} />
       {/* Breadcrumb */}
       <nav className="mb-4 flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:mb-6 sm:gap-2 sm:text-sm">
         <Link href={ROUTES.EXPLORE} className="shrink-0 transition-colors hover:text-primary">Explore</Link>

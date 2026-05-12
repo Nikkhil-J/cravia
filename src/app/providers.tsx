@@ -8,6 +8,7 @@ import { MotionConfig } from 'motion/react'
 import { Toaster } from 'sonner'
 import { AuthProvider } from '@/lib/hooks/useAuth'
 import { CONFIG } from '@/lib/constants'
+import { PWAProvider } from '@/context/PWAContext'
 
 function ThemedToaster() {
   const { resolvedTheme } = useTheme()
@@ -36,6 +37,7 @@ export function Providers({ children }: { children: ReactNode }) {
   )
 
   return (
+    <PWAProvider>
     <ThemeProvider
       attribute="class"
       defaultTheme="system"
@@ -57,5 +59,6 @@ export function Providers({ children }: { children: ReactNode }) {
       </MotionConfig>
       <ThemedToaster />
     </ThemeProvider>
+    </PWAProvider>
   )
 }

@@ -170,7 +170,7 @@ export function Navbar() {
                   <DropdownMenuItem
                     variant="destructive"
                     className="gap-2 px-3 py-2"
-                    onSelect={() => logout()}
+                    onClick={() => logout()}
                   >
                     <LogOut className="h-4 w-4" />
                     Logout

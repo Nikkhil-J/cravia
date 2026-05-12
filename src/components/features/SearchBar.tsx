@@ -139,6 +139,10 @@ export function SearchBar({
           onChange={(e) => setQuery(e.target.value)}
           placeholder={SEARCH_PLACEHOLDERS[placeholderIndex]}
           autoFocus={autoFocus}
+          spellCheck={false}
+          autoCorrect="off"
+          autoCapitalize="none"
+          enterKeyHint="search"
           className={cn(
             "h-auto w-full rounded-pill border border-border bg-card/50 py-2 pl-10 pr-4 text-base md:text-sm font-body",
             "placeholder:text-text-muted focus-visible:border-primary focus-visible:ring-0",

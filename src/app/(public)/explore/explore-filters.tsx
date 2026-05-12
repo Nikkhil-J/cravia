@@ -306,7 +306,19 @@ function FiltersInner({
             </button>
           </div>
 
-          <div className="flex items-center gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {/* Mobile: dropdown */}
+          <select
+            value={selectedSortBy}
+            onChange={(e) => handleSort(e.target.value)}
+            className="md:hidden rounded-pill border border-border bg-card px-3 py-1.5 text-[0.75rem] font-semibold text-foreground focus:outline-none focus:border-primary"
+          >
+            {sortOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+
+          {/* Desktop: pills */}
+          <div className="hidden md:flex items-center gap-0.5">
             {sortOptions.map((opt) => (
               <SortChip
                 key={opt.value}

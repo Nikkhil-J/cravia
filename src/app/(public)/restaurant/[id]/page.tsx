@@ -62,7 +62,7 @@ export default async function RestaurantPage({ params }: PageProps) {
       <div>
         {/* Hero */}
         <div className="relative h-56 w-full overflow-hidden bg-gradient-to-r from-bg-cream via-coral-light to-primary-light sm:h-64">
-          <MobileBackButton variant="floating" />
+          <MobileBackButton variant="floating" parentHref={ROUTES.EXPLORE} />
           {restaurant.coverImage && (
             <Image
               src={restaurant.coverImage}

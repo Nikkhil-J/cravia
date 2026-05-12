@@ -28,6 +28,7 @@ import {
 import { UserAvatar } from '@/components/ui/Avatar'
 import { CITY_AREAS, GURUGRAM } from '@/lib/constants'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
+import { ROUTES } from '@/lib/constants/routes'
 
 export default function SettingsPage() {
   const { user } = useAuth()
@@ -87,7 +88,7 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
-      <MobileBackButton />
+      <MobileBackButton parentHref={ROUTES.MY_PROFILE} />
       <h1 className="font-display text-2xl font-bold text-heading">Settings</h1>
       <p className="mt-1 text-sm text-text-secondary">Update your profile information</p>
 

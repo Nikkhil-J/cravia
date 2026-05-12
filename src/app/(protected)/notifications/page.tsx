@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { formatRelativeTime } from '@/lib/utils/index'
 import type { Notification } from '@/lib/types'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
+import { ROUTES } from '@/lib/constants/routes'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 
 export default function NotificationsPage() {
@@ -43,7 +44,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
-      <MobileBackButton />
+      <MobileBackButton parentHref={ROUTES.MY_PROFILE} />
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold text-heading">Notifications</h1>
         {unreadCount > 0 && (

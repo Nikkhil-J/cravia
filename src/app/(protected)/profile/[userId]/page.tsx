@@ -12,6 +12,7 @@ import { useReviewDishContexts } from '@/lib/hooks/useReviewDishContexts'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
+import { ROUTES } from '@/lib/constants/routes'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import type { User, Review } from '@/lib/types'
@@ -64,7 +65,7 @@ export default function UserProfilePage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-10">
-      <MobileBackButton />
+      <MobileBackButton parentHref={ROUTES.EXPLORE} />
       <div className="flex items-center gap-3 sm:gap-4">
         {profile.avatarUrl ? (
           <Image src={profile.avatarUrl} alt={profile.displayName} width={72} height={72} className="h-14 w-14 rounded-full object-cover sm:h-[72px] sm:w-[72px]" />

@@ -117,7 +117,11 @@ export function useAuth() {
 }
 
 export async function logout() {
-  await authProvider.signOut()
-  useAuthStore.getState().clearUser()
-  clearSessionCookie()
+  try {
+    await authProvider.signOut()
+    useAuthStore.getState().clearUser()
+    clearSessionCookie()
+  } catch (err) {
+    console.error('[logout] Sign-out failed:', err)
+  }
 }
