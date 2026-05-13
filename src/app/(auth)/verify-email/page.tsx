@@ -19,6 +19,7 @@ function VerifyEmailContent() {
   const authUser = useAuthStore((s) => s.authUser)
 
   const [checking, setChecking] = useState(false)
+  const [notVerifiedYet, setNotVerifiedYet] = useState(false)
   const [resending, setResending] = useState(false)
   const [resendError, setResendError] = useState<string | null>(null)
   const [resendCooldown, setResendCooldown] = useState(0)
@@ -60,6 +61,7 @@ function VerifyEmailContent() {
   async function handleResend() {
     setResending(true)
     setResendError(null)
+    setNotVerifiedYet(false)
     const err = await sendVerificationEmail()
     setResending(false)
     if (err) {
@@ -71,10 +73,13 @@ function VerifyEmailContent() {
 
   async function handleCheckNow() {
     setChecking(true)
+    setNotVerifiedYet(false)
     const verified = await reloadAuthUser()
     setChecking(false)
     if (verified) {
       router.replace(redirectTo)
+    } else {
+      setNotVerifiedYet(true)
     }
   }
 
@@ -100,6 +105,12 @@ function VerifyEmailContent() {
       >
         {checking ? <LoadingSpinner size="sm" /> : "I've verified — continue"}
       </Button>
+
+      {notVerifiedYet && (
+        <p className="mt-3 text-xs font-medium text-destructive">
+          Your email isn&apos;t verified yet — please click the link we sent you.
+        </p>
+      )}
 
       <Button
         variant="outline"
