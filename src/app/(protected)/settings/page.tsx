@@ -29,6 +29,7 @@ import { UserAvatar } from '@/components/ui/Avatar'
 import { CITY_AREAS, GURUGRAM } from '@/lib/constants'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
 import { ROUTES } from '@/lib/constants/routes'
+import { revalidateProfilePage } from '@/lib/actions/revalidate'
 
 export default function SettingsPage() {
   const { user } = useAuth()
@@ -82,7 +83,7 @@ export default function SettingsPage() {
     setUser({ ...user, displayName: nextDisplayName, city: GURUGRAM }, authUser)
     setSaved(true)
     toast.success('Profile updated')
-    router.refresh()
+    await revalidateProfilePage(user.id)
     savedTimerRef.current = setTimeout(() => setSaved(false), 3000)
   }
 

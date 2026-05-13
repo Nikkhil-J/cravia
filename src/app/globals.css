@@ -93,6 +93,12 @@
   --shadow-glow: 0 4px 20px rgba(232, 87, 26, 0.25);
 }
 
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background-color: #121009;
+  }
+}
+
 :root {
   /* ── shadcn semantic tokens ── */
   --background: #faf7f4;

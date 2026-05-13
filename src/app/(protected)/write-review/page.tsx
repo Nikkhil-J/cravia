@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useReviewFormStore } from '@/lib/store/reviewFormStore'
+import { revalidateDishPage, revalidateRestaurantPage } from '@/lib/actions/revalidate'
 import { getDish } from '@/lib/services/dishes'
 import { getReview } from '@/lib/services/reviews'
 import { uploadDishPhoto, uploadBillPhoto } from '@/lib/services/cloudinary'
@@ -312,10 +313,8 @@ function WriteReviewContent() {
         hadBill: !!billUrl,
       }))
       reset()
-      // Invalidate the router cache for the dish and restaurant pages so that
-      // navigating back to them after this review shows fresh data (new review
-      // count, updated ratings) rather than the 1-hour staleTimes cached version.
-      router.refresh()
+      await revalidateDishPage(dishId)
+      await revalidateRestaurantPage(restaurantId)
       router.push(ROUTES.REVIEW_SUCCESS)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Submission failed. Please try again.'

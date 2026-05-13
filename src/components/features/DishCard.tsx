@@ -15,6 +15,7 @@ export function DishCard({ dish, index = 0 }: DishCardProps) {
   return (
     <Link
       href={ROUTES.dish(dish.id)}
+      prefetch={true}
       className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-all duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1.5 hover:border-transparent hover:shadow-lg active:translate-y-0 active:shadow-md animate-pop-in"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms`, animationFillMode: 'both' }}
     >

@@ -4,7 +4,7 @@
   "description": "Discover what's worth craving. Restaurant discovery and dish-level reviews.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#2C1810",
+  "background_color": "#121009",
   "theme_color": "#D85A30",
   "orientation": "portrait",
   "icons": [

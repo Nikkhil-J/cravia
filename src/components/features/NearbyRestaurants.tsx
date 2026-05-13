@@ -43,6 +43,7 @@ export function NearbyRestaurants({ restaurants, city }: NearbyRestaurantsProps)
           <RevealItem key={r.id}>
             <Link
               href={ROUTES.restaurant(r.id)}
+              prefetch={true}
               className="group flex h-full flex-col overflow-hidden rounded-2xl border-[0.5px] border-border bg-card transition-colors hover:border-coral"
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-2">
