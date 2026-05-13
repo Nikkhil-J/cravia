@@ -228,15 +228,13 @@ export default async function RestaurantPage({ params }: PageProps) {
             </div>
 
             {!restaurant.ownerId && (
-              <div className="mt-8 rounded-xl border border-glass-border bg-glass-surface p-4 text-center backdrop-blur-sm">
-                <p className="text-sm text-text-muted">
-                  Is this your restaurant?
-                </p>
+              <div className="mt-6 mb-8 flex flex-col items-center gap-3 py-6">
+                <p className="text-sm text-text-muted">Is this your restaurant?</p>
                 <Link
                   href={ROUTES.claimRestaurant(restaurant.id)}
-                  className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-5 py-2.5 text-sm font-semibold text-primary transition-all hover:border-primary/60 hover:bg-primary/20"
                 >
-                  <Building2 size={14} />
+                  <Building2 size={15} />
                   Claim this restaurant
                 </Link>
               </div>

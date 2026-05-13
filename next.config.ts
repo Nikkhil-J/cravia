@@ -17,6 +17,14 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'motion/react'],
     viewTransition: true,
+    staleTimes: {
+      // Cache dynamic-page RSC payloads for 30 s in the client router.
+      // This prevents back-navigation from triggering a full server re-render
+      // and ensures prefetched loading-shells are still usable when the user taps.
+      dynamic: 30,
+      // Static pages (no dynamic data) are fine at the default 5 min.
+      static: 300,
+    },
   },
 };
 
