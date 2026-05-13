@@ -1,6 +1,6 @@
 export default function WishlistLoading() {
   return (
-    <div className="mx-auto max-w-[900px] px-6 py-8 animate-fade-in">
+    <div className="mx-auto max-w-[900px] px-4 py-6 sm:px-6 sm:py-8 animate-fade-in">
       {/* Centered header */}
       <div className="text-center">
         <div className="mx-auto h-7 w-40 animate-pulse rounded-lg bg-border" />
@@ -9,7 +9,7 @@ export default function WishlistLoading() {
       </div>
 
       {/* Dish card grid */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="overflow-hidden rounded-lg border border-border bg-card">
             <div className="relative h-36 animate-pulse bg-surface-3">

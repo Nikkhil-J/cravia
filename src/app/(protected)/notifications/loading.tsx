@@ -1,6 +1,9 @@
 export default function NotificationsLoading() {
   return (
     <div className="mx-auto max-w-xl px-4 py-10 animate-fade-in">
+      {/* MobileBackButton — md:hidden */}
+      <div className="mb-3 h-4 w-10 animate-pulse rounded bg-border md:hidden" />
+
       {/* Title + mark-all-read button */}
       <div className="flex items-center justify-between">
         <div className="h-7 w-36 animate-pulse rounded-lg bg-border" />

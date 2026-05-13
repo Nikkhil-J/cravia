@@ -1,6 +1,9 @@
 export default function SettingsLoading() {
   return (
     <div className="mx-auto max-w-xl px-4 py-10 animate-fade-in">
+      {/* MobileBackButton — md:hidden */}
+      <div className="mb-3 h-4 w-10 animate-pulse rounded bg-border md:hidden" />
+
       {/* Title + subtitle */}
       <div className="h-7 w-28 animate-pulse rounded-lg bg-border" />
       <div className="mt-2 h-4 w-56 animate-pulse rounded bg-border" />
