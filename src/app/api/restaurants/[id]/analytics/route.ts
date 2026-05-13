@@ -24,10 +24,15 @@ export async function GET(req: Request, context: RouteContext) {
     return NextResponse.json({ message: API_ERRORS.UNAUTHORIZED }, { status: 401 })
   }
 
-  const analytics = await getRestaurantAnalytics(restaurantId)
-  if (!analytics) {
-    return NextResponse.json({ message: API_ERRORS.RESTAURANT_NOT_FOUND }, { status: 404 })
-  }
+  try {
+    const analytics = await getRestaurantAnalytics(restaurantId)
+    if (!analytics) {
+      return NextResponse.json({ message: API_ERRORS.RESTAURANT_NOT_FOUND }, { status: 404 })
+    }
 
-  return NextResponse.json(analytics)
+    return NextResponse.json(analytics)
+  } catch (error) {
+    captureError(error, { route: '/api/restaurants/[id]/analytics', extra: { restaurantId } })
+    return NextResponse.json({ error: 'Failed to load analytics' }, { status: 500 })
+  }
 }

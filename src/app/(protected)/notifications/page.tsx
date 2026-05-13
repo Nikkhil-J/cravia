@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { getNotifications } from '@/lib/services/notifications'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -12,8 +12,10 @@ import type { Notification } from '@/lib/types'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
 import { ROUTES } from '@/lib/constants/routes'
 import { API_ENDPOINTS } from '@/lib/constants/api'
+import { toast } from 'sonner'
 
 export default function NotificationsPage() {
+  const router = useRouter()
   const { user, authUser } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
@@ -26,17 +28,37 @@ export default function NotificationsPage() {
       .then(setNotifications)
       .catch(() => setError(true))
       .finally(() => setLoading(false))
-  }, [user?.id, retryCount])
+  }, [user?.id, retryCount]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleNotificationClick(notificationId: string, linkUrl: string) {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n))
+    )
+
+    router.push(linkUrl)
+
+    if (authUser) {
+      authUser.getIdToken().then((token) => {
+        fetch(`/api/notifications/${notificationId}/read`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => {})
+      }).catch(() => {})
+    }
+  }
 
   async function handleMarkAllRead() {
     if (!user || !authUser) return
-    const token = await authUser.getIdToken()
-    const res = await fetch(API_ENDPOINTS.NOTIFICATIONS_READ_ALL, {
-      method: 'POST',
-      headers: { authorization: `Bearer ${token}` },
-    })
-    if (res.ok) {
+    try {
+      const token = await authUser.getIdToken()
+      const res = await fetch(API_ENDPOINTS.NOTIFICATIONS_READ_ALL, {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) throw new Error('Failed')
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
+    } catch {
+      toast.error('Could not mark notifications as read. Please try again.')
     }
   }
 
@@ -91,9 +113,18 @@ export default function NotificationsPage() {
             const cls = `block rounded-xl border px-4 py-3 transition-colors ${n.isRead ? 'border-border bg-card' : 'border-primary/20 bg-primary-light'}`
 
             return n.linkUrl ? (
-              <Link key={n.id} href={n.linkUrl} className={`${cls} hover:border-primary/40`}>
+              <div
+                key={n.id}
+                role="link"
+                tabIndex={0}
+                className={`${cls} cursor-pointer hover:border-primary/40`}
+                onClick={() => handleNotificationClick(n.id, n.linkUrl!)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') handleNotificationClick(n.id, n.linkUrl!)
+                }}
+              >
                 {inner}
-              </Link>
+              </div>
             ) : (
               <div key={n.id} className={cls}>
                 {inner}

@@ -49,6 +49,7 @@ export default function ReviewSuccessPage() {
   const router = useRouter()
   const [data] = useState<SuccessData | null>(readSuccessData)
   const [relatedDishes, setRelatedDishes] = useState<Dish[]>([])
+  const [relatedLoading, setRelatedLoading] = useState(false)
 
   useEffect(() => {
     if (data) {
@@ -60,6 +61,8 @@ export default function ReviewSuccessPage() {
 
   useEffect(() => {
     if (!data?.restaurantId) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRelatedLoading(true)
     let cancelled = false
     fetch(API_ENDPOINTS.restaurantDishes(encodeURIComponent(data.restaurantId)))
       .then((res) => (res.ok ? res.json() : null))
@@ -69,6 +72,7 @@ export default function ReviewSuccessPage() {
         setRelatedDishes(items.filter((d) => d.id !== data.dishId).slice(0, 4))
       })
       .catch(() => {})
+      .finally(() => { if (!cancelled) setRelatedLoading(false) })
     return () => { cancelled = true }
   }, [data?.restaurantId, data?.dishId])
 
@@ -218,11 +222,25 @@ export default function ReviewSuccessPage() {
         </div>
 
         {/* 5. Related dish row */}
-        {relatedDishes.length > 0 && data.restaurantId && (
+        {data.restaurantId && (relatedLoading || relatedDishes.length > 0) && (
           <div className="mt-8 border-t border-border pt-6">
             <p className="text-sm font-semibold text-text-primary">
               Had more here? Review another dish
             </p>
+            {relatedLoading ? (
+              <div className="mt-3 space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+                    <div className="h-10 w-10 shrink-0 animate-pulse rounded-lg bg-border" />
+                    <div className="flex-1 space-y-1.5">
+                      <div className="h-4 w-1/2 animate-pulse rounded bg-border" />
+                      <div className="h-3 w-1/3 animate-pulse rounded bg-border" />
+                    </div>
+                    <div className="h-4 w-8 animate-pulse rounded bg-border" />
+                  </div>
+                ))}
+              </div>
+            ) : (
             <div className="mt-3 space-y-2">
               {relatedDishes.map((dish) => (
                 <Link
@@ -253,6 +271,7 @@ export default function ReviewSuccessPage() {
                 </Link>
               ))}
             </div>
+            )}
           </div>
         )}
       </div>

@@ -4,5 +4,15 @@ Disallow: /admin
 Disallow: /settings
 Disallow: /write-review
 Disallow: /onboarding
+Disallow: /my-profile
+Disallow: /wishlist
+Disallow: /notifications
+Disallow: /rewards
+Disallow: /review-success
+Disallow: /profile/
+Disallow: /upgrade
+Disallow: /compare
+Disallow: /claim-restaurant/
+Disallow: /restaurant-dashboard/
 
 Sitemap: https://cravia.app/sitemap.xml

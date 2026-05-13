@@ -1,13 +1,20 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { X } from 'lucide-react'
+import { X, ChevronDown } from 'lucide-react'
 import { useCallback, useState, Suspense, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import type { RestaurantSortOption } from '@/lib/services/catalog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from '@/components/ui/dropdown-menu'
 import { ROUTES } from '@/lib/constants/routes'
 
 type ExploreTab = 'dishes' | 'restaurants'
@@ -115,6 +122,7 @@ function SortChip({
 }
 
 function FiltersInner({
+  query,
   activeTab,
   selectedCuisine: serverCuisine,
   selectedArea: serverArea,
@@ -196,7 +204,7 @@ function FiltersInner({
     router.push(buildUrl({ sortBy: value === defaultSort ? null : value }))
   }
 
-  const filterCount = [selectedCuisine, selectedArea, selectedDietary, selectedPriceRange].filter(
+  const filterCount = [query, selectedCuisine, selectedArea, selectedDietary, selectedPriceRange].filter(
     Boolean
   ).length
 
@@ -209,6 +217,18 @@ function FiltersInner({
         <span className="text-xs font-medium text-text-muted">
           {filterCount} filter{filterCount !== 1 ? 's' : ''}
         </span>
+        {query && (
+          <Badge
+            variant="secondary"
+            className="cursor-pointer gap-1"
+            render={
+              <button type="button" onClick={() => { signalFilterChange(); router.push(buildUrl({})) }} />
+            }
+          >
+            &ldquo;{query}&rdquo;
+            <X className="h-3 w-3 text-text-muted" aria-hidden />
+          </Badge>
+        )}
         {selectedCuisine && (
           <Badge
             variant="secondary"
@@ -280,42 +300,46 @@ function FiltersInner({
         {/* Row 1: tabs (left) + sort chips (right) */}
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div className="flex shrink-0 items-center gap-1 rounded-pill bg-surface-3 p-1">
-            <button
-              type="button"
-              onClick={() => handleTabChange('dishes')}
-              className={cn(
-                'relative rounded-pill px-4 py-1.5 text-sm font-semibold transition-colors duration-200',
-                activeTab === 'dishes'
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'text-text-secondary hover:text-text-primary'
-              )}
-            >
-              Dishes
-            </button>
-            <button
-              type="button"
-              onClick={() => handleTabChange('restaurants')}
-              className={cn(
-                'relative rounded-pill px-4 py-1.5 text-sm font-medium transition-colors duration-200',
-                activeTab === 'restaurants'
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'text-text-muted hover:text-text-secondary'
-              )}
-            >
-              Restaurants
-            </button>
+            {(['dishes', 'restaurants'] as const).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => handleTabChange(tab)}
+                className={cn(
+                  'relative rounded-pill px-4 py-1.5 text-sm font-semibold transition-colors duration-200',
+                  activeTab === tab ? 'text-white' : 'text-text-secondary hover:text-text-primary'
+                )}
+              >
+                {activeTab === tab && (
+                  <motion.span
+                    layoutId="explore-tab-indicator"
+                    className="absolute inset-0 rounded-pill bg-primary shadow-sm"
+                    transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+                  />
+                )}
+                <span className="relative z-[1]">
+                  {tab === 'dishes' ? 'Dishes' : 'Restaurants'}
+                </span>
+              </button>
+            ))}
           </div>
 
-          {/* Mobile: dropdown */}
-          <select
-            value={selectedSortBy}
-            onChange={(e) => handleSort(e.target.value)}
-            className="md:hidden rounded-pill border border-border bg-card px-3 py-1.5 text-[0.75rem] font-semibold text-foreground focus:outline-none focus:border-primary"
-          >
-            {sortOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
+          {/* Mobile: custom dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="md:hidden flex items-center gap-1.5 rounded-pill border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground focus:outline-none focus:border-primary transition-colors hover:bg-surface-2">
+              {sortOptions.find((o) => o.value === selectedSortBy)?.label ?? 'Sort'}
+              <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" sideOffset={6} className="w-auto min-w-[160px]">
+              <DropdownMenuRadioGroup value={selectedSortBy} onValueChange={handleSort}>
+                {sortOptions.map((opt) => (
+                  <DropdownMenuRadioItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Desktop: pills */}
           <div className="hidden md:flex items-center gap-0.5">

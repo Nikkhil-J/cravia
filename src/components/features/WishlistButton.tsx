@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { cn } from '@/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 import { useRouter, usePathname } from 'next/navigation'
 import { Heart } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useWishlist } from '@/lib/hooks/useWishlist'
-import { useWishlistStore } from '@/lib/store/wishlistStore'
 import { Button } from '@/components/ui/button'
 import { ROUTES } from '@/lib/constants/routes'
 import { API_ENDPOINTS } from '@/lib/constants/api'
@@ -20,14 +21,16 @@ interface WishlistButtonProps {
 export function WishlistButton({ dishId, className = '' }: WishlistButtonProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const queryClient = useQueryClient()
   const { user, authUser, isAuthenticated } = useAuth()
   const { data: wishlistItems } = useWishlist()
-  const { addId, removeId } = useWishlistStore()
 
   const serverSaved = wishlistItems?.some((item) => item.dishId === dishId) ?? false
   const [optimistic, setOptimistic] = useState<boolean | null>(null)
+  const [isAnimating, setIsAnimating] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOptimistic(null)
   }, [serverSaved])
 
@@ -38,10 +41,9 @@ export function WishlistButton({ dishId, className = '' }: WishlistButtonProps) 
     const token = authUser ? await authUser.getIdToken() : null
     if (!token) return
 
+    setIsAnimating(true)
     const wasSaved = isSaved
     setOptimistic(!wasSaved)
-    if (wasSaved) removeId(dishId)
-    else addId(dishId)
 
     const res = await fetch(
       API_ENDPOINTS.wishlistItem(encodeURIComponent(user.id), encodeURIComponent(dishId)),
@@ -49,9 +51,9 @@ export function WishlistButton({ dishId, className = '' }: WishlistButtonProps) 
     )
     if (!res.ok) {
       setOptimistic(wasSaved)
-      if (wasSaved) addId(dishId)
-      else removeId(dishId)
       toast.error(CLIENT_ERRORS.COULD_NOT_UPDATE_WISHLIST)
+    } else {
+      queryClient.invalidateQueries({ queryKey: ['wishlist'] })
     }
   }
 
@@ -80,7 +82,12 @@ export function WishlistButton({ dishId, className = '' }: WishlistButtonProps) 
       } ${className}`}
       aria-label={isSaved ? 'Remove from wishlist' : 'Save to wishlist'}
     >
-      <Heart className="h-4 w-4" fill={isSaved ? 'currentColor' : 'none'} />
+      <span
+        className={cn('inline-flex', isAnimating && 'animate-heart-bounce')}
+        onAnimationEnd={() => setIsAnimating(false)}
+      >
+        <Heart className="h-4 w-4" fill={isSaved ? 'currentColor' : 'none'} />
+      </span>
       {isSaved ? 'Saved' : 'Save'}
     </Button>
   )

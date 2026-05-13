@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -22,6 +22,8 @@ export default function OnboardingPage() {
   )
 }
 
+const ONBOARDING_KEY = 'cravia_onboarding_draft'
+
 function OnboardingContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -34,6 +36,30 @@ function OnboardingContent() {
   const [selectedArea, setSelectedArea] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+
+  // Restore draft from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(ONBOARDING_KEY)
+      if (saved) {
+        const { step: savedStep, selectedCuisines: savedCuisines, selectedArea: savedArea } = JSON.parse(saved)
+        if (savedStep) setStep(savedStep)
+        if (savedCuisines) setSelectedCuisines(savedCuisines)
+        if (savedArea) setSelectedArea(savedArea)
+      }
+    } catch {
+      // Corrupt sessionStorage — ignore and start fresh
+    }
+  }, [])
+
+  // Persist draft to sessionStorage on every state change
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(ONBOARDING_KEY, JSON.stringify({ step, selectedCuisines, selectedArea }))
+    } catch {
+      // sessionStorage unavailable — silent fail
+    }
+  }, [step, selectedCuisines, selectedArea])
 
   function toggleCuisine(c: string) {
     setSelectedCuisines(prev =>
@@ -60,6 +86,7 @@ function OnboardingContent() {
       }
 
       setUser({ ...user, city: GURUGRAM }, authUser)
+      sessionStorage.removeItem(ONBOARDING_KEY)
       router.push(redirectTo)
     } catch (err) {
       captureError(err, { route: 'OnboardingPage' })

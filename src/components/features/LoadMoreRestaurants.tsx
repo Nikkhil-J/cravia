@@ -43,7 +43,9 @@ export function LoadMoreRestaurants({
   // Always holds the latest loadMore so the observer never captures a stale closure
   const loadMoreRef = useRef<() => void>(() => undefined)
   const isPendingRef = useRef(isPending)
-  isPendingRef.current = isPending
+  useEffect(() => {
+    isPendingRef.current = isPending
+  }, [isPending])
 
   function loadMore() {
     if (isPendingRef.current) return
@@ -73,7 +75,9 @@ export function LoadMoreRestaurants({
     })
   }
 
-  loadMoreRef.current = loadMore
+  useEffect(() => {
+    loadMoreRef.current = loadMore
+  })
 
   useEffect(() => {
     const sentinel = sentinelRef.current

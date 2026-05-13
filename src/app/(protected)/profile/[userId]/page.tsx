@@ -116,13 +116,14 @@ export default function UserProfilePage() {
           <EmptyState icon="📝" title="No reviews yet" description="This user hasn't reviewed anything yet." />
         ) : (
           <div className="mt-4 flex flex-col gap-4">
-            {reviews.map((review) => (
+            {reviews.map((review, i) => (
               <ReviewCardV2
                 key={review.id}
                 review={review}
                 variant="profile"
                 currentUserId={currentUser?.id}
                 dishContext={dishContexts[review.dishId] ?? null}
+                index={i}
               />
             ))}
           </div>

@@ -9,7 +9,11 @@ export async function GET(req: Request, context: RouteContext) {
   const { id } = await context.params
   const { searchParams } = new URL(req.url)
   const cursor = searchParams.get('cursor')
-  const result = await listDishReviews(id, cursor)
-  return NextResponse.json(result)
+  try {
+    const result = await listDishReviews(id, cursor)
+    return NextResponse.json(result)
+  } catch {
+    return NextResponse.json({ error: 'Failed to load reviews' }, { status: 500 })
+  }
 }
 

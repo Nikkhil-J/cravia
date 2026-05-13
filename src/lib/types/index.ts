@@ -154,7 +154,7 @@ export interface DishRequest {
   createdAt: string
 }
 
-export type NotificationType = 'badge_earned' | 'helpful_vote' | 'review_approved' | 'system'
+export type NotificationType = 'badge_earned' | 'helpful_vote' | 'review_approved' | 'review_removed' | 'system'
 
 export interface Notification {
   id: string

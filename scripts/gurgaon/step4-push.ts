@@ -192,7 +192,7 @@ This will:
   let restaurantsMerged = 0
   let dishesInserted = 0
   let dishesSkipped = 0
-  let reviewsDeleted = 0
+  const reviewsDeleted = 0
 
   // ── PHASE A: Insert new restaurants ──────────────────────
 

@@ -193,7 +193,7 @@ export default function MyProfilePage() {
             </div>
           ) : (
             <div className="mt-4 flex flex-col gap-3">
-              {reviews.map((review) => (
+              {reviews.map((review, i) => (
                 <ReviewCardV2
                   key={review.id}
                   review={review}
@@ -202,6 +202,7 @@ export default function MyProfilePage() {
                   dishContext={dishContexts[review.dishId] ?? null}
                   onEdit={() => handleEdit(review)}
                   onDelete={() => setReviewToDelete(review)}
+                  index={i}
                 />
               ))}
             </div>

@@ -8,7 +8,8 @@ interface StreakCTAProps {
   dishId?: string
 }
 
-export function StreakCTA(_props: StreakCTAProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function StreakCTA(_: StreakCTAProps) {
   const { user } = useAuth()
   const { currentStreak: streak, bonusEligible } = useStreak()
 

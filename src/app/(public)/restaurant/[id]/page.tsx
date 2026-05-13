@@ -25,9 +25,24 @@ export async function generateMetadata({
   const { id } = await params;
   const restaurant = await getRestaurantDetails(id);
   if (!restaurant) return { title: "Not found — Cravia" };
+  const title = `${restaurant.name} — Cravia`;
+  const description = `Dish reviews for ${restaurant.name} in ${restaurant.area}, ${restaurant.city}.`;
   return {
-    title: `${restaurant.name} — Cravia`,
-    description: `Dish reviews for ${restaurant.name} in ${restaurant.area}, ${restaurant.city}.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: restaurant.coverImage
+        ? [{ url: restaurant.coverImage, width: 1200, height: 630, alt: restaurant.name }]
+        : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: restaurant.coverImage ? [restaurant.coverImage] : [],
+    },
   };
 }
 

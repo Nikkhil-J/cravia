@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   const parsed = parseBody(verifyPaymentSchema, await req.json())
   if (!parsed.success) return parsed.response
 
-  const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = parsed.data
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature, plan } = parsed.data
 
   const isValid = verifyPaymentSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
   if (!isValid) {
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    await activatePremium(auth.userId, razorpay_payment_id, razorpay_order_id, 'monthly')
+    await activatePremium(auth.userId, razorpay_payment_id, razorpay_order_id, plan)
 
     createServerNotification(
       auth.userId,

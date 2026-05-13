@@ -18,22 +18,27 @@ export async function POST(req: Request, context: RouteContext) {
   const rateLimited = await checkRateLimit(auth.userId, 'GENERAL')
   if (rateLimited) return rateLimited
 
-  const { id } = await context.params
-  const review = await reviewRepository.getById(id)
-  const ok = await reviewRepository.voteHelpful(id, auth.userId)
-  if (!ok) return NextResponse.json({ message: API_ERRORS.FAILED_TO_VOTE_HELPFUL }, { status: 400 })
+  try {
+    const { id } = await context.params
+    const review = await reviewRepository.getById(id)
+    const ok = await reviewRepository.voteHelpful(id, auth.userId)
+    if (!ok) return NextResponse.json({ message: API_ERRORS.FAILED_TO_VOTE_HELPFUL }, { status: 400 })
 
-  if (review && review.userId !== auth.userId) {
-    createServerNotification(
-      review.userId,
-      'helpful_vote',
-      'Someone found your review helpful!',
-      `Your review was marked as helpful.`,
-      ROUTES.review(id)
-    ).catch((e) => captureError(e, { route: '/api/reviews/[id]/helpful', extra: { context: 'notification' } }))
+    if (review && review.userId !== auth.userId) {
+      createServerNotification(
+        review.userId,
+        'helpful_vote',
+        'Someone found your review helpful!',
+        `Your review was marked as helpful.`,
+        ROUTES.review(id)
+      ).catch((e) => captureError(e, { route: '/api/reviews/[id]/helpful', extra: { context: 'notification' } }))
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (e) {
+    captureError(e, { userId: auth.userId, route: 'POST /api/reviews/[id]/helpful' })
+    return NextResponse.json({ error: 'Failed to record vote' }, { status: 500 })
   }
-
-  return NextResponse.json({ success: true })
 }
 
 export async function DELETE(req: Request, context: RouteContext) {
@@ -43,10 +48,15 @@ export async function DELETE(req: Request, context: RouteContext) {
   const rateLimited = await checkRateLimit(auth.userId, 'GENERAL')
   if (rateLimited) return rateLimited
 
-  const { id } = await context.params
-  const ok = await reviewRepository.unvoteHelpful(id, auth.userId)
-  if (!ok) return NextResponse.json({ message: API_ERRORS.FAILED_TO_VOTE_HELPFUL }, { status: 400 })
+  try {
+    const { id } = await context.params
+    const ok = await reviewRepository.unvoteHelpful(id, auth.userId)
+    if (!ok) return NextResponse.json({ message: API_ERRORS.FAILED_TO_VOTE_HELPFUL }, { status: 400 })
 
-  return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true })
+  } catch (e) {
+    captureError(e, { userId: auth.userId, route: 'DELETE /api/reviews/[id]/helpful' })
+    return NextResponse.json({ error: 'Failed to remove vote' }, { status: 500 })
+  }
 }
 

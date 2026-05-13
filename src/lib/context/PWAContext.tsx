@@ -10,7 +10,8 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const isAndroidPWA = window.matchMedia('(display-mode: standalone)').matches
-    const isIOSPWA = (navigator as any).standalone === true
+    const isIOSPWA = (navigator as unknown as { standalone?: boolean }).standalone === true
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsPWA(isAndroidPWA || isIOSPWA)
   }, [])
 

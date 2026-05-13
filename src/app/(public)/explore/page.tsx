@@ -12,7 +12,7 @@ import { LoadMoreDishes } from '@/components/features/LoadMoreDishes'
 import { ExploreResultsWrapper } from '@/components/features/ExploreResultsWrapper'
 import { ExploreEntranceWrapper } from '@/components/features/ExploreEntranceWrapper'
 import { ExploreSearchResults, ExploreDefaultContent } from '@/components/features/ExploreSearchResults'
-import { CUISINE_TYPES, FEATURED_CUISINES, SORT_OPTIONS, HERO_TAGS, GURUGRAM } from '@/lib/constants'
+import { FEATURED_CUISINES, SORT_OPTIONS, HERO_TAGS, GURUGRAM } from '@/lib/constants'
 import { listCityAreas } from '@/lib/services/city'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { SearchBar } from '@/components/features/SearchBar'
@@ -87,6 +87,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
 
   const highlyRatedFiltered = highlyRated.filter((d) => d.reviewCount >= 2)
 
+  // eslint-disable-next-line react-hooks/purity
   const now = Date.now()
   const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000
   const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000
@@ -359,7 +360,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
         </div>
 
         <ExploreFilters
-          query=""
+          query={params.q ?? ''}
           activeTab={tab}
           selectedCuisine={cuisine}
           selectedArea={area}

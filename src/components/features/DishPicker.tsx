@@ -74,6 +74,7 @@ export function DishPicker({ onSelect }: DishPickerProps) {
   const restaurantContext = useMemo(() => getRestaurantContext(), [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRecentDishes(getRecentlyViewed())
 
     startTransition(async () => {
@@ -98,6 +99,7 @@ export function DishPicker({ onSelect }: DishPickerProps) {
 
   useEffect(() => {
     if (debouncedQuery.length < 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setResults([])
       return
     }

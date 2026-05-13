@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { ArrowRight, Check, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { setExploreQuery } from "@/lib/stores/explore-search";
+import { useExploreSearchStore } from "@/lib/store/exploreSearchStore";
 import { CITY_DISPLAY_NAME, type City } from "@/lib/constants";
 import type { Dish } from "@/lib/types";
 
@@ -393,6 +393,7 @@ function CyclingProblems({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap }}>
+      {/* eslint-disable-next-line react-hooks/refs */}
       {PROBLEMS.map((problem, i) => {
         const solved = phases[i] === "solved";
         const striking = phases[i] === "striking";
@@ -685,7 +686,7 @@ export function LandingHero({
   function navigateWithQuery(query: string) {
     if (exiting) return;
     setExiting(true);
-    setExploreQuery(query);
+    useExploreSearchStore.getState().setQuery(query);
     setTimeout(
       () =>
         router.push(

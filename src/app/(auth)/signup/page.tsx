@@ -20,7 +20,7 @@ function getPasswordStrength(pw: string): { score: number; label: string; color:
   if (/[0-9]/.test(pw)) score++
   if (/[^A-Za-z0-9]/.test(pw)) score++
   const labels = ['Too short', 'Weak', 'Fair', 'Good', 'Strong']
-  const colors = ['bg-destructive', 'bg-destructive', 'bg-accent', 'bg-success', 'bg-success']
+  const colors = ['bg-destructive', 'bg-destructive', 'bg-coral', 'bg-success', 'bg-success']
   return { score, label: labels[score], color: colors[score] }
 }
 
@@ -47,7 +47,10 @@ function SignupForm() {
     const err = await signUpWithEmail(email, password, name)
     setLoading(false)
     if (err) { setError(err); return }
-    router.push(redirect ? `${ROUTES.ONBOARDING}?redirect=${encodeURIComponent(redirect)}` : ROUTES.ONBOARDING)
+    const onboardingUrl = redirect
+      ? `${ROUTES.ONBOARDING}?redirect=${encodeURIComponent(redirect)}`
+      : ROUTES.ONBOARDING
+    router.push(`${ROUTES.VERIFY_EMAIL}?redirect=${encodeURIComponent(onboardingUrl)}`)
   }
 
   async function handleGoogle() {

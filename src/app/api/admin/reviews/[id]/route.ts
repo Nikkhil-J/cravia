@@ -6,6 +6,8 @@ import { computeLevel, computeEarnedBadges } from '@/lib/gamification'
 import { computeOverall, computeTopTags } from '@/lib/utils/index'
 import { captureError } from '@/lib/monitoring/sentry'
 import { API_ERRORS } from '@/lib/constants/errors'
+import { createServerNotification } from '@/lib/services/notifications-server'
+import { syncRestaurantToTypesense } from '@/lib/services/typesense-restaurant-sync'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -36,6 +38,15 @@ export async function DELETE(req: Request, context: RouteContext) {
   try {
     await assertAdmin(req)
     const { id } = await context.params
+
+    let reason: string | undefined
+    try {
+      const body = await req.json()
+      reason = typeof body?.reason === 'string' ? body.reason.trim() : undefined
+    } catch {
+      // no body is fine
+    }
+
     const reviewRef = adminDb.collection(COLLECTIONS.REVIEWS).doc(id)
 
     const deletedReview = await adminDb.runTransaction(async (tx) => {
@@ -92,7 +103,7 @@ export async function DELETE(req: Request, context: RouteContext) {
         })
       }
 
-      return { dishId }
+      return { dishId, authorId: authorId as string }
     })
 
     const tagsSnap = await adminDb
@@ -102,7 +113,31 @@ export async function DELETE(req: Request, context: RouteContext) {
       .get()
     const allTagArrays = tagsSnap.docs.map((doc) => (doc.data().tags as string[] | undefined) ?? [])
     const topTags = computeTopTags(allTagArrays)
-    await adminDb.collection(COLLECTIONS.DISHES).doc(deletedReview.dishId).update({ topTags })
+
+    const dishRef = adminDb.collection(COLLECTIONS.DISHES).doc(deletedReview.dishId)
+    await dishRef.update({ topTags })
+
+    const dishSnap = await dishRef.get()
+    const restaurantId = dishSnap.data()?.restaurantId as string | undefined
+    if (restaurantId) {
+      syncRestaurantToTypesense(restaurantId).catch((err) =>
+        captureError(err, { route: 'DELETE /api/admin/reviews/[id]', extra: { phase: 'typesense-sync' } })
+      )
+    }
+
+    const notificationMessage = reason
+      ? `Your review was removed by a moderator. Reason: ${reason}`
+      : 'Your review was removed by a moderator for violating community guidelines.'
+
+    createServerNotification(
+      deletedReview.authorId,
+      'review_removed',
+      'Your review was removed',
+      notificationMessage,
+      null
+    ).catch((err) =>
+      captureError(err, { route: 'DELETE /api/admin/reviews/[id]', extra: { phase: 'notification' } })
+    )
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, type ReactNode } from 'react'
+import { getRedirectResult } from 'firebase/auth'
 import { FirebaseClientAuthProvider } from '@/lib/auth/firebase-provider'
+import { auth } from '@/lib/firebase/config'
 import { userRepository } from '@/lib/repositories'
 import { useAuthStore } from '@/lib/store/authStore'
 import { CONFIG } from '@/lib/constants'
@@ -48,10 +50,27 @@ export function sendPasswordReset(email: string) {
   return authProvider.sendPasswordReset(email)
 }
 
+export function sendVerificationEmail() {
+  return authProvider.sendVerificationEmail()
+}
+
+export async function reloadAuthUser(): Promise<boolean> {
+  await auth.currentUser?.reload()
+  return auth.currentUser?.emailVerified ?? false
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { setUser, clearUser, setLoading } = useAuthStore()
 
   useEffect(() => {
+    getRedirectResult(auth).then((result) => {
+      if (result?.user) {
+        // User just returned from Google redirect — onIdTokenChanged handles state update
+      }
+    }).catch((error) => {
+      console.error('Redirect sign-in error:', error)
+    })
+
     let cancelPrevious: (() => void) | undefined
 
     const unsub = authProvider.onAuthStateChange((authUser) => {

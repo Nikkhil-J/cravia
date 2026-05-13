@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Reveal, RevealGrid, RevealItem } from "@/components/ui/AnimateReveal";
+import { Reveal } from "@/components/ui/AnimateReveal";
 
 const BEFORE_ITEMS = [
   "Restaurant is 4.2 stars — but which dish is actually good?",

@@ -8,6 +8,7 @@ export interface AuthSessionUser {
   email?: string | null
   displayName?: string | null
   avatarUrl?: string | null
+  emailVerified: boolean
   getIdToken(): Promise<string>
 }
 
@@ -17,5 +18,6 @@ export interface ClientAuthProvider extends AuthProvider {
   signInWithEmail(email: string, password: string): Promise<string | null>
   signUpWithEmail(email: string, password: string, name: string): Promise<string | null>
   sendPasswordReset(email: string): Promise<string | null>
+  sendVerificationEmail(): Promise<string | null>
   signOut(): Promise<void>
 }

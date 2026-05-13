@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useSyncExternalStore } from 'react'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { SkeletonCard } from '@/components/ui/SkeletonCard'
 
 let pendingFlag = false
 const listeners = new Set<() => void>()
@@ -37,16 +37,18 @@ export function ExploreResultsWrapper({ children }: { children: React.ReactNode 
     setPendingFlag(false)
   })
 
-  return (
-    <div className="relative">
-      {pending && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-background/60 backdrop-blur-sm">
-          <LoadingSpinner />
+  if (pending) {
+    return (
+      <div className="mt-6">
+        <div className="mb-4 h-4 w-32 animate-pulse rounded bg-border" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
-      )}
-      <div className={pending ? 'pointer-events-none opacity-50' : ''}>
-        {children}
       </div>
-    </div>
-  )
+    )
+  }
+
+  return <>{children}</>
 }

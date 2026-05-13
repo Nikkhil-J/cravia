@@ -6,7 +6,7 @@ import { motion } from 'motion/react'
 import { HeroSearchBar } from '@/components/features/HeroSearchBar'
 import { ROUTES } from '@/lib/constants/routes'
 import { HERO_TAGS } from '@/lib/constants'
-import { setExploreQuery } from '@/lib/stores/explore-search'
+import { useExploreSearchStore } from '@/lib/store/exploreSearchStore'
 
 export function HeroSection() {
   const [heroExiting, setHeroExiting] = useState(false)
@@ -15,7 +15,7 @@ export function HeroSection() {
   function handleTagClick(tag: string) {
     if (heroExiting) return
     setHeroExiting(true)
-    setExploreQuery(tag)
+    useExploreSearchStore.getState().setQuery(tag)
     setTimeout(() => router.push(`${ROUTES.EXPLORE}?tab=dishes`), 150)
   }
 

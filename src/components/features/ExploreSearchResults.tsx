@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { LoadMoreDishes } from '@/components/features/LoadMoreDishes'
 import { LoadMoreRestaurants } from '@/components/features/LoadMoreRestaurants'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { subscribeExploreQuery, getExploreQuery, setExploreQuery } from '@/lib/stores/explore-search'
+import { useExploreSearchStore } from '@/lib/store/exploreSearchStore'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { GURUGRAM } from '@/lib/constants'
@@ -25,14 +25,14 @@ interface RestaurantsApiResult {
 }
 
 export function ExploreSearchResults() {
-  const query = useSyncExternalStore(subscribeExploreQuery, getExploreQuery, () => '')
+  const query = useExploreSearchStore((s) => s.query)
   const searchParams = useSearchParams()
   const { authUser } = useAuth()
 
   useEffect(() => {
     const urlQ = new URLSearchParams(window.location.search).get('q')?.trim()
     if (urlQ && urlQ.length >= 2) {
-      setExploreQuery(urlQ)
+      useExploreSearchStore.getState().setQuery(urlQ)
       const url = new URL(window.location.href)
       url.searchParams.delete('q')
       window.history.replaceState(null, '', url.pathname + (url.search || ''))
@@ -194,7 +194,7 @@ export function ExploreSearchResults() {
 }
 
 export function ExploreDefaultContent({ children }: { children: ReactNode }) {
-  const query = useSyncExternalStore(subscribeExploreQuery, getExploreQuery, () => '')
+  const query = useExploreSearchStore((s) => s.query)
   const isSearchActive = query.length >= 2
 
   if (isSearchActive) return null

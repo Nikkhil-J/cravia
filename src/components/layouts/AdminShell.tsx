@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { href: ROUTES.ADMIN_USERS, label: 'Users', icon: '👥' },
   { href: ROUTES.ADMIN_COUPONS, label: 'Coupons', icon: '🎟️' },
   { href: ROUTES.ADMIN_CLAIMS, label: 'Restaurant Claims', icon: '🏪' },
+  { href: ROUTES.ADMIN_MAINTENANCE, label: 'Maintenance', icon: '🔧' },
 ]
 
 interface AdminShellProps {
@@ -48,16 +49,8 @@ function AdminNav({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
 export function AdminShell({ children }: AdminShellProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, isLoading } = useAuth()
+  const { user } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-sm text-text-muted">Loading...</p>
-      </div>
-    )
-  }
 
   if (!user) {
     router.push(ROUTES.LOGIN)

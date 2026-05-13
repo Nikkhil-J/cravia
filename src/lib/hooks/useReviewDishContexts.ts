@@ -18,6 +18,7 @@ export function useReviewDishContexts(reviews: Review[]) {
 
   useEffect(() => {
     if (!dishIdsKey) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMap({})
       return
     }

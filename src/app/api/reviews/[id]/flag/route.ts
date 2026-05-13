@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { reviewRepository } from '@/lib/repositories/server'
 import { getRequestAuth } from '@/lib/services/request-auth'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { captureError } from '@/lib/monitoring/sentry'
 import { API_ERRORS } from '@/lib/constants/errors'
 
 interface RouteContext {
@@ -15,12 +16,17 @@ export async function POST(req: Request, context: RouteContext) {
   const rateLimited = await checkRateLimit(auth.userId, 'GENERAL')
   if (rateLimited) return rateLimited
 
-  const { id } = await context.params
-  const result = await reviewRepository.flag(id, auth.userId)
-  if (result === 'already_flagged') {
-    return NextResponse.json({ message: API_ERRORS.ALREADY_FLAGGED }, { status: 409 })
+  try {
+    const { id } = await context.params
+    const result = await reviewRepository.flag(id, auth.userId)
+    if (result === 'already_flagged') {
+      return NextResponse.json({ message: API_ERRORS.ALREADY_FLAGGED }, { status: 409 })
+    }
+    if (!result) return NextResponse.json({ message: API_ERRORS.FAILED_TO_FLAG_REVIEW }, { status: 400 })
+    return NextResponse.json({ success: true })
+  } catch (e) {
+    captureError(e, { userId: auth.userId, route: 'POST /api/reviews/[id]/flag' })
+    return NextResponse.json({ error: 'Failed to flag review' }, { status: 500 })
   }
-  if (!result) return NextResponse.json({ message: API_ERRORS.FAILED_TO_FLAG_REVIEW }, { status: 400 })
-  return NextResponse.json({ success: true })
 }
 

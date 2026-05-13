@@ -73,8 +73,8 @@ export function LoadMoreReviews({
         </div>
       )}
       <div className="mt-5 flex flex-col gap-4">
-        {reviews.map((review) => (
-          <ReviewCardV2 key={review.id} review={review} variant="dish" currentUserId={currentUserId} />
+        {reviews.map((review, i) => (
+          <ReviewCardV2 key={review.id} review={review} variant="dish" currentUserId={currentUserId} index={i} />
         ))}
       </div>
       {hasMore && (

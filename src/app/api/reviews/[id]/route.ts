@@ -24,18 +24,23 @@ export async function PATCH(req: Request, context: RouteContext) {
   const parsed = parseBody(updateReviewSchema, await req.json())
   if (!parsed.success) return parsed.response
 
-  const updated = await reviewRepository.update(id, auth.userId, parsed.data)
-  if (!updated) {
-    return NextResponse.json({ message: API_ERRORS.FAILED_TO_UPDATE_REVIEW }, { status: 400 })
-  }
+  try {
+    const updated = await reviewRepository.update(id, auth.userId, parsed.data)
+    if (!updated) {
+      return NextResponse.json({ message: API_ERRORS.FAILED_TO_UPDATE_REVIEW }, { status: 400 })
+    }
 
-  if (updated.restaurantId) {
-    syncRestaurantToTypesense(updated.restaurantId).catch((err) =>
-      captureError(err, { route: 'PATCH /api/reviews/[id]', extra: { phase: 'typesense-restaurant-sync' } }),
-    )
-  }
+    if (updated.restaurantId) {
+      syncRestaurantToTypesense(updated.restaurantId).catch((err) =>
+        captureError(err, { route: 'PATCH /api/reviews/[id]', extra: { phase: 'typesense-restaurant-sync' } }),
+      )
+    }
 
-  return NextResponse.json({ item: updated })
+    return NextResponse.json({ item: updated })
+  } catch (e) {
+    captureError(e, { userId: auth.userId, route: 'PATCH /api/reviews/[id]' })
+    return NextResponse.json({ error: 'Failed to update review' }, { status: 500 })
+  }
 }
 
 export async function DELETE(req: Request, context: RouteContext) {
@@ -49,16 +54,21 @@ export async function DELETE(req: Request, context: RouteContext) {
     return NextResponse.json({ message: API_ERRORS.DISH_ID_REQUIRED }, { status: 400 })
   }
 
-  const dish = await dishRepository.getById(dishId)
+  try {
+    const dish = await dishRepository.getById(dishId)
 
-  const ok = await reviewRepository.delete(id, dishId, auth.userId, auth.isAdmin)
-  if (!ok) return NextResponse.json({ message: API_ERRORS.FAILED_TO_DELETE_REVIEW }, { status: 400 })
+    const ok = await reviewRepository.delete(id, dishId, auth.userId, auth.isAdmin)
+    if (!ok) return NextResponse.json({ message: API_ERRORS.FAILED_TO_DELETE_REVIEW }, { status: 400 })
 
-  if (dish?.restaurantId) {
-    syncRestaurantToTypesense(dish.restaurantId).catch((err) =>
-      captureError(err, { route: 'DELETE /api/reviews/[id]', extra: { phase: 'typesense-restaurant-sync' } }),
-    )
+    if (dish?.restaurantId) {
+      syncRestaurantToTypesense(dish.restaurantId).catch((err) =>
+        captureError(err, { route: 'DELETE /api/reviews/[id]', extra: { phase: 'typesense-restaurant-sync' } }),
+      )
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (e) {
+    captureError(e, { userId: auth.userId, route: 'DELETE /api/reviews/[id]' })
+    return NextResponse.json({ error: 'Failed to delete review' }, { status: 500 })
   }
-
-  return NextResponse.json({ success: true })
 }

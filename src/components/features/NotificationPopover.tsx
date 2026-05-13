@@ -58,6 +58,7 @@ export function NotificationPopover() {
 
   useEffect(() => {
     if (!open || !user || hasFetched) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true)
     getNotifications(user.id, CONFIG.NOTIFICATION_PREVIEW_LIMIT)
       .then(setNotifications)

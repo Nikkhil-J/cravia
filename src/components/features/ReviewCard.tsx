@@ -21,6 +21,7 @@ interface ReviewCardProps {
   onDelete?: () => void
   /** When set (e.g. user profile), shows "at restaurant · dish". Omit on dish page. */
   dishContext?: { dishName: string; restaurantName: string } | null
+  index?: number
 }
 
 function RatingPill({ label, value }: { label: string; value: number }) {
@@ -32,7 +33,7 @@ function RatingPill({ label, value }: { label: string; value: number }) {
   )
 }
 
-export function ReviewCard({ review, currentUserId, onEdit, onDelete, dishContext }: ReviewCardProps) {
+export function ReviewCard({ review, currentUserId, onEdit, onDelete, dishContext, index = 0 }: ReviewCardProps) {
   const { authUser } = useAuth()
   const [expanded, setExpanded] = useState(false)
   const [photoOpen, setPhotoOpen] = useState(false)
@@ -96,7 +97,10 @@ export function ReviewCard({ review, currentUserId, onEdit, onDelete, dishContex
   const hasExpandableText = review.text && review.text.length > CONFIG.REVIEW_CARD_PREVIEW_LENGTH
 
   return (
-    <div className="rounded-md border-[0.5px] border-border bg-card px-3.5 py-3 transition-colors hover:border-text-muted">
+    <div
+      className="animate-pop-in rounded-md border-[0.5px] border-border bg-card px-3.5 py-3 transition-colors hover:border-text-muted"
+      style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
+    >
       {/* Row 1: identity + ratings */}
       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
         <div

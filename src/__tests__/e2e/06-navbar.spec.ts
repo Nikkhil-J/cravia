@@ -27,7 +27,8 @@ test.describe('Navbar — logged out', () => {
     await expect(page).toHaveURL('/', { timeout: 5000 })
   })
 
-  test('mobile bottom nav shows Sign in for guests', async ({ page, viewport }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  test('mobile bottom nav shows Sign in for guests', async ({ page, viewport: _viewport }) => {
     await page.setViewportSize({ width: 375, height: 812 })
     await page.goto('/')
     // MobileBottomNav shows Sign in link for guests

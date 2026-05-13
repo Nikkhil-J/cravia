@@ -6,7 +6,8 @@ export function isSupportedCity(value: string | null | undefined): value is City
   return (SUPPORTED_CITIES as readonly string[]).includes(value ?? '')
 }
 
-export function resolveCity(_options?: {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function resolveCity(_?: {
   requestedCity?: string | null
   userCity?: string | null
   fallbackCity?: City

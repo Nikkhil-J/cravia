@@ -16,7 +16,7 @@ const NEXT_LEVEL: Record<UserLevel, UserLevel | null> = {
 }
 
 export function PersonalStatsBanner() {
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
   const { currentStreak: streak } = useStreak()
   const [animate, setAnimate] = useState(false)
 
@@ -26,6 +26,18 @@ export function PersonalStatsBanner() {
     return () => cancelAnimationFrame(id)
   }, [user])
 
+  // While auth is resolving, reserve the banner's height so content below
+  // doesn't jump when the real banner appears for logged-in users with reviews.
+  // Heights derived from the banner's own padding (py-3/py-4) + content stack.
+  if (isLoading) {
+    return (
+      <div className="px-4 py-3 sm:px-6 sm:py-4" aria-hidden="true">
+        <div className="invisible h-[142px] sm:h-[86px]" />
+      </div>
+    )
+  }
+
+  // Confirmed logged-out or user has no reviews — no banner, no reserved space.
   if (!user || user.reviewCount < 1) return null
 
   const nextLevel = NEXT_LEVEL[user.level]

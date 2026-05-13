@@ -8,7 +8,7 @@ import { MotionConfig } from 'motion/react'
 import { Toaster } from 'sonner'
 import { AuthProvider } from '@/lib/hooks/useAuth'
 import { CONFIG } from '@/lib/constants'
-import { PWAProvider } from '@/context/PWAContext'
+import { PWAProvider } from '@/lib/context/PWAContext'
 
 function ThemedToaster() {
   const { resolvedTheme } = useTheme()

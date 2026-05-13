@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import type { ReviewFormData } from '@/lib/types'
 
 interface ReviewFormState {
@@ -37,13 +37,17 @@ export const useReviewFormStore = create<ReviewFormState>()(
     }),
     {
       name: 'cravia-review-draft',
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         data: {
+          dishId: state.data.dishId,
+          restaurantId: state.data.restaurantId,
           tasteRating: state.data.tasteRating,
           portionRating: state.data.portionRating,
           valueRating: state.data.valueRating,
           tags: state.data.tags,
           text: state.data.text,
+          // photoFile, billFile, photoPreviewUrl, billPreviewUrl, billUrl excluded — File objects cannot be serialized
         },
         activeDishId: state.activeDishId,
       }),

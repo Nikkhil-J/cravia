@@ -51,6 +51,10 @@ export const API_ERRORS = {
   FAILED_TO_SAVE_DISH: 'Failed to save dish',
   FAILED_TO_REMOVE_DISH: 'Failed to remove dish',
   INVALID_QUERY_PARAMS: 'Invalid query parameters',
+  FAILED_TO_SET_ADMIN: 'Failed to grant admin role',
+  FAILED_TO_BACKFILL_DISH_CITY: 'Failed to run dish city backfill',
+  FAILED_TO_BACKFILL_DISH_DENORM: 'Failed to run dish denorm backfill',
+  FAILED_TO_BACKFILL_TAG_COUNTS: 'Failed to run tag counts backfill',
 } as const
 
 export const CLIENT_ERRORS = {

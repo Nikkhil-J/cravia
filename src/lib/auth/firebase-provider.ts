@@ -4,9 +4,11 @@ import {
   createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail,
   onIdTokenChanged,
+  sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   updateProfile,
 } from 'firebase/auth'
@@ -35,6 +37,26 @@ type FirebaseAuthErrorLike = {
   customData?: {
     email?: string
   }
+}
+
+function getAuthErrorMessage(code: string): string {
+  const messages: Record<string, string> = {
+    'auth/wrong-password':           'Incorrect password. Please try again.',
+    'auth/invalid-credential':       'Incorrect email or password.',
+    'auth/user-not-found':           'No account found with that email.',
+    'auth/email-already-in-use':     'An account with that email already exists.',
+    'auth/weak-password':            'Password must be at least 8 characters.',
+    'auth/invalid-email':            'Please enter a valid email address.',
+    'auth/too-many-requests':        'Too many attempts. Please wait a moment and try again.',
+    'auth/network-request-failed':   'Network error. Please check your connection.',
+    'auth/popup-blocked':            'Sign-in popup was blocked. Please try again or use email sign-in.',
+    'auth/popup-closed-by-user':     'Sign-in was cancelled.',
+    'auth/cancelled-popup-request':  'Sign-in was cancelled.',
+    'auth/account-exists-with-different-credential': 'An account already exists with this email using a different sign-in method.',
+    'auth/user-disabled':         'Your account has been disabled. Please contact support.',
+    'auth/requires-recent-login': 'Please sign out and sign back in to continue.',
+  }
+  return messages[code] ?? 'Something went wrong. Please try again.'
 }
 
 function base64UrlDecode(input: string): string {
@@ -96,6 +118,7 @@ function toSessionUser(user: {
   email?: string | null
   displayName?: string | null
   photoURL?: string | null
+  emailVerified: boolean
   getIdToken: () => Promise<string>
 }): AuthSessionUser {
   return {
@@ -103,6 +126,7 @@ function toSessionUser(user: {
     email: user.email ?? null,
     displayName: user.displayName ?? null,
     avatarUrl: user.photoURL ?? null,
+    emailVerified: user.emailVerified,
     getIdToken: () => user.getIdToken(),
   }
 }
@@ -125,6 +149,16 @@ export class FirebaseClientAuthProvider implements ClientAuthProvider {
   }
 
   async signInWithGoogle(): Promise<void> {
+    const isPWA =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (navigator as unknown as { standalone?: boolean }).standalone === true
+
+    if (isPWA) {
+      await signInWithRedirect(auth, googleProvider)
+      // Result is caught by getRedirectResult() in AuthProvider on next load
+      return
+    }
+
     try {
       await signInWithPopup(auth, googleProvider)
     } catch (e: unknown) {
@@ -149,16 +183,10 @@ export class FirebaseClientAuthProvider implements ClientAuthProvider {
         }
         throw new Error('This email is already registered with another sign-in method.')
       }
-      if (code === 'auth/popup-closed-by-user') {
-        throw new Error('Google sign-in popup was closed before completion.')
-      }
-      if (code === 'auth/popup-blocked') {
-        throw new Error('Popup was blocked by your browser. Allow popups for this site and try again.')
-      }
       if (code === 'auth/operation-not-allowed') {
         throw new Error('Google sign-in is not enabled in Firebase Authentication settings.')
       }
-      throw e
+      throw new Error(getAuthErrorMessage(code))
     }
   }
 
@@ -168,7 +196,7 @@ export class FirebaseClientAuthProvider implements ClientAuthProvider {
       return null
     } catch (e: unknown) {
       logError('signInWithEmail', e)
-      return e instanceof Error ? e.message : 'Sign in failed'
+      return getAuthErrorMessage((e as FirebaseAuthErrorLike)?.code ?? '')
     }
   }
 
@@ -176,11 +204,29 @@ export class FirebaseClientAuthProvider implements ClientAuthProvider {
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password)
       await updateProfile(user, { displayName: name })
+      try {
+        await sendEmailVerification(user)
+      } catch (verifyErr) {
+        logError('sendEmailVerification', verifyErr)
+        // Non-fatal: account is created; user can request resend from verify page
+      }
       await user.reload()
       return null
     } catch (e: unknown) {
       logError('signUpWithEmail', e)
-      return e instanceof Error ? e.message : 'Sign up failed'
+      return getAuthErrorMessage((e as FirebaseAuthErrorLike)?.code ?? '')
+    }
+  }
+
+  async sendVerificationEmail(): Promise<string | null> {
+    const user = auth.currentUser
+    if (!user) return 'No signed-in user found.'
+    try {
+      await sendEmailVerification(user)
+      return null
+    } catch (e: unknown) {
+      logError('sendVerificationEmail', e)
+      return getAuthErrorMessage((e as FirebaseAuthErrorLike)?.code ?? '')
     }
   }
 
@@ -190,7 +236,7 @@ export class FirebaseClientAuthProvider implements ClientAuthProvider {
       return null
     } catch (e: unknown) {
       logError('sendPasswordReset', e)
-      return e instanceof Error ? e.message : 'Failed to send reset email'
+      return getAuthErrorMessage((e as FirebaseAuthErrorLike)?.code ?? '')
     }
   }
 

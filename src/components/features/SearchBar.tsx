@@ -1,17 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Search, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { ROUTES } from "@/lib/constants/routes";
-import {
-  setExploreQuery,
-  getExploreQuery,
-  subscribeExploreQuery,
-} from "@/lib/stores/explore-search";
+import { useExploreSearchStore } from "@/lib/store/exploreSearchStore";
 
 const SEARCH_PLACEHOLDERS = [
   "Search for a dish... e.g. Butter Chicken",
@@ -51,12 +47,9 @@ export function SearchBar({
     return () => clearInterval(id)
   }, [rotatePlaceholder])
 
-  const storeQuery = useSyncExternalStore(
-    subscribeExploreQuery,
-    getExploreQuery,
-    () => ""
-  );
-  const [query, setQuery] = useState(() => initialQuery || getExploreQuery());
+  const storeQuery = useExploreSearchStore((s) => s.query);
+  const setStoreQuery = useExploreSearchStore((s) => s.setQuery);
+  const [query, setQuery] = useState(() => initialQuery || useExploreSearchStore.getState().query);
   const [lastStoreQuery, setLastStoreQuery] = useState(storeQuery);
   if (storeQuery !== lastStoreQuery) {
     setLastStoreQuery(storeQuery);
@@ -70,6 +63,7 @@ export function SearchBar({
     const params = new URLSearchParams(window.location.search);
     const urlQ = params.get("q")?.trim();
     if (urlQ && !query) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery(urlQ);
     }
     if (!params.has("focus")) return;
@@ -81,22 +75,23 @@ export function SearchBar({
       window.history.replaceState(null, "", url.pathname + (url.search || ""));
     }, 300);
     return () => clearTimeout(timer);
-  }, [variant, isOnExplorePage]);
+  }, [variant, isOnExplorePage]); // eslint-disable-line react-hooks/exhaustive-deps -- intentionally omits `query`; adding it would re-run on every keystroke
 
   const debouncedQuery = useDebounce(query, 400);
 
   useEffect(() => {
     if (variant !== "navbar") return;
     if (!isOnExplorePage) return;
-    setExploreQuery(debouncedQuery.length >= 2 ? debouncedQuery : "");
-  }, [debouncedQuery, variant, isOnExplorePage]);
+    setStoreQuery(debouncedQuery.length >= 2 ? debouncedQuery : "");
+  }, [debouncedQuery, variant, isOnExplorePage, setStoreQuery]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    inputRef.current?.blur();
     const trimmed = query.trim();
     if (!trimmed) return;
 
-    setExploreQuery(trimmed);
+    setStoreQuery(trimmed);
 
     if (!isOnExplorePage) {
       router.push(ROUTES.EXPLORE);

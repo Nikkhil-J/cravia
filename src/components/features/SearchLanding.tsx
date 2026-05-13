@@ -1,16 +1,16 @@
 'use client'
 
 import { Clock, X } from 'lucide-react'
-import { useRecentSearches } from '@/lib/hooks/useRecentSearches'
-import { setExploreQuery } from '@/lib/stores/explore-search'
+import { useRecentSearchesStore } from '@/lib/store/recentSearchesStore'
+import { useExploreSearchStore } from '@/lib/store/exploreSearchStore'
 
 export function SearchLanding() {
-  const { searches, removeSearch, clearAll } = useRecentSearches()
+  const { searches, removeSearch, clearAll } = useRecentSearchesStore()
 
   if (searches.length === 0) return null
 
   function handleSearchClick(term: string) {
-    setExploreQuery(term)
+    useExploreSearchStore.getState().setQuery(term)
   }
 
   return (

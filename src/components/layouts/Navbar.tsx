@@ -28,6 +28,7 @@ export function Navbar() {
   const showSearchInNavbar = pathname !== ROUTES.HOME && !pathname.startsWith('/restaurant/')
   const showMobileSearchIcon = showSearchInNavbar && !pathname.startsWith('/explore') && !pathname.startsWith('/my-profile') && !pathname.startsWith('/profile/')
   const [scrolled, setScrolled] = useState(false)
+  const [confirmingLogout, setConfirmingLogout] = useState(false)
   const { user, isAuthenticated, isLoading } = useAuth()
 
   useEffect(() => {
@@ -83,6 +84,18 @@ export function Navbar() {
 
           <ThemeToggle />
 
+          {isLoading && (
+            <>
+              {/* Mobile: matches the ghost icon sign-in button */}
+              <div className="h-8 w-8 animate-pulse rounded-full bg-muted sm:hidden" />
+              {/* Desktop: matches the Sign in + Sign up pill buttons */}
+              <div className="hidden items-center gap-2.5 sm:flex">
+                <div className="h-9 w-[72px] animate-pulse rounded-full bg-muted" />
+                <div className="h-9 w-[82px] animate-pulse rounded-full bg-muted" />
+              </div>
+            </>
+          )}
+
           {!isLoading && !isAuthenticated && (
             <>
               <Button
@@ -118,7 +131,7 @@ export function Navbar() {
               <NotificationPopover />
 
               <div className="hidden md:block">
-              <DropdownMenu>
+              <DropdownMenu onOpenChange={(open) => { if (!open) setConfirmingLogout(false) }}>
                 <DropdownMenuTrigger
                   className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-2 border-background bg-gradient-to-br from-primary to-brand-orange shadow-sm outline-none sm:h-[38px] sm:w-[38px]"
                 >
@@ -167,14 +180,25 @@ export function Navbar() {
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    variant="destructive"
-                    className="gap-2 px-3 py-2"
-                    onClick={() => logout()}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Logout
-                  </DropdownMenuItem>
+                  {!confirmingLogout ? (
+                    <DropdownMenuItem
+                      variant="destructive"
+                      className="gap-2 px-3 py-2"
+                      closeOnClick={false}
+                      onClick={() => setConfirmingLogout(true)}
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      variant="destructive"
+                      className="justify-center px-3 py-2 font-semibold"
+                      onClick={() => logout()}
+                    >
+                      Confirm logout
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
               </div>

@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation'
 import { ChevronLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { usePWA } from '@/context/PWAContext'
+import { usePWA } from '@/lib/context/PWAContext'
+import { Button } from '@/components/ui/button'
 
 interface MobileBackButtonProps {
   parentHref: string
@@ -30,31 +31,32 @@ export function MobileBackButton({ parentHref, variant = 'inline', label = 'Back
 
   if (variant === 'floating') {
     return (
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={handleBack}
         aria-label="Go back"
         className={cn(
-          'absolute left-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm transition-colors active:bg-black/60 md:hidden',
+          'absolute left-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 p-0 backdrop-blur-sm transition-colors active:bg-black/60 md:hidden',
           className,
         )}
       >
         <ChevronLeft className="h-5 w-5 text-white" />
-      </button>
+      </Button>
     )
   }
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="sm"
       onClick={handleBack}
       className={cn(
-        'mb-3 flex items-center gap-0.5 text-xs font-medium text-text-muted transition-colors hover:text-primary md:hidden',
+        'mb-3 flex h-auto items-center gap-0.5 p-0 text-xs font-medium text-text-muted transition-colors hover:bg-transparent hover:text-primary md:hidden',
         className,
       )}
     >
       <ChevronLeft className="h-3.5 w-3.5" />
       {label}
-    </button>
+    </Button>
   )
 }

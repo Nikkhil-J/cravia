@@ -24,6 +24,7 @@ interface ReviewCardV2Props {
   onEdit?: () => void
   onDelete?: () => void
   dishContext?: { dishName: string; restaurantName: string } | null
+  index?: number
 }
 
 const MAX_VISIBLE_TAGS = 4
@@ -59,6 +60,7 @@ export function ReviewCardV2({
   onEdit,
   onDelete,
   dishContext,
+  index = 0,
 }: ReviewCardV2Props) {
   const { authUser } = useAuth()
   const [photoExpanded, setPhotoExpanded] = useState(false)
@@ -155,7 +157,10 @@ export function ReviewCardV2({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-text-muted">
+    <div
+      className="animate-pop-in overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-text-muted"
+      style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
+    >
       {/* ── Photo banner ─────────────────────────────── */}
       {review.photoUrl && (
         <button

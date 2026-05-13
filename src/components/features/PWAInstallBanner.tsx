@@ -32,6 +32,7 @@ export function PWAInstallBanner() {
     if (sessionStorage.getItem(SESSION_KEY)) return
 
     const iosDevice = isIOS()
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIos(iosDevice)
 
     if (iosDevice) {

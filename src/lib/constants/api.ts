@@ -28,4 +28,9 @@ export const API_ENDPOINTS = {
   adminReview: (id: string) => `/api/admin/reviews/${id}`,
   adminUserRole: (userId: string) => `/api/admin/users/${userId}/role`,
   adminUserPremium: (userId: string) => `/api/admin/users/${userId}/premium`,
+  ADMIN_SYNC_TYPESENSE: '/api/admin/sync-typesense',
+  ADMIN_TOOL_SET_ADMIN: '/api/admin/tools/set-admin',
+  ADMIN_TOOL_BACKFILL_DISH_CITY: '/api/admin/tools/backfill-dish-city',
+  ADMIN_TOOL_BACKFILL_DISH_DENORM: '/api/admin/tools/backfill-dish-denorm',
+  ADMIN_TOOL_BACKFILL_TAG_COUNTS: '/api/admin/tools/backfill-tag-counts',
 } as const
