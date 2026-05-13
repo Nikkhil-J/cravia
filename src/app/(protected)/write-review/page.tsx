@@ -312,6 +312,10 @@ function WriteReviewContent() {
         hadBill: !!billUrl,
       }))
       reset()
+      // Invalidate the router cache for the dish and restaurant pages so that
+      // navigating back to them after this review shows fresh data (new review
+      // count, updated ratings) rather than the 1-hour staleTimes cached version.
+      router.refresh()
       router.push(ROUTES.REVIEW_SUCCESS)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Submission failed. Please try again.'

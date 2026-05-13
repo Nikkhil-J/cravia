@@ -131,8 +131,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAuth() {
-  const { user, authUser, isLoading } = useAuthStore()
-  return { user, authUser, isLoading, isAuthenticated: !!user }
+  const { user, authUser, isLoading, isInitialized } = useAuthStore()
+  return { user, authUser, isLoading, isInitialized, isAuthenticated: !!user }
 }
 
 export async function logout() {
