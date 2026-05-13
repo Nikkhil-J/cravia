@@ -149,16 +149,20 @@ export class FirebaseClientAuthProvider implements ClientAuthProvider {
   }
 
   async signInWithGoogle(): Promise<void> {
-    const isPWA =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (navigator as unknown as { standalone?: boolean }).standalone === true
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    // On Android / desktop PWA, popups can be blocked by the system so use redirect.
+    // On iOS, signInWithRedirect fails silently: it runs inside an ASWebAuthenticationSession
+    // whose storage is isolated from the PWA's WKWebView, causing getRedirectResult to always
+    // return null. All iOS browsers use WebKit, so this affects Safari and Chrome installs alike.
+    const isAndroidOrDesktopPWA = !isIOS && window.matchMedia('(display-mode: standalone)').matches
 
-    if (isPWA) {
+    if (isAndroidOrDesktopPWA) {
       await signInWithRedirect(auth, googleProvider)
-      // Result is caught by getRedirectResult() in AuthProvider on next load
+      // Result is caught by getRedirectResult() in AuthProvider on next load.
       return
     }
 
+    // iOS PWA + all regular browser sessions → popup works correctly.
     try {
       await signInWithPopup(auth, googleProvider)
     } catch (e: unknown) {

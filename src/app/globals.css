@@ -93,12 +93,6 @@
   --shadow-glow: 0 4px 20px rgba(232, 87, 26, 0.25);
 }
 
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background-color: #121009;
-  }
-}
-
 :root {
   /* ── shadcn semantic tokens ── */
   --background: #faf7f4;
@@ -253,6 +247,35 @@
   --dc-coral-deeper: #F5C4B3;
 }
 
+/*
+ * Pre-hydration dark mode fix: sets background/color on html+body directly
+ * so the page shows the correct dark background before JS runs and next-themes
+ * applies the .dark class. Intentionally does NOT override :root CSS variables
+ * here — doing so would break the manual light-mode toggle on dark-OS devices
+ * (the media query has the same specificity as :root and no way to check if
+ * the user explicitly chose light mode). The .dark class handles all variable
+ * switching. AppLoader uses .app-loader-bg (below) for the same reason.
+ */
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background-color: #121009;
+    color: #f5f0eb;
+  }
+}
+
+/*
+ * Direct-color class for AppLoader — zero dependency on .dark or CSS variables.
+ * Uses raw hex values and a media query so it works before any JS runs.
+ */
+.app-loader-bg {
+  background-color: #faf7f4;
+}
+@media (prefers-color-scheme: dark) {
+  .app-loader-bg {
+    background-color: #121009;
+  }
+}
+
 html.theme-transitioning *,
 html.theme-transitioning *::before,
 html.theme-transitioning *::after {
@@ -269,8 +292,6 @@ html.theme-transitioning *::after {
     @apply bg-background text-foreground;
   }
   html {
-    /* APPROVED HARDCODED COLOR — matches manifest background_color to prevent white flash on PWA launch */
-    background-color: #2C1810;
     @apply font-body;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

@@ -65,7 +65,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     getRedirectResult(auth).then((result) => {
       if (result?.user) {
-        // User just returned from Google redirect — onIdTokenChanged handles state update
+        // User just returned from Google redirect — ensure the session cookie is set
+        // immediately so any middleware-guarded navigation that follows sees it.
+        setSessionCookie()
       }
     }).catch((error) => {
       console.error('Redirect sign-in error:', error)

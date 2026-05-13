@@ -26,7 +26,7 @@ export function AppLoader() {
   return (
     <div
       className={cn(
-        'fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background',
+        'fixed inset-0 z-[9999] flex flex-col items-center justify-center app-loader-bg',
         'transition-opacity duration-300 ease-out',
         isInitialized ? 'pointer-events-none opacity-0' : 'opacity-100',
       )}

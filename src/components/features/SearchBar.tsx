@@ -118,7 +118,7 @@ export function SearchBar({
         {showBackArrow ? (
           <button
             type="button"
-            onClick={() => router.back()}
+            onClick={() => router.push(ROUTES.HOME)}
             aria-label="Go back"
             className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground"
           >

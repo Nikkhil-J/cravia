@@ -1,10 +1,10 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AuthShell } from '@/components/layouts/AuthShell'
-import { signInWithEmail, signInWithGoogle } from '@/lib/hooks/useAuth'
+import { signInWithEmail, signInWithGoogle, useAuth } from '@/lib/hooks/useAuth'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,6 +22,17 @@ function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
 
+  const { isAuthenticated, isInitialized } = useAuth()
+
+  // Handles the PWA redirect-return case: after signInWithRedirect brings the user
+  // back, Firebase resolves auth state and this effect fires to complete navigation.
+  // Also handles already-authenticated users landing on /login.
+  useEffect(() => {
+    if (isInitialized && isAuthenticated) {
+      router.replace(redirect)
+    }
+  }, [isAuthenticated, isInitialized, redirect, router])
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
@@ -29,7 +40,7 @@ function LoginForm() {
     const err = await signInWithEmail(email, password)
     setLoading(false)
     if (err) { setError(err); return }
-    router.push(redirect)
+    router.replace(redirect)
   }
 
   async function handleGoogle() {
@@ -37,10 +48,10 @@ function LoginForm() {
     setGoogleLoading(true)
     try {
       await signInWithGoogle()
-      router.push(redirect)
+      // Desktop (popup): popup resolves, useEffect above navigates on auth state change.
+      // PWA (redirect): browser navigates away to Google; on return, useEffect navigates.
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Google sign in failed')
-    } finally {
       setGoogleLoading(false)
     }
   }

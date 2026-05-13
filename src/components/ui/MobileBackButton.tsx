@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation'
 import { ChevronLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { usePWA } from '@/lib/context/PWAContext'
 import { Button } from '@/components/ui/button'
 
 interface MobileBackButtonProps {
@@ -15,17 +14,12 @@ interface MobileBackButtonProps {
 
 export function MobileBackButton({ parentHref, variant = 'inline', label = 'Back', className }: MobileBackButtonProps) {
   const router = useRouter()
-  const { isPWA } = usePWA()
 
   const handleBack = () => {
-    if (isPWA) {
-      router.replace(parentHref)
+    if (window.history.length > 1) {
+      router.back()
     } else {
-      if (window.history.length > 1) {
-        router.back()
-      } else {
-        router.replace(parentHref)
-      }
+      router.replace(parentHref)
     }
   }
 

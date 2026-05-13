@@ -1,11 +1,11 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { AuthShell } from '@/components/layouts/AuthShell'
-import { signUpWithEmail, signInWithGoogle } from '@/lib/hooks/useAuth'
+import { signUpWithEmail, signInWithGoogle, useAuth } from '@/lib/hooks/useAuth'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -36,6 +36,25 @@ function SignupForm() {
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
 
+  const { isAuthenticated, isInitialized } = useAuth()
+  // Prevents the useEffect below from overriding the verify-email navigation
+  // that handleSubmit triggers for the email/password sign-up path.
+  const emailNavigating = useRef(false)
+
+  const onboardingUrl = redirect
+    ? `${ROUTES.ONBOARDING}?redirect=${encodeURIComponent(redirect)}`
+    : ROUTES.ONBOARDING
+
+  // Handles the PWA redirect-return case: after signInWithRedirect brings the user
+  // back, Firebase resolves auth state and this effect fires to complete navigation.
+  // Also handles already-authenticated users landing on /signup.
+  useEffect(() => {
+    if (emailNavigating.current) return
+    if (isInitialized && isAuthenticated) {
+      router.replace(onboardingUrl)
+    }
+  }, [isAuthenticated, isInitialized, onboardingUrl, router])
+
   const strength = getPasswordStrength(password)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -47,9 +66,7 @@ function SignupForm() {
     const err = await signUpWithEmail(email, password, name)
     setLoading(false)
     if (err) { setError(err); return }
-    const onboardingUrl = redirect
-      ? `${ROUTES.ONBOARDING}?redirect=${encodeURIComponent(redirect)}`
-      : ROUTES.ONBOARDING
+    emailNavigating.current = true
     router.push(`${ROUTES.VERIFY_EMAIL}?redirect=${encodeURIComponent(onboardingUrl)}`)
   }
 
@@ -57,10 +74,10 @@ function SignupForm() {
     setGoogleLoading(true)
     try {
       await signInWithGoogle()
-      router.push(redirect ? `${ROUTES.ONBOARDING}?redirect=${encodeURIComponent(redirect)}` : ROUTES.ONBOARDING)
+      // Desktop (popup): popup resolves, useEffect above navigates on auth state change.
+      // PWA (redirect): browser navigates away to Google; on return, useEffect navigates.
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Google sign up failed')
-    } finally {
       setGoogleLoading(false)
     }
   }
