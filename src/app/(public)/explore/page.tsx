@@ -103,7 +103,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
       {highlyRatedFiltered.length >= 3 && (
         <section>
           <h3 className="mb-4 font-display text-lg font-bold text-heading">Highly rated dishes</h3>
-          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {highlyRatedFiltered.slice(0, 6).map((d, i) => (
               <DishCard key={d.id} dish={d} index={i} />
             ))}
@@ -114,7 +114,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
       {newestItems.length >= 3 && (
         <section>
           <h3 className="mb-4 font-display text-lg font-bold text-heading">{newestLabel}</h3>
-          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {newestItems.map((d, i) => (
               <DishCard key={d.id} dish={d} index={i} />
             ))}
@@ -128,7 +128,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
           <p className="mb-4 -mt-2 text-sm text-text-secondary">
             These dishes have few reviews — your rating helps others decide.
           </p>
-          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {needsReview.map((d, i) => (
               <DishCard key={d.id} dish={d} index={i} />
             ))}
@@ -245,7 +245,7 @@ async function DishEmptyFallback({ query, city }: { query: string; city: string 
           <h3 className="mb-4 font-display text-lg font-bold text-heading">
             Top dishes{city ? ` in ${city}` : ''}
           </h3>
-          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {topDishes.map((dish, i) => (
               <DishCard key={dish.id} dish={dish} index={i} />
             ))}

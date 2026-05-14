@@ -6,9 +6,25 @@ export type BadgeId =
   | 'food-critic' | 'legend' | 'helpful' | 'trusted'
 
 export type DishCategory =
-  | 'Starter' | 'Main Course' | 'Bread' | 'Rice & Biryani'
-  | 'Dessert' | 'Beverage' | 'Side Dish' | 'Snack'
-  | 'Street Food' | 'Breakfast'
+  | 'Starter & Appetiser'
+  | 'Salad'
+  | 'Main Course'
+  | 'Biryani & Rice'
+  | 'Noodles & Pasta'
+  | 'Pizza'
+  | 'Burger'
+  | 'Sandwich & Wraps'
+  | 'Momos & Dimsum'
+  | 'Sushi & Asian'
+  | 'Kebab & Grill'
+  | 'Bread'
+  | 'Side'
+  | 'Snack & Street Food'
+  | 'Thali & Meals'
+  | 'Combos & Offers'
+  | 'Dessert'
+  | 'Beverage'
+  | 'Other'
 
 export type DishRequestStatus = 'pending' | 'approved' | 'rejected'
 
@@ -43,6 +59,7 @@ export interface Restaurant {
   createdAt: string
   totalReviews?: number
   dishCount?: number
+  categories?: DishCategory[]
 }
 
 export interface RestaurantClaim {
@@ -79,6 +96,8 @@ export interface Dish {
   avgValue: number
   avgOverall: number
   reviewCount: number
+  helpfulVotes?: number
+  totalReviews?: number
   topTags: string[]
   tagCounts?: Record<string, number>
   isActive: boolean

@@ -92,10 +92,17 @@ function WriteReviewContent() {
     }
     if (dishId !== data.dishId) {
       updateField('dishId', dishId)
+      if (restaurantId) updateField('restaurantId', restaurantId)
+    } else if (restaurantId && data.restaurantId !== restaurantId) {
       updateField('restaurantId', restaurantId)
     }
     getDish(dishId).then(setDish)
-  }, [dishId, restaurantId, data.dishId, updateField, reset])
+  }, [dishId, restaurantId, data.dishId, data.restaurantId, updateField, reset])
+
+  useEffect(() => {
+    if (!dish || restaurantId || data.restaurantId === dish.restaurantId) return
+    updateField('restaurantId', dish.restaurantId)
+  }, [dish, restaurantId, data.restaurantId, updateField])
 
   useEffect(() => {
     if (!dishId) return
@@ -220,7 +227,8 @@ function WriteReviewContent() {
       return
     }
 
-    if (!restaurantId) return
+    const submitRestaurantId = restaurantId || dish?.restaurantId || data.restaurantId
+    if (!submitRestaurantId) return
     setSubmitting(true)
     setSubmitError(null)
     try {
@@ -247,7 +255,7 @@ function WriteReviewContent() {
         },
         body: JSON.stringify({
           dishId,
-          restaurantId,
+          restaurantId: submitRestaurantId,
           tasteRating: data.tasteRating,
           portionRating: data.portionRating,
           valueRating: data.valueRating,
@@ -299,7 +307,7 @@ function WriteReviewContent() {
         dishId,
         dishName: displayName,
         restaurantName: displayRestaurant,
-        restaurantId,
+        restaurantId: submitRestaurantId,
         newBadges,
         newReviewCount: user.reviewCount + 1,
         pointsAwarded: payload.pointsAwarded ?? 0,
@@ -314,7 +322,7 @@ function WriteReviewContent() {
       }))
       reset()
       await revalidateDishPage(dishId)
-      await revalidateRestaurantPage(restaurantId)
+      await revalidateRestaurantPage(submitRestaurantId)
       router.push(ROUTES.REVIEW_SUCCESS)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Submission failed. Please try again.'

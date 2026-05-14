@@ -268,7 +268,7 @@ export default async function DishPage({ params }: PageProps) {
             <h2 className="mb-4 text-lg font-bold text-text-primary">
               More from {dish.restaurantName}
             </h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               {relatedDishes.map((d, i) => (
                 <DishCard key={d.id} dish={d} index={i} />
               ))}

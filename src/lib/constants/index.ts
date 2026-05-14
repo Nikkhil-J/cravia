@@ -121,9 +121,40 @@ export const FIRESTORE_BATCH_LIMIT     = 500
 
 // ── Dish categories ──────────────────────────────────────
 export const DISH_CATEGORIES: DishCategory[] = [
-  'Starter', 'Main Course', 'Bread', 'Rice & Biryani',
-  'Dessert', 'Beverage', 'Side Dish', 'Snack',
-  'Street Food', 'Breakfast',
+  'Starter & Appetiser',
+  'Salad',
+  'Main Course',
+  'Biryani & Rice',
+  'Noodles & Pasta',
+  'Pizza',
+  'Burger',
+  'Sandwich & Wraps',
+  'Momos & Dimsum',
+  'Sushi & Asian',
+  'Kebab & Grill',
+  'Bread',
+  'Side',
+  'Snack & Street Food',
+  'Thali & Meals',
+  'Combos & Offers',
+  'Dessert',
+  'Beverage',
+  'Other',
+]
+
+export const RECOMMENDED_DISH_CATEGORIES: DishCategory[] = [
+  'Starter & Appetiser',
+  'Main Course',
+  'Biryani & Rice',
+  'Noodles & Pasta',
+  'Pizza',
+  'Burger',
+  'Sandwich & Wraps',
+  'Momos & Dimsum',
+  'Sushi & Asian',
+  'Kebab & Grill',
+  'Snack & Street Food',
+  'Thali & Meals',
 ]
 
 // ── Display constants ────────────────────────────────────

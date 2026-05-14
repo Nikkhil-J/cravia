@@ -7,7 +7,7 @@ import {
   getRestaurantDetails,
   listRestaurantDishes,
 } from "@/lib/services/catalog";
-import { RestaurantMenu } from "@/components/features/RestaurantMenu";
+import { RecommendedDishesRow, RestaurantMenu } from "@/components/features/RestaurantMenu";
 import { ReviewDishPicker } from "@/components/features/ReviewDishPicker";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MobileBackButton } from "@/components/ui/MobileBackButton";
@@ -182,6 +182,7 @@ export default async function RestaurantPage({ params }: PageProps) {
               <div className="mt-6 flex gap-3">
                 <ReviewDishPicker
                   dishes={dishes}
+                  categories={restaurant.categories}
                   restaurantId={restaurant.id}
                   restaurantName={restaurant.name}
                 />
@@ -209,6 +210,8 @@ export default async function RestaurantPage({ params }: PageProps) {
               ))}
             </div>
 
+            {dishes.length > 0 && <RecommendedDishesRow dishes={dishes} />}
+
             {/* Menu */}
             <div className="mt-8 pb-12 sm:mt-10">
               <h2 className="font-display text-lg font-bold text-heading sm:text-xl">
@@ -222,7 +225,7 @@ export default async function RestaurantPage({ params }: PageProps) {
                 />
               ) : (
                 <div className="mt-4 sm:mt-6">
-                  <RestaurantMenu dishes={dishes} />
+                  <RestaurantMenu dishes={dishes} categories={restaurant.categories} />
                 </div>
               )}
             </div>

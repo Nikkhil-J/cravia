@@ -63,7 +63,7 @@ export default function WishlistPage() {
           />
         </div>
       ) : (
-        <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:mt-8 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
           {items.map((item) => (
             <div key={item.dishId} className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:-translate-y-0.5 active:translate-y-0 hover:border-transparent hover:shadow-md active:shadow-sm">
               <div className="relative h-36 bg-bg-cream">

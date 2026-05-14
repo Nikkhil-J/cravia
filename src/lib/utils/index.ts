@@ -1,8 +1,10 @@
 export { cn } from '../utils'
 import {
+  DISH_CATEGORIES,
   REVIEW_EDIT_WINDOW_MS,
   REVIEW_PHOTO_MAX_MB,
   REVIEW_PHOTO_ALLOWED_TYPES,
+  RECOMMENDED_DISH_CATEGORIES,
 } from '../constants'
 import type { Dish, DishCategory } from '../types'
 
@@ -122,4 +124,34 @@ export function groupDishesByCategory(dishes: Dish[]): Partial<Record<DishCatego
     result[dish.category]!.push(dish)
   }
   return result
+}
+
+export function isDishCategory(category: string): category is DishCategory {
+  return (DISH_CATEGORIES as readonly string[]).includes(category)
+}
+
+export function getDishCategorySlug(category: string): string {
+  return category.toLowerCase().replace(/\s*&\s*/g, '--').replace(/\s+/g, '-')
+}
+
+export function getOrderedDishCategories(categories: readonly string[]): DishCategory[] {
+  const present = new Set(categories.filter(isDishCategory))
+  return DISH_CATEGORIES.filter((category) => present.has(category))
+}
+
+export function getRecommendedDishes(dishes: readonly Dish[]): Dish[] {
+  const eligible = dishes.filter((dish) => RECOMMENDED_DISH_CATEGORIES.includes(dish.category))
+  if (eligible.length < 3) return []
+
+  return [...eligible]
+    .sort((a, b) => {
+      const reviewDelta = (b.totalReviews ?? b.reviewCount) - (a.totalReviews ?? a.reviewCount)
+      if (reviewDelta !== 0) return reviewDelta
+
+      const ratingDelta = b.avgOverall - a.avgOverall
+      if (ratingDelta !== 0) return ratingDelta
+
+      return a.name.localeCompare(b.name)
+    })
+    .slice(0, 6)
 }
