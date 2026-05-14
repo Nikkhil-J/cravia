@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils'
 import { useAuth, logout } from '@/lib/hooks/useAuth'
 import { UserAvatar } from '@/components/ui/Avatar'
 import { Logo } from '@/components/ui/Logo'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { SearchBar } from '@/components/features/SearchBar'
 import { ROUTES } from '@/lib/constants/routes'
 import { NotificationPopover } from '@/components/features/NotificationPopover'
@@ -81,8 +80,6 @@ export function Navbar() {
               <Search className="h-5 w-5 text-text-secondary" />
             </Button>
           )}
-
-          <ThemeToggle />
 
           {isLoading && (
             <>

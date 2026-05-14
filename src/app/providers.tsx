@@ -2,7 +2,6 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, useEffect, useState, type ReactNode } from 'react'
-import { ThemeProvider, useTheme } from 'next-themes'
 import { AppProgressBar } from 'next-nprogress-bar'
 import { MotionConfig } from 'motion/react'
 import { Toaster, toast } from 'sonner'
@@ -10,18 +9,6 @@ import { AuthProvider } from '@/lib/hooks/useAuth'
 import { CONFIG } from '@/lib/constants'
 import { PWAProvider } from '@/lib/context/PWAContext'
 import { AppLoader } from '@/components/ui/AppLoader'
-
-function ThemedToaster() {
-  const { resolvedTheme } = useTheme()
-  return (
-    <Toaster
-      position="bottom-center"
-      richColors
-      closeButton
-      theme={(resolvedTheme as 'light' | 'dark') ?? 'light'}
-    />
-  )
-}
 
 /**
  * Watches for a waiting service worker (installed but blocked by skipWaiting: false)
@@ -93,12 +80,6 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <PWAProvider>
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange={true}
-    >
       <Suspense>
         <AppProgressBar
           height="3px"
@@ -113,8 +94,12 @@ export function Providers({ children }: { children: ReactNode }) {
         </QueryClientProvider>
       </MotionConfig>
       <AppLoader />
-      <ThemedToaster />
-    </ThemeProvider>
+      <Toaster
+        position="bottom-center"
+        richColors
+        closeButton
+        theme="dark"
+      />
     </PWAProvider>
   )
 }

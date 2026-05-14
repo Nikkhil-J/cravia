@@ -44,7 +44,7 @@ function hasAuthToken(request: NextRequest): boolean {
  *     redirects unauthenticated users via useAuth(). Do NOT remove that
  *     client-side check assuming middleware handles it.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const start = Date.now()
   const { pathname } = request.nextUrl
 

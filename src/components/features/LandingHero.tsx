@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import { ArrowRight, Check, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useExploreSearchStore } from "@/lib/store/exploreSearchStore";
@@ -26,23 +25,6 @@ const DARK_C = {
   mCardShadow: "0 6px 24px rgba(0,0,0,0.45)",
   stack1Bg: "rgba(30,26,23,0.63)",
   stack2Bg: "rgba(30,26,23,0.41)",
-} as const;
-
-const LIGHT_C = {
-  bg: "var(--background)", // #faf7f4
-  surface: "var(--dc-surface-2)", // #f0ebe5
-  card: "var(--card)", // #f0ebe5
-  border: "var(--dc-border)", // #e0d6ce
-  orange: "var(--color-primary)", // #e8571a
-  orangeDim: "rgba(232,87,26,0.12)",
-  white: "var(--dc-text-primary)", // #1a1008
-  gray: "var(--dc-text-secondary)", // #6b5d52
-  grayDim: "var(--dc-text-muted)", // #9a8880
-  scoreBg: "rgba(0,0,0,0.08)",
-  cardShadow: "0 8px 32px rgba(0,0,0,0.12)",
-  mCardShadow: "0 6px 24px rgba(0,0,0,0.10)",
-  stack1Bg: "rgba(240,235,229,0.80)",
-  stack2Bg: "rgba(240,235,229,0.55)",
 } as const;
 
 type HeroColors = {
@@ -543,24 +525,20 @@ const HANGING_TAGS = [
 
 function HangingTags() {
   const [litIdx, setLitIdx] = useState(1)
-  const { resolvedTheme } = useTheme()
-  const isLight = resolvedTheme === "light"
 
   useEffect(() => {
     const id = setInterval(() => setLitIdx((p) => (p + 1) % 3), 2400)
     return () => clearInterval(id)
   }, [])
 
-  const cardBgActive   = isLight ? "#f5ede5"             : "#1a1210"
-  const cardBgInactive = isLight ? LIGHT_C.surface       : "#131313"
+  const cardBgActive   = "#1a1210"
+  const cardBgInactive = "#131313"
   const borderActive   = "rgba(232,69,10,0.35)"
-  const borderInactive = isLight ? "rgba(0,0,0,0.10)"   : "rgba(255,255,255,0.06)"
-  const textActive     = isLight ? LIGHT_C.white         : "rgba(255,255,255,0.85)"
-  const textInactive   = isLight ? LIGHT_C.grayDim       : "rgba(255,255,255,0.28)"
-  const stringGrad     = isLight
-    ? "linear-gradient(to bottom, rgba(0,0,0,0.18), rgba(0,0,0,0.04))"
-    : "linear-gradient(to bottom, rgba(255,255,255,0.10), rgba(255,255,255,0.02))"
-  const pinInactive    = isLight ? "rgba(0,0,0,0.12)"   : "rgba(255,255,255,0.08)"
+  const borderInactive = "rgba(255,255,255,0.06)"
+  const textActive     = "rgba(255,255,255,0.85)"
+  const textInactive   = "rgba(255,255,255,0.28)"
+  const stringGrad     = "linear-gradient(to bottom, rgba(255,255,255,0.10), rgba(255,255,255,0.02))"
+  const pinInactive    = "rgba(255,255,255,0.08)"
 
   return (
     <div
@@ -650,8 +628,7 @@ export function LandingHero({
   dishCount = 0,
 }: LandingHeroProps) {
   const router = useRouter();
-  const { resolvedTheme } = useTheme();
-  const C: HeroColors = resolvedTheme === "light" ? LIGHT_C : DARK_C;
+  const C: HeroColors = DARK_C;
   const [exiting, setExiting] = useState(false);
   const [desktopIdx, setDesktopIdx] = useState(0);
   const [mobileIdx, setMobileIdx] = useState(0);

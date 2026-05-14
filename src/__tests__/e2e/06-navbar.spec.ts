@@ -10,16 +10,6 @@ test.describe('Navbar — logged out', () => {
     ).toBeVisible({ timeout: 6000 })
   })
 
-  test('shows theme toggle when logged out', async ({ page }) => {
-    await page.goto('/')
-    // ThemeToggle always visible regardless of auth state
-    await expect(
-      page.locator('[data-testid="theme-toggle"]').or(
-        page.getByRole('button', { name: /toggle theme|dark mode|light mode/i })
-      ).first()
-    ).toBeVisible({ timeout: 6000 })
-  })
-
   test('shows logo linking to home', async ({ page }) => {
     await page.goto('/explore')
     const logo = page.getByRole('link', { name: /cravia/i }).first()

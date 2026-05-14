@@ -41,14 +41,6 @@ test.describe('Home feed', () => {
     ).toBeVisible({ timeout: 6000 })
   })
 
-  test('theme toggle is visible', async ({ page }) => {
-    await page.goto('/home')
-    await expect(
-      page.locator('[data-testid="theme-toggle"]').or(
-        page.getByRole('button', { name: /theme|dark|light/i })
-      ).first()
-    ).toBeVisible({ timeout: 6000 })
-  })
 })
 
 test.describe('Notifications page', () => {

@@ -98,10 +98,7 @@ export const metadata: Metadata = {
 
 // APPROVED HARDCODED COLOR — HTML meta viewport theme-color requires hex
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#D85A30' },
-    { media: '(prefers-color-scheme: dark)', color: '#121009' },
-  ],
+  themeColor: '#121009',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -117,9 +114,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning
+      className={`dark ${fredoka.variable} ${dmSans.variable} ${barlowCondensed.variable} h-full`}
       data-scroll-behavior="smooth"
-      className={`${fredoka.variable} ${dmSans.variable} ${barlowCondensed.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
