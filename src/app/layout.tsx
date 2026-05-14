@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fredoka, DM_Sans, Barlow_Condensed } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -34,40 +35,9 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'Cravia',
-    startupImage: [
-      {
-        url: '/splashscreens/iphone5_splash.png',
-        media: '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)',
-      },
-      {
-        url: '/splashscreens/iphone6_splash.png',
-        media: '(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)',
-      },
-      {
-        url: '/splashscreens/iphoneplus_splash.png',
-        media: '(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)',
-      },
-      {
-        url: '/splashscreens/iphonex_splash.png',
-        media: '(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)',
-      },
-      {
-        url: '/splashscreens/iphonexr_splash.png',
-        media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)',
-      },
-      {
-        url: '/splashscreens/iphonexsmax_splash.png',
-        media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)',
-      },
-      {
-        url: '/splashscreens/iphone14pro_splash.png',
-        media: '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)',
-      },
-      {
-        url: '/splashscreens/iphone14promax_splash.png',
-        media: '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)',
-      },
-    ],
+    // Splash screens are injected dynamically by PWACompat (see Script in RootLayout).
+    // PWACompat reads manifest.json background_color + icons and generates the correct
+    // splash at runtime for any device — no per-device PNG files needed.
   },
   icons: {
     icon: [
@@ -121,6 +91,13 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col" style={{ backgroundColor: '#121009' }}>
         <Providers>{children}</Providers>
+        {/* Generates apple-touch-startup-image meta tags dynamically from manifest.json
+            for any iOS device, eliminating the need for per-device splash screen PNGs. */}
+        <Script
+          src="https://unpkg.com/pwacompat@3.0.3/pwacompat.min.js"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
       </body>
     </html>
   );
