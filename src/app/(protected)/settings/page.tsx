@@ -89,9 +89,13 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
-      <MobileBackButton parentHref={ROUTES.MY_PROFILE} />
-      <h1 className="font-display text-2xl font-bold text-heading">Settings</h1>
-      <p className="mt-1 text-sm text-text-secondary">Update your profile information</p>
+      <div className="flex items-center gap-2">
+        <MobileBackButton parentHref={ROUTES.MY_PROFILE} />
+        <div>
+          <h1 className="font-display text-2xl font-bold text-heading">Settings</h1>
+          <p className="mt-0.5 text-sm text-text-secondary">Update your profile information</p>
+        </div>
+      </div>
 
       <form onSubmit={handleSave} className="mt-8 space-y-5">
         <div>

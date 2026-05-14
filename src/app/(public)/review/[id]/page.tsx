@@ -29,20 +29,22 @@ export default async function ReviewPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-10">
-      <MobileBackButton parentHref={`/dish/${review.dishId}`} />
-      {dish && (
-        <div className="mb-6">
-          <Link
-            href={`/dish/${review.dishId}`}
-            className="group inline-block"
-          >
-            <h1 className="font-display text-2xl font-bold text-heading underline-offset-4 group-hover:underline">
-              {dish.name}
-            </h1>
-          </Link>
-          <p className="text-sm text-text-muted">{dish.restaurantName}</p>
-        </div>
-      )}
+      <div className="mb-6 flex items-start gap-2">
+        <MobileBackButton parentHref={`/dish/${review.dishId}`} className="mt-0.5" />
+        {dish && (
+          <div>
+            <Link
+              href={`/dish/${review.dishId}`}
+              className="group inline-block"
+            >
+              <h1 className="font-display text-2xl font-bold text-heading underline-offset-4 group-hover:underline">
+                {dish.name}
+              </h1>
+            </Link>
+            <p className="text-sm text-text-muted">{dish.restaurantName}</p>
+          </div>
+        )}
+      </div>
       <ReviewCardV2
         review={review}
         variant="profile"

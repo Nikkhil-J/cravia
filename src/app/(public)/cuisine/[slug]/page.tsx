@@ -51,7 +51,7 @@ export default async function CuisinePage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
-      <MobileBackButton parentHref={ROUTES.EXPLORE} />
+      <MobileBackButton parentHref={ROUTES.EXPLORE} className="mb-2" />
       {/* Hero */}
       <div className="py-6 text-center sm:py-10">
         <div className="text-4xl sm:text-5xl">{emoji}</div>

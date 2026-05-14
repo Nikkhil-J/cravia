@@ -120,11 +120,15 @@ export default function ClaimRestaurantPage() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
-      <MobileBackButton parentHref={ROUTES.restaurant(restaurant.id)} />
-      <h1 className="font-display text-2xl font-bold text-heading">Claim this restaurant</h1>
-      <p className="mt-1 text-sm text-text-secondary">
-        Verify your ownership of <strong>{restaurant.name}</strong> to access the analytics dashboard.
-      </p>
+      <div className="flex items-start gap-2">
+        <MobileBackButton parentHref={ROUTES.restaurant(restaurant.id)} className="mt-0.5" />
+        <div>
+          <h1 className="font-display text-2xl font-bold text-heading">Claim this restaurant</h1>
+          <p className="mt-1 text-sm text-text-secondary">
+            Verify your ownership of <strong>{restaurant.name}</strong> to access the analytics dashboard.
+          </p>
+        </div>
+      </div>
 
       <div className="mt-4 rounded-xl border border-border bg-card p-4">
         <p className="font-semibold text-heading">{restaurant.name}</p>

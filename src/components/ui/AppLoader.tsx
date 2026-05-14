@@ -54,7 +54,7 @@ export function AppLoader() {
       )}
       aria-hidden="true"
     >
-      <Logo size="lg" className="animate-fade-in" />
+      <Logo size="lg" />
     </div>
   )
 }

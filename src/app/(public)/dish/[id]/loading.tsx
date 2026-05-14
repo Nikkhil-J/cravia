@@ -1,13 +1,16 @@
 export default function DishLoading() {
   return (
     <div className="mx-auto max-w-[1200px] overflow-hidden px-4 py-8 sm:px-6">
-      {/* Breadcrumb */}
+      {/* Breadcrumb row — back button + crumbs */}
       <div className="mb-6 flex items-center gap-2">
-        <div className="h-3.5 w-10 animate-pulse rounded bg-border" />
-        <span className="text-text-muted">/</span>
-        <div className="h-3.5 w-14 animate-pulse rounded bg-border" />
-        <span className="text-text-muted">/</span>
-        <div className="h-3.5 w-28 animate-pulse rounded bg-border" />
+        <div className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-border md:hidden" />
+        <div className="flex items-center gap-2">
+          <div className="h-3.5 w-10 animate-pulse rounded bg-border" />
+          <span className="text-text-muted">/</span>
+          <div className="h-3.5 w-14 animate-pulse rounded bg-border" />
+          <span className="text-text-muted">/</span>
+          <div className="h-3.5 w-28 animate-pulse rounded bg-border" />
+        </div>
       </div>
 
       {/* Photo grid — mirrors DishPhotoGrid 60/40 two-row layout */}

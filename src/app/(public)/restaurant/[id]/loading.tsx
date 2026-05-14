@@ -2,7 +2,10 @@ export default function RestaurantLoading() {
   return (
     <div>
       {/* Cover hero — mirrors h-56 sm:h-64 in page.tsx */}
-      <div className="relative h-56 w-full animate-pulse bg-surface-2 sm:h-64" />
+      <div className="relative h-56 w-full animate-pulse bg-surface-2 sm:h-64">
+        {/* Floating back button */}
+        <div className="absolute left-3 top-3 h-11 w-11 rounded-full bg-black/30 md:hidden" />
+      </div>
 
       {/* Info card — mirrors -mt-8 rounded-t-xl overlap */}
       <div className="relative -mt-8 rounded-t-xl border-t border-border bg-card">

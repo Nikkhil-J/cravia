@@ -93,14 +93,16 @@ export default async function DishPage({ params }: PageProps) {
         avgOverall: dish.avgOverall,
         cuisines: dish.cuisines,
       }} />
-      <MobileBackButton parentHref={ROUTES.restaurant(dish.restaurantId)} />
-      {/* Breadcrumb */}
-      <nav className="mb-4 flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:mb-6 sm:gap-2 sm:text-sm">
+      {/* Breadcrumb row — back button + breadcrumb on one line on mobile */}
+      <nav className="mb-4 flex min-w-0 items-center gap-2 sm:mb-6">
+        <MobileBackButton parentHref={ROUTES.restaurant(dish.restaurantId)} />
+        <div className="flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm">
         <Link href={ROUTES.EXPLORE} className="shrink-0 transition-colors hover:text-primary">Explore</Link>
         <span className="shrink-0">/</span>
         <Link href={ROUTES.restaurant(dish.restaurantId)} className="min-w-0 shrink truncate transition-colors hover:text-primary">{dish.restaurantName}</Link>
         <span className="shrink-0">/</span>
         <span className="min-w-0 truncate text-text-primary">{dish.name}</span>
+        </div>
       </nav>
 
       {/* Photo grid */}

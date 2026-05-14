@@ -12,7 +12,7 @@ interface MobileBackButtonProps {
   className?: string
 }
 
-export function MobileBackButton({ parentHref, variant = 'inline', label = 'Back', className }: MobileBackButtonProps) {
+export function MobileBackButton({ parentHref, variant = 'inline', className }: MobileBackButtonProps) {
   const router = useRouter()
 
   const handleBack = () => {
@@ -30,11 +30,11 @@ export function MobileBackButton({ parentHref, variant = 'inline', label = 'Back
         onClick={handleBack}
         aria-label="Go back"
         className={cn(
-          'absolute left-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 p-0 backdrop-blur-sm transition-colors active:bg-black/60 md:hidden',
+          'absolute left-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/40 p-0 backdrop-blur-sm transition-colors active:bg-black/60 md:hidden',
           className,
         )}
       >
-        <ChevronLeft className="h-5 w-5 text-white" />
+        <ChevronLeft className="h-6 w-6 text-white" />
       </Button>
     )
   }
@@ -42,15 +42,14 @@ export function MobileBackButton({ parentHref, variant = 'inline', label = 'Back
   return (
     <Button
       variant="ghost"
-      size="sm"
       onClick={handleBack}
+      aria-label="Go back"
       className={cn(
-        'mb-3 flex h-auto items-center gap-0.5 p-0 text-xs font-medium text-text-muted transition-colors hover:bg-transparent hover:text-primary md:hidden',
+        'flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-foreground/10 p-0 transition-colors hover:bg-foreground/15 active:bg-foreground/20 md:hidden',
         className,
       )}
     >
-      <ChevronLeft className="h-3.5 w-3.5" />
-      {label}
+      <ChevronLeft className="h-6 w-6 text-foreground" />
     </Button>
   )
 }

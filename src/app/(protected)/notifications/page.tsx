@@ -66,9 +66,11 @@ export default function NotificationsPage() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
-      <MobileBackButton parentHref={ROUTES.MY_PROFILE} />
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-heading">Notifications</h1>
+        <div className="flex items-center gap-2">
+          <MobileBackButton parentHref={ROUTES.MY_PROFILE} />
+          <h1 className="font-display text-2xl font-bold text-heading">Notifications</h1>
+        </div>
         {unreadCount > 0 && (
           <Button
             variant="link"
