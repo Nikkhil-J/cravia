@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
-import { Search, Bell, User, Heart, Settings, LogOut } from 'lucide-react'
+import { Bell, User, Heart, Settings, LogOut } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { useAuth, logout } from '@/lib/hooks/useAuth'
@@ -22,10 +22,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export function Navbar() {
-  const router = useRouter()
   const pathname = usePathname()
   const showSearchInNavbar = pathname !== ROUTES.HOME && !pathname.startsWith('/restaurant/')
-  const showMobileSearchIcon = showSearchInNavbar && !pathname.startsWith('/explore') && !pathname.startsWith('/my-profile') && !pathname.startsWith('/profile/')
   const [scrolled, setScrolled] = useState(false)
   const [confirmingLogout, setConfirmingLogout] = useState(false)
   const { user, isAuthenticated, isLoading } = useAuth()
@@ -69,18 +67,6 @@ export function Navbar() {
         </div>
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2.5">
-          {showMobileSearchIcon && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full md:hidden"
-              onClick={() => router.push(`${ROUTES.EXPLORE}?focus=1`)}
-              aria-label="Search"
-            >
-              <Search className="h-5 w-5 text-text-secondary" />
-            </Button>
-          )}
-
           {isLoading && (
             <>
               {/* Mobile: matches the ghost icon sign-in button */}

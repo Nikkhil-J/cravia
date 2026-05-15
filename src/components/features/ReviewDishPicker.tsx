@@ -170,7 +170,6 @@ export function ReviewDishPicker({ dishes, categories, restaurantId, restaurantN
                   'h-auto w-full rounded-pill border border-border bg-card/50 py-2 pl-10 pr-4 text-sm',
                   'placeholder:text-text-muted focus-visible:border-primary focus-visible:ring-0'
                 )}
-                autoFocus
               />
             </div>
           )}

@@ -7,6 +7,10 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { PageShell } from '@/components/layouts/PageShell'
 import { ROUTES } from '@/lib/constants/routes'
 
+const SKIP_EMAIL_VERIFICATION =
+  process.env.NODE_ENV === 'development' &&
+  process.env.NEXT_PUBLIC_SKIP_EMAIL_VERIFICATION === 'true'
+
 function ProtectedPageSkeleton() {
   return (
     <div className="flex min-h-screen flex-col">
@@ -62,7 +66,7 @@ function AuthGate({ children }: { children: ReactNode }) {
 
     // Block email/password users who haven't verified yet.
     // Google sign-ins always have emailVerified === true so they pass through.
-    if (authUser && !authUser.emailVerified) {
+    if (!SKIP_EMAIL_VERIFICATION && authUser && !authUser.emailVerified) {
       const returnUrl = searchParams.toString()
         ? `${pathname}?${searchParams.toString()}`
         : pathname
@@ -74,7 +78,7 @@ function AuthGate({ children }: { children: ReactNode }) {
     return <ProtectedPageSkeleton />
   }
 
-  if (!isAuthenticated || (authUser && !authUser.emailVerified)) return null
+  if (!isAuthenticated || (!SKIP_EMAIL_VERIFICATION && authUser && !authUser.emailVerified)) return null
 
   return (
     <>

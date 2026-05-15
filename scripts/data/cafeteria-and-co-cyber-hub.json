@@ -1,0 +1,1926 @@
+{
+  "_instructions": [
+    "Cafeteria & Co. - 15, Ground Floor, Cyber Hub, DLF Cyber City, Gurgaon.",
+    "Dasaprakash - SCO 344, 1st Floor, Behind Radisson Hotel, Sector 29, Gurugram, Haryana 122001.",
+    "Bartari Resto Bar & Club - Unit 4 First Floor, Elan Epic Mall, Near Sector 70, Sector 69, Gurgaon.",
+    "Menu extracted from 11 menu screenshots: Fusion Sushi Bar & Hand Roll, Tossed Salads, Dim Sums, Small Plates, Start Me Up, Ultimate Dippers, Chicago Fries, House Fries, Tandoori Dippers, Mezze Platters, Country Burgers & Club Sandwiches, Pastas, Pizzas, Full Meals, Ice Cream Sundaes, and French Crepes.",
+    "Dasaprakash menu extracted from 2 unique menu screenshot spreads: Dosas & Uttapam, South Indian Delicacies, Rice, Vada, South Indian Favourites, Extras, Thali and Platters.",
+    "Bartari menu extracted from 11 menu screenshots: Desserts, Liquor Infused Food, Biryani & Rice, Indian Mains, Noodles & Fried Rice, Pan Asian Mains, Grills & Steaks, Pasta & Risotto, and Dimsum.",
+    "Coordinates were intentionally left null because exact Google Maps coordinates were not provided.",
+    "Run: npx tsx scripts/seed-from-json.ts --file=scripts/data/cafeteria-and-co-cyber-hub.json --dry-run",
+    "Then: npx tsx scripts/seed-from-json.ts --file=scripts/data/cafeteria-and-co-cyber-hub.json"
+  ],
+  "_stats": {
+    "totalRestaurants": 3,
+    "gurugram": 3,
+    "fetchedAt": "2026-05-15T00:00:00.000Z"
+  },
+  "restaurants": [
+    {
+      "googlePlaceId": "gurugram-cafeteria-and-co-cyber-hub",
+      "name": "Cafeteria & Co.",
+      "city": "Gurugram",
+      "area": "Cyber Hub",
+      "address": "15, Ground Floor, Cyber Hub, DLF Cyber City, Gurgaon",
+      "coordinates": { "lat": null, "lng": null },
+      "googleRating": 4.4,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+919289088201",
+      "cuisines": ["Mexican", "Coffee", "Italian", "North Indian", "Continental", "Burger", "Beverages", "Desserts"],
+      "priceLevel": "900 for two",
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Philadelphia & Cucumber Temptation",
+          "description": "Philadelphia sushi roll with cream cheese and cucumber.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "399-399"
+        },
+        {
+          "name": "Soy-Glazed Shiitake Roll",
+          "description": "Shiitake mushroom glazed with Kikkoman soy, rolled in sushi rice.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "399-399"
+        },
+        {
+          "name": "Paneer Tikka, Asparagus & Mango",
+          "description": "Asparagus and charred paneer rubbed with tandoori spices, rolled in rice and topped with mango salsa.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "419-419"
+        },
+        {
+          "name": "Sunkissed Chicken Teriyaki",
+          "description": "Rice roll stuffed with teriyaki grilled chicken and asparagus, topped with house teriyaki mayo.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "419-419"
+        },
+        {
+          "name": "Tandoori Chicken & Mango Salsa",
+          "description": "Charred smoke chicken rubbed with tandoori spices, rolled in rice and topped with mango salsa.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "419-419"
+        },
+        {
+          "name": "Smoked Salmon Sushi",
+          "description": "Sushi roll with smoked salmon, cucumber and cream cheese.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Crispy Prawn Tempura",
+          "description": "Prawn fried in tempura batter, rolled with cucumber and Philadelphia cheese.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Spring Time Salad",
+          "description": "Fresh mixed lettuce tossed with cucumber, jalapeno olives, tomato, apple, cottage cheese and processed cheese.",
+          "category": "Salad",
+          "dietary": "veg",
+          "priceRange": "359-359"
+        },
+        {
+          "name": "Club Salad",
+          "description": "Mixed lettuce blended with mayonnaise and cheese dressing, topped with hard boiled egg and herb grilled chicken.",
+          "category": "Salad",
+          "dietary": "non-veg",
+          "priceRange": "389-389"
+        },
+        {
+          "name": "Truffle Mushroom & Cheese Dim Sum",
+          "description": "Rich truffle mushroom with cream cheese, enveloped in a thin dumpling skin.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Spicy Vegetable & Water Chestnut Dim Sum",
+          "description": "Vegetables with sweet crunch of water chestnuts, wrapped in thin skin.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Burnt Garlic & Chive Dim Sum",
+          "description": "Corn and chives with burnt garlic, wrapped in a dainty film.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Chili Oil & Coriander Chicken Dim Sum",
+          "description": "Tender chicken with chili oil and fresh citrusy coriander.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "Bok Choy Wrapped Chicken Dim Sum",
+          "description": "Chicken wrapped in bok choy leaves with subtle savory flavours.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "Mutton Chili & Ginger Dim Sum",
+          "description": "Mutton with the heat of chili and warmth of fresh ginger.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "Vegetarian Dim Sum Binge-Out Basket",
+          "description": "Truffle mushroom and cheese, spicy vegetable and water chestnut, and burnt garlic and chive dim sums.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "459-459"
+        },
+        {
+          "name": "Non-Vegetarian Dim Sum Binge-Out Basket",
+          "description": "Chili oil and coriander chicken, bok choy wrapped chicken, and mutton chili and ginger dim sums.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "479-479"
+        },
+        {
+          "name": "Cream of Tomato Soup",
+          "description": "",
+          "category": "Soup",
+          "dietary": "veg",
+          "priceRange": "269-269"
+        },
+        {
+          "name": "Cream of Mushroom Soup",
+          "description": "",
+          "category": "Soup",
+          "dietary": "veg",
+          "priceRange": "269-269"
+        },
+        {
+          "name": "Cream of Chicken Soup",
+          "description": "",
+          "category": "Soup",
+          "dietary": "non-veg",
+          "priceRange": "289-289"
+        },
+        {
+          "name": "Paneer Tikka Taquitos",
+          "description": "Baked tortilla rolls stuffed with paneer tikka khurchan, lettuce, refried beans and queso.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Hummus With Pita",
+          "description": "",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        },
+        {
+          "name": "Veg Nachos",
+          "description": "",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Chicken Nachos",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "Garlic Bread",
+          "description": "Peri peri garlic bread.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Korean Cream Cheese Bun",
+          "description": "Soft brioche bun stuffed with cream cheese and smothered with garlic and spice butter.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        },
+        {
+          "name": "Mushroom Galouti Sliders",
+          "description": "Mushroom galouti patty, masala mushroom, crisp fried onions and mint chutney in buttered soft buns.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Chowpatty Pao Bhaji with Butter Garlic Pao",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Falafel Pita Pockets",
+          "description": "",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "5 Spice Lotus Root Chaat",
+          "description": "Crisp Thai lotus root stir fried in Chinese-inspired tangy and spicy chutney.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "359-359"
+        },
+        {
+          "name": "Chicken Khurchan Taquitos",
+          "description": "Baked tortilla rolls stuffed with chicken khurchan, lettuce, refried beans and queso.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "Mutton Galouti Slider",
+          "description": "Melt-in-your-mouth mutton galouti patty, keema masala, fried onions and mint chutney in buttered buns.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "379-379"
+        },
+        {
+          "name": "Mutton Keema Pao",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "379-379"
+        },
+        {
+          "name": "Chicken Salami & Cheese Garlic Butter Bites",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "379-379"
+        },
+        {
+          "name": "Chicken Parche with Chips",
+          "description": "Thin slices of boneless chicken marinated in Indian spices, grilled and served with crisps.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "Crispy Fried Calamari",
+          "description": "Crumb fried calamari spiced with a special blend of spices and herbs.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "379-379"
+        },
+        {
+          "name": "'I'm Stuffed' Mushrooms",
+          "description": "Fresh fried mushrooms, crispy golden brown outside and hot and juicy inside.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "389-389"
+        },
+        {
+          "name": "Hand Wrapped Cheese Sticks",
+          "description": "",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "Texas Roadhouse Poppers",
+          "description": "Crispy cheese with fiery jalapeno peppers.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "389-389"
+        },
+        {
+          "name": "Spicy Sriracha Potatoes",
+          "description": "Crispy fried potato bites tossed in spicy homemade sriracha sauce.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "389-389"
+        },
+        {
+          "name": "Crispy Chili Pepper Corn",
+          "description": "",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "389-389"
+        },
+        {
+          "name": "Cheese Burst Vegetable Spring Roll",
+          "description": "Spring roll cigars filled with fresh vegetables and oozy cheese.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "359-359"
+        },
+        {
+          "name": "Cottage Cheese Schezwan Stir Fry",
+          "description": "",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "389-389"
+        },
+        {
+          "name": "Parmesan Basil Soya Tikka",
+          "description": "Tandoor cooked tandoori soya chaap marinated in smoky spices and basil pesto.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "399-399"
+        },
+        {
+          "name": "Peri-Peri Paneer Tikka",
+          "description": "Tandoor cooked smoked tikka with paneer and signature creamy peri-peri sauce.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Tandoori Garlic Broccoli",
+          "description": "Garlic infused rich and creamy broccoli tandoor cooked.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Chargrilled Achaari Mushrooms",
+          "description": "",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Schezwan Prawns",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "439-439"
+        },
+        {
+          "name": "Beer Battered Prawns",
+          "description": "Tempura coated crispy prawns with a chili dip.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "439-439"
+        },
+        {
+          "name": "Panko Fish Fingers",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "439-439"
+        },
+        {
+          "name": "Garlic Fish Stir Fry",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "439-439"
+        },
+        {
+          "name": "Zinger Fried Chicken",
+          "description": "Chicken supreme coated with freshly ground herbs and deep fried with crisp flour coating.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "399-399"
+        },
+        {
+          "name": "Super Angry Wings",
+          "description": "Chicken wings marinated in freshly ground hot spices then tossed in home made black pepper sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "399-399"
+        },
+        {
+          "name": "Bird Eye Chili Spiced Garlic Chicken",
+          "description": "Stir fried diced chicken tossed in homemade sauce with bird eye chili.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "399-399"
+        },
+        {
+          "name": "Mumbai Style Chicken & Cheese Spring Roll",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "Lamb Galouti With Mint Chutney",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "439-439"
+        },
+        {
+          "name": "Lamb Adana Seekh Kebab",
+          "description": "Lamb meat minced and flavoured with aromatic spices, cooked to smoky perfection on skewers in tandoor.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "439-439"
+        },
+        {
+          "name": "Peri Peri Chicken Tikka",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "459-459"
+        },
+        {
+          "name": "Arizona Chicken Tikka",
+          "description": "Yellow cheddar flavoured chicken tikka topped with Arizona cheese sauce.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "459-459"
+        },
+        {
+          "name": "Wood Fired Fish Tikka",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "459-459"
+        },
+        {
+          "name": "Tandoori Prawns With Cilantro Mint Dip",
+          "description": "",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "459-459"
+        },
+        {
+          "name": "Vegetarian Ultimate Dipper",
+          "description": "Korean hot paneer skewer, cheese burst veg spring roll, stuffed mushroom and Texas Roadhouse popper.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "479-479"
+        },
+        {
+          "name": "Non-Vegetarian Ultimate Dipper",
+          "description": "Korean hot chicken skewer, Mumbai style chicken and cheese spring roll, Zinger fried chicken and Super Angry chicken wings.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "489-489"
+        },
+        {
+          "name": "Seafood Ultimate Dipper",
+          "description": "Crispy fried calamari, fish and chips, and beer battered prawn.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "499-499"
+        },
+        {
+          "name": "Famous Seasoned Chicago Fries",
+          "description": "Chicago fries with choice of sauce.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Fajita Fries",
+          "description": "Fajita style french fries.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "3 Way Chicken Fries",
+          "description": "Fries loaded with grilled chicken, chicken sausages and chicken tikka.",
+          "category": "Side Dish",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "Vegetarian Triple Tandoori Dipper",
+          "description": "Parmesan basil soya tikka, peri-peri paneer tikka, and corn and cheese seekh kebab.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "489-489"
+        },
+        {
+          "name": "Non-Vegetarian Triple Tandoori Dipper",
+          "description": "Grilled chicken parche, peri-peri chicken tikka, and lamb Adana seekh kebab.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "529-529"
+        },
+        {
+          "name": "Vegetarian Mezze Platter",
+          "description": "Lebanese grilled paneer, spinach and ricotta sambousek, falafel, pickled vegetables, hummus, tzatziki, pitted olives, pita bread and spicy toum.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "489-489"
+        },
+        {
+          "name": "Non-Vegetarian Mezze Platter",
+          "description": "Lebanese grilled chicken, mutton sambousek, falafel, pickled vegetables, hummus, tzatziki, pitted olives, pita bread and spicy toum.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "499-499"
+        },
+        {
+          "name": "The Canadian Grilled Chicken Burger",
+          "description": "Cajun spiced grilled chicken patty with tandoori mayo.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "The Australian Grilled Mutton Burger",
+          "description": "Mutton patty inspired by Australia with spicy mayo twist.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "379-379"
+        },
+        {
+          "name": "The American Fried Chicken Burger",
+          "description": "Crispy fried chicken patty with Rancher sauce, Arizona cheese sauce and Chipotle.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "The French Fried Fish Burger",
+          "description": "Fish patty with tartar sauce and French fry twist.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "The Spanish Chicken Club Sandwich",
+          "description": "A people pleaser with the right ingredients.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "369-369"
+        },
+        {
+          "name": "The Italian Vegetarian Club Sandwich",
+          "description": "Cheese layer sandwich with a whole lot of sauciness.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "359-359"
+        },
+        {
+          "name": "The Brazilian Mixed Vegetable Burger",
+          "description": "Mixed corn, potato, beans and potato patty with tangy twist.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        },
+        {
+          "name": "The Mexican Corn & Paprika Burger",
+          "description": "Corn and paprika patty with chipotle greens twist.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "The British Paneer Burger",
+          "description": "Paneer patty with jalapeno surprise.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "349-349"
+        },
+        {
+          "name": "Cilantro & Mushroom Alfredo",
+          "description": "Penne or fusilli sauteed with mushrooms in creamy cheese sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "419-419"
+        },
+        {
+          "name": "Spicy Arrabiata",
+          "description": "Penne or fusilli in fiery tomato sauce with olives, crushed black pepper and basil leaves.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "419-419"
+        },
+        {
+          "name": "Creamy Peri Peri Sauce Pasta",
+          "description": "Penne or fusilli tossed in smoky and creamy peri peri sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Soya Spaghetti Bolognaise",
+          "description": "Spaghetti served in traditional soya bolognaise sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Chicken Spaghetti Bolognaise",
+          "description": "Spaghetti served in traditional chicken bolognaise sauce.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Vegetarian Lasagna",
+          "description": "Zucchini, red and green bell peppers, onion, tomato and olives in tomato and bechamel sauce layered between lasagna sheets.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Chicken Lasagna",
+          "description": "Diced chicken in bechamel sauce spread between tender lasagna sheets.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Classic White Pizza",
+          "description": "All-time favorite plain cheese pizza.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Greek Chargrilled Pizza",
+          "description": "Cilantro pesto sauce, caramelized onions, tomatoes, bell peppers, jalapenos and ricotta cheese.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Sun Dried Tomato Pesto Pizza",
+          "description": "Sun-dried tomatoes, basil, pesto and mozzarella.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Country Style Chipotle Pizza",
+          "description": "Baby corn, American green capsicum, jalapenos, olives and mushroom.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Paneer Tikka and Paprika Pizza",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Chicken & Turkey Overload Pizza",
+          "description": "Turkey ham, chicken ham, chicken salami, chicken sausage, grilled chicken and jerk chicken.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "479-479"
+        },
+        {
+          "name": "Ultimate Chicken Pizza",
+          "description": "Loaded with grilled chicken, chicken sausages, Jamaican chicken and paprika.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "479-479"
+        },
+        {
+          "name": "Jamaican Jerk Chicken Pizza",
+          "description": "Topped with spicy, sweet, tangy hot grilled chicken and veggies.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "479-479"
+        },
+        {
+          "name": "Southwest Chicken Pizza",
+          "description": "Southwest chicken, onion and sun-dried tomatoes.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "479-479"
+        },
+        {
+          "name": "Chicken Tikka and Rocket Leaves Pizza",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "479-479"
+        },
+        {
+          "name": "Pepperoni Overload Pizza",
+          "description": "100% pork pepperoni.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "479-479"
+        },
+        {
+          "name": "Captain Fish and Chips",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Accidental Fish and Shrimp",
+          "description": "Grilled fish fillet over a bed of tomato rice, topped with grilled shrimps and lemon butter sauce.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Tandoori Prawn in Butter Garlic Sauce",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Grilled Chicken Steak Black Pepper Sauce",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Tandoori Chicken Steak",
+          "description": "Served with Indian flatbread and grilled veggies.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Dragon Chili Chicken",
+          "description": "Served with garlic noodles.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Grilled Chicken Burrito Bowl",
+          "description": "Marinated grilled chicken on a bed of chipotle rice topped with sour cream, tomato salsa, guacamole, house salad, mixed cheese and crispy tortilla strips.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Asian Chicken Noodle Bowl",
+          "description": "Wok tossed noodles with crispy chicken, black bean sauce and American corns.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Mutton Texas Black Pepper Sauce",
+          "description": "Handcrafted minced mutton steak paired with black pepper sauce and mashed potatoes.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "The Great Indian Chicken Platter",
+          "description": "Bhuna chicken masala, dal makhani, chicken parche kebab, chicken paratha or roomali roti, raita and masala onions.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Chicken Tikka Khurchan Biryani",
+          "description": "With raita mousse.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "Caramel Nut Brownie Sundae",
+          "description": "Molten chocolate brownie served with vanilla ice cream and chocolate sauce.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        },
+        {
+          "name": "Death By Chocolate",
+          "description": "Chocolate treat for chocolate fans.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "339-339"
+        },
+        {
+          "name": "Tropical Heaven Sundae",
+          "description": "Strawberry, blueberry and mango ice cream topped with canned fruits.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "339-339"
+        },
+        {
+          "name": "Massive Sundae Bowl",
+          "description": "Serves 5-6.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "449-449"
+        },
+        {
+          "name": "Mix Berry Cream Cheese Crepe",
+          "description": "Filled with mixed berries and topped with cream cheese frosting.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        },
+        {
+          "name": "Tiramisu Crepe",
+          "description": "Thin French crepes brushed with espresso, layered with tiramisu cocoa and mascarpone cream.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        },
+        {
+          "name": "Black Forest Hazelnut Crepe",
+          "description": "Combination of Nutella and berries topped with cream cheese frosting.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        },
+        {
+          "name": "3 Way Chocolate Crepe Rolls",
+          "description": "",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        },
+        {
+          "name": "Classic Banana Nutella Crepe",
+          "description": "Fried with banana and Nutella, topped with whipped cream.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "329-329"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "gurugram-dasaprakash-sector-29",
+      "name": "Dasaprakash",
+      "city": "Gurugram",
+      "area": "Sector 29",
+      "address": "SCO 344, 1st Floor, Behind Radisson Hotel, Sector 29, Gurugram, Haryana 122001",
+      "coordinates": { "lat": null, "lng": null },
+      "googleRating": null,
+      "googleMapsUrl": null,
+      "website": "https://stores.thedasaprakash.com/store-pages/dasaprakash-sector-29-gurgaon-gurugram/",
+      "phoneNumber": null,
+      "cuisines": ["South Indian", "Indian", "Vegetarian"],
+      "priceLevel": null,
+      "types": ["restaurant"],
+      "dishes": [
+        {
+          "name": "Dasaprakash Special Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "320-320"
+        },
+        {
+          "name": "Chettinad Mushroom Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "320-320"
+        },
+        {
+          "name": "Chettinad Paneer Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "320-320"
+        },
+        {
+          "name": "Malabar Parotta with Kurma",
+          "description": "",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "299-299"
+        },
+        {
+          "name": "Malabar Parotta with Chettinad Mushroom",
+          "description": "",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "320-320"
+        },
+        {
+          "name": "Malabar Parotta with Chettinad Paneer",
+          "description": "",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "320-320"
+        },
+        {
+          "name": "Udupi Set Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "280-280"
+        },
+        {
+          "name": "Masala Appe",
+          "description": "8 pieces.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "250-250"
+        },
+        {
+          "name": "Cheese Appe",
+          "description": "8 pieces.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "259-259"
+        },
+        {
+          "name": "Kerala Appe",
+          "description": "Served with kurma.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "299-299"
+        },
+        {
+          "name": "Ragi Masala Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "299-299"
+        },
+        {
+          "name": "Paneer Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "305-305"
+        },
+        {
+          "name": "Nellore Garlic Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "299-299"
+        },
+        {
+          "name": "Onion Appe",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "240-240"
+        },
+        {
+          "name": "Butter Plain/Masala Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "240-270"
+        },
+        {
+          "name": "Ghee Roast Paper Plain/Masala Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "235-265"
+        },
+        {
+          "name": "Ghee Podi Roast Plain/Masala Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "240-270"
+        },
+        {
+          "name": "Onion Plain/Masala Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "240-270"
+        },
+        {
+          "name": "Mysore Plain/Masala Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "250-280"
+        },
+        {
+          "name": "Chettinad Spicy Plain/Masala Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "270-305"
+        },
+        {
+          "name": "Cheese/Chilli Cheese Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "299-315"
+        },
+        {
+          "name": "Crispy Rava Dosa Plain/Masala Dosa",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "249-279"
+        },
+        {
+          "name": "Crispy Rava Onion Dosa Plain/Masala/Paneer",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "259-310"
+        },
+        {
+          "name": "Coconut Rava Plain/Masala",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "270-300"
+        },
+        {
+          "name": "Mysore Rava Dosa Plain/Masala/Paneer",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "269-320"
+        },
+        {
+          "name": "Uttapam Plain",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "210-210"
+        },
+        {
+          "name": "Corn Cheese Uttapam",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "275-275"
+        },
+        {
+          "name": "Uttapam Onion/Tomato",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "235-235"
+        },
+        {
+          "name": "Onion Tomato Uttapam",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Uttapam Mix Veg",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Steamed Idli",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "155-155"
+        },
+        {
+          "name": "Mini Idli",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "165-165"
+        },
+        {
+          "name": "Idli Fries",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Cocktail Gunpowder Idli",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Gunpowder Idli",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "210-210"
+        },
+        {
+          "name": "Masala Idli",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Idli Chilli Chaat",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "225-225"
+        },
+        {
+          "name": "Chettinad Idli",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "210-210"
+        },
+        {
+          "name": "Crispy Idli Chilli with Schezwan Sauce",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "350-350"
+        },
+        {
+          "name": "Chatpati Tandoori Idli",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "350-350"
+        },
+        {
+          "name": "Tamarind Rice",
+          "description": "Served with appalam, sambar, and raita.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Tomato Rice",
+          "description": "Served with appalam, sambar, and raita.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Curd Rice",
+          "description": "Served with appalam, sambar, and raita.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "225-225"
+        },
+        {
+          "name": "Lemon Rice",
+          "description": "Served with appalam, sambar, and raita.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "225-225"
+        },
+        {
+          "name": "Sambar Rice",
+          "description": "Served with appalam, sambar, and raita.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Rasam Rice",
+          "description": "Served with appalam, sambar, and raita.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Bissi Belle Hulli Anna",
+          "description": "Served with appalam, sambar, and raita.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Mangalore Garlic Rice",
+          "description": "Served with appalam, sambar, and raita.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "249-249"
+        },
+        {
+          "name": "Medu Vada",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Madras Masala Vada",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "205-205"
+        },
+        {
+          "name": "Rasam Vadai",
+          "description": "Dipped.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Dahi Vada",
+          "description": "1 piece.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "120-120"
+        },
+        {
+          "name": "Dahi Vada",
+          "description": "2 pieces.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "230-230"
+        },
+        {
+          "name": "Idli Vada Combo",
+          "description": "1 piece idli and 2 pieces vada.",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Pongal Vada Combo",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "230-230"
+        },
+        {
+          "name": "Upma",
+          "description": "",
+          "category": "Snack",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Poori Bhaji",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "215-215"
+        },
+        {
+          "name": "Ghee Pongal",
+          "description": "",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "199-199"
+        },
+        {
+          "name": "Aloo Masala",
+          "description": "Extra.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "50-50"
+        },
+        {
+          "name": "Extra Poori",
+          "description": "Extra.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "50-50"
+        },
+        {
+          "name": "Veg Kurma",
+          "description": "Extra.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "50-50"
+        },
+        {
+          "name": "Malabar Parotta",
+          "description": "Extra.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "85-85"
+        },
+        {
+          "name": "South Indian Papad",
+          "description": "Extra.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "40-40"
+        },
+        {
+          "name": "Desi Ghee/Butter",
+          "description": "Extra.",
+          "category": "Side Dish",
+          "dietary": "veg",
+          "priceRange": "50-50"
+        },
+        {
+          "name": "Mahalakshmi Bhojanam Thali",
+          "description": "Buttermilk, sambar, rasam, kootu, dish of the day, kurma, poriyal, raita, biryani, rice, flavoured rice, appalam, pickle, kara kozhambu, poori and dosa.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "429-429"
+        },
+        {
+          "name": "South Indian Platter",
+          "description": "Idli, vada, mini masala dosa, upma, rava kesari and filter coffee.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "399-399"
+        },
+        {
+          "name": "South Indian Mini Thali",
+          "description": "Masala idli, lemon rice, curd rice, bisi belle hulli anna, appalam, medu vada and rava kesari.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "330-330"
+        },
+        {
+          "name": "Uttapam Platter",
+          "description": "Varieties of uttapams made with unique toppings.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "330-330"
+        },
+        {
+          "name": "Idli Platter",
+          "description": "Varieties of idli tossed in house spices.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "330-330"
+        }
+      ]
+    },
+    {
+      "googlePlaceId": "gurugram-bartari-resto-bar-and-club-sector-69",
+      "name": "Bartari Resto Bar & Club",
+      "city": "Gurugram",
+      "area": "Sector 69",
+      "address": "Unit 4 First Floor, Elan Epic Mall, Near Sector 70, Sector 69, Gurgaon",
+      "coordinates": { "lat": null, "lng": null },
+      "googleRating": 4.0,
+      "googleMapsUrl": null,
+      "website": null,
+      "phoneNumber": "+919289286464",
+      "cuisines": ["North Indian", "Mediterranean"],
+      "priceLevel": null,
+      "types": ["restaurant", "bar", "club"],
+      "dishes": [
+        {
+          "name": "Walnut Brownie",
+          "description": "Rich walnut brownie served warm with ice cream, drizzled with chocolate sauce.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "395-395"
+        },
+        {
+          "name": "Japanese Tempura Fried Ice Cream",
+          "description": "Ice cream encased in a crisp tempura shell with a hint of caramel.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "395-395"
+        },
+        {
+          "name": "Tiramisu Al Mascarpone",
+          "description": "Coffee-soaked sponge with mascarpone cream, prepared live.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Biscoff Cheesecake Jar",
+          "description": "Biscuit base topped with cheese mousse and Biscoff spread.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Gulkand Gulab Jamun",
+          "description": "Rose-petal-infused milk dumplings soaked in sugar syrup.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "395-395"
+        },
+        {
+          "name": "Choice of Icecream",
+          "description": "Vanilla, chocolate, or homemade blend.",
+          "category": "Dessert",
+          "dietary": "veg",
+          "priceRange": "295-295"
+        },
+        {
+          "name": "Chicken Sharabi Tikka",
+          "description": "Chicken thigh marinated in yoghurt and red spices, served with mint sauce and finished with white rum.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Wine-Flavoured Garlic Prawns",
+          "description": "Prawns in butter-garlic sauce with creamy polenta and Chardonnay wine.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "795-795"
+        },
+        {
+          "name": "Sharabi Nukkad Ka Kukkad",
+          "description": "Tandoori chicken marinated in Indian spices and infused with rum.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "845-845"
+        },
+        {
+          "name": "Liquor Tangri Sehzadi",
+          "description": "Chicken drumsticks stuffed with spiced chicken mince and cooked in a clay oven.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "795-795"
+        },
+        {
+          "name": "Lucknowi Subz Biryani",
+          "description": "Long-grain basmati rice and vegetables slow-cooked in dum style.",
+          "category": "Biryani",
+          "dietary": "veg",
+          "priceRange": "545-545"
+        },
+        {
+          "name": "Awadhi Chicken Biryani",
+          "description": "Chicken and long-grain basmati rice slow-cooked in dum style.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "645-645"
+        },
+        {
+          "name": "Lucknowi Gosht Biryani",
+          "description": "Lamb and aromatic basmati rice cooked in traditional dum style.",
+          "category": "Biryani",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Choice of Pulao",
+          "description": "Jeera, vegetable, or peas pulao.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "445-445"
+        },
+        {
+          "name": "Kudrat-e-Moti",
+          "description": "Steamed long-grain basmati rice.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "395-395"
+        },
+        {
+          "name": "Rotis",
+          "description": "Plain roti or butter roti.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "95-115"
+        },
+        {
+          "name": "Naans",
+          "description": "Plain naan, butter naan, butter laccha naan, or chilli garlic naan.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "120-155"
+        },
+        {
+          "name": "Parathas",
+          "description": "Laccha paratha or Malabari paratha.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "145-145"
+        },
+        {
+          "name": "Stuffed Naan",
+          "description": "Stuffed with aloo, onion, paneer, or mix veg.",
+          "category": "Bread",
+          "dietary": "veg",
+          "priceRange": "165-165"
+        },
+        {
+          "name": "Chicken Rara",
+          "description": "Chicken pieces and minced chicken in a rich, spicy gravy.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Butter Chicken",
+          "description": "Boneless chicken in creamy tomato-based makhani gravy with butter.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Kali Mirch Ka Murgh",
+          "description": "Smoked chicken cooked with crushed peppercorns.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Chicken Tikka Lababdar",
+          "description": "Tandoori chicken tikka simmered in onion-tomato gravy.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Kadai Chicken",
+          "description": "Chicken cooked with kadai masala, onions, tomatoes and coriander.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Chicken Curry",
+          "description": "Home-style chicken curry made with aromatic spices.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Home-Style Mutton Curry",
+          "description": "Traditional home-style mutton curry.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "745-745"
+        },
+        {
+          "name": "Mutton Rogan Josh",
+          "description": "Kashmiri mutton speciality with aromatic spices and red hue.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "795-795"
+        },
+        {
+          "name": "Tuni Khatta Meat",
+          "description": "Tangy mutton curry made from Chef Surya's secret recipe.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "845-845"
+        },
+        {
+          "name": "Rara Gosht",
+          "description": "Mutton pieces and minced mutton in a North Indian preparation.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "845-845"
+        },
+        {
+          "name": "Deewani Handi",
+          "description": "Vegetables cooked in spinach-based gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "445-445"
+        },
+        {
+          "name": "Matar Methi Malai",
+          "description": "Fenugreek leaves and green peas in mildly spiced creamy sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "545-545"
+        },
+        {
+          "name": "Mushroom Do Pyaza",
+          "description": "Mushrooms tossed with onions in a semi-dry preparation.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Subz Lajawab",
+          "description": "Seasonal vegetables stir-fried with Indian spices.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "545-545"
+        },
+        {
+          "name": "Mother's Special",
+          "description": "Seasonal vegetables tempered with cumin and asafoetida.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "445-445"
+        },
+        {
+          "name": "Zafrani Kofta",
+          "description": "Cottage cheese dumplings stuffed with dry fruits in cashew-saffron gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "545-545"
+        },
+        {
+          "name": "Dal Tadka",
+          "description": "Split pigeon peas tempered with spices, ginger, garlic, onions and tomatoes.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "545-545"
+        },
+        {
+          "name": "Dal Makhani",
+          "description": "Urad dal, rajma and chana dal simmered with butter, cream and kasoori methi.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Dal Lalla Mussa",
+          "description": "Slow-cooked lentils finished with ghee.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Paneer Lababdar",
+          "description": "Cottage cheese in spiced tomato gravy with bell peppers.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Kadai Paneer / Kadai Mushroom",
+          "description": "Paneer or mushrooms stir-fried with kadai masala, onions, tomatoes and coriander.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Paneer Tikka Butter Masala",
+          "description": "Char-grilled paneer cubes simmered in creamy tomato-based gravy.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "745-745"
+        },
+        {
+          "name": "Veg Pan-Fried Noodles",
+          "description": "Crispy pan-fried noodles with choice of black bean, Schezwan, hot garlic, or burnt garlic sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Non-Veg Pan-Fried Noodles",
+          "description": "Crispy pan-fried noodles with choice of black bean, Schezwan, hot garlic, or burnt garlic sauce.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "795-795"
+        },
+        {
+          "name": "Veg Pad Thai Noodles",
+          "description": "Flat rice noodles tossed with peanuts and tangy tamarind sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Non-Veg Pad Thai Noodles",
+          "description": "Flat rice noodles tossed with peanuts and tangy tamarind sauce.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "795-795"
+        },
+        {
+          "name": "Veg Pan-Roasted Garlic Noodles",
+          "description": "Burnt garlic and vegetables in a Pan-Asian sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Non-Veg Pan-Roasted Garlic Noodles",
+          "description": "Burnt garlic and vegetables in a Pan-Asian sauce.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "795-795"
+        },
+        {
+          "name": "Veg Fried Rice",
+          "description": "Choice of chilli garlic, Schezwan, burnt garlic, pimento, peppercorn, or vegetable fried rice.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "445-445"
+        },
+        {
+          "name": "Egg Fried Rice",
+          "description": "Choice of chilli garlic, Schezwan, burnt garlic, pimento, or peppercorn fried rice.",
+          "category": "Main Course",
+          "dietary": "egg",
+          "priceRange": "495-495"
+        },
+        {
+          "name": "Non-Veg Fried Rice",
+          "description": "Choice of chilli garlic, Schezwan, burnt garlic, pimento, or peppercorn fried rice.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "545-545"
+        },
+        {
+          "name": "Oriental Greens",
+          "description": "Stir-fried exotic vegetables in garlic-flavoured sauce with fried garlic and roasted cashews, served with jasmine rice.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "895-895"
+        },
+        {
+          "name": "Veg Nasi Goreng",
+          "description": "Indonesian-style stir-fried rice with vegetables, tamarind sauce, sweet soy sauce, crispy onions, peanuts and half-fried egg.",
+          "category": "Main Course",
+          "dietary": "egg",
+          "priceRange": "895-895"
+        },
+        {
+          "name": "Chicken Nasi Goreng",
+          "description": "Indonesian-style stir-fried rice with chicken, tamarind sauce, sweet soy sauce, crispy onions, peanuts and half-fried egg.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "995-995"
+        },
+        {
+          "name": "Chicken Krapow",
+          "description": "Thai stir-fry with balanced spicy, savoury and herbal flavours.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "995-995"
+        },
+        {
+          "name": "Vegetable Thai Curry",
+          "description": "Green, red, or yellow Thai curry with vegetables, kaffir lime, coconut milk and palm sugar.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "895-895"
+        },
+        {
+          "name": "Chicken Thai Curry",
+          "description": "Green, red, or yellow Thai curry with chicken, kaffir lime, coconut milk and palm sugar.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "995-995"
+        },
+        {
+          "name": "Fish Thai Curry",
+          "description": "Green, red, or yellow Thai curry with fish, kaffir lime, coconut milk and palm sugar.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "945-945"
+        },
+        {
+          "name": "Cottage Cheese in Black Bean Sauce",
+          "description": "Cottage cheese and French beans cooked in black bean sauce.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "545-545"
+        },
+        {
+          "name": "Stir-Fried Vegetables with Star Anise",
+          "description": "Chinese-style vegetables stir-fried with garlic, star anise and chilli paste.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "495-495"
+        },
+        {
+          "name": "Chong Qing Chicken",
+          "description": "Crispy diced chicken tossed with Schezwan pepper and pickled chillies.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Chicken Parmigiana",
+          "description": "Crispy chicken with Napolitano sauce and mozzarella, served with vegetables and potato rosti.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "845-845"
+        },
+        {
+          "name": "Grilled Chicken with Mushroom Sauce",
+          "description": "Grilled chicken breast with mushroom-black pepper-thyme sauce, butter-parsley rice, potato cream and vegetables.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "845-845"
+        },
+        {
+          "name": "Silky Lemon Butter Fish",
+          "description": "Grilled fish with lemon-butter-parsley sauce, vegetables, mashed potatoes and beetroot chips.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "995-995"
+        },
+        {
+          "name": "Herb-Crusted Fish Steak",
+          "description": "Sole or salmon fish steak with herb crust, caper-butter sauce and parmesan polenta.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "995-1345"
+        },
+        {
+          "name": "Veg Alfredo Pasta",
+          "description": "Creamy Alfredo sauce with sauteed vegetables, pinwheel garlic bread and parmesan cheese.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Chicken Alfredo Pasta",
+          "description": "Creamy Alfredo sauce with chicken, pinwheel garlic bread and parmesan cheese.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Veg Arrabbiata Pasta",
+          "description": "Spicy Italian tomato sauce with garlic, vegetables and sun-dried chillies.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Chicken Arrabbiata Pasta",
+          "description": "Spicy Italian tomato sauce with garlic, chicken and sun-dried chillies.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Mushroom Creamy Pesto Pasta",
+          "description": "Walnut pesto cream sauce with buttered mushrooms.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "615-615"
+        },
+        {
+          "name": "Chicken Creamy Pesto Pasta",
+          "description": "Walnut pesto cream sauce with chicken.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Mushroom & Truffle Pasta",
+          "description": "Sauteed mushrooms simmered in mushroom-truffle sauce with truffle oil.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "615-615"
+        },
+        {
+          "name": "Spaghetti Aglio e Olio",
+          "description": "Italian preparation with garlic, olive oil and parmesan cheese tossed with spaghetti.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Mushroom Risotto",
+          "description": "Arborio rice cooked with thyme, white wine and mushroom sauce, finished with parmesan cheese.",
+          "category": "Main Course",
+          "dietary": "veg",
+          "priceRange": "615-615"
+        },
+        {
+          "name": "Chicken Risotto",
+          "description": "Arborio rice cooked with thyme, white wine and chicken, finished with parmesan cheese.",
+          "category": "Main Course",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Wild Forest Mushroom Dimsum",
+          "description": "Exotic mushrooms and cream cheese.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "645-645"
+        },
+        {
+          "name": "Thai Basil Vegetable Dimsum",
+          "description": "Steamed dumplings stuffed with vegetables, celery, garlic and Thai basil.",
+          "category": "Starter",
+          "dietary": "veg",
+          "priceRange": "595-595"
+        },
+        {
+          "name": "Butter Roast Garlic Chicken Dimsum",
+          "description": "Chicken keema, chopped onion, butter-roasted garlic and seasoning.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        },
+        {
+          "name": "Pan-Fried Chicken Gyoza",
+          "description": "Chicken-filled dumplings served with golden garlic chilli oil.",
+          "category": "Starter",
+          "dietary": "non-veg",
+          "priceRange": "695-695"
+        }
+      ]
+    }
+  ]
+}

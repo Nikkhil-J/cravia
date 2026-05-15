@@ -152,7 +152,6 @@ export function DishPicker({ onSelect }: DishPickerProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search dishes... e.g. Butter Chicken, Margherita Pizza"
-          autoFocus
           className="h-auto w-full rounded-pill border border-border bg-card/50 py-3 pl-10 pr-4 text-sm font-body placeholder:text-text-muted focus-visible:border-primary focus-visible:ring-0"
         />
         {isPending && (

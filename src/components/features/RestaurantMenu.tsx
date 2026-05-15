@@ -4,7 +4,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDown, ChevronUp, LayoutList, Search, X } from 'lucide-react'
+import { LayoutList, Search, X } from 'lucide-react'
 import { DishCard } from '@/components/features/DishCard'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -19,8 +19,6 @@ import { getCuisineEmoji } from '@/lib/utils/dish-display'
 import { ROUTES } from '@/lib/constants/routes'
 import type { Dish, DishCategory } from '@/lib/types'
 
-const INITIAL_VISIBLE = 6
-
 interface RestaurantMenuProps {
   dishes: Dish[]
   categories?: DishCategory[]
@@ -32,7 +30,6 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
   const [jumpMenuMounted, setJumpMenuMounted] = useState(false)
   const [jumpMenuPhase, setJumpMenuPhase] = useState<'enter' | 'visible' | 'exit'>('enter')
   const [mounted, setMounted] = useState(false)
-  const [showAll, setShowAll] = useState(false)
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const jumpButtonRef = useRef<HTMLButtonElement | null>(null)
   const jumpPopoverRef = useRef<HTMLDivElement | null>(null)
@@ -107,18 +104,12 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
     return categoryRows.flatMap((row) => groupedDishes[row.category] ?? [])
   }, [categoryRows, filteredDishes, groupedDishes, isSearching])
 
-  const shouldTruncate = !isSearching && !showAll && orderedDishes.length > INITIAL_VISIBLE
-  const visibleDishes = shouldTruncate
-    ? orderedDishes.slice(0, INITIAL_VISIBLE)
-    : orderedDishes
-  const hiddenCount = orderedDishes.length - INITIAL_VISIBLE
-
   const sectionMetaByDishId = useMemo(() => {
     const seen = new Set<DishCategory>()
     const metaByDishId = new Map<string, { count: number; index: number }>()
     let sectionIndex = 0
 
-    for (const dish of visibleDishes) {
+    for (const dish of orderedDishes) {
       if (seen.has(dish.category)) continue
       seen.add(dish.category)
       const count = isSearching
@@ -129,7 +120,7 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
     }
 
     return metaByDishId
-  }, [groupedDishes, groupedFilteredDishes, isSearching, visibleDishes])
+  }, [groupedDishes, groupedFilteredDishes, isSearching, orderedDishes])
 
   function openJumpMenu() {
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
@@ -153,7 +144,6 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
     const sectionId = `section-${getDishCategorySlug(category)}`
     closeJumpMenu()
     setSearchQuery('')
-    setShowAll(true)
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -246,10 +236,7 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
           <Input
             type="search"
             value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value)
-              if (e.target.value.trim()) setShowAll(true)
-            }}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search this menu..."
             className={cn(
               'h-auto w-full rounded-pill border border-border bg-card/50 py-2.5 pl-10 pr-4 text-sm font-body',
@@ -260,7 +247,7 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
       )}
 
       {/* Results */}
-      {visibleDishes.length === 0 ? (
+      {orderedDishes.length === 0 ? (
         <div className="rounded-xl border border-border bg-card py-10 text-center">
           <p className="text-2xl">🍽️</p>
           <p className="mt-2 font-display font-semibold text-heading">
@@ -270,7 +257,7 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
-          {visibleDishes.map((dish, i) => {
+          {orderedDishes.map((dish, i) => {
             const sectionMeta = sectionMetaByDishId.get(dish.id)
             return (
               <Fragment key={dish.id}>
@@ -305,23 +292,6 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
               </Fragment>
             )
           })}
-        </div>
-      )}
-
-      {/* View full menu toggle */}
-      {!isSearching && orderedDishes.length > INITIAL_VISIBLE && (
-        <div className="mt-6 flex justify-center">
-          <Button
-            variant="outline"
-            onClick={() => setShowAll((prev) => !prev)}
-            className="h-auto gap-2 rounded-pill border-2 border-border px-6 py-3 text-sm font-semibold text-text-primary transition-all hover:border-primary hover:bg-transparent hover:text-primary"
-          >
-            {showAll ? (
-              <>Show less <ChevronUp className="h-4 w-4" /></>
-            ) : (
-              <>View full menu ({hiddenCount} more) <ChevronDown className="h-4 w-4" /></>
-            )}
-          </Button>
         </div>
       )}
 

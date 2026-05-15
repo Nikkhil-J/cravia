@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
+import { createPortal } from 'react-dom'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -36,6 +37,16 @@ const RATING_FIELDS = [
   { label: SUB_RATING_LABELS[0], field: 'tasteRating' as const, emoji: '😋', hint: 'How did it taste?' },
   { label: SUB_RATING_LABELS[1], field: 'portionRating' as const, emoji: '📏', hint: 'Was the serving size fair?' },
   { label: SUB_RATING_LABELS[2], field: 'valueRating' as const, emoji: '💰', hint: 'Worth the price?' },
+] as const
+
+const REVIEW_TEXT_PLACEHOLDER = 'Share specifics: what did it taste like, how was the portion, was it worth the price, and would you order it again?'
+
+const REVIEW_SENTENCE_STARTERS = [
+  'The first thing I noticed was',
+  'The flavour was',
+  'The portion size felt',
+  'For the price, it was',
+  "I'd order this again because",
 ] as const
 
 function WriteReviewContent() {
@@ -74,6 +85,8 @@ function WriteReviewContent() {
   const [billError, setBillError] = useState<string | null>(null)
   const [isEditMode, setIsEditMode] = useState(false)
   const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
+  const reviewTextRef = useRef<HTMLTextAreaElement>(null)
   const photoRef = useRef<HTMLInputElement>(null)
   const billRef = useRef<HTMLInputElement>(null)
 
@@ -121,6 +134,10 @@ function WriteReviewContent() {
   }, [])
 
   useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
     if (!editReviewId) return
     setIsEditMode(true)
     getReview(editReviewId).then((review) => {
@@ -157,6 +174,18 @@ function WriteReviewContent() {
     if (data.billPreviewUrl) URL.revokeObjectURL(data.billPreviewUrl)
     updateField('billFile', file)
     updateField('billPreviewUrl', URL.createObjectURL(file))
+  }
+
+  function handleSentenceStarterClick(starter: string) {
+    const needsSpace = data.text.length > 0 && !/\s$/.test(data.text)
+    const nextText = `${data.text}${needsSpace ? ' ' : ''}${starter} `
+    const caretPosition = nextText.length
+
+    updateField('text', nextText)
+    requestAnimationFrame(() => {
+      reviewTextRef.current?.focus()
+      reviewTextRef.current?.setSelectionRange(caretPosition, caretPosition)
+    })
   }
 
   function handleCancel() {
@@ -350,7 +379,7 @@ function WriteReviewContent() {
   }
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-[1200px] px-4 pb-24 pt-8 sm:px-6 lg:pb-8">
 
       {/* Dish hero card */}
       <div className="mb-8 flex items-center gap-3 rounded-2xl border border-border bg-card p-4 sm:gap-4 sm:p-7">
@@ -431,12 +460,12 @@ function WriteReviewContent() {
                   <div
                     key={label}
                     className={cn(
-                      'flex flex-wrap items-center gap-3 rounded-xl border-[1.5px] p-4 transition-all duration-300 sm:flex-nowrap sm:gap-4',
+                      'flex items-center gap-2 rounded-xl border-[1.5px] p-3 transition-all duration-300 sm:gap-4 sm:p-4',
                       isRated ? 'border-brand-gold/30 bg-bg-cream' : 'border-border bg-card',
                     )}
                   >
                     <div className={cn(
-                      'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xl transition-transform duration-300',
+                      'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-lg transition-transform duration-300 sm:h-10 sm:w-10 sm:text-xl',
                       isRated ? 'scale-110 bg-bg-warm' : 'bg-surface-2',
                     )}>
                       {emoji}
@@ -450,7 +479,7 @@ function WriteReviewContent() {
                         {isRated ? RATING_LABELS[value] : hint}
                       </p>
                     </div>
-                    <div className="w-full sm:w-auto">
+                    <div className="shrink-0">
                       <StarRating value={value} onChange={(v) => { updateField(field, v); setRatingsTouched(true) }} size="lg" />
                     </div>
                   </div>
@@ -504,12 +533,29 @@ function WriteReviewContent() {
             <SectionHeader num={3} done={textComplete} title="Tell the story" desc="What made this memorable? Would you order it again?" />
             <div className="mt-5 overflow-hidden rounded-2xl border-2 border-border transition-colors focus-within:border-primary">
               <textarea
+                ref={reviewTextRef}
                 value={data.text}
                 onChange={(e) => updateField('text', e.target.value)}
                 rows={5}
-                placeholder="The biryani had perfectly layered rice with tender chicken pieces. The flavour was rich and the spice level was just right..."
+                placeholder={REVIEW_TEXT_PLACEHOLDER}
                 className="w-full resize-none border-none bg-bg-cream px-5 py-4 text-base outline-none placeholder:text-text-muted"
               />
+              <div className="bg-bg-cream px-5 pb-4">
+                <p className="mb-2 text-xs font-semibold text-text-muted">Need a start? Tap one:</p>
+                <div className="flex flex-wrap gap-2">
+                  {REVIEW_SENTENCE_STARTERS.map((starter) => (
+                    <Button
+                      key={starter}
+                      type="button"
+                      variant="outline"
+                      onClick={() => handleSentenceStarterClick(starter)}
+                      className="h-auto rounded-pill border-border bg-card px-3 py-1.5 text-xs font-semibold text-text-secondary hover:border-primary hover:bg-bg-cream hover:text-primary"
+                    >
+                      {starter}
+                    </Button>
+                  ))}
+                </div>
+              </div>
               <div className="flex items-center justify-between bg-bg-cream px-5 pb-3">
                 <span className={cn('text-xs font-semibold', textComplete ? 'text-success' : 'text-text-muted')}>
                   {data.text.length} / {REVIEW_TEXT_MIN_CHARS} minimum
@@ -610,7 +656,7 @@ function WriteReviewContent() {
           </div>
 
           {/* Submit bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-card p-5 sm:p-6">
+          <div className="hidden flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-card p-5 sm:p-6 lg:flex">
             <p className="text-sm text-text-muted">
               {canSubmit ? (
                 <><strong className="text-success">Ready to go!</strong> Your review looks great.</>
@@ -670,41 +716,44 @@ function WriteReviewContent() {
         </aside>
       </div>
 
-      {/* Sticky mobile progress + submit bar */}
-      <div className="fixed bottom-[70px] left-0 right-0 z-40 border-t border-border bg-card/96 backdrop-blur-xl lg:hidden"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-      >
-        <div className="mx-auto flex max-w-[1200px] items-center gap-3 px-4 py-3">
-          <div className="flex items-center gap-1.5">
-            {[ratingsComplete, tagsComplete, textComplete].map((done, i) => (
-              <div
-                key={i}
-                className={cn(
-                  'h-2.5 w-2.5 rounded-full transition-colors duration-300',
-                  done ? 'bg-success' : 'border-2 border-border',
-                )}
-              />
-            ))}
+      {isMounted && createPortal(
+        <div
+          className="fixed left-4 right-4 z-40 rounded-2xl border border-border bg-card/95 shadow-lg backdrop-blur-xl lg:hidden"
+          style={{ bottom: 'calc(70px + env(safe-area-inset-bottom, 0px) + 12px)' }}
+        >
+          <div className="flex items-center gap-3 px-4 py-3">
+            <div className="flex items-center gap-1.5">
+              {[ratingsComplete, tagsComplete, textComplete].map((done, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    'h-2.5 w-2.5 rounded-full transition-colors duration-300',
+                    done ? 'bg-success' : 'border-2 border-border',
+                  )}
+                />
+              ))}
+            </div>
+            <span className="flex-1 text-xs font-semibold text-text-secondary">
+              {completedCount === 3 ? 'Ready!' : `${completedCount} of 3 done`}
+            </span>
+            <Button
+              onClick={handleSubmit}
+              disabled={!canSubmit || submitting}
+              className="h-auto rounded-pill px-5 py-2 text-sm font-semibold hover:bg-primary-dark"
+            >
+              {submitting ? (
+                <LoadingSpinner size="sm" />
+              ) : (
+                <>
+                  {isEditMode ? 'Update' : 'Submit'}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="ml-1"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                </>
+              )}
+            </Button>
           </div>
-          <span className="flex-1 text-xs font-semibold text-text-secondary">
-            {completedCount === 3 ? 'Ready!' : `${completedCount} of 3 done`}
-          </span>
-          <Button
-            onClick={handleSubmit}
-            disabled={!canSubmit || submitting}
-            className="h-auto rounded-pill px-5 py-2 text-sm font-semibold hover:bg-primary-dark"
-          >
-            {submitting ? (
-              <LoadingSpinner size="sm" />
-            ) : (
-              <>
-                {isEditMode ? 'Update' : 'Submit'}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="ml-1"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
+        </div>,
+        document.body,
+      )}
     </div>
   )
 }
