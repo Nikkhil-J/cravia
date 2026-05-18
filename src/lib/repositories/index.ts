@@ -16,31 +16,40 @@ import { FirebaseRestaurantSearchRepository } from "./firebase/firebaseRestauran
 import { FirebaseReviewRepository } from "./firebase/firebaseReviewRepository";
 import { FirebaseUserRepository } from "./firebase/firebaseUserRepository";
 import { FirebaseWishlistRepository } from "./firebase/firebaseWishlistRepository";
-// import {
-//   isTypesenseConfigured,
-//   getTypesenseClient,
-//   getTypesenseSearchClient,
-// } from "./typesense/typesenseClient";
-// import { TypesenseDishRepository } from "./typesense/typesenseDishRepository";
-// import { TypesenseRestaurantRepository } from "./typesense/typesenseRestaurantRepository";
+import {
+  isTypesenseConfigured,
+  getTypesenseClient,
+  getTypesenseSearchClient,
+} from "./typesense/typesenseClient";
+import { TypesenseDishRepository } from "./typesense/typesenseDishRepository";
+import { TypesenseRestaurantRepository } from "./typesense/typesenseRestaurantRepository";
 
 export const userRepository: UserRepository = new FirebaseUserRepository();
 
 const firebaseDishRepo = new FirebaseDishRepository();
-// export const dishRepository: DishRepository = isTypesenseConfigured()
-//   ? new TypesenseDishRepository(getTypesenseClient(), firebaseDishRepo, getTypesenseSearchClient())
-//   : firebaseDishRepo
-export const dishRepository: DishRepository = firebaseDishRepo;
+export const dishRepository: DishRepository = isTypesenseConfigured()
+  ? new TypesenseDishRepository(
+      getTypesenseClient(),
+      firebaseDishRepo,
+      getTypesenseSearchClient(),
+    )
+  : firebaseDishRepo;
+// export const dishRepository: DishRepository = firebaseDishRepo;
 
 export const restaurantRepository: RestaurantRepository =
   new FirebaseRestaurantRepository();
 
 const firebaseRestaurantSearchRepo = new FirebaseRestaurantSearchRepository();
-// export const restaurantSearchRepository: RestaurantSearchRepository = isTypesenseConfigured()
-//   ? new TypesenseRestaurantRepository(getTypesenseClient(), firebaseRestaurantSearchRepo, getTypesenseSearchClient())
-//   : firebaseRestaurantSearchRepo
 export const restaurantSearchRepository: RestaurantSearchRepository =
-  firebaseRestaurantSearchRepo;
+  isTypesenseConfigured()
+    ? new TypesenseRestaurantRepository(
+        getTypesenseClient(),
+        firebaseRestaurantSearchRepo,
+        getTypesenseSearchClient(),
+      )
+    : firebaseRestaurantSearchRepo;
+// export const restaurantSearchRepository: RestaurantSearchRepository =
+//   firebaseRestaurantSearchRepo;
 
 export const reviewRepository: ReviewRepository =
   new FirebaseReviewRepository();
