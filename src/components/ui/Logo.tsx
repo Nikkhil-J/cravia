@@ -14,7 +14,13 @@ const sizes = {
   lg: { icon: 56, text: 'text-3xl' },
 }
 
-function CraviaMark({ size }: { size: number }) {
+export function CraviaMark({
+  size,
+  className,
+}: {
+  size: number
+  className?: string
+}) {
   return (
     <svg
       width={size}
@@ -22,7 +28,7 @@ function CraviaMark({ size }: { size: number }) {
       viewBox="0 0 100 110"
       fill="none"
       aria-hidden="true"
-      className="shrink-0"
+      className={cn('shrink-0', className)}
     >
       {/* Aroma wisps */}
       <path d="M36 8 C33 2 37 -2 35 -7" fill="none" stroke="#EF9F27" strokeWidth="2" strokeLinecap="round"/>

@@ -105,7 +105,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
           <h3 className="mb-4 font-display text-lg font-bold text-heading">Highly rated dishes</h3>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {highlyRatedFiltered.slice(0, 6).map((d, i) => (
-              <DishCard key={d.id} dish={d} index={i} />
+              <DishCard key={d.id} dish={d} index={i} showRestaurantContext />
             ))}
           </div>
         </section>
@@ -116,7 +116,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
           <h3 className="mb-4 font-display text-lg font-bold text-heading">{newestLabel}</h3>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {newestItems.map((d, i) => (
-              <DishCard key={d.id} dish={d} index={i} />
+              <DishCard key={d.id} dish={d} index={i} showRestaurantContext />
             ))}
           </div>
         </section>
@@ -130,7 +130,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
           </p>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {needsReview.map((d, i) => (
-              <DishCard key={d.id} dish={d} index={i} />
+              <DishCard key={d.id} dish={d} index={i} showRestaurantContext />
             ))}
           </div>
         </section>
@@ -247,7 +247,7 @@ async function DishEmptyFallback({ query, city }: { query: string; city: string 
           </h3>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {topDishes.map((dish, i) => (
-              <DishCard key={dish.id} dish={dish} index={i} />
+              <DishCard key={dish.id} dish={dish} index={i} showRestaurantContext />
             ))}
           </div>
         </div>

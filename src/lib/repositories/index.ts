@@ -34,7 +34,6 @@ export const dishRepository: DishRepository = isTypesenseConfigured()
       getTypesenseSearchClient(),
     )
   : firebaseDishRepo;
-// export const dishRepository: DishRepository = firebaseDishRepo;
 
 export const restaurantRepository: RestaurantRepository =
   new FirebaseRestaurantRepository();
@@ -48,8 +47,6 @@ export const restaurantSearchRepository: RestaurantSearchRepository =
         getTypesenseSearchClient(),
       )
     : firebaseRestaurantSearchRepo;
-// export const restaurantSearchRepository: RestaurantSearchRepository =
-//   firebaseRestaurantSearchRepo;
 
 export const reviewRepository: ReviewRepository =
   new FirebaseReviewRepository();

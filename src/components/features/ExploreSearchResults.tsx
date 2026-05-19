@@ -131,6 +131,8 @@ export function ExploreSearchResults() {
     priceRange: priceRange as 'under-100' | '100-200' | '200-400' | '400-600' | 'above-600' | null,
     sortBy: sortBy as SortOrder | undefined,
   }
+  const dishResultsKey = ['dishes', query, cuisine, area, dietary, priceRange, sortBy].join('|')
+  const restaurantResultsKey = ['restaurants', query, cuisine, area, sortBy].join('|')
 
   if (tab === 'dishes') {
     const count = dishes.length
@@ -152,6 +154,7 @@ export function ExploreSearchResults() {
           />
         ) : (
           <LoadMoreDishes
+            key={dishResultsKey}
             initialDishes={dishes}
             initialHasMore={hasMore}
             initialCursorId={cursorId}
@@ -182,6 +185,7 @@ export function ExploreSearchResults() {
         />
       ) : (
         <LoadMoreRestaurants
+          key={restaurantResultsKey}
           initialRestaurants={restaurants}
           initialHasMore={hasMore}
           initialCursorId={cursorId}

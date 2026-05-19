@@ -12,9 +12,14 @@ import { ROUTES } from "@/lib/constants/routes";
 interface DishCardProps {
   dish: Dish;
   index?: number;
+  showRestaurantContext?: boolean;
 }
 
-export function DishCard({ dish, index = 0 }: DishCardProps) {
+export function DishCard({
+  dish,
+  index = 0,
+  showRestaurantContext = false,
+}: DishCardProps) {
   const router = useRouter();
   const dietary = dish.dietary as string | null | undefined;
   const dietaryTone =
@@ -46,6 +51,11 @@ export function DishCard({ dish, index = 0 }: DishCardProps) {
           <h3 className="mt-2 line-clamp-2 text-[17px] font-semibold leading-snug text-text-primary">
             {dish.name}
           </h3>
+          {showRestaurantContext && dish.restaurantName && (
+            <p className="mt-1 line-clamp-1 text-[13px] font-medium text-text-secondary">
+              {dish.restaurantName}{dish.area ? ` · ${dish.area}` : ""}
+            </p>
+          )}
           {price && (
             <p className="mt-2 text-sm font-semibold text-text-primary">
               ₹{price} (approx)

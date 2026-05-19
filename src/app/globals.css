@@ -246,6 +246,9 @@
   html[data-scroll-behavior="smooth"] {
     scroll-behavior: smooth;
   }
+  input[type="search"]::-webkit-search-cancel-button {
+    cursor: pointer;
+  }
 }
 
 /* ── Dark mode image dimming ─────────────────────────────── */

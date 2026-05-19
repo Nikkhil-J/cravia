@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuthStore } from '@/lib/store/authStore'
-import { Logo } from '@/components/ui/Logo'
+import { CraviaMark } from '@/components/ui/Logo'
 import { cn } from '@/lib/utils'
 
 // Minimum time the splash stays visible so the logo entrance animation
@@ -24,9 +24,8 @@ const MIN_DISPLAY_MS = 900
 export function AppLoader() {
   const isInitialized = useAuthStore((s) => s.isInitialized)
   const [minTimePassed, setMinTimePassed] = useState(false)
-  const [exiting, setExiting] = useState(false)
   const [hidden, setHidden] = useState(false)
-  const exitScheduled = useRef(false)
+  const exiting = isInitialized && minTimePassed
 
   // Start the minimum display timer once on mount.
   useEffect(() => {
@@ -36,12 +35,10 @@ export function AppLoader() {
 
   // Trigger fade-out once both conditions are satisfied.
   useEffect(() => {
-    if (!isInitialized || !minTimePassed || exitScheduled.current) return
-    exitScheduled.current = true
-    setExiting(true)
+    if (!exiting) return
     const t = setTimeout(() => setHidden(true), 350)
     return () => clearTimeout(t)
-  }, [isInitialized, minTimePassed])
+  }, [exiting])
 
   if (hidden) return null
 
@@ -54,7 +51,20 @@ export function AppLoader() {
       )}
       aria-hidden="true"
     >
-      <Logo size="lg" />
+      <div className="flex h-16 items-center gap-2.5">
+        <span className="relative h-16 w-16 shrink-0">
+          <CraviaMark
+            size={56}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[42%]"
+          />
+        </span>
+        <span
+          className="text-coral-deep flex h-16 items-center text-[2.5rem] font-extrabold uppercase leading-none tracking-[0.07em]"
+          style={{ fontFamily: 'var(--font-headline)' }}
+        >
+          Cravia
+        </span>
+      </div>
     </div>
   )
 }

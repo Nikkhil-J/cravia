@@ -127,7 +127,8 @@ export async function searchDishes(
       const lower = searchQuery.toLowerCase()
       constraints.push(
         where('nameLower', '>=', lower),
-        where('nameLower', '<=', lower + '\uf8ff')
+        where('nameLower', '<=', lower + '\uf8ff'),
+        orderBy('nameLower')
       )
     }
 
@@ -142,11 +143,13 @@ export async function searchDishes(
     const hasMinRating = !!filters?.minRating
     if (hasMinRating) constraints.push(where('avgOverall', '>=', filters.minRating))
 
-    const sortField = hasMinRating ? 'avgOverall'
-      : filters?.sortBy === SORT_OPTIONS.HIGHEST_RATED ? 'avgOverall'
-      : filters?.sortBy === SORT_OPTIONS.MOST_HELPFUL ? 'reviewCount'
-      : 'createdAt'
-    constraints.push(orderBy(sortField, 'desc'))
+    if (!hasTextSearch) {
+      const sortField = hasMinRating ? 'avgOverall'
+        : filters?.sortBy === SORT_OPTIONS.HIGHEST_RATED ? 'avgOverall'
+        : filters?.sortBy === SORT_OPTIONS.MOST_HELPFUL ? 'reviewCount'
+        : 'createdAt'
+      constraints.push(orderBy(sortField, 'desc'))
+    }
 
     const fetchLimit = hasCuisineFilter && hasTextSearch
       ? DISHES_PER_PAGE * 3

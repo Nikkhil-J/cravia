@@ -93,7 +93,7 @@ export function LoadMoreDishes({
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {dishes.map((dish, i) => (
-          <DishCard key={dish.id} dish={dish} index={i} />
+          <DishCard key={dish.id} dish={dish} index={i} showRestaurantContext />
         ))}
       </div>
 
