@@ -58,6 +58,12 @@ export function SearchBar({
     }
   }
 
+  const focusInput = useCallback(() => {
+    const input = inputRef.current;
+    if (!input) return;
+    input.focus({ preventScroll: true });
+  }, []);
+
   useEffect(() => {
     if (variant !== "navbar" || !isOnExplorePage) return;
     const params = new URLSearchParams(window.location.search);
@@ -66,16 +72,26 @@ export function SearchBar({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery(urlQ);
     }
-    if (!params.has("focus")) return;
+    const shouldFocus = autoFocus || params.has("focus");
+    if (!shouldFocus) return;
 
-    const timer = setTimeout(() => {
-      inputRef.current?.focus();
+    focusInput();
+    const frame = requestAnimationFrame(focusInput);
+    const timers = [100, 300].map((delay) =>
+      setTimeout(focusInput, delay)
+    );
+
+    if (params.has("focus")) {
       const url = new URL(window.location.href);
       url.searchParams.delete("focus");
       window.history.replaceState(null, "", url.pathname + (url.search || ""));
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [variant, isOnExplorePage]); // eslint-disable-line react-hooks/exhaustive-deps -- intentionally omits `query`; adding it would re-run on every keystroke
+    }
+
+    return () => {
+      cancelAnimationFrame(frame);
+      timers.forEach(clearTimeout);
+    };
+  }, [variant, isOnExplorePage, autoFocus, focusInput]); // eslint-disable-line react-hooks/exhaustive-deps -- intentionally omits `query`; adding it would re-run on every keystroke
 
   const debouncedQuery = useDebounce(query, 400);
 

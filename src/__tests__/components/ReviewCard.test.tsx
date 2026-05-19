@@ -1,5 +1,5 @@
 /**
- * ReviewCard component tests.
+ * ReviewCardV2 component tests.
  *
  * @testing-library/react is NOT installed in this project.
  * Tests are marked as it.todo — install the library to enable rendering.
@@ -10,14 +10,14 @@
 
 import { describe, it } from 'vitest'
 
-describe('ReviewCard', () => {
+describe('ReviewCardV2', () => {
   it.todo('renders dish name and restaurant name when dishContext is provided')
 
   it.todo('renders taste, portion, and value rating pills')
 
-  it.todo('shows "Bill attached" badge when review.isVerified is true')
+  it.todo('shows "Verified visit" badge when review.isVerified is true')
 
-  it.todo('does NOT show "Bill attached" badge when review.isVerified is false')
+  it.todo('does NOT show "Verified visit" badge when review.isVerified is false')
 
   it.todo('shows helpful vote count')
 

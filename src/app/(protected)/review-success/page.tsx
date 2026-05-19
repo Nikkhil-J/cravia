@@ -11,6 +11,7 @@ import { ROUTES } from '@/lib/constants/routes'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { formatRating } from '@/lib/utils/index'
 import { getCuisineEmoji } from '@/lib/utils/dish-display'
+import { PWAInstallBanner } from '@/components/features/PWAInstallBanner'
 
 interface SuccessData {
   dishId: string
@@ -91,8 +92,9 @@ export default function ReviewSuccessPage() {
   const helpfulVotes = data.helpfulVotesReceived ?? 0
 
   return (
-    <div className="mx-auto flex min-h-[80vh] max-w-md items-start px-4 py-10 text-center sm:px-6 sm:py-16 md:max-w-2xl md:items-center md:py-12">
-      <div className="w-full animate-pop-in md:rounded-2xl md:border md:border-border/50 md:bg-card md:px-10 md:py-10 md:shadow-lg">
+    <>
+      <div className="mx-auto flex min-h-[80vh] max-w-md items-start px-4 py-10 text-center sm:px-6 sm:py-16 md:max-w-2xl md:items-center md:py-12">
+        <div className="w-full animate-pop-in md:rounded-2xl md:border md:border-border/50 md:bg-card md:px-10 md:py-10 md:shadow-lg">
         <div className="text-5xl sm:text-6xl">🎉</div>
         <h1 className="mt-4 font-display text-2xl font-bold text-heading sm:mt-5 sm:text-3xl md:text-4xl">Review Published!</h1>
         <p className="mt-3 text-text-secondary">
@@ -274,7 +276,14 @@ export default function ReviewSuccessPage() {
             )}
           </div>
         )}
+        </div>
       </div>
-    </div>
+      <PWAInstallBanner
+        title="Keep Cravia handy"
+        description="Add it to your home screen to review faster and track dishes worth trying."
+        iosTitle="Keep Cravia handy"
+        dismissKey="pwa-review-success-banner-dismissed"
+      />
+    </>
   )
 }

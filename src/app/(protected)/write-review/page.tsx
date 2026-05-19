@@ -181,6 +181,7 @@ function WriteReviewContent() {
     const nextText = `${data.text}${needsSpace ? ' ' : ''}${starter} `
     const caretPosition = nextText.length
 
+    reviewTextRef.current?.focus({ preventScroll: true })
     updateField('text', nextText)
     requestAnimationFrame(() => {
       reviewTextRef.current?.focus()
@@ -548,6 +549,7 @@ function WriteReviewContent() {
                       key={starter}
                       type="button"
                       variant="outline"
+                      onPointerDown={(event) => event.preventDefault()}
                       onClick={() => handleSentenceStarterClick(starter)}
                       className="h-auto rounded-pill border-border bg-card px-3 py-1.5 text-xs font-semibold text-text-secondary hover:border-primary hover:bg-bg-cream hover:text-primary"
                     >

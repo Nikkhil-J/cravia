@@ -37,6 +37,7 @@ interface ExplorePageProps {
     dietary?: string
     priceRange?: string
     sortBy?: string
+    focus?: string
   }>
 }
 
@@ -329,6 +330,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const area = params.area ?? null
   const dietary = params.dietary ?? null
   const priceRange = params.priceRange ?? null
+  const shouldFocusSearch = params.focus === '1'
 
   const dishSortBy = (VALID_DISH_SORT.includes(params.sortBy as DishSortOption)
     ? params.sortBy as DishSortOption
@@ -345,6 +347,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
             <SearchBar
               variant="navbar"
               initialQuery=""
+              autoFocus={shouldFocusSearch}
               className="block w-full max-w-none"
               showBackArrow
             />

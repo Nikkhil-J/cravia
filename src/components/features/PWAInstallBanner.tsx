@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -10,6 +10,14 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const SESSION_KEY = 'pwa-banner-dismissed'
+
+interface PWAInstallBannerProps {
+  title?: string
+  description?: string
+  iosTitle?: string
+  iosDescription?: ReactNode
+  dismissKey?: string
+}
 
 function isIOS(): boolean {
   if (typeof navigator === 'undefined') return false
@@ -21,7 +29,13 @@ function isStandalone(): boolean {
   return window.matchMedia('(display-mode: standalone)').matches
 }
 
-export function PWAInstallBanner() {
+export function PWAInstallBanner({
+  title = 'Add Cravia to your home screen',
+  description = 'Get the full app experience',
+  iosTitle = 'Add to your home screen',
+  iosDescription,
+  dismissKey = SESSION_KEY,
+}: PWAInstallBannerProps) {
   const [visible, setVisible] = useState(false)
   const [ios, setIos] = useState(false)
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null)
@@ -29,7 +43,7 @@ export function PWAInstallBanner() {
 
   useEffect(() => {
     if (isStandalone()) return
-    if (sessionStorage.getItem(SESSION_KEY)) return
+    if (sessionStorage.getItem(dismissKey)) return
 
     const iosDevice = isIOS()
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -53,10 +67,10 @@ export function PWAInstallBanner() {
       window.removeEventListener('beforeinstallprompt', onBeforeInstall)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [])
+  }, [dismissKey])
 
   function dismiss() {
-    sessionStorage.setItem(SESSION_KEY, '1')
+    sessionStorage.setItem(dismissKey, '1')
     setVisible(false)
   }
 
@@ -91,36 +105,40 @@ export function PWAInstallBanner() {
         {ios ? (
           <>
             <p className="text-sm font-semibold text-text-primary leading-snug">
-              Add to your home screen
+              {iosTitle}
             </p>
             <p className="mt-0.5 flex items-center gap-1 text-xs text-text-muted">
-              Tap
-              {/* Share icon inline SVG */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="inline h-3.5 w-3.5 text-text-secondary"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                <polyline points="16 6 12 2 8 6" />
-                <line x1="12" y1="2" x2="12" y2="15" />
-              </svg>
-              then &ldquo;Add to Home Screen&rdquo;
+              {iosDescription ?? (
+                <>
+                  Tap
+                  {/* Share icon inline SVG */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="inline h-3.5 w-3.5 text-text-secondary"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                    <polyline points="16 6 12 2 8 6" />
+                    <line x1="12" y1="2" x2="12" y2="15" />
+                  </svg>
+                  then &ldquo;Add to Home Screen&rdquo;
+                </>
+              )}
             </p>
           </>
         ) : (
           <>
             <p className="text-sm font-semibold text-text-primary leading-snug">
-              Add Cravia to your home screen
+              {title}
             </p>
             <p className="mt-0.5 text-xs text-text-muted">
-              Get the full app experience
+              {description}
             </p>
           </>
         )}

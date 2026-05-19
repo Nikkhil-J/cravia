@@ -17,7 +17,14 @@ import {
 } from '@/lib/utils/index'
 import { getCuisineEmoji } from '@/lib/utils/dish-display'
 import { ROUTES } from '@/lib/constants/routes'
-import type { Dish, DishCategory } from '@/lib/types'
+import type { DietaryType, Dish, DishCategory } from '@/lib/types'
+
+type MenuDietaryFilter = Extract<DietaryType, 'veg' | 'non-veg'>
+
+const DIETARY_FILTERS: { value: MenuDietaryFilter; label: string; tone: MenuDietaryFilter }[] = [
+  { value: 'veg', label: 'Veg', tone: 'veg' },
+  { value: 'non-veg', label: 'Non-veg', tone: 'non-veg' },
+]
 
 interface RestaurantMenuProps {
   dishes: Dish[]
@@ -26,6 +33,7 @@ interface RestaurantMenuProps {
 
 export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedDietary, setSelectedDietary] = useState<MenuDietaryFilter | null>(null)
   const [jumpMenuOpen, setJumpMenuOpen] = useState(false)
   const [jumpMenuMounted, setJumpMenuMounted] = useState(false)
   const [jumpMenuPhase, setJumpMenuPhase] = useState<'enter' | 'visible' | 'exit'>('enter')
@@ -35,6 +43,12 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
   const jumpPopoverRef = useRef<HTMLDivElement | null>(null)
 
   const isSearching = searchQuery.trim().length > 0
+  const isDietaryFiltering = selectedDietary !== null
+  const hasActiveMenuFilter = isSearching || isDietaryFiltering
+  const hasDietaryFilters = useMemo(
+    () => dishes.some((dish) => dish.dietary === 'veg' || dish.dietary === 'non-veg'),
+    [dishes]
+  )
 
   const closeJumpMenu = useCallback(() => {
     setJumpMenuOpen(false)
@@ -70,39 +84,42 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
   }, [jumpMenuMounted, closeJumpMenu])
 
   const filteredDishes = useMemo(() => {
-    if (!isSearching) return dishes
+    const dietaryFilteredDishes = selectedDietary
+      ? dishes.filter((dish) => matchesDietaryFilter(dish, selectedDietary))
+      : dishes
+
+    if (!isSearching) return dietaryFilteredDishes
     const q = searchQuery.toLowerCase().trim()
-    return dishes.filter(
+    return dietaryFilteredDishes.filter(
       (d) =>
         d.name.toLowerCase().includes(q) ||
         d.category?.toLowerCase().includes(q) ||
         d.topTags.some((t) => t.toLowerCase().includes(q))
     )
-  }, [dishes, searchQuery, isSearching])
+  }, [dishes, searchQuery, isSearching, selectedDietary])
 
-  const groupedDishes = useMemo(() => groupDishesByCategory(dishes), [dishes])
-  const groupedFilteredDishes = useMemo(
-    () => groupDishesByCategory(filteredDishes),
-    [filteredDishes]
+  const groupedVisibleDishes = useMemo(
+    () => groupDishesByCategory(hasActiveMenuFilter ? filteredDishes : dishes),
+    [dishes, filteredDishes, hasActiveMenuFilter]
   )
 
   const categoryRows = useMemo(() => {
-    const categorySource = categories && categories.length > 0
+    const categorySource = !hasActiveMenuFilter && categories && categories.length > 0
       ? categories
-      : dishes.map((dish) => dish.category)
+      : (hasActiveMenuFilter ? filteredDishes : dishes).map((dish) => dish.category)
 
     return getOrderedDishCategories(categorySource)
       .map((category) => ({
         category,
-        count: groupedDishes[category]?.length ?? 0,
+        count: groupedVisibleDishes[category]?.length ?? 0,
       }))
       .filter((row) => row.count > 0)
-  }, [categories, dishes, groupedDishes])
+  }, [categories, dishes, filteredDishes, groupedVisibleDishes, hasActiveMenuFilter])
 
   const orderedDishes = useMemo(() => {
     if (isSearching) return filteredDishes
-    return categoryRows.flatMap((row) => groupedDishes[row.category] ?? [])
-  }, [categoryRows, filteredDishes, groupedDishes, isSearching])
+    return categoryRows.flatMap((row) => groupedVisibleDishes[row.category] ?? [])
+  }, [categoryRows, filteredDishes, groupedVisibleDishes, isSearching])
 
   const sectionMetaByDishId = useMemo(() => {
     const seen = new Set<DishCategory>()
@@ -112,15 +129,13 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
     for (const dish of orderedDishes) {
       if (seen.has(dish.category)) continue
       seen.add(dish.category)
-      const count = isSearching
-        ? groupedFilteredDishes[dish.category]?.length ?? 0
-        : groupedDishes[dish.category]?.length ?? 0
+      const count = groupedVisibleDishes[dish.category]?.length ?? 0
       metaByDishId.set(dish.id, { count, index: sectionIndex })
       sectionIndex += 1
     }
 
     return metaByDishId
-  }, [groupedDishes, groupedFilteredDishes, isSearching, orderedDishes])
+  }, [groupedVisibleDishes, orderedDishes])
 
   function openJumpMenu() {
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
@@ -154,6 +169,21 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
       })
     })
   }
+
+  function toggleDietaryFilter(value: MenuDietaryFilter) {
+    setSelectedDietary((current) => current === value ? null : value)
+    closeJumpMenu()
+  }
+
+  const selectedDietaryLabel = DIETARY_FILTERS.find((filter) => filter.value === selectedDietary)?.label
+  const emptyTitle = selectedDietaryLabel
+    ? isSearching
+      ? `No ${selectedDietaryLabel} dishes match "${searchQuery}"`
+      : `No ${selectedDietaryLabel} dishes here`
+    : `No dishes match "${searchQuery}"`
+  const emptyDescription = selectedDietaryLabel
+    ? 'Try clearing this filter or searching for another dish.'
+    : 'Try a different search term.'
 
   const categoryJumpPortal = mounted && categoryRows.length > 0
     ? createPortal(
@@ -229,6 +259,20 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
 
   return (
     <div className="relative">
+      {hasDietaryFilters && (
+        <div className="mb-4 flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {DIETARY_FILTERS.map((filter) => (
+            <DietaryFilterButton
+              key={filter.value}
+              label={filter.label}
+              tone={filter.tone}
+              active={selectedDietary === filter.value}
+              onClick={() => toggleDietaryFilter(filter.value)}
+            />
+          ))}
+        </div>
+      )}
+
       {/* Search within menu */}
       {dishes.length > 3 && (
         <div className="relative mb-4">
@@ -251,9 +295,19 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
         <div className="rounded-xl border border-border bg-card py-10 text-center">
           <p className="text-2xl">🍽️</p>
           <p className="mt-2 font-display font-semibold text-heading">
-            No dishes match &ldquo;{searchQuery}&rdquo;
+            {emptyTitle}
           </p>
-          <p className="mt-1 text-sm text-text-muted">Try a different search term.</p>
+          <p className="mt-1 text-sm text-text-muted">{emptyDescription}</p>
+          {selectedDietary && (
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => setSelectedDietary(null)}
+              className="mt-2 h-auto min-h-0 px-2 py-1 text-xs font-semibold"
+            >
+              Clear filter
+            </Button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
@@ -297,6 +351,67 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
 
       {categoryJumpPortal}
     </div>
+  )
+}
+
+function matchesDietaryFilter(dish: Dish, filter: MenuDietaryFilter) {
+  const dietary = dish.dietary as string
+
+  if (filter === 'veg') return dietary === 'veg' || dietary === 'vegan'
+  return dietary === 'non-veg'
+}
+
+function DietaryFilterButton({
+  label,
+  tone,
+  active,
+  onClick,
+}: {
+  label: string
+  tone: MenuDietaryFilter
+  active: boolean
+  onClick: () => void
+}) {
+  const isVeg = tone === 'veg'
+
+  return (
+    <Button
+      variant="outline"
+      aria-pressed={active}
+      aria-label={active ? `Clear ${label} filter` : `Show only ${label} dishes`}
+      onClick={onClick}
+      className={cn(
+        'h-9 min-h-9 shrink-0 gap-2 rounded-pill border px-3.5 text-sm font-semibold shadow-sm transition-all hover:bg-card',
+        active
+          ? isVeg
+            ? 'border-success bg-success/10 text-success hover:text-success'
+            : 'border-destructive bg-destructive/10 text-destructive hover:text-destructive'
+          : 'border-border bg-card text-text-primary hover:border-border-secondary hover:text-text-primary'
+      )}
+    >
+      <DietaryMark tone={tone} />
+      <span>{label}</span>
+      {active && <X className="h-3.5 w-3.5" aria-hidden />}
+    </Button>
+  )
+}
+
+function DietaryMark({ tone }: { tone: MenuDietaryFilter }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        'flex h-3.5 w-3.5 items-center justify-center border',
+        tone === 'veg' ? 'border-success' : 'border-destructive'
+      )}
+    >
+      <span
+        className={cn(
+          'h-1.5 w-1.5 rounded-full',
+          tone === 'veg' ? 'bg-success' : 'bg-destructive'
+        )}
+      />
+    </span>
   )
 }
 
