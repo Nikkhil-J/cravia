@@ -63,8 +63,10 @@ export function LoadMoreDishes({
       if (!res.ok) return
 
       const result = (await res.json()) as DishesApiResult
-      const newItems = result.items.filter((d) => !dishes.some((existing) => existing.id === d.id))
-      setDishes((prev) => [...prev, ...newItems])
+      setDishes((prev) => [
+        ...prev,
+        ...result.items.filter((d) => !prev.some((existing) => existing.id === d.id)),
+      ])
       setNextCursorId(result.nextCursorId)
       setHasMore(result.hasMore)
     })

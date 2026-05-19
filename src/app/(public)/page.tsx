@@ -30,7 +30,7 @@ export default async function LandingPage() {
       getTopDishes(8, city, { minReviewCount: 1 }),
       getDishCount(city),
       getRestaurantCount(city),
-      searchRestaurants({ city, limit: 8, sortBy: "most-reviewed" }),
+      searchRestaurants({ city, limit: 8 }),
     ]);
     topDishes = topDishesResult;
     dishCount = dCount;

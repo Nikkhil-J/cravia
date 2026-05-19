@@ -32,15 +32,12 @@ export async function listRestaurants(params?: ListRestaurantsParams): Promise<R
   }
 }
 
-export type RestaurantSortOption = 'most-reviewed' | 'newest' | 'alphabetical'
-
 export interface SearchRestaurantsParams {
   query?: string | null
   city?: string | null
   userCity?: string | null
   area?: string | null
   cuisine?: string | null
-  sortBy?: RestaurantSortOption
   cursorId?: string | null
   limit?: number
 }
@@ -62,7 +59,6 @@ export async function searchRestaurants(params?: SearchRestaurantsParams): Promi
     city,
     cuisine: params?.cuisine ?? null,
     area,
-    sortBy: params?.sortBy ?? 'most-reviewed',
     cursor: params?.cursorId ?? undefined,
     limit: params?.limit,
   })

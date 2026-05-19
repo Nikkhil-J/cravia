@@ -5,7 +5,6 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
   limit,
   startAfter,
   type QueryConstraint,
@@ -27,19 +26,6 @@ async function getRestaurantSnapshot(id: string): Promise<DocumentSnapshot | nul
   } catch {
     return null
   }
-}
-
-function sortInMemory(items: Restaurant[], sortBy: string | undefined): Restaurant[] {
-  if (sortBy === 'most-reviewed') {
-    return [...items].sort((a, b) => (b.dishCount ?? 0) - (a.dishCount ?? 0))
-  }
-  if (sortBy === 'newest') {
-    return [...items].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-  }
-  if (sortBy === 'alphabetical') {
-    return [...items].sort((a, b) => a.name.localeCompare(b.name))
-  }
-  return items
 }
 
 export class FirebaseRestaurantSearchRepository implements RestaurantSearchRepository {
@@ -74,14 +60,6 @@ export class FirebaseRestaurantSearchRepository implements RestaurantSearchRepos
       if (params.area) {
         constraints.push(where('area', '==', params.area))
       }
-    }
-
-    if (!searchQuery && params.sortBy === 'most-reviewed') {
-      constraints.push(orderBy('dishCount', 'desc'))
-    } else if (!searchQuery && params.sortBy === 'newest') {
-      constraints.push(orderBy('createdAt', 'desc'))
-    } else if (!searchQuery && params.sortBy === 'alphabetical') {
-      constraints.push(orderBy('name', 'asc'))
     }
 
     const pageSize = params.limit ?? DEFAULT_PAGE_SIZE
@@ -149,8 +127,6 @@ export class FirebaseRestaurantSearchRepository implements RestaurantSearchRepos
       if (params.area) {
         items = items.filter((r) => r.area === params.area)
       }
-
-      items = sortInMemory(items, params.sortBy)
 
       const pageSize = params.limit ?? DEFAULT_PAGE_SIZE
       const startIndex = 0

@@ -50,19 +50,6 @@ function hitToRestaurant(hit: SearchResponseHit<TypesenseRestaurantDoc>): Restau
   }
 }
 
-function buildSortBy(sortBy?: string): string {
-  switch (sortBy) {
-    case 'most-reviewed':
-      return 'totalReviews:desc,dishCount:desc'
-    case 'newest':
-      return 'createdAt:desc'
-    case 'alphabetical':
-      return 'name:asc'
-    default:
-      return '_text_match:desc,totalReviews:desc'
-  }
-}
-
 function buildFilterBy(params: GetRestaurantsParams): string {
   const filters: string[] = ['isActive:true']
 
@@ -101,8 +88,8 @@ export class TypesenseRestaurantRepository implements RestaurantSearchRepository
         .search({
           q: params.query || '*',
           query_by: 'name,cuisines,dishNames',
+          query_by_weights: '10,3,1',
           filter_by: buildFilterBy(params),
-          sort_by: buildSortBy(params.sortBy),
           per_page: pageSize + 1,
           page,
           typo_tokens_threshold: 3,

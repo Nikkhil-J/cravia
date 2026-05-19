@@ -6,7 +6,6 @@ export interface GetRestaurantsParams {
   city?: string | null
   area?: string | null
   cuisine?: string | null
-  sortBy?: 'most-reviewed' | 'newest' | 'alphabetical'
   limit?: number
   cursor?: string
 }

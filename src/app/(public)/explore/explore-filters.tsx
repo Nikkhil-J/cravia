@@ -5,7 +5,6 @@ import { X, ChevronDown } from 'lucide-react'
 import { useCallback, useState, Suspense, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
-import type { RestaurantSortOption } from '@/lib/services/catalog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -19,7 +18,6 @@ import { ROUTES } from '@/lib/constants/routes'
 
 type ExploreTab = 'dishes' | 'restaurants'
 type DishSortOption = 'highest-rated' | 'newest' | 'most-helpful'
-type AnySortOption = RestaurantSortOption | DishSortOption
 
 interface ExploreFiltersProps {
   query: string
@@ -28,7 +26,7 @@ interface ExploreFiltersProps {
   selectedArea: string | null
   selectedDietary: string | null
   selectedPriceRange: string | null
-  selectedSortBy: AnySortOption
+  selectedSortBy: DishSortOption
   cuisines: string[]
   areas: string[]
 }
@@ -45,12 +43,6 @@ const PRICE_RANGE_OPTIONS = [
   { value: '200-400', label: '₹200–400' },
   { value: '400-600', label: '₹400–600' },
   { value: 'above-600', label: '₹600+' },
-]
-
-const RESTAURANT_SORT_OPTIONS: { value: RestaurantSortOption; label: string }[] = [
-  { value: 'most-reviewed', label: 'Most Reviewed' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'alphabetical', label: 'A–Z' },
 ]
 
 const DISH_SORT_OPTIONS: { value: DishSortOption; label: string }[] = [
@@ -164,13 +156,14 @@ function FiltersInner({
     (overrides: Record<string, string | null>) => {
       const params = new URLSearchParams(searchParams.toString())
       params.delete('q')
+      if (activeTab === 'restaurants') params.delete('sortBy')
       Object.entries(overrides).forEach(([key, val]) => {
         if (val) params.set(key, val)
         else params.delete(key)
       })
       return `${ROUTES.EXPLORE}?${params.toString()}`
     },
-    [searchParams]
+    [activeTab, searchParams]
   )
 
   function signalFilterChange() {
@@ -200,7 +193,7 @@ function FiltersInner({
   function handleSort(value: string) {
     setOptimisticSort(value)
     signalFilterChange()
-    const defaultSort = activeTab === 'dishes' ? 'highest-rated' : 'most-reviewed'
+    const defaultSort = 'highest-rated'
     router.push(buildUrl({ sortBy: value === defaultSort ? null : value }))
   }
 
@@ -208,7 +201,6 @@ function FiltersInner({
     Boolean
   ).length
 
-  const sortOptions = activeTab === 'dishes' ? DISH_SORT_OPTIONS : RESTAURANT_SORT_OPTIONS
   const hasAreas = areas.length > 0
 
   const summaryRow =
@@ -325,34 +317,38 @@ function FiltersInner({
           </div>
 
           {/* Mobile: custom dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger className="md:hidden flex items-center gap-1.5 rounded-pill border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground focus:outline-none focus:border-primary transition-colors hover:bg-surface-2">
-              {sortOptions.find((o) => o.value === selectedSortBy)?.label ?? 'Sort'}
-              <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={6} className="w-auto min-w-[160px]">
-              <DropdownMenuRadioGroup value={selectedSortBy} onValueChange={handleSort}>
-                {sortOptions.map((opt) => (
-                  <DropdownMenuRadioItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {activeTab === 'dishes' && (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="md:hidden flex items-center gap-1.5 rounded-pill border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground focus:outline-none focus:border-primary transition-colors hover:bg-surface-2">
+                {DISH_SORT_OPTIONS.find((o) => o.value === selectedSortBy)?.label ?? 'Sort'}
+                <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" sideOffset={6} className="w-auto min-w-[160px]">
+                <DropdownMenuRadioGroup value={selectedSortBy} onValueChange={handleSort}>
+                  {DISH_SORT_OPTIONS.map((opt) => (
+                    <DropdownMenuRadioItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           {/* Desktop: pills */}
-          <div className="hidden md:flex items-center gap-0.5">
-            {sortOptions.map((opt) => (
-              <SortChip
-                key={opt.value}
-                active={selectedSortBy === opt.value}
-                onClick={() => handleSort(opt.value)}
-              >
-                {opt.label}
-              </SortChip>
-            ))}
-          </div>
+          {activeTab === 'dishes' && (
+            <div className="hidden md:flex items-center gap-0.5">
+              {DISH_SORT_OPTIONS.map((opt) => (
+                <SortChip
+                  key={opt.value}
+                  active={selectedSortBy === opt.value}
+                  onClick={() => handleSort(opt.value)}
+                >
+                  {opt.label}
+                </SortChip>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Row 2: filter chips strip */}

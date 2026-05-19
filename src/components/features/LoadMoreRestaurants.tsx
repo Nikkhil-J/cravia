@@ -15,7 +15,6 @@ interface LoadMoreRestaurantsProps {
     city?: string | null
     cuisine?: string | null
     area?: string | null
-    sortBy?: string | null
   }
   query: string
 }
@@ -55,7 +54,6 @@ export function LoadMoreRestaurants({
       if (filters.city) params.set('city', filters.city)
       if (filters.cuisine) params.set('cuisine', filters.cuisine)
       if (filters.area) params.set('area', filters.area)
-      if (filters.sortBy) params.set('sortBy', filters.sortBy)
       if (nextCursorId) params.set('cursor', nextCursorId)
 
       const token = authUser ? await authUser.getIdToken() : null
@@ -66,10 +64,10 @@ export function LoadMoreRestaurants({
       if (!res.ok) return
 
       const result = (await res.json()) as RestaurantsApiResult
-      const newItems = result.items.filter(
-        (r) => !restaurants.some((existing) => existing.id === r.id)
-      )
-      setRestaurants((prev) => [...prev, ...newItems])
+      setRestaurants((prev) => [
+        ...prev,
+        ...result.items.filter((r) => !prev.some((existing) => existing.id === r.id)),
+      ])
       setNextCursorId(result.nextCursorId)
       setHasMore(result.hasMore)
     })

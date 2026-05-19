@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { PWAInstallBanner } from '@/components/features/PWAInstallBanner'
 import { searchRestaurants } from '@/lib/services/catalog'
-import type { RestaurantSortOption } from '@/lib/services/catalog'
 import { searchDishes, getTopDishes } from '@/lib/services/dishes'
 import { DishCard } from '@/components/features/DishCard'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -27,7 +26,6 @@ export const metadata: Metadata = {
 type ExploreTab = 'dishes' | 'restaurants'
 type DishSortOption = 'highest-rated' | 'newest' | 'most-helpful'
 
-const VALID_RESTAURANT_SORT: RestaurantSortOption[] = ['most-reviewed', 'newest', 'alphabetical']
 const VALID_DISH_SORT: DishSortOption[] = ['highest-rated', 'newest', 'most-helpful']
 
 interface ExplorePageProps {
@@ -275,18 +273,16 @@ async function RestaurantExploreResults({
   city,
   area,
   cuisine,
-  sortBy,
 }: {
   query: string
   city: string | null
   area: string | null
   cuisine: string | null
-  sortBy: RestaurantSortOption
 }) {
-  const result = await searchRestaurants({ query, city, area, cuisine, sortBy })
+  const result = await searchRestaurants({ query, city, area, cuisine })
   const restaurants = result.items
 
-  const filterPayload = { city, cuisine, area, sortBy }
+  const filterPayload = { city, cuisine, area }
 
   return (
     <div className="mt-6">
@@ -338,10 +334,6 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
     ? params.sortBy as DishSortOption
     : SORT_OPTIONS.HIGHEST_RATED) as DishSortOption
 
-  const restaurantSortBy = (VALID_RESTAURANT_SORT.includes(params.sortBy as RestaurantSortOption)
-    ? params.sortBy as RestaurantSortOption
-    : 'most-reviewed') as RestaurantSortOption
-
   const areas = listCityAreas(GURUGRAM)
   const paramsKey = JSON.stringify(params)
 
@@ -366,7 +358,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           selectedArea={area}
           selectedDietary={dietary}
           selectedPriceRange={priceRange}
-          selectedSortBy={tab === 'dishes' ? dishSortBy : restaurantSortBy}
+          selectedSortBy={dishSortBy}
           cuisines={[...FEATURED_CUISINES]}
           areas={[...areas]}
         />
@@ -396,7 +388,6 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
                   city={city}
                   area={area}
                   cuisine={cuisine}
-                  sortBy={restaurantSortBy}
                 />
               )}
             </ExploreResultsWrapper>

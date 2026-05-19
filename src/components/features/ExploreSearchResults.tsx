@@ -72,7 +72,7 @@ export function ExploreSearchResults() {
       if (area) params.set('area', area)
       if (dietary) params.set('dietary', dietary)
       if (priceRange) params.set('priceRange', priceRange)
-      if (sortBy) params.set('sortBy', sortBy)
+      if (tab === 'dishes' && sortBy) params.set('sortBy', sortBy)
 
       const token = authUser ? await authUser.getIdToken() : null
       const endpoint = tab === 'dishes' ? API_ENDPOINTS.DISHES : API_ENDPOINTS.RESTAURANTS
@@ -131,8 +131,27 @@ export function ExploreSearchResults() {
     priceRange: priceRange as 'under-100' | '100-200' | '200-400' | '400-600' | 'above-600' | null,
     sortBy: sortBy as SortOrder | undefined,
   }
-  const dishResultsKey = ['dishes', query, cuisine, area, dietary, priceRange, sortBy].join('|')
-  const restaurantResultsKey = ['restaurants', query, cuisine, area, sortBy].join('|')
+  const dishResultsKey = [
+    'dishes',
+    query,
+    cuisine,
+    area,
+    dietary,
+    priceRange,
+    sortBy,
+    cursorId,
+    hasMore,
+    dishes.map((dish) => dish.id).join(','),
+  ].join('|')
+  const restaurantResultsKey = [
+    'restaurants',
+    query,
+    cuisine,
+    area,
+    cursorId,
+    hasMore,
+    restaurants.map((restaurant) => restaurant.id).join(','),
+  ].join('|')
 
   if (tab === 'dishes') {
     const count = dishes.length
@@ -189,7 +208,7 @@ export function ExploreSearchResults() {
           initialRestaurants={restaurants}
           initialHasMore={hasMore}
           initialCursorId={cursorId}
-          filters={{ city: GURUGRAM, cuisine, area, sortBy }}
+          filters={{ city: GURUGRAM, cuisine, area }}
           query={query}
         />
       )}
