@@ -46,7 +46,7 @@ describe('manifest.json', () => {
 
   it('has correct theme_color', () => {
     const m = readManifest()
-    expect(m.theme_color).toBe('#D85A30')
+    expect(m.theme_color).toBe('#121009')
   })
 
   it('has an icons array', () => {

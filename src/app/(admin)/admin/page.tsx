@@ -31,7 +31,12 @@ export default function AdminDashboardPage() {
     { label: 'Dishes', value: stats.totalDishes, icon: '🍽️' },
     { label: 'Reviews', value: stats.totalReviews, icon: '📝' },
     { label: 'Users', value: stats.totalUsers, icon: '👥' },
-    { label: 'Pending requests', value: stats.pendingRequests, icon: '📋', highlight: stats.pendingRequests > 0 },
+    {
+      label: 'Pending restaurant requests',
+      value: stats.pendingRestaurantRequests,
+      icon: '📋',
+      highlight: stats.pendingRestaurantRequests > 0,
+    },
     { label: 'Flagged reviews', value: stats.flaggedReviews, icon: '🚩', highlight: stats.flaggedReviews > 0 },
   ]
 

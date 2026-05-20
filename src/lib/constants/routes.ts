@@ -13,6 +13,7 @@ export const ROUTES = {
   UPGRADE: '/upgrade',
   COMPARE: '/compare',
   REVIEW_SUCCESS: '/review-success',
+  REQUEST_RESTAURANT: '/request-restaurant',
   FORGOT_PASSWORD: '/forgot-password',
   VERIFY_EMAIL: '/verify-email',
   ADMIN: '/admin',

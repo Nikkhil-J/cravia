@@ -12,7 +12,7 @@ import * as fs from 'fs'
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
 
-import { sleep, slugify, log, logError, DATA_DIR } from './utils'
+import { sleep, log, logError, DATA_DIR } from './utils'
 
 // ── Types ────────────────────────────────────────────────────
 

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { Star, Gift, Settings, ChevronRight } from 'lucide-react'
+import { Star, Gift, Settings, ChevronRight, Store } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useMyReviews } from '@/lib/hooks/useMyReviews'
 import { BADGE_DEFINITIONS, LEVEL_THRESHOLDS, CITY_DISPLAY_NAME } from '@/lib/constants'
@@ -26,6 +26,7 @@ import { toast } from 'sonner'
 const QUICK_LINKS = [
   { label: 'Wishlist', desc: 'Saved dishes', icon: Star, href: ROUTES.WISHLIST },
   { label: 'Rewards', desc: 'DishPoints available', icon: Gift, href: ROUTES.REWARDS },
+  { label: 'Request Restaurant', desc: 'Suggest a place to add', icon: Store, href: ROUTES.REQUEST_RESTAURANT },
   { label: 'Settings', desc: 'Profile, preferences', icon: Settings, href: ROUTES.SETTINGS },
 ] as const
 

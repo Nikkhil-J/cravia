@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 
@@ -9,7 +9,9 @@ import type { ReactNode } from 'react'
 let hasPlayedEntranceAnimation = false
 
 export function ExploreEntranceWrapper({ children }: { children: ReactNode }) {
-  const shouldAnimate = useRef(!hasPlayedEntranceAnimation)
+  const [initialAnimation] = useState(() =>
+    hasPlayedEntranceAnimation ? false : { opacity: 0, y: 16 }
+  )
 
   useEffect(() => {
     hasPlayedEntranceAnimation = true
@@ -17,7 +19,7 @@ export function ExploreEntranceWrapper({ children }: { children: ReactNode }) {
 
   return (
     <motion.div
-      initial={shouldAnimate.current ? { opacity: 0, y: 16 } : false}
+      initial={initialAnimation}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
     >

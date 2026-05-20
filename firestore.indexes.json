@@ -59,7 +59,7 @@
       ]
     },
     {
-      "collectionGroup": "dishRequests",
+      "collectionGroup": "restaurantRequests",
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "status", "order": "ASCENDING" },

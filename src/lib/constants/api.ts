@@ -1,5 +1,6 @@
 export const API_ENDPOINTS = {
   RESTAURANTS: '/api/restaurants',
+  RESTAURANT_REQUESTS: '/api/restaurant-requests',
   REVIEWS: '/api/reviews',
   review: (id: string) => `/api/reviews/${id}`,
   reviewHelpful: (id: string) => `/api/reviews/${id}/helpful`,
@@ -23,7 +24,8 @@ export const API_ENDPOINTS = {
   BILLING_VERIFY: '/api/billing/verify',
   ADMIN_COUPONS: '/api/admin/coupons',
   adminCoupon: (id: string) => `/api/admin/coupons/${id}`,
-  adminDishRequest: (id: string) => `/api/admin/dish-requests/${id}`,
+  ADMIN_RESTAURANT_REQUESTS: '/api/admin/restaurant-requests',
+  adminRestaurantRequest: (id: string) => `/api/admin/restaurant-requests/${id}`,
   ADMIN_RESTAURANT_CLAIMS: '/api/admin/restaurant-claims',
   adminReview: (id: string) => `/api/admin/reviews/${id}`,
   adminUserRole: (userId: string) => `/api/admin/users/${userId}/role`,

@@ -4,8 +4,9 @@ import { dishSearchParamsSchema } from '@/lib/validation/dish.schema'
 import {
   toggleAdminSchema,
   togglePremiumSchema,
-  dishRequestActionSchema,
+  restaurantRequestActionSchema,
 } from '@/lib/validation/admin.schema'
+import { createRestaurantRequestSchema } from '@/lib/validation/restaurant-request.schema'
 import { userProfileUpdateSchema } from '@/lib/validation/user.schema'
 import { redeemCouponSchema, createCouponSchema } from '@/lib/validation/coupon.schema'
 
@@ -237,44 +238,57 @@ describe('togglePremiumSchema', () => {
   })
 })
 
-describe('dishRequestActionSchema', () => {
-  it('accepts approve action', () => {
-    const result = dishRequestActionSchema.safeParse({ action: 'approve' })
+describe('restaurantRequestActionSchema', () => {
+  it('accepts done action', () => {
+    const result = restaurantRequestActionSchema.safeParse({ action: 'done' })
     expect(result.success).toBe(true)
   })
 
-  it('accepts reject action with note', () => {
-    const result = dishRequestActionSchema.safeParse({
-      action: 'reject',
-      note: 'Duplicate dish',
-    })
-    expect(result.success).toBe(true)
-  })
-
-  it('accepts approve with optional category and dietary', () => {
-    const result = dishRequestActionSchema.safeParse({
-      action: 'approve',
-      category: 'Main Course',
-      dietary: 'veg',
+  it('accepts done action with note', () => {
+    const result = restaurantRequestActionSchema.safeParse({
+      action: 'done',
+      note: 'Added through seed script',
     })
     expect(result.success).toBe(true)
   })
 
   it('rejects invalid action', () => {
-    const result = dishRequestActionSchema.safeParse({ action: 'delete' })
+    const result = restaurantRequestActionSchema.safeParse({ action: 'approve' })
     expect(result.success).toBe(false)
   })
 
   it('rejects missing action', () => {
-    const result = dishRequestActionSchema.safeParse({})
+    const result = restaurantRequestActionSchema.safeParse({})
     expect(result.success).toBe(false)
   })
+})
 
-  it('rejects invalid category', () => {
-    const result = dishRequestActionSchema.safeParse({
-      action: 'approve',
-      category: 'Not A Real Category',
+describe('createRestaurantRequestSchema', () => {
+  it('accepts valid restaurant request', () => {
+    const result = createRestaurantRequestSchema.safeParse({
+      restaurantName: 'Carnatic Cafe',
+      location: 'Galleria Market',
+      note: 'Popular South Indian place',
     })
+    expect(result.success).toBe(true)
+  })
+
+  it('trims empty optional fields to null', () => {
+    const result = createRestaurantRequestSchema.safeParse({
+      restaurantName: '  Carnatic Cafe  ',
+      location: '',
+      note: '   ',
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.restaurantName).toBe('Carnatic Cafe')
+      expect(result.data.location).toBeNull()
+      expect(result.data.note).toBeNull()
+    }
+  })
+
+  it('rejects missing restaurant name', () => {
+    const result = createRestaurantRequestSchema.safeParse({ restaurantName: '' })
     expect(result.success).toBe(false)
   })
 })

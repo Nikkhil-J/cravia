@@ -1,54 +1,55 @@
 export default function RestaurantLoading() {
   return (
     <div>
-      {/* Cover hero — mirrors h-56 sm:h-64 in page.tsx */}
-      <div className="relative h-56 w-full animate-pulse bg-surface-2 sm:h-64">
-        {/* Floating back button */}
-        <div className="absolute left-3 top-3 h-11 w-11 rounded-full bg-black/30 md:hidden" />
+      {/* Mobile context bar */}
+      <div className="sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] z-40 flex items-center gap-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur-xl sm:top-[calc(4.25rem+env(safe-area-inset-top,0px))] sm:px-6 md:hidden">
+        <div className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-border" />
+        <div className="flex min-w-0 items-center gap-1.5">
+          <div className="h-3.5 w-20 animate-pulse rounded bg-border" />
+          <span className="text-text-muted">/</span>
+          <div className="h-3.5 w-32 animate-pulse rounded bg-border" />
+        </div>
       </div>
 
-      {/* Info card — mirrors -mt-8 rounded-t-xl overlap */}
-      <div className="relative -mt-8 rounded-t-xl border-t border-border bg-card">
-        <div className="mx-auto max-w-[1000px] px-4 pt-6 sm:px-6 sm:pt-8">
-
-          {/* Breadcrumb */}
-          <div className="mb-4 flex items-center gap-1.5 sm:gap-2">
-            <div className="h-3.5 w-20 animate-pulse rounded bg-border" />
-            <span className="text-text-muted">/</span>
-            <div className="h-3.5 w-36 animate-pulse rounded bg-border" />
+      {/* Cover hero — mirrors page.tsx */}
+      <div className="relative min-h-[320px] w-full overflow-hidden bg-surface-2 sm:min-h-[380px]">
+        <div className="absolute inset-0 animate-pulse bg-surface-2" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0">
+          <div className="mx-auto max-w-[1000px] px-4 pb-8 pt-24 sm:px-6 sm:pb-10">
+            <div className="mb-3 hidden items-center gap-2 md:flex">
+              <div className="h-3.5 w-20 animate-pulse rounded bg-border" />
+              <span className="text-text-muted">/</span>
+              <div className="h-3.5 w-36 animate-pulse rounded bg-border" />
+            </div>
+            <div className="h-9 w-2/3 animate-pulse rounded-lg bg-border sm:h-10" />
+            <div className="mt-2 h-4 w-1/3 animate-pulse rounded bg-border" />
+            <div className="mt-4 flex flex-wrap gap-3">
+              <div className="h-4 w-40 animate-pulse rounded bg-border" />
+              <div className="h-4 w-28 animate-pulse rounded bg-border" />
+            </div>
           </div>
+        </div>
+      </div>
 
-          {/* Restaurant name */}
-          <div className="h-8 w-2/3 animate-pulse rounded-lg bg-border sm:h-9" />
-
-          {/* Cuisines text */}
-          <div className="mt-1 h-4 w-1/3 animate-pulse rounded bg-border" />
-
-          {/* Meta: location */}
-          <div className="mt-3 flex items-center gap-1.5">
-            <div className="h-4 w-4 animate-pulse rounded bg-border" />
-            <div className="h-4 w-40 animate-pulse rounded bg-border" />
-          </div>
-
-          {/* Links row: Maps / Phone / Website */}
-          <div className="mt-3 flex flex-wrap gap-4">
-            <div className="h-4 w-28 animate-pulse rounded bg-border" />
-            <div className="h-4 w-20 animate-pulse rounded bg-border" />
-          </div>
-
+      {/* Content */}
+      <div className="bg-background">
+        <div className="mx-auto max-w-[1000px] px-4 py-6 sm:px-6 sm:py-8">
           {/* Cuisine pills */}
-          <div className="mt-4 flex flex-wrap gap-2">
-            {Array.from({ length: 3 }).map((_, i) => (
+          <div className="flex flex-wrap gap-2">
+            {Array.from({ length: 3 }).map((_, i) => {
+              const widthClass = ['w-16', 'w-20', 'w-24'][i] ?? 'w-16'
+              return (
               <div
                 key={i}
-                className="h-6 animate-pulse rounded-pill bg-border"
-                style={{ width: `${64 + i * 20}px` }}
+                className={`h-6 animate-pulse rounded-pill bg-border ${widthClass}`}
               />
-            ))}
+              )
+            })}
           </div>
 
           {/* "Review a dish" CTA button */}
-          <div className="mt-6">
+          <div className="mt-5">
             <div className="h-10 w-40 animate-pulse rounded-pill bg-border" />
           </div>
 

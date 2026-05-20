@@ -22,7 +22,7 @@ export const COLLECTIONS = {
   DISHES: 'dishes',
   REVIEWS: 'reviews',
   USERS: 'users',
-  DISH_REQUESTS: 'dishRequests',
+  RESTAURANT_REQUESTS: 'restaurantRequests',
   NOTIFICATIONS: 'notifications',
   COUPONS: 'coupons',
   RESTAURANT_CLAIMS: 'restaurantClaims',

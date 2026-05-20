@@ -43,13 +43,11 @@ function buildSvg(width, height) {
   const iconH      = Math.round(iconSize * 1.1)
   const gap        = Math.round(iconSize * 0.14)
   const fontSize   = Math.round(iconSize * 0.38)
-  const wordmarkW  = Math.round(iconSize * 2.4)
   const totalH     = iconH + gap + Math.round(fontSize * 1.4)
   const cx         = width / 2
   const logoY      = Math.round((height - totalH) / 2)
   const wmY        = logoY + iconH + gap + Math.round(fontSize * 1.05)
   const iconX      = Math.round(cx - iconSize / 2)
-  const wmX        = Math.round(cx - wordmarkW / 2)
   const scale      = iconSize / 100
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">

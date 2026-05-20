@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 
 const NAV_ITEMS = [
   { href: ROUTES.ADMIN, label: 'Dashboard', icon: '📊' },
-  { href: ROUTES.ADMIN_REQUESTS, label: 'Dish Requests', icon: '📋' },
+  { href: ROUTES.ADMIN_REQUESTS, label: 'Restaurant Requests', icon: '📋' },
   { href: ROUTES.ADMIN_REVIEWS, label: 'Flagged Reviews', icon: '🚩' },
   { href: ROUTES.ADMIN_USERS, label: 'Users', icon: '👥' },
   { href: ROUTES.ADMIN_COUPONS, label: 'Coupons', icon: '🎟️' },

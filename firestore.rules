@@ -13,6 +13,10 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.isAdmin == true;
+    }
+
     // Fields a user may set on their own profile via client SDK.
     function isProfileUpdate() {
       let allowed = ['displayName', 'avatarUrl', 'city', 'area', 'favoriteCuisines'].toSet();
@@ -95,17 +99,15 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // ── Dish Requests ─────────────────────────────────────────
+    // ── Restaurant Requests ───────────────────────────────────
 
-    match /dishRequests/{requestId} {
-      // Authenticated users can read dish requests.
-      allow read: if isSignedIn();
+    match /restaurantRequests/{requestId} {
+      // Users may read their own requests; admins may read pending requests for dashboard/admin UI.
+      allow read: if isSignedIn()
+                  && (resource.data.requestedBy == request.auth.uid || isAdmin());
 
-      // Authenticated user can create a request with their own userId.
-      allow create: if isSignedIn()
-                    && request.resource.data.requestedBy == request.auth.uid;
-
-      // Status updates (approve/reject) are server-only via admin API routes.
+      // Creation and completion go through server API routes only.
+      allow create: if false;
       allow update: if false;
       allow delete: if false;
     }

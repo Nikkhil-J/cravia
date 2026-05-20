@@ -83,7 +83,7 @@ export default async function DishPage({ params }: PageProps) {
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
-    <div className="mx-auto max-w-[1200px] overflow-hidden px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
       <TrackDishView dish={{
         id: dish.id,
         name: dish.name,
@@ -93,8 +93,8 @@ export default async function DishPage({ params }: PageProps) {
         avgOverall: dish.avgOverall,
         cuisines: dish.cuisines,
       }} />
-      {/* Breadcrumb row — back button + breadcrumb on one line on mobile */}
-      <nav className="mb-4 flex min-w-0 items-center gap-2 sm:mb-6">
+      {/* Breadcrumb row — sticky on mobile so PWA users keep a visible way back. */}
+      <nav className="sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] z-40 -mx-4 mb-4 flex min-w-0 items-center gap-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur-xl sm:-mx-6 sm:top-[calc(4.25rem+env(safe-area-inset-top,0px))] sm:mb-6 sm:px-6 md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none">
         <MobileBackButton parentHref={ROUTES.restaurant(dish.restaurantId)} />
         <div className="flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm">
         <Link href={ROUTES.EXPLORE} className="shrink-0 transition-colors hover:text-primary">Explore</Link>

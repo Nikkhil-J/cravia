@@ -8,7 +8,7 @@ vi.mock('@/lib/firebase/config', () => ({
     DISHES: 'dishes',
     REVIEWS: 'reviews',
     USERS: 'users',
-    DISH_REQUESTS: 'dishRequests',
+    RESTAURANT_REQUESTS: 'restaurantRequests',
     NOTIFICATIONS: 'notifications',
   },
   SUBCOLLECTIONS: {
@@ -55,7 +55,7 @@ vi.mock('@/lib/utils/index', () => ({
 import { adminAuth, adminDb } from '@/lib/firebase/admin-server'
 import { PATCH as patchRole } from '@/app/api/admin/users/[userId]/role/route'
 import { PATCH as patchPremium } from '@/app/api/admin/users/[userId]/premium/route'
-import { PATCH as patchDishRequest } from '@/app/api/admin/dish-requests/[id]/route'
+import { PATCH as patchRestaurantRequest } from '@/app/api/admin/restaurant-requests/[id]/route'
 
 function makeRequest(body: unknown, token?: string): Request {
   const headers = new Headers({ 'content-type': 'application/json' })
@@ -177,10 +177,10 @@ describe('Admin premium route', () => {
   })
 })
 
-describe('Admin dish-requests route', () => {
+describe('Admin restaurant-requests route', () => {
   it('returns 401 when no token is provided', async () => {
-    const req = makeRequest({ action: 'approve' })
-    const res = await patchDishRequest(req, makeContext({ id: 'req1' }))
+    const req = makeRequest({ action: 'done' })
+    const res = await patchRestaurantRequest(req, makeContext({ id: 'req1' }))
     expect(res.status).toBe(401)
   })
 
@@ -199,7 +199,7 @@ describe('Admin dish-requests route', () => {
     } as never)
 
     const req = makeRequest({ action: 'destroy' }, 'valid-token')
-    const res = await patchDishRequest(req, makeContext({ id: 'req1' }))
+    const res = await patchRestaurantRequest(req, makeContext({ id: 'req1' }))
     expect(res.status).toBe(400)
   })
 })

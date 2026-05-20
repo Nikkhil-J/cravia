@@ -8,7 +8,7 @@ vi.mock('@/lib/firebase/config', () => ({
     DISHES: 'dishes',
     REVIEWS: 'reviews',
     USERS: 'users',
-    DISH_REQUESTS: 'dishRequests',
+    RESTAURANT_REQUESTS: 'restaurantRequests',
     NOTIFICATIONS: 'notifications',
     COUPONS: 'coupons',
   },

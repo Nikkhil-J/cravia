@@ -33,7 +33,6 @@ const CLOUDINARY_SECRET = process.env.CLOUDINARY_API_SECRET
 const COLLECTIONS = { RESTAURANTS: 'restaurants' } as const
 const CALL_DELAY_MS = 200
 const PHOTO_MAX_WIDTH = 800
-const BATCH_LIMIT = 400
 
 // ── Validation ────────────────────────────────────────────────
 

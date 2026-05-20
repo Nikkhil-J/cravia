@@ -2,51 +2,46 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/hooks/useAuth'
-import { getPendingRequests } from '@/lib/services/dish-requests'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import type { DishRequest } from '@/lib/types'
+import type { RestaurantRequest } from '@/lib/types'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { HTTP_HEADERS } from '@/lib/constants'
 
 export default function AdminRequestsPage() {
   const { user, authUser } = useAuth()
-  const [requests, setRequests] = useState<DishRequest[]>([])
+  const [requests, setRequests] = useState<RestaurantRequest[]>([])
   const [loading, setLoading] = useState(true)
-  const [rejectNote, setRejectNote] = useState<Record<string, string>>({})
+  const [adminNote, setAdminNote] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    getPendingRequests().then((r) => { setRequests(r); setLoading(false) })
-  }, [])
-
-  async function handleApprove(id: string) {
-    if (!user || !authUser) return
-    const token = await authUser.getIdToken()
-    const response = await fetch(API_ENDPOINTS.adminDishRequest(encodeURIComponent(id)), {
-      method: 'PATCH',
-      headers: {
-        authorization: `Bearer ${token}`,
-        [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
-      },
-      body: JSON.stringify({ action: 'approve' }),
-    })
-    if (response.ok) {
-      setRequests((prev) => prev.filter((r) => r.id !== id))
+    async function loadRequests() {
+      if (!authUser) return
+      const token = await authUser.getIdToken()
+      const response = await fetch(API_ENDPOINTS.ADMIN_RESTAURANT_REQUESTS, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      if (response.ok) {
+        const payload = (await response.json()) as { requests?: RestaurantRequest[] }
+        setRequests(payload.requests ?? [])
+      }
+      setLoading(false)
     }
-  }
+    loadRequests()
+  }, [authUser])
 
-  async function handleReject(id: string) {
+  async function handleMarkDone(id: string) {
     if (!user || !authUser) return
     const token = await authUser.getIdToken()
-    const response = await fetch(API_ENDPOINTS.adminDishRequest(encodeURIComponent(id)), {
+    const response = await fetch(API_ENDPOINTS.adminRestaurantRequest(encodeURIComponent(id)), {
       method: 'PATCH',
       headers: {
         authorization: `Bearer ${token}`,
         [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
       },
-      body: JSON.stringify({ action: 'reject', note: rejectNote[id] ?? '' }),
+      body: JSON.stringify({ action: 'done', note: adminNote[id] ?? '' }),
     })
     if (response.ok) {
       setRequests((prev) => prev.filter((r) => r.id !== id))
@@ -57,46 +52,38 @@ export default function AdminRequestsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-xl font-bold text-heading">Dish Requests</h1>
+      <h1 className="font-display text-xl font-bold text-heading">Restaurant Requests</h1>
       <p className="mt-1 text-sm text-text-muted">{requests.length} pending</p>
 
       {requests.length === 0 ? (
-        <div className="mt-8"><EmptyState icon="✅" title="All clear" description="No pending dish requests." /></div>
+        <div className="mt-8"><EmptyState icon="✅" title="All clear" description="No pending restaurant requests." /></div>
       ) : (
         <div className="mt-6 space-y-4">
           {requests.map((req) => (
             <div key={req.id} className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="font-semibold text-heading">{req.dishName}</p>
-                  <p className="text-sm text-text-secondary">{req.restaurantName}</p>
-                  {req.description && <p className="mt-1 text-xs text-text-muted">{req.description}</p>}
+                  <p className="font-semibold text-heading">{req.restaurantName}</p>
+                  {req.location && <p className="text-sm text-text-secondary">{req.location}</p>}
+                  {req.note && <p className="mt-1 text-xs text-text-muted">{req.note}</p>}
                   <p className="mt-1 text-xs text-text-muted">Requested by {req.requestedByName}</p>
                 </div>
               </div>
               <div className="mt-3">
                 <Input
-                  placeholder="Rejection note (optional)…"
-                  value={rejectNote[req.id] ?? ''}
-                  onChange={(e) => setRejectNote((prev) => ({ ...prev, [req.id]: e.target.value }))}
+                  placeholder="Admin note (optional)..."
+                  value={adminNote[req.id] ?? ''}
+                  onChange={(e) => setAdminNote((prev) => ({ ...prev, [req.id]: e.target.value }))}
                   className="h-auto px-3 py-1.5 text-xs border-border focus:border-primary"
                 />
               </div>
               <div className="mt-3 flex gap-2">
                 <Button
-                  onClick={() => handleApprove(req.id)}
+                  onClick={() => handleMarkDone(req.id)}
                   size="xs"
                   className="rounded-lg px-3 py-1.5 text-xs font-medium hover:bg-primary-dark"
                 >
-                  Approve
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => handleReject(req.id)}
-                  size="xs"
-                  className="rounded-lg px-3 py-1.5 text-xs text-text-secondary hover:bg-bg-cream"
-                >
-                  Reject
+                  Mark done
                 </Button>
               </div>
             </div>

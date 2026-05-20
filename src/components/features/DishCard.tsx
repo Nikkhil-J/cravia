@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import type { Dish } from "@/lib/types";
 import { cn } from "@/lib/utils/index";
 import { getCuisineEmoji } from "@/lib/utils/dish-display";
@@ -74,7 +73,7 @@ export function DishCard({
           </p>
         </div>
 
-        <div className="relative w-[120px] shrink-0 pb-4 sm:w-[128px] md:w-full md:pb-0">
+        <div className="relative w-[120px] shrink-0 sm:w-[128px] md:w-full">
           <div className="relative h-[120px] w-[120px] overflow-hidden rounded-lg bg-background-tertiary sm:h-[128px] sm:w-[128px] md:h-44 md:w-full md:rounded-none">
             {dish.coverImage ? (
               <Image
@@ -92,17 +91,22 @@ export function DishCard({
               </div>
             )}
           </div>
-          <Button
-            variant="outline"
-            onClick={() =>
+          <div
+            onClick={(e) => {
+              e.preventDefault();
               router.push(
                 `${ROUTES.WRITE_REVIEW}?dishId=${encodeURIComponent(dish.id)}`,
-              )
-            }
-            className="pointer-events-auto absolute bottom-2 left-1/2 h-11 min-h-11 w-[92px] -translate-x-1/2 rounded-md border-[0.5px] border-border-secondary bg-background-elevated px-0 text-xs font-bold text-brand-orange shadow-lg hover:bg-background-elevated hover:text-brand-orange md:hidden"
+              );
+            }}
+            className="pointer-events-auto absolute -bottom-3 left-1/2 z-20 flex h-10 w-[88px] -translate-x-1/2 cursor-pointer items-center justify-center rounded-sm border border-border-tertiary bg-background-elevated/95 pl-4 pr-5 shadow-lg transition-colors hover:bg-background-tertiary md:hidden"
           >
-            Review
-          </Button>
+            <span className="text-sm font-extrabold tracking-wide text-success">
+              REVIEW
+            </span>
+            <span className="absolute right-1 top-0.5 text-sm font-medium leading-none text-success">
+              +
+            </span>
+          </div>
         </div>
       </div>
     </div>

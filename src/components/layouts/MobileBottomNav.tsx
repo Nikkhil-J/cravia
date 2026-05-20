@@ -1,5 +1,6 @@
 'use client'
 
+import type { MouseEvent } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home, Search, Heart, User, Plus } from 'lucide-react'
@@ -19,6 +20,16 @@ const navItems = [
 export function MobileBottomNav() {
   const pathname = usePathname()
   const { isAuthenticated, isLoading, isInitialized } = useAuth()
+
+  function handleNavItemClick(
+    event: MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) {
+    if (href !== ROUTES.HOME || pathname !== ROUTES.HOME) return
+
+    event.preventDefault()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   // AppLoader covers the UI during the initial auth check — don't render
   // the nav until auth state is known so tabs never flicker into view.
@@ -61,6 +72,7 @@ export function MobileBottomNav() {
           <Link
             key={item.href}
             href={item.href}
+            onClick={(event) => handleNavItemClick(event, item.href)}
             className={cn(
               'flex min-h-[44px] flex-1 flex-col items-center gap-0.5 py-1.5 text-xs font-medium transition-colors',
               isActive ? 'text-primary' : 'text-text-muted',

@@ -26,7 +26,7 @@ export type DishCategory =
   | 'Beverage'
   | 'Other'
 
-export type DishRequestStatus = 'pending' | 'approved' | 'rejected'
+export type RestaurantRequestStatus = 'pending' | 'done'
 
 export type RestaurantClaimStatus = 'pending' | 'approved' | 'rejected'
 export type ClaimantRole = 'owner' | 'manager'
@@ -159,18 +159,20 @@ export interface WishlistItem {
   savedAt: string
 }
 
-export interface DishRequest {
+export interface RestaurantRequest {
   id: string
-  restaurantId: string
   restaurantName: string
-  dishName: string
-  description: string | null
+  restaurantNameLower: string
+  location: string | null
+  note: string | null
   requestedBy: string
   requestedByName: string
-  status: DishRequestStatus
+  requestedByCity: string | null
+  status: RestaurantRequestStatus
   adminId: string | null
   adminNote: string | null
   createdAt: string
+  completedAt: string | null
 }
 
 export type NotificationType = 'badge_earned' | 'helpful_vote' | 'review_approved' | 'review_removed' | 'system'
@@ -261,7 +263,7 @@ export interface AdminStats {
   totalRestaurants: number
   totalDishes: number
   totalReviews: number
-  pendingRequests: number
+  pendingRestaurantRequests: number
   flaggedReviews: number
   totalUsers: number
 }

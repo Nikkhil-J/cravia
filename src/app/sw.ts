@@ -8,11 +8,10 @@ declare const self: ServiceWorkerGlobalScope & {
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
-  // Force immediate SW activation for this release so existing users get
-  // the dark-mode flicker fix without needing to manually accept a prompt.
-  // Revert to false once the fix is confirmed shipped to all users.
-  skipWaiting: true,
-  clientsClaim: true,
+  // Let the app prompt the user before activating an updated service worker.
+  // Immediate takeover can clear the Next.js client router cache mid-session.
+  skipWaiting: false,
+  clientsClaim: false,
   navigationPreload: true,
   runtimeCaching: defaultCache,
   fallbacks: {

@@ -75,9 +75,18 @@ export default async function RestaurantPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div>
+        {/* Mobile context bar — mirrors the dish page back + breadcrumb pattern. */}
+        <nav className="sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] z-40 flex min-w-0 items-center gap-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur-xl sm:top-[calc(4.25rem+env(safe-area-inset-top,0px))] sm:px-6 md:hidden">
+          <MobileBackButton parentHref={ROUTES.EXPLORE} />
+          <div className="flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm">
+            <Link href={ROUTES.EXPLORE} className="shrink-0 transition-colors hover:text-primary">Restaurants</Link>
+            <span className="shrink-0">/</span>
+            <span className="min-w-0 truncate text-text-primary">{restaurant.name}</span>
+          </div>
+        </nav>
+
         {/* Hero */}
-        <div className="relative h-56 w-full overflow-hidden bg-gradient-to-r from-bg-cream via-coral-light to-primary-light sm:h-64">
-          <MobileBackButton variant="floating" parentHref={ROUTES.EXPLORE} />
+        <section className="relative min-h-[320px] w-full overflow-hidden bg-gradient-to-r from-bg-cream via-coral-light to-primary-light sm:min-h-[380px]">
           {restaurant.coverImage && (
             <Image
               src={restaurant.coverImage}
@@ -88,85 +97,76 @@ export default async function RestaurantPage({ params }: PageProps) {
               className="object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0">
+            <div className="mx-auto max-w-[1000px] px-4 pb-8 pt-24 sm:px-6 sm:pb-10">
+              <nav className="mb-3 hidden min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm md:flex">
+                <Link
+                  href={ROUTES.EXPLORE}
+                  className="shrink-0 transition-colors hover:text-primary"
+                >
+                  Restaurants
+                </Link>
+                <span className="shrink-0">/</span>
+                <span className="min-w-0 truncate text-text-primary">
+                  {restaurant.name}
+                </span>
+              </nav>
 
-        {/* Info */}
-        <div className="relative -mt-8 rounded-t-xl border-t border-glass-border bg-glass-surface backdrop-blur-xl">
-          <div className="mx-auto max-w-[1000px] px-4 pt-6 sm:px-6 sm:pt-8">
-            {/* Breadcrumb */}
-            <nav className="mb-4 flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm">
-              <Link
-                href={ROUTES.EXPLORE}
-                className="shrink-0 transition-colors hover:text-primary"
-              >
-                Restaurants
-              </Link>
-              <span className="shrink-0">/</span>
-              <span className="min-w-0 truncate text-text-primary">
+              <h1 className="font-display text-3xl font-bold text-heading sm:text-4xl">
                 {restaurant.name}
-              </span>
-            </nav>
+              </h1>
+              <p className="mt-1 text-sm text-text-secondary">
+                {restaurant.cuisines.join(" · ")}
+              </p>
 
-            <h1 className="font-display text-2xl font-bold text-heading sm:text-3xl">
-              {restaurant.name}
-            </h1>
-            <p className="mt-1 text-sm text-text-secondary">
-              {restaurant.cuisines.join(" · ")}
-            </p>
-
-            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
-              <span className="flex items-center gap-1.5 text-text-secondary">
-                <svg
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                {restaurant.area}, {restaurant.city}
-              </span>
-            </div>
-
-            <div className="flex flex-wrap gap-3 mt-3">
-              {restaurant.googleMapsUrl && (
-                <a
-                  href={restaurant.googleMapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-sm text-text-muted hover:text-primary transition-colors"
-                >
+              <div className="mt-4 flex flex-wrap gap-3 text-sm">
+                <span className="flex items-center gap-1.5 text-text-secondary">
                   <MapPin size={14} />
-                  View on Google Maps
-                </a>
-              )}
-              {restaurant.phoneNumber && (
-                <a
-                  href={`tel:${restaurant.phoneNumber}`}
-                  className="flex items-center gap-1.5 text-sm text-text-muted hover:text-primary transition-colors"
-                >
-                  <Phone size={14} />
-                  {restaurant.phoneNumber}
-                </a>
-              )}
-              {restaurant.website && (
-                <a
-                  href={restaurant.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-sm text-text-muted hover:text-primary transition-colors"
-                >
-                  <Globe size={14} />
-                  Website
-                </a>
-              )}
+                  {restaurant.area}, {restaurant.city}
+                </span>
+                {restaurant.phoneNumber && (
+                  <a
+                    href={`tel:${restaurant.phoneNumber}`}
+                    className="flex items-center gap-1.5 text-text-muted transition-colors hover:text-primary"
+                  >
+                    <Phone size={14} />
+                    {restaurant.phoneNumber}
+                  </a>
+                )}
+                {restaurant.googleMapsUrl && (
+                  <a
+                    href={restaurant.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-text-muted transition-colors hover:text-primary"
+                  >
+                    <MapPin size={14} />
+                    View map
+                  </a>
+                )}
+                {restaurant.website && (
+                  <a
+                    href={restaurant.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-text-muted transition-colors hover:text-primary"
+                  >
+                    <Globe size={14} />
+                    Website
+                  </a>
+                )}
+              </div>
             </div>
+          </div>
+        </section>
+
+        {/* Content */}
+        <div className="bg-background">
+          <div className="mx-auto max-w-[1000px] px-4 py-6 sm:px-6 sm:py-8">
 
             {restaurant.cuisines.length > 0 && (
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                 {restaurant.cuisines.map((c) => (
                   <span
                     key={c}
@@ -179,7 +179,7 @@ export default async function RestaurantPage({ params }: PageProps) {
             )}
 
             {dishes.length > 0 && (
-              <div className="mt-6 flex gap-3">
+              <div className="mt-5 flex gap-3">
                 <ReviewDishPicker
                   dishes={dishes}
                   categories={restaurant.categories}

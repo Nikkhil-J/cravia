@@ -1,8 +1,8 @@
 export default function DishLoading() {
   return (
-    <div className="mx-auto max-w-[1200px] overflow-hidden px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
       {/* Breadcrumb row — back button + crumbs */}
-      <div className="mb-6 flex items-center gap-2">
+      <div className="sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] z-40 -mx-4 mb-6 flex items-center gap-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur-xl sm:-mx-6 sm:top-[calc(4.25rem+env(safe-area-inset-top,0px))] sm:px-6 md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none">
         <div className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-border md:hidden" />
         <div className="flex items-center gap-2">
           <div className="h-3.5 w-10 animate-pulse rounded bg-border" />

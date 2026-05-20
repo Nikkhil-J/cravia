@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { LoadMoreDishes } from '@/components/features/LoadMoreDishes'
 import { LoadMoreRestaurants } from '@/components/features/LoadMoreRestaurants'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -9,6 +10,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { useExploreSearchStore } from '@/lib/store/exploreSearchStore'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { API_ENDPOINTS } from '@/lib/constants/api'
+import { ROUTES } from '@/lib/constants/routes'
 import { GURUGRAM } from '@/lib/constants'
 import type { Dish, Restaurant, SortOrder } from '@/lib/types'
 
@@ -197,11 +199,21 @@ export function ExploreSearchResults() {
         {count}{hasMore ? '+' : ''} result{count !== 1 ? 's' : ''} for &ldquo;{query}&rdquo;
       </p>
       {count === 0 ? (
-        <EmptyState
-          icon="🏪"
-          title={`No restaurants found for "${query}"`}
-          description="Try a different search term or adjust your filters."
-        />
+        <div>
+          <EmptyState
+            icon="🏪"
+            title={`No restaurants found for "${query}"`}
+            description="Tell us what is missing and we will review it for Cravia."
+          />
+          <div className="mt-4 text-center">
+            <Link
+              href={`${ROUTES.REQUEST_RESTAURANT}?name=${encodeURIComponent(query)}`}
+              className="inline-flex min-h-11 items-center rounded-pill bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+            >
+              Request &ldquo;{query}&rdquo;
+            </Link>
+          </div>
+        </div>
       ) : (
         <LoadMoreRestaurants
           key={restaurantResultsKey}

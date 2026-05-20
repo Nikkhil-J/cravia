@@ -1,6 +1,5 @@
 import type { AdminRepository } from "./adminRepository";
 import type { DishRepository } from "./dishRepository";
-import type { DishRequestRepository } from "./dishRequestRepository";
 import type { NotificationRepository } from "./notificationRepository";
 import type { RestaurantRepository } from "./restaurantRepository";
 import type { RestaurantSearchRepository } from "./restaurantSearchRepository";
@@ -9,7 +8,6 @@ import type { UserRepository } from "./userRepository";
 import type { WishlistRepository } from "./wishlistRepository";
 import { FirebaseAdminRepository } from "./firebase/firebaseAdminRepository";
 import { FirebaseDishRepository } from "./firebase/firebaseDishRepository";
-import { FirebaseDishRequestRepository } from "./firebase/firebaseDishRequestRepository";
 import { FirebaseNotificationRepository } from "./firebase/firebaseNotificationRepository";
 import { FirebaseRestaurantRepository } from "./firebase/firebaseRestaurantRepository";
 import { FirebaseRestaurantSearchRepository } from "./firebase/firebaseRestaurantSearchRepository";
@@ -54,6 +52,4 @@ export const wishlistRepository: WishlistRepository =
   new FirebaseWishlistRepository();
 export const notificationRepository: NotificationRepository =
   new FirebaseNotificationRepository();
-export const dishRequestRepository: DishRequestRepository =
-  new FirebaseDishRequestRepository();
 export const adminRepository: AdminRepository = new FirebaseAdminRepository();

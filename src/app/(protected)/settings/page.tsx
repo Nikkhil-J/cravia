@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { Camera } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -35,7 +34,6 @@ export default function SettingsPage() {
   const { user } = useAuth()
   const setUser = useAuthStore((s) => s.setUser)
   const authUser = useAuthStore((s) => s.authUser)
-  const router = useRouter()
   const [displayName, setDisplayName] = useState('')
   const [area, setArea] = useState('')
   const [saving, setSaving] = useState(false)

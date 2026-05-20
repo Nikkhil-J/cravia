@@ -296,15 +296,31 @@ async function RestaurantExploreResults({
           <EmptyState
             icon="🏪"
             title={query ? `No restaurants found for "${query}"` : 'No restaurants found'}
-            description="Try adjusting your filters or search term."
+            description={query ? 'Tell us what is missing and we will review it for Cravia.' : 'Try adjusting your filters or request a restaurant we should add.'}
             ctaLabel="Clear filters"
             ctaHref={`${ROUTES.EXPLORE}?tab=restaurants`}
           />
           {query && (
+            <div className="mt-4 flex flex-col items-center gap-2 text-sm text-text-muted">
+              <Link
+                href={`${ROUTES.REQUEST_RESTAURANT}?name=${encodeURIComponent(query)}`}
+                className="font-semibold text-primary hover:underline"
+              >
+                Request this restaurant
+              </Link>
+              <p>
+                Looking for a dish?{' '}
+                <Link href={`${ROUTES.EXPLORE}?tab=dishes&q=${encodeURIComponent(query)}`} className="font-medium text-primary hover:underline">
+                  Try the Dishes tab
+                </Link>
+              </p>
+            </div>
+          )}
+          {!query && (
             <p className="mt-4 text-center text-sm text-text-muted">
-              Looking for a dish?{' '}
-              <Link href={`${ROUTES.EXPLORE}?tab=dishes&q=${encodeURIComponent(query)}`} className="font-medium text-primary hover:underline">
-                Try the Dishes tab
+              Can&apos;t find a restaurant?{' '}
+              <Link href={ROUTES.REQUEST_RESTAURANT} className="font-medium text-primary hover:underline">
+                Request it here
               </Link>
             </p>
           )}

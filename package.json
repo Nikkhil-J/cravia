@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:unit": "vitest run --exclude src/__tests__/rules/",
-    "test:rules": "vitest run src/__tests__/rules/",
+    "test:rules": "XDG_CONFIG_HOME=/tmp/cravia-firebase-config firebase emulators:exec --only firestore \"vitest run --config vitest.rules.config.ts\"",
     "seed": "npx tsx scripts/seed-cities.ts",
     "ingest": "npx tsx scripts/ingest-google-places.ts",
     "emulator": "firebase emulators:start --only firestore",

@@ -1,4 +1,4 @@
-import type { Dish, DishRequest, Notification, Restaurant, Review, User, WishlistItem } from '@/lib/types'
+import type { Dish, Notification, Restaurant, Review, User, WishlistItem } from '@/lib/types'
 
 type MaybeTimestamp = { toDate?: () => Date } | Date | string | null | undefined
 
@@ -58,10 +58,6 @@ export function mapUser(entity: User): User {
 
 export function mapWishlistItem(entity: WishlistItem): WishlistItem {
   return { ...entity, savedAt: toIso(entity.savedAt as MaybeTimestamp) }
-}
-
-export function mapDishRequest(entity: DishRequest): DishRequest {
-  return { ...entity, createdAt: toIso(entity.createdAt as MaybeTimestamp) }
 }
 
 export function mapNotification(entity: Notification): Notification {

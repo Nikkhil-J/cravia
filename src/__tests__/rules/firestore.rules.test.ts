@@ -1,11 +1,8 @@
 /**
  * Firestore security rules tests.
  *
- * Requires the Firestore emulator running on 127.0.0.1:8080:
- *   npx firebase emulators:start --only firestore
- *
  * Run with:
- *   npx vitest run src/__tests__/rules/firestore.rules.test.ts
+ *   pnpm test:rules
  */
 
 import {
@@ -36,11 +33,11 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await testEnv.cleanup()
+  await testEnv?.cleanup()
 })
 
 beforeEach(async () => {
-  await testEnv.clearFirestore()
+  if (testEnv) await testEnv.clearFirestore()
 })
 
 // ── Users ─────────────────────────────────────────────────
@@ -345,31 +342,61 @@ describe('reviews collection', () => {
   })
 })
 
-// ── Dish Requests ─────────────────────────────────────────
+// ── Restaurant Requests ───────────────────────────────────
 
-describe('dishRequests collection', () => {
-  it('allows authenticated user to create request with own requestedBy', async () => {
+describe('restaurantRequests collection', () => {
+  it('allows owner to read their request', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection('restaurantRequests').doc('req1').set({
+        requestedBy: 'alice',
+        restaurantName: 'Carnatic Cafe',
+        status: 'pending',
+      })
+    })
+
     const alice = testEnv.authenticatedContext('alice')
     const db = alice.firestore()
 
-    await assertSucceeds(
-      db.collection('dishRequests').doc('req1').set({
+    await assertSucceeds(db.collection('restaurantRequests').doc('req1').get())
+  })
+
+  it('denies non-owner reading request', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection('restaurantRequests').doc('req1').set({
         requestedBy: 'alice',
-        dishName: 'Butter Chicken',
-        restaurantId: 'rest1',
-        restaurantName: 'Meghana',
+        restaurantName: 'Carnatic Cafe',
         status: 'pending',
       })
+    })
+
+    const bob = testEnv.authenticatedContext('bob')
+
+    await assertFails(bob.firestore().collection('restaurantRequests').doc('req1').get())
+  })
+
+  it('allows admin to query pending requests', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection('restaurantRequests').doc('req1').set({
+        requestedBy: 'alice',
+        restaurantName: 'Carnatic Cafe',
+        status: 'pending',
+      })
+    })
+
+    const admin = testEnv.authenticatedContext('admin', { isAdmin: true })
+
+    await assertSucceeds(
+      admin.firestore().collection('restaurantRequests').where('status', '==', 'pending').get()
     )
   })
 
-  it('denies unauthenticated creating request', async () => {
-    const unauthed = testEnv.unauthenticatedContext()
+  it('denies client create because requests are server-only', async () => {
+    const alice = testEnv.authenticatedContext('alice')
 
     await assertFails(
-      unauthed.firestore().collection('dishRequests').doc('req1').set({
+      alice.firestore().collection('restaurantRequests').doc('req1').set({
         requestedBy: 'alice',
-        dishName: 'Butter Chicken',
+        restaurantName: 'Carnatic Cafe',
         status: 'pending',
       })
     )
@@ -377,9 +404,9 @@ describe('dishRequests collection', () => {
 
   it('denies client update (status changes are server-only)', async () => {
     await testEnv.withSecurityRulesDisabled(async (ctx) => {
-      await ctx.firestore().collection('dishRequests').doc('req1').set({
+      await ctx.firestore().collection('restaurantRequests').doc('req1').set({
         requestedBy: 'alice',
-        dishName: 'Butter Chicken',
+        restaurantName: 'Carnatic Cafe',
         status: 'pending',
       })
     })
@@ -388,7 +415,7 @@ describe('dishRequests collection', () => {
     const db = alice.firestore()
 
     await assertFails(
-      db.collection('dishRequests').doc('req1').update({ status: 'approved' })
+      db.collection('restaurantRequests').doc('req1').update({ status: 'done' })
     )
   })
 })

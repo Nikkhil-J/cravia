@@ -14,11 +14,11 @@ import { logError } from '../logger'
 /** Returns aggregate counts for the admin dashboard. */
 export async function getAdminStats(): Promise<AdminStats | null> {
   try {
-    const [restaurants, dishes, reviews, pending, flagged, users] = await Promise.all([
+    const [restaurants, dishes, reviews, pendingRestaurantRequests, flagged, users] = await Promise.all([
       getCountFromServer(query(collection(db, COLLECTIONS.RESTAURANTS), where('isActive', '==', true))),
       getCountFromServer(query(collection(db, COLLECTIONS.DISHES), where('isActive', '==', true))),
       getCountFromServer(collection(db, COLLECTIONS.REVIEWS)),
-      getCountFromServer(query(collection(db, COLLECTIONS.DISH_REQUESTS), where('status', '==', 'pending'))),
+      getCountFromServer(query(collection(db, COLLECTIONS.RESTAURANT_REQUESTS), where('status', '==', 'pending'))),
       getCountFromServer(query(collection(db, COLLECTIONS.REVIEWS), where('isFlagged', '==', true))),
       getCountFromServer(collection(db, COLLECTIONS.USERS)),
     ])
@@ -26,7 +26,7 @@ export async function getAdminStats(): Promise<AdminStats | null> {
       totalRestaurants: restaurants.data().count,
       totalDishes:      dishes.data().count,
       totalReviews:     reviews.data().count,
-      pendingRequests:  pending.data().count,
+      pendingRestaurantRequests: pendingRestaurantRequests.data().count,
       flaggedReviews:   flagged.data().count,
       totalUsers:       users.data().count,
     }
