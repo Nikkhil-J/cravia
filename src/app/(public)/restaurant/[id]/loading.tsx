@@ -4,11 +4,7 @@ export default function RestaurantLoading() {
       {/* Mobile context bar */}
       <div className="sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] z-40 flex items-center gap-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur-xl sm:top-[calc(4.25rem+env(safe-area-inset-top,0px))] sm:px-6 md:hidden">
         <div className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-border" />
-        <div className="flex min-w-0 items-center gap-1.5">
-          <div className="h-3.5 w-20 animate-pulse rounded bg-border" />
-          <span className="text-text-muted">/</span>
-          <div className="h-3.5 w-32 animate-pulse rounded bg-border" />
-        </div>
+        <div className="h-4 w-36 min-w-0 animate-pulse rounded bg-border" />
       </div>
 
       {/* Cover hero — mirrors page.tsx */}
@@ -16,7 +12,7 @@ export default function RestaurantLoading() {
         <div className="absolute inset-0 animate-pulse bg-surface-2" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
         <div className="absolute inset-x-0 bottom-0">
-          <div className="mx-auto max-w-[1000px] px-4 pb-8 pt-24 sm:px-6 sm:pb-10">
+          <div className="mx-auto max-w-[1000px] px-4 pb-3 pt-24 sm:px-6 sm:pb-10">
             <div className="mb-3 hidden items-center gap-2 md:flex">
               <div className="h-3.5 w-20 animate-pulse rounded bg-border" />
               <span className="text-text-muted">/</span>
@@ -34,7 +30,7 @@ export default function RestaurantLoading() {
 
       {/* Content */}
       <div className="bg-background">
-        <div className="mx-auto max-w-[1000px] px-4 py-6 sm:px-6 sm:py-8">
+        <div className="mx-auto max-w-[1000px] px-4 pb-6 pt-3 sm:px-6 sm:py-8">
           {/* Cuisine pills */}
           <div className="flex flex-wrap gap-2">
             {Array.from({ length: 3 }).map((_, i) => {

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { Star, Gift, Settings, ChevronRight, Store } from 'lucide-react'
+import { Star, Gift, Settings, ChevronRight, Store, ShieldCheck } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useMyReviews } from '@/lib/hooks/useMyReviews'
 import { BADGE_DEFINITIONS, LEVEL_THRESHOLDS, CITY_DISPLAY_NAME } from '@/lib/constants'
@@ -95,6 +95,13 @@ export default function MyProfilePage() {
     { label: 'Badges', value: earnedBadges.length },
     { label: 'Points', value: user.dishPointsBalance },
   ]
+
+  const quickLinks = user.isAdmin
+    ? [
+        ...QUICK_LINKS,
+        { label: 'Admin Panel', desc: 'Manage Cravia', icon: ShieldCheck, href: ROUTES.ADMIN },
+      ]
+    : QUICK_LINKS
 
   return (
     <>
@@ -263,7 +270,7 @@ export default function MyProfilePage() {
 
           {/* Quick links */}
           <div className="overflow-hidden rounded-xl border border-border bg-card">
-            {QUICK_LINKS.map(({ label, desc, icon: Icon, href }) => (
+            {quickLinks.map(({ label, desc, icon: Icon, href }) => (
               <Link
                 key={label}
                 href={href}

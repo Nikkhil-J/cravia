@@ -75,14 +75,12 @@ export default async function RestaurantPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div>
-        {/* Mobile context bar — mirrors the dish page back + breadcrumb pattern. */}
+        {/* Mobile context bar: back follows history, title identifies the current page. */}
         <nav className="sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] z-40 flex min-w-0 items-center gap-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur-xl sm:top-[calc(4.25rem+env(safe-area-inset-top,0px))] sm:px-6 md:hidden">
           <MobileBackButton parentHref={ROUTES.EXPLORE} />
-          <div className="flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm">
-            <Link href={ROUTES.EXPLORE} className="shrink-0 transition-colors hover:text-primary">Restaurants</Link>
-            <span className="shrink-0">/</span>
-            <span className="min-w-0 truncate text-text-primary">{restaurant.name}</span>
-          </div>
+          <span className="min-w-0 truncate text-sm font-semibold text-text-primary">
+            {restaurant.name}
+          </span>
         </nav>
 
         {/* Hero */}
@@ -99,7 +97,7 @@ export default async function RestaurantPage({ params }: PageProps) {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
           <div className="absolute inset-x-0 bottom-0">
-            <div className="mx-auto max-w-[1000px] px-4 pb-8 pt-24 sm:px-6 sm:pb-10">
+            <div className="mx-auto max-w-[1000px] px-4 pb-3 pt-24 sm:px-6 sm:pb-10">
               <nav className="mb-3 hidden min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm md:flex">
                 <Link
                   href={ROUTES.EXPLORE}
@@ -163,7 +161,7 @@ export default async function RestaurantPage({ params }: PageProps) {
 
         {/* Content */}
         <div className="bg-background">
-          <div className="mx-auto max-w-[1000px] px-4 py-6 sm:px-6 sm:py-8">
+          <div className="mx-auto max-w-[1000px] px-4 pb-6 pt-3 sm:px-6 sm:py-8">
 
             {restaurant.cuisines.length > 0 && (
               <div className="flex flex-wrap gap-2">

@@ -8,6 +8,7 @@ import { restaurantRequestActionSchema } from '@/lib/validation/admin.schema'
 import { createServerNotification } from '@/lib/services/notifications-server'
 import { captureError } from '@/lib/monitoring/sentry'
 import { API_ERRORS } from '@/lib/constants/errors'
+import { ROUTES } from '@/lib/constants/routes'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -47,9 +48,9 @@ export async function PATCH(req: Request, context: RouteContext) {
       createServerNotification(
         requestedBy,
         'system',
-        'Restaurant request completed',
-        `"${restaurantName}" has been reviewed by our team. Thanks for helping Cravia grow!`,
-        null
+        'Your requested restaurant is live',
+        `"${restaurantName}" is now on Cravia. Add your first review and help others discover what to order.`,
+        ROUTES.WRITE_REVIEW
       ).catch((error) => {
         captureError(error, {
           route: '/api/admin/restaurant-requests/[id]',
