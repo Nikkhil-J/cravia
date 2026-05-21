@@ -123,6 +123,7 @@ export async function POST(req: Request) {
             avgPortion: dish.avgPortion,
             avgValue: dish.avgValue,
             reviewCount: dish.reviewCount,
+            coverImage: body.photoUrl ?? dish.coverImage ?? null,
           })
       }).catch((err) => captureError(err, { route: '/api/reviews', extra: { phase: 'typesense-sync' } }))
     }

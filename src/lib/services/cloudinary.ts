@@ -1,8 +1,23 @@
+import imageCompression from 'browser-image-compression'
+
 // Next.js only inlines NEXT_PUBLIC env vars with direct property access.
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
 const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
 
 const UPLOAD_TIMEOUT_MS = 30_000
+
+const IMAGE_COMPRESSION_OPTIONS = {
+  maxSizeMB: 1,
+  maxWidthOrHeight: 1920,
+  useWebWorker: true,
+  fileType: 'image/webp',
+} as const
+
+async function compressImageForUpload(file: File): Promise<File | Blob> {
+  if (!file.type.startsWith('image/')) return file
+
+  return imageCompression(file, IMAGE_COMPRESSION_OPTIONS)
+}
 
 export async function uploadDishPhoto(file: File, dishId: string): Promise<string> {
   if (!CLOUD_NAME) {
@@ -12,8 +27,9 @@ export async function uploadDishPhoto(file: File, dishId: string): Promise<strin
     throw new Error('Missing env var: NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET')
   }
 
+  const compressed = await compressImageForUpload(file)
   const formData = new FormData()
-  formData.append('file', file)
+  formData.append('file', compressed)
   formData.append('upload_preset', UPLOAD_PRESET)
   formData.append('folder', `cravia/reviews/${dishId}`)
 
@@ -47,8 +63,9 @@ export async function uploadBillPhoto(file: File, dishId: string): Promise<strin
     throw new Error('Missing env var: NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET')
   }
 
+  const compressed = await compressImageForUpload(file)
   const formData = new FormData()
-  formData.append('file', file)
+  formData.append('file', compressed)
   formData.append('upload_preset', UPLOAD_PRESET)
   formData.append('folder', `cravia/bills/${dishId}`)
 
@@ -79,8 +96,9 @@ export async function uploadAvatarPhoto(
 ): Promise<{ secure_url: string } | null> {
   if (!CLOUD_NAME || !UPLOAD_PRESET) return null
 
+  const compressed = await compressImageForUpload(file)
   const formData = new FormData()
-  formData.append('file', file)
+  formData.append('file', compressed)
   formData.append('upload_preset', UPLOAD_PRESET)
   formData.append('folder', `cravia/avatars/${userId}`)
 

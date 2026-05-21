@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { formatRating } from '@/lib/utils/index'
+import { getOptimizedImageUrl } from '@/lib/utils/image'
 import { ROUTES } from '@/lib/constants/routes'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 
@@ -66,9 +67,9 @@ export default function WishlistPage() {
         <div className="mt-6 grid grid-cols-1 gap-3 sm:mt-8 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
           {items.map((item) => (
             <div key={item.dishId} className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:-translate-y-0.5 active:translate-y-0 hover:border-transparent hover:shadow-md active:shadow-sm">
-              <div className="relative h-36 bg-bg-cream">
+              <div className="relative aspect-[4/3] bg-bg-cream">
                 {item.coverImage ? (
-                  <Image src={item.coverImage} alt={item.dishName} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+                  <Image src={getOptimizedImageUrl(item.coverImage, 'card') ?? ''} alt={item.dishName} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                 ) : (
                   <div className="flex h-full items-center justify-center text-4xl">🍽️</div>
                 )}

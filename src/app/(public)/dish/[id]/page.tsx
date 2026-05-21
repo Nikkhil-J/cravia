@@ -93,27 +93,26 @@ export default async function DishPage({ params }: PageProps) {
         avgOverall: dish.avgOverall,
         cuisines: dish.cuisines,
       }} />
-      {/* Breadcrumb row — sticky on mobile so PWA users keep a visible way back. */}
+      {/* Context row: back follows history, with fallback to the restaurant page on direct entry. */}
       <nav className="sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] z-40 -mx-4 mb-4 flex min-w-0 items-center gap-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur-xl sm:-mx-6 sm:top-[calc(4.25rem+env(safe-area-inset-top,0px))] sm:mb-6 sm:px-6 md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none">
         <MobileBackButton parentHref={ROUTES.restaurant(dish.restaurantId)} />
-        <div className="flex min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm">
-        <Link href={ROUTES.EXPLORE} className="shrink-0 transition-colors hover:text-primary">Explore</Link>
-        <span className="shrink-0">/</span>
-        <Link href={ROUTES.restaurant(dish.restaurantId)} className="min-w-0 shrink truncate transition-colors hover:text-primary">{dish.restaurantName}</Link>
-        <span className="shrink-0">/</span>
-        <span className="min-w-0 truncate text-text-primary">{dish.name}</span>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-text-primary">{dish.name}</p>
+          <p className="truncate text-xs text-text-muted">{dish.restaurantName}</p>
         </div>
       </nav>
 
       {/* Photo grid */}
-      <DishPhotoGrid
-        photos={dishPhotos}
-        dishName={dish.name}
-        dishId={dish.id}
-        restaurantId={dish.restaurantId}
-        restaurantName={dish.restaurantName}
-        reviewCount={dish.reviewCount}
-      />
+      <div className="w-full max-w-3xl mx-auto">
+        <DishPhotoGrid
+          photos={dishPhotos}
+          dishName={dish.name}
+          dishId={dish.id}
+          restaurantId={dish.restaurantId}
+          restaurantName={dish.restaurantName}
+          reviewCount={dish.reviewCount}
+        />
+      </div>
 
       <div className="mt-6 grid gap-6 sm:mt-8 sm:gap-8 lg:grid-cols-3">
         {/* Main */}
@@ -165,12 +164,13 @@ export default async function DishPage({ params }: PageProps) {
           {/* CTA */}
           {dish.reviewCount > 0 && (
             <div className="mt-8">
-              <div className="flex flex-wrap gap-3">
+              <div className="flex gap-3">
                 <Link
                   href={`${ROUTES.WRITE_REVIEW}?dishId=${dish.id}&restaurantId=${dish.restaurantId}&dishName=${encodeURIComponent(dish.name)}&restaurantName=${encodeURIComponent(dish.restaurantName)}&from=${encodeURIComponent(ROUTES.dish(dish.id))}`}
-                  className="inline-flex items-center justify-center rounded-pill bg-primary px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-primary-dark hover:-translate-y-0.5 hover:shadow-glow"
+                  className="inline-flex min-w-0 flex-1 items-center justify-center rounded-pill bg-primary px-4 py-3 text-center text-sm font-semibold text-white transition-all hover:bg-primary-dark hover:-translate-y-0.5 hover:shadow-glow sm:flex-none sm:px-6"
                 >
-                  Earn 25 pts — Review this dish
+                  <span className="sm:hidden">Review this dish</span>
+                  <span className="hidden sm:inline">Earn 25 pts — Review this dish</span>
                 </Link>
                 <WishlistButton dishId={dish.id} />
               </div>

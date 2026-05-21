@@ -12,6 +12,7 @@ import { API_ENDPOINTS } from '@/lib/constants/api'
 import { ROUTES } from '@/lib/constants/routes'
 import { formatRating } from '@/lib/utils/index'
 import { getCuisineEmoji } from '@/lib/utils/dish-display'
+import { getOptimizedImageUrl } from '@/lib/utils/image'
 import type { Dish } from '@/lib/types'
 import { getRecentlyViewed, type RecentDishEntry } from '@/lib/utils/recently-viewed'
 
@@ -182,14 +183,14 @@ export function DishPicker({ onSelect }: DishPickerProps) {
               >
                 {dish.coverImage ? (
                   <Image
-                    src={dish.coverImage}
+                    src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''}
                     alt={dish.name}
-                    width={48}
+                    width={64}
                     height={48}
-                    className="h-12 w-12 rounded-lg object-cover"
+                    className="h-12 w-16 shrink-0 rounded-lg object-cover"
                   />
                 ) : (
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-2xl">
+                  <div className="flex h-12 w-16 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-2xl">
                     {getCuisineEmoji(dish.cuisines?.[0])}
                   </div>
                 )}
@@ -253,14 +254,14 @@ function DishRow({ dish, onSelect }: { dish: Dish; onSelect: (dish: Dish) => voi
     >
       {dish.coverImage ? (
         <Image
-          src={dish.coverImage}
+          src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''}
           alt={dish.name}
-          width={48}
+          width={64}
           height={48}
-          className="h-12 w-12 rounded-lg object-cover"
+          className="h-12 w-16 shrink-0 rounded-lg object-cover"
         />
       ) : (
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-2xl">
+        <div className="flex h-12 w-16 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-2xl">
           {getCuisineEmoji(dish.cuisines?.[0])}
         </div>
       )}

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import type { Review } from '@/lib/types'
 import { canEditReview, computeOverall, formatRelativeTime, formatRating } from '@/lib/utils/index'
+import { getOptimizedImageUrl } from '@/lib/utils/image'
 import { LEVEL_COLORS } from '@/lib/constants'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { cn } from '@/lib/utils'
@@ -194,26 +195,41 @@ export function ReviewCardV2({
       {review.photoUrl && (
         <button
           type="button"
-          onClick={() => setPhotoExpanded((v) => !v)}
-          className={cn(
-            'relative w-full cursor-pointer overflow-hidden transition-[height] duration-400 ease-out',
-            photoExpanded ? 'h-[200px] sm:h-[260px] md:h-[320px]' : 'h-[140px] sm:h-[160px] md:h-[180px]',
-          )}
+          onClick={() => setPhotoExpanded(true)}
+          className="relative w-full overflow-hidden cursor-pointer"
+          style={{ aspectRatio: '4/3' }}
         >
           <Image
-            src={review.photoUrl}
+            src={getOptimizedImageUrl(review.photoUrl, 'banner') ?? ''}
             alt="Review photo"
             fill
             sizes="(max-width: 640px) 100vw, 360px"
-            className={cn(
-              'transition-[object-fit] duration-300',
-              photoExpanded ? 'bg-surface-dark object-contain' : 'object-cover',
-            )}
+            className="object-cover transition-transform duration-300 hover:scale-105"
           />
-          <span className="pointer-events-none absolute bottom-2 right-2 flex items-center gap-1 rounded-md bg-black/55 px-2 py-1 text-[10px] font-semibold text-white/85 backdrop-blur-sm">
-            {photoExpanded ? '↕ Collapse' : '↕ Expand'}
-          </span>
         </button>
+      )}
+      {photoExpanded && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+          onClick={() => setPhotoExpanded(false)}
+        >
+          <div className="relative w-full max-w-2xl mx-4" style={{ aspectRatio: '3/4' }}>
+            <Image
+              src={getOptimizedImageUrl(review.photoUrl, 'lightbox') ?? ''}
+              alt="Review photo"
+              fill
+              sizes="100vw"
+              className="object-contain"
+              priority
+            />
+          </div>
+          <button
+            className="absolute top-4 right-4 text-white text-2xl font-bold"
+            onClick={() => setPhotoExpanded(false)}
+          >
+            ✕
+          </button>
+        </div>
       )}
 
       {/* ── Card body ────────────────────────────────── */}

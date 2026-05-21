@@ -192,6 +192,7 @@ export interface Notification {
 export interface DishPhoto {
   url: string
   createdAt: string
+  alt?: string
 }
 
 // ── Form types ────────────────────────────────────────────

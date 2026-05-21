@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { getDishComparison, searchDishes } from '@/lib/services/dishes'
 import { formatRating } from '@/lib/utils/index'
+import { getOptimizedImageUrl } from '@/lib/utils/image'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { UpgradePrompt } from '@/components/ui/UpgradePrompt'
 import { Button } from '@/components/ui/button'
@@ -155,7 +156,7 @@ export default function ComparePage() {
           {/* Header: dish images + names — 3-col on sm+, stacked on mobile */}
           <div className="hidden bg-bg-cream sm:grid sm:grid-cols-3">
             <div className="p-4 text-center">
-              {dish1.coverImage && <Image src={dish1.coverImage} alt={dish1.name} width={80} height={80} className="mx-auto h-20 w-20 rounded-lg object-cover" />}
+              {dish1.coverImage && <Image src={getOptimizedImageUrl(dish1.coverImage, 'thumbnail') ?? ''} alt={dish1.name} width={106} height={80} className="mx-auto h-20 w-[106px] rounded-lg object-cover" />}
               <p className="mt-2 text-sm font-semibold text-heading">{dish1.name}</p>
               <p className="text-xs text-text-muted">{dish1.restaurantName}</p>
             </div>
@@ -163,20 +164,20 @@ export default function ComparePage() {
               <span className="text-xs font-medium text-text-muted">vs</span>
             </div>
             <div className="p-4 text-center">
-              {dish2.coverImage && <Image src={dish2.coverImage} alt={dish2.name} width={80} height={80} className="mx-auto h-20 w-20 rounded-lg object-cover" />}
+              {dish2.coverImage && <Image src={getOptimizedImageUrl(dish2.coverImage, 'thumbnail') ?? ''} alt={dish2.name} width={106} height={80} className="mx-auto h-20 w-[106px] rounded-lg object-cover" />}
               <p className="mt-2 text-sm font-semibold text-heading">{dish2.name}</p>
               <p className="text-xs text-text-muted">{dish2.restaurantName}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 bg-bg-cream p-4 sm:hidden">
             <div className="min-w-0 flex-1 text-center">
-              {dish1.coverImage && <Image src={dish1.coverImage} alt={dish1.name} width={80} height={80} className="mx-auto h-14 w-14 rounded-lg object-cover" />}
+              {dish1.coverImage && <Image src={getOptimizedImageUrl(dish1.coverImage, 'thumbnail') ?? ''} alt={dish1.name} width={74} height={56} className="mx-auto h-14 w-[74px] rounded-lg object-cover" />}
               <p className="mt-1.5 truncate text-xs font-semibold text-heading">{dish1.name}</p>
               <p className="truncate text-[10px] text-text-muted">{dish1.restaurantName}</p>
             </div>
             <span className="shrink-0 text-xs font-medium text-text-muted">vs</span>
             <div className="min-w-0 flex-1 text-center">
-              {dish2.coverImage && <Image src={dish2.coverImage} alt={dish2.name} width={80} height={80} className="mx-auto h-14 w-14 rounded-lg object-cover" />}
+              {dish2.coverImage && <Image src={getOptimizedImageUrl(dish2.coverImage, 'thumbnail') ?? ''} alt={dish2.name} width={74} height={56} className="mx-auto h-14 w-[74px] rounded-lg object-cover" />}
               <p className="mt-1.5 truncate text-xs font-semibold text-heading">{dish2.name}</p>
               <p className="truncate text-[10px] text-text-muted">{dish2.restaurantName}</p>
             </div>

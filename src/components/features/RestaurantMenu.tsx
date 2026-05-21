@@ -16,6 +16,7 @@ import {
   groupDishesByCategory,
 } from '@/lib/utils/index'
 import { getCuisineEmoji } from '@/lib/utils/dish-display'
+import { getOptimizedImageUrl } from '@/lib/utils/image'
 import { ROUTES } from '@/lib/constants/routes'
 import type { DietaryType, Dish, DishCategory } from '@/lib/types'
 
@@ -98,15 +99,20 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
     )
   }, [dishes, searchQuery, isSearching, selectedDietary])
 
-  const groupedVisibleDishes = useMemo(
-    () => groupDishesByCategory(hasActiveMenuFilter ? filteredDishes : dishes),
+  const visibleDishes = useMemo(
+    () => sortReviewedFirst(hasActiveMenuFilter ? filteredDishes : dishes),
     [dishes, filteredDishes, hasActiveMenuFilter]
+  )
+
+  const groupedVisibleDishes = useMemo(
+    () => groupDishesByCategory(visibleDishes),
+    [visibleDishes]
   )
 
   const categoryRows = useMemo(() => {
     const categorySource = !hasActiveMenuFilter && categories && categories.length > 0
       ? categories
-      : (hasActiveMenuFilter ? filteredDishes : dishes).map((dish) => dish.category)
+      : visibleDishes.map((dish) => dish.category)
 
     return getOrderedDishCategories(categorySource)
       .map((category) => ({
@@ -114,12 +120,12 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
         count: groupedVisibleDishes[category]?.length ?? 0,
       }))
       .filter((row) => row.count > 0)
-  }, [categories, dishes, filteredDishes, groupedVisibleDishes, hasActiveMenuFilter])
+  }, [categories, groupedVisibleDishes, hasActiveMenuFilter, visibleDishes])
 
   const orderedDishes = useMemo(() => {
-    if (isSearching) return filteredDishes
+    if (isSearching) return visibleDishes
     return categoryRows.flatMap((row) => groupedVisibleDishes[row.category] ?? [])
-  }, [categoryRows, filteredDishes, groupedVisibleDishes, isSearching])
+  }, [categoryRows, groupedVisibleDishes, isSearching, visibleDishes])
 
   const sectionMetaByDishId = useMemo(() => {
     const seen = new Set<DishCategory>()
@@ -361,6 +367,15 @@ function matchesDietaryFilter(dish: Dish, filter: MenuDietaryFilter) {
   return dietary === 'non-veg'
 }
 
+function sortReviewedFirst(dishes: readonly Dish[]): Dish[] {
+  return [...dishes].sort((a, b) => {
+    const reviewDelta = (b.reviewCount ?? 0) - (a.reviewCount ?? 0)
+    if (reviewDelta !== 0) return reviewDelta
+
+    return (b.avgOverall ?? 0) - (a.avgOverall ?? 0)
+  })
+}
+
 function DietaryFilterButton({
   label,
   tone,
@@ -429,10 +444,10 @@ export function RecommendedDishesRow({ dishes }: { dishes: Dish[] }) {
             href={ROUTES.dish(dish.id)}
             className="w-[140px] shrink-0 overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/30 hover:shadow-sm"
           >
-            <div className="relative h-24 w-full overflow-hidden bg-bg-cream">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-bg-cream">
               {dish.coverImage ? (
                 <Image
-                  src={dish.coverImage}
+                  src={getOptimizedImageUrl(dish.coverImage, 'card') ?? ''}
                   alt={dish.name}
                   fill
                   sizes="140px"

@@ -4,6 +4,7 @@ import type { Dish } from '@/lib/types'
 import { ROUTES } from '@/lib/constants/routes'
 import { CITY_DISPLAY_NAME, type City } from '@/lib/constants'
 import { getCuisineEmoji } from '@/lib/utils/dish-display'
+import { getOptimizedImageUrl } from '@/lib/utils/image'
 import { Reveal, RevealGrid, RevealItem } from '@/components/ui/AnimateReveal'
 
 interface TopRatedStripProps {
@@ -28,14 +29,14 @@ export function TopRatedStrip({ dishes, city }: TopRatedStripProps) {
               href={ROUTES.dish(dish.id)}
               className="group block rounded-xl bg-surface-2 p-3.5 transition-colors hover:bg-surface-3"
             >
-              <div className="mb-2 flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-coral-bg">
+              <div className="mb-2 flex h-10 w-[54px] items-center justify-center overflow-hidden rounded-lg bg-coral-bg">
                 {dish.coverImage ? (
                   <Image
-                    src={dish.coverImage}
+                    src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''}
                     alt={dish.name}
-                    width={40}
+                    width={54}
                     height={40}
-                    sizes="40px"
+                    sizes="54px"
                     className="h-full w-full object-cover"
                   />
                 ) : (

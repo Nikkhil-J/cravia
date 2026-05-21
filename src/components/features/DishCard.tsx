@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { Dish } from "@/lib/types";
 import { cn } from "@/lib/utils/index";
 import { getCuisineEmoji } from "@/lib/utils/dish-display";
+import { getOptimizedImageUrl } from "@/lib/utils/image";
 import { ROUTES } from "@/lib/constants/routes";
 
 interface DishCardProps {
@@ -74,13 +75,13 @@ export function DishCard({
         </div>
 
         <div className="relative w-[120px] shrink-0 sm:w-[128px] md:w-full">
-          <div className="relative h-[120px] w-[120px] overflow-hidden rounded-lg bg-background-tertiary sm:h-[128px] sm:w-[128px] md:h-44 md:w-full md:rounded-none">
+          <div className="relative aspect-[4/3] w-[120px] overflow-hidden rounded-lg bg-background-tertiary sm:w-[128px] md:w-full md:rounded-none">
             {dish.coverImage ? (
               <Image
-                src={dish.coverImage}
+                src={getOptimizedImageUrl(dish.coverImage, 'card') ?? ''}
                 alt={dish.name}
                 fill
-                sizes="(max-width: 767px) 100px, (max-width: 1023px) 100px, 100px"
+                sizes="(max-width: 767px) 120px, (max-width: 1023px) 128px, 400px"
                 className="object-cover"
               />
             ) : (

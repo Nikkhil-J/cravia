@@ -2,13 +2,10 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { ChevronLeft, ChevronRight, X, Images } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import type { DishPhoto } from '@/lib/types'
-import { ROUTES } from '@/lib/constants/routes'
-import { CONFIG } from '@/lib/constants'
+import { getOptimizedImageUrl } from '@/lib/utils/image'
 
 interface DishPhotoGridProps {
   photos: DishPhoto[]
@@ -19,49 +16,9 @@ interface DishPhotoGridProps {
   reviewCount: number
 }
 
-function FoodIllustration({ width = 80, height = 80, className }: { width?: number; height?: number; className?: string }) {
-  return (
-    <svg
-      width={width}
-      height={height}
-      viewBox="0 0 80 80"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={cn('text-text-muted', className)}
-      style={!className ? { opacity: 0.5 } : undefined}
-    >
-      <path d="M30 24C30 19 34 19 34 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M40 22C40 17 44 17 44 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M50 24C50 19 54 19 54 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M12 42C12 42 12 30 40 30C68 30 68 42 68 42" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <ellipse cx="40" cy="42" rx="28" ry="9" stroke="currentColor" strokeWidth="2" />
-      <path d="M12 42C12 46 14 53 17 55" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M68 42C68 46 66 53 63 55" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M17 55C17 59 27 64 40 64C53 64 63 59 63 55" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M28 40C32 37 36 40 40 37" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M40 40C44 37 48 40 52 37" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function EmptySlot() {
-  return (
-    <div
-      className="flex h-full w-full items-center justify-center bg-surface-2"
-      style={{ border: '0.5px dashed var(--border)' }}
-    >
-      <FoodIllustration width={64} height={64} className="opacity-15 text-text-muted" />
-    </div>
-  )
-}
-
 export function DishPhotoGrid({
   photos,
   dishName,
-  dishId,
-  restaurantId,
-  restaurantName,
-  reviewCount,
 }: DishPhotoGridProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
@@ -71,8 +28,8 @@ export function DishPhotoGrid({
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )
 
-  const gridPhotos = sortedPhotos.slice(0, CONFIG.PHOTO_GRID_MAX)
-  const totalPhotos = sortedPhotos.length
+  const gridPhotos = sortedPhotos.slice(0, 3)
+  const totalPhotoCount = sortedPhotos.length
 
   const openLightbox = useCallback((index: number) => {
     setLightboxIndex(index)
@@ -82,12 +39,12 @@ export function DishPhotoGrid({
   const closeLightbox = useCallback(() => setLightboxOpen(false), [])
 
   const goNext = useCallback(() => {
-    setLightboxIndex((prev) => (prev + 1) % totalPhotos)
-  }, [totalPhotos])
+    setLightboxIndex((prev) => (prev + 1) % totalPhotoCount)
+  }, [totalPhotoCount])
 
   const goPrev = useCallback(() => {
-    setLightboxIndex((prev) => (prev - 1 + totalPhotos) % totalPhotos)
-  }, [totalPhotos])
+    setLightboxIndex((prev) => (prev - 1 + totalPhotoCount) % totalPhotoCount)
+  }, [totalPhotoCount])
 
   useEffect(() => {
     if (!lightboxOpen) return
@@ -104,110 +61,126 @@ export function DishPhotoGrid({
     }
   }, [lightboxOpen, closeLightbox, goNext, goPrev])
 
-  const writeReviewHref = `${ROUTES.WRITE_REVIEW}?dishId=${dishId}&restaurantId=${restaurantId}&dishName=${encodeURIComponent(dishName)}&restaurantName=${encodeURIComponent(restaurantName)}&from=${encodeURIComponent(ROUTES.dish(dishId))}`
-  const hasReviews = reviewCount > 0
-
   return (
     <>
-      <div
-        className="grid h-[220px] grid-cols-1 grid-rows-[1fr] gap-[4px] overflow-hidden rounded-[12px] border border-border sm:h-[280px] sm:grid-cols-[60%_40%] sm:grid-rows-[1fr_1fr]"
-      >
-        {/* Left panel — spans both rows */}
-        {totalPhotos === 0 ? (
-          <div
-            className="sm:row-span-2 flex flex-col items-center justify-center bg-surface-2 p-6"
-            style={{ border: '0.5px dashed var(--border)' }}
+      {totalPhotoCount === 0 && (
+        <div className="flex flex-col items-center justify-center w-full rounded-xl bg-background-tertiary py-16 gap-3">
+          <span className="text-5xl opacity-40">📷</span>
+          <p className="text-text-secondary text-sm font-medium">No photos yet</p>
+          <p className="text-text-muted text-xs">Be the first to review this dish</p>
+        </div>
+      )}
+
+      {totalPhotoCount === 1 && (
+        <div
+          className="relative w-full overflow-hidden rounded-xl max-h-[360px] sm:max-h-[420px] md:max-h-[480px]"
+          style={{ aspectRatio: '4/3' }}
+        >
+          <Image
+            src={getOptimizedImageUrl(photos[0].url, 'grid') ?? ''}
+            alt={photos[0].alt ?? 'Dish photo'}
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
+          />
+        </div>
+      )}
+
+      {totalPhotoCount === 2 && (
+        <div className="flex w-full gap-[4px] overflow-hidden rounded-[12px] border border-border">
+          <button
+            type="button"
+            className="relative flex-[6] cursor-pointer overflow-hidden"
+            style={{ aspectRatio: '3/4' }}
+            onClick={() => openLightbox(0)}
           >
-            <FoodIllustration />
-            <div className="mt-3 flex flex-col items-center gap-1">
-              <p className="text-sm text-text-secondary">
-                {hasReviews ? 'No photos yet' : 'No reviews yet'}
-              </p>
-              <p className="text-[13px] text-text-muted">
-                {hasReviews
-                  ? 'Photos from reviews will appear here'
-                  : 'Be the first to review this dish'}
-              </p>
-            </div>
-            {!hasReviews && (
-              <Button variant="ghost" size="sm" className="mt-3" render={<Link href={writeReviewHref} />}>
-                Write a review
-              </Button>
-            )}
-          </div>
-        ) : (
+            <Image
+              src={getOptimizedImageUrl(gridPhotos[0].url, 'grid') ?? ''}
+              alt={gridPhotos[0].alt ?? `${dishName} photo 1`}
+              fill
+              sizes="60vw"
+              className="object-cover"
+              priority
+            />
+          </button>
+          <button
+            type="button"
+            className="relative flex-[4] cursor-pointer overflow-hidden"
+            style={{ aspectRatio: '3/4' }}
+            onClick={() => openLightbox(1)}
+          >
+            <Image
+              src={getOptimizedImageUrl(gridPhotos[1].url, 'grid') ?? ''}
+              alt={gridPhotos[1].alt ?? `${dishName} photo 2`}
+              fill
+              sizes="40vw"
+              className="object-cover"
+            />
+          </button>
+        </div>
+      )}
+
+      {totalPhotoCount >= 3 && (
+        <div
+          className="grid h-[260px] grid-cols-1 grid-rows-[1fr] gap-[4px] overflow-hidden rounded-[12px] border border-border sm:h-[320px] sm:grid-cols-[60%_40%] sm:grid-rows-[1fr_1fr] md:h-[400px]"
+        >
+          {/* Left panel — spans both rows */}
           <button
             type="button"
             className="relative sm:row-span-2 cursor-pointer overflow-hidden"
             onClick={() => openLightbox(0)}
           >
             <Image
-              src={gridPhotos[0].url}
-              alt={`${dishName} photo 1`}
+              src={getOptimizedImageUrl(gridPhotos[0].url, 'grid') ?? ''}
+              alt={gridPhotos[0].alt ?? `${dishName} photo 1`}
               fill
               sizes="60vw"
               className="object-cover"
               priority
             />
-            {totalPhotos >= 3 && (
-              <div className="absolute bottom-3 right-3 z-10">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-1.5 bg-black/60 text-white backdrop-blur-sm hover:bg-black/70 hover:text-white"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    openLightbox(0)
-                  }}
-                >
-                  <Images className="size-4" />
-                  Show all photos
-                </Button>
-              </div>
-            )}
           </button>
-        )}
 
-        {/* Top-right slot */}
-        {totalPhotos >= 2 ? (
+          {/* Top-right slot */}
           <button
             type="button"
             className="relative hidden cursor-pointer overflow-hidden sm:block"
             onClick={() => openLightbox(1)}
           >
             <Image
-              src={gridPhotos[1].url}
-              alt={`${dishName} photo 2`}
+              src={getOptimizedImageUrl(gridPhotos[1].url, 'grid') ?? ''}
+              alt={gridPhotos[1].alt ?? `${dishName} photo 2`}
               fill
               sizes="40vw"
               className="object-cover"
             />
           </button>
-        ) : (
-          <div className="hidden sm:block"><EmptySlot /></div>
-        )}
 
-        {/* Bottom-right slot */}
-        {totalPhotos >= 3 ? (
+          {/* Bottom-right slot */}
           <button
             type="button"
             className="relative hidden cursor-pointer overflow-hidden sm:block"
             onClick={() => openLightbox(2)}
           >
-            <Image
-              src={gridPhotos[2].url}
-              alt={`${dishName} photo 3`}
-              fill
-              sizes="40vw"
-              className="object-cover"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={getOptimizedImageUrl(gridPhotos[2].url, 'grid') ?? ''}
+                alt={gridPhotos[2].alt ?? `${dishName} photo 3`}
+                fill
+                sizes="40vw"
+                className="object-cover"
+              />
+              {totalPhotoCount > 3 && (
+                <div className="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none">
+                  <span className="text-white text-sm font-bold">+{totalPhotoCount - 3} more</span>
+                </div>
+              )}
+            </div>
           </button>
-        ) : (
-          <div className="hidden sm:block"><EmptySlot /></div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {lightboxOpen && totalPhotos > 0 && (
+      {lightboxOpen && totalPhotoCount > 0 && (
         <PhotoLightbox
           photos={sortedPhotos}
           currentIndex={lightboxIndex}
@@ -281,7 +254,7 @@ function PhotoLightbox({
         onClick={(e) => e.stopPropagation()}
       >
         <Image
-          src={photos[currentIndex].url}
+          src={getOptimizedImageUrl(photos[currentIndex].url, 'grid') ?? ''}
           alt={`${dishName} photo ${currentIndex + 1}`}
           fill
           sizes="100vw"

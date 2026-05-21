@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
+import Cropper, { type Area, type Point } from 'react-easy-crop'
 import { createPortal } from 'react-dom'
 import { toast } from 'sonner'
 import Link from 'next/link'
@@ -13,6 +14,7 @@ import { getDish } from '@/lib/services/dishes'
 import { getReview } from '@/lib/services/reviews'
 import { uploadDishPhoto, uploadBillPhoto } from '@/lib/services/cloudinary'
 import { validatePhotoFile } from '@/lib/utils/index'
+import { cropImageToFile, getOptimizedImageUrl } from '@/lib/utils/image'
 import { getNewlyEarnedBadges } from '@/lib/gamification'
 import { StarRating } from '@/components/ui/StarRating'
 import { TagPill } from '@/components/ui/TagPill'
@@ -48,6 +50,10 @@ const REVIEW_SENTENCE_STARTERS = [
   'For the price, it was',
   "I'd order this again because",
 ] as const
+
+function revokeObjectUrl(url: string | null) {
+  if (url?.startsWith('blob:')) URL.revokeObjectURL(url)
+}
 
 function WriteReviewContent() {
   const router = useRouter()
@@ -86,6 +92,12 @@ function WriteReviewContent() {
   const [isEditMode, setIsEditMode] = useState(false)
   const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null)
   const [isMounted, setIsMounted] = useState(false)
+  const [cropImageUrl, setCropImageUrl] = useState<string | null>(null)
+  const [cropSourceFile, setCropSourceFile] = useState<File | null>(null)
+  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 })
+  const [zoom, setZoom] = useState(1)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
+  const [isCroppingPhoto, setIsCroppingPhoto] = useState(false)
   const reviewTextRef = useRef<HTMLTextAreaElement>(null)
   const photoRef = useRef<HTMLInputElement>(null)
   const billRef = useRef<HTMLInputElement>(null)
@@ -138,6 +150,12 @@ function WriteReviewContent() {
   }, [])
 
   useEffect(() => {
+    return () => {
+      revokeObjectUrl(cropImageUrl)
+    }
+  }, [cropImageUrl])
+
+  useEffect(() => {
     if (!editReviewId) return
     setIsEditMode(true)
     getReview(editReviewId).then((review) => {
@@ -158,11 +176,57 @@ function WriteReviewContent() {
     const file = e.target.files?.[0]
     if (!file) return
     const { valid, error } = validatePhotoFile(file)
-    if (!valid) { setPhotoError(error); return }
+    if (!valid) {
+      setPhotoError(error)
+      e.target.value = ''
+      return
+    }
     setPhotoError(null)
-    if (data.photoPreviewUrl) URL.revokeObjectURL(data.photoPreviewUrl)
-    updateField('photoFile', file)
-    updateField('photoPreviewUrl', URL.createObjectURL(file))
+    revokeObjectUrl(cropImageUrl)
+    setCropImageUrl(URL.createObjectURL(file))
+    setCropSourceFile(file)
+    setCrop({ x: 0, y: 0 })
+    setZoom(1)
+    setCroppedAreaPixels(null)
+    e.target.value = ''
+  }
+
+  const handleCropComplete = useCallback((_croppedArea: Area, nextCroppedAreaPixels: Area) => {
+    setCroppedAreaPixels(nextCroppedAreaPixels)
+  }, [])
+
+  function closePhotoCropper() {
+    revokeObjectUrl(cropImageUrl)
+    setCropImageUrl(null)
+    setCropSourceFile(null)
+    setCroppedAreaPixels(null)
+    setIsCroppingPhoto(false)
+  }
+
+  async function handleConfirmPhotoCrop() {
+    if (!cropImageUrl || !cropSourceFile || !croppedAreaPixels) return
+
+    setIsCroppingPhoto(true)
+    setPhotoError(null)
+    try {
+      const croppedFile = await cropImageToFile(cropImageUrl, croppedAreaPixels, cropSourceFile.name)
+      const previewUrl = URL.createObjectURL(croppedFile)
+      revokeObjectUrl(data.photoPreviewUrl)
+      updateField('photoFile', croppedFile)
+      updateField('photoPreviewUrl', previewUrl)
+      closePhotoCropper()
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Could not crop this photo. Please try another image.'
+      setPhotoError(msg)
+      toast.error(msg)
+      setIsCroppingPhoto(false)
+    }
+  }
+
+  function handleRemovePhoto() {
+    revokeObjectUrl(data.photoPreviewUrl)
+    updateField('photoFile', null)
+    updateField('photoPreviewUrl', null)
   }
 
   function handleBillChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -171,7 +235,7 @@ function WriteReviewContent() {
     const { valid, error } = validatePhotoFile(file)
     if (!valid) { setBillError(error); return }
     setBillError(null)
-    if (data.billPreviewUrl) URL.revokeObjectURL(data.billPreviewUrl)
+    revokeObjectUrl(data.billPreviewUrl)
     updateField('billFile', file)
     updateField('billPreviewUrl', URL.createObjectURL(file))
   }
@@ -385,7 +449,7 @@ function WriteReviewContent() {
       {/* Dish hero card */}
       <div className="mb-8 flex items-center gap-3 rounded-2xl border border-border bg-card p-4 sm:gap-4 sm:p-7">
         {dish?.coverImage ? (
-          <Image src={dish.coverImage} alt={displayName} width={72} height={72} className="h-14 w-14 shrink-0 rounded-xl object-cover sm:h-[72px] sm:w-[72px]" />
+          <Image src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''} alt={displayName} width={96} height={72} className="h-14 w-[74px] shrink-0 rounded-xl object-cover sm:h-[72px] sm:w-24" />
         ) : displayName ? (
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-2xl sm:h-[72px] sm:w-[72px] sm:text-3xl">🍽️</div>
         ) : (
@@ -575,32 +639,47 @@ function WriteReviewContent() {
           </section>
 
           {/* Dish photo — incentivized */}
-          <div className="flex items-center gap-4 rounded-2xl border-2 border-dashed border-brand-gold/40 bg-gradient-to-br from-brand-gold-light/30 to-transparent p-5">
-            <span className="text-3xl">📸</span>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-heading">Add a photo of the dish</p>
-              <p className="text-xs text-text-secondary">Photo reviews earn <strong className="text-brand-gold">20 pts</strong> vs <strong className="text-text-muted">10 pts</strong> without</p>
-              {photoError && <p className="mt-1 text-xs font-medium text-destructive">{photoError}</p>}
-            </div>
-            {data.photoPreviewUrl ? (
-              <div className="flex items-center gap-2">
-                <Image src={data.photoPreviewUrl} alt="Preview" width={48} height={48} className="h-12 w-12 rounded-lg object-cover" />
+          <div className="rounded-2xl border-2 border-dashed border-brand-gold/40 bg-gradient-to-br from-brand-gold-light/30 to-transparent p-5">
+            <div className="flex items-center gap-4">
+              <span className="text-3xl">📸</span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-heading">Add a photo of the dish</p>
+                <p className="text-xs text-text-secondary">Photo reviews earn <strong className="text-brand-gold">20 pts</strong> vs <strong className="text-text-muted">10 pts</strong> without</p>
+                {photoError && <p className="mt-1 text-xs font-medium text-destructive">{photoError}</p>}
+              </div>
+              {data.photoPreviewUrl ? (
+                <span className="shrink-0 rounded-pill border-[1.5px] border-success bg-success/10 px-4 py-2 text-sm font-semibold text-success">
+                  Photo added
+                </span>
+              ) : (
                 <button
                   type="button"
-                  onClick={() => { updateField('photoFile', null); updateField('photoPreviewUrl', null) }}
-                  className="text-xs font-semibold text-destructive"
+                  onClick={() => photoRef.current?.click()}
+                  className="shrink-0 rounded-pill border-[1.5px] border-border bg-card px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary"
                 >
-                  Remove
+                  Add Photo
+                </button>
+              )}
+            </div>
+            {data.photoPreviewUrl && (
+              <div className="mt-3 w-full">
+                <div className="relative w-full overflow-hidden rounded-xl" style={{ aspectRatio: '4/3' }}>
+                  <Image
+                    src={data.photoPreviewUrl}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemovePhoto}
+                  className="mt-2 block w-full text-right text-xs font-semibold text-destructive"
+                >
+                  Remove photo
                 </button>
               </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => photoRef.current?.click()}
-                className="shrink-0 rounded-pill border-[1.5px] border-border bg-card px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary"
-              >
-                Add Photo
-              </button>
             )}
             <input ref={photoRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePhotoChange} />
           </div>
@@ -718,6 +797,21 @@ function WriteReviewContent() {
         </aside>
       </div>
 
+      {isMounted && cropImageUrl && createPortal(
+        <PhotoCropModal
+          imageUrl={cropImageUrl}
+          crop={crop}
+          zoom={zoom}
+          isCropping={isCroppingPhoto}
+          onCropChange={setCrop}
+          onZoomChange={setZoom}
+          onCropComplete={handleCropComplete}
+          onCancel={closePhotoCropper}
+          onConfirm={handleConfirmPhotoCrop}
+        />,
+        document.body,
+      )}
+
       {isMounted && createPortal(
         <div
           className="fixed left-4 right-4 z-40 rounded-2xl border border-border bg-card/95 shadow-lg backdrop-blur-xl lg:hidden"
@@ -756,6 +850,94 @@ function WriteReviewContent() {
         </div>,
         document.body,
       )}
+    </div>
+  )
+}
+
+function PhotoCropModal({
+  imageUrl,
+  crop,
+  zoom,
+  isCropping,
+  onCropChange,
+  onZoomChange,
+  onCropComplete,
+  onCancel,
+  onConfirm,
+}: {
+  imageUrl: string
+  crop: Point
+  zoom: number
+  isCropping: boolean
+  onCropChange: (crop: Point) => void
+  onZoomChange: (zoom: number) => void
+  onCropComplete: (croppedArea: Area, croppedAreaPixels: Area) => void
+  onCancel: () => void
+  onConfirm: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end bg-black/80 p-0 sm:items-center sm:justify-center sm:p-6">
+      <div className="w-full overflow-hidden rounded-t-3xl bg-card shadow-2xl sm:max-w-2xl sm:rounded-3xl">
+        <div className="border-b border-border px-5 py-4">
+          <h2 className="font-display text-lg font-bold text-heading">Fit your dish photo</h2>
+          <p className="mt-1 text-sm text-text-secondary">
+            Move and zoom the image into a 4:3 frame. We&apos;ll save it as a consistent 1200x900 photo.
+          </p>
+        </div>
+
+        <div className="relative h-[52vh] min-h-[320px] bg-black sm:h-[480px]">
+          <Cropper
+            image={imageUrl}
+            crop={crop}
+            zoom={zoom}
+            aspect={4 / 3}
+            minZoom={1}
+            maxZoom={3}
+            onCropChange={onCropChange}
+            onZoomChange={onZoomChange}
+            onCropComplete={onCropComplete}
+            showGrid={false}
+          />
+        </div>
+
+        <div className="space-y-4 px-5 py-4">
+          <div>
+            <label htmlFor="photo-zoom" className="text-xs font-semibold uppercase tracking-widest text-text-muted">
+              Zoom
+            </label>
+            <input
+              id="photo-zoom"
+              type="range"
+              min={1}
+              max={3}
+              step={0.01}
+              value={zoom}
+              onChange={(event) => onZoomChange(Number(event.target.value))}
+              className="mt-2 w-full accent-primary"
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isCropping}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={onConfirm}
+              disabled={isCropping}
+              className="flex-1"
+            >
+              {isCropping ? <LoadingSpinner size="sm" /> : 'Use photo'}
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

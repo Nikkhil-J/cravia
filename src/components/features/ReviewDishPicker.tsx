@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ROUTES } from '@/lib/constants/routes'
 import type { Dish, DishCategory } from '@/lib/types'
+import { getOptimizedImageUrl } from '@/lib/utils/image'
 import {
   Sheet,
   SheetTrigger,
@@ -264,11 +265,11 @@ function CategoryDishRow({ dish, onSelect }: { dish: Dish; onSelect: (dish: Dish
       </div>
       {dish.coverImage && (
         <Image
-          src={dish.coverImage}
+          src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''}
           alt={dish.name}
-          width={40}
+          width={54}
           height={40}
-          className="h-10 w-10 shrink-0 rounded-lg object-cover"
+          className="h-10 w-[54px] shrink-0 rounded-lg object-cover"
         />
       )}
     </Button>
@@ -282,12 +283,12 @@ function SearchDishRow({ dish, onSelect }: { dish: Dish; onSelect: (dish: Dish) 
       onClick={() => onSelect(dish)}
       className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-surface-2"
     >
-      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-bg-cream">
+      <div className="h-10 w-[54px] shrink-0 overflow-hidden rounded-lg bg-bg-cream">
         {dish.coverImage ? (
           <Image
-            src={dish.coverImage}
+            src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''}
             alt={dish.name}
-            width={40}
+            width={54}
             height={40}
             className="h-full w-full object-cover"
           />
