@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purple Sector — Manifesto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .manifesto { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: clamp(150px,22vh,260px) clamp(24px,5vw,40px) clamp(80px,12vh,160px); }
+  .manifesto .open { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--grey-dim); margin-bottom: clamp(50px,9vh,110px); }
+
+  .m-block { margin-bottom: clamp(46px, 8vh, 100px); }
+  .m-lead { font-size: var(--step-lg); font-weight: 700; letter-spacing: -0.025em; line-height: 1.08; }
+  .m-lead .em { color: var(--sector); }
+  .m-lead .red { color: var(--lauda); }
+  .m-lead .rain { color: var(--rain); }
+  .m-body { font-size: var(--step-md); color: var(--grey); line-height: 1.7; max-width: 56ch; margin-top: 18px; }
+  .m-body .em { color: var(--white); }
+
+  .rule { height:1px; background: var(--line-soft); margin: clamp(50px,9vh,110px) 0; }
+
+  .m-end { text-align: center; margin-top: clamp(70px,12vh,160px); }
+  .m-end p { font-size: var(--step-xl); font-weight: 700; letter-spacing: -0.03em; line-height: 1.02; }
+  .m-end p .em { color: var(--sector); }
+  .m-end .sig { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--grey-dim); margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="vignette"></div>
+
+<nav class="nav solid">
+  <a class="nav__brand" href="index.html"><span class="sectorline"></span> PURPLE SECTOR</a>
+  <div class="nav__links">
+    <a href="shop.html">Shop</a>
+    <a href="drop.html">Drop</a>
+    <a href="about.html" aria-current="page">About</a>
+  </div>
+</nav>
+
+<main class="manifesto">
+  <p class="open reveal">Manifesto — Purple Sector</p>
+
+  <div class="m-block">
+    <p class="m-lead reveal">The purple sector is the fastest split of the lap. The part where everything aligns.</p>
+    <p class="m-body reveal">We named the label after it because that's what we're chasing — not the win, not the podium. The <span class="em">moment</span>. The fraction of a second a fan never forgets.</p>
+  </div>
+
+  <div class="m-block">
+    <p class="m-lead reveal">Senna went around the outside at <span class="rain">Donington</span>. In the rain. Five cars in one lap.</p>
+    <p class="m-body reveal">Lauda came back from the last rites at <span class="red">Nürburgring</span> and was on the grid six weeks later. Hamilton took it at the last corner of Interlagos. Räikkönen told them to leave him alone.</p>
+  </div>
+
+  <div class="m-block">
+    <p class="m-lead reveal">We don't sell merchandise. We sell <span class="em">recognition</span>.</p>
+    <p class="m-body reveal">The kind that hits before you've finished reading the label. A year. A circuit. A fragment of radio. If you know, you know — and if you know, the object is already yours.</p>
+  </div>
+
+  <div class="rule reveal"></div>
+
+  <div class="m-block">
+    <p class="m-lead reveal">Every piece references one moment. No filler. No logo soup. No drops for the sake of drops.</p>
+    <p class="m-body reveal">Dark photography. Editorial restraint. Numbered editions. The design carries the weight so the copy doesn't have to.</p>
+  </div>
+
+  <div class="m-end">
+    <p class="reveal">We release only<br>when a moment <span class="em">deserves it.</span></p>
+    <p class="sig reveal">Purple Sector — est. between the apex and the line</p>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">PURPLE<br><span class="accent">SECTOR</span></div>
+    <div class="footer__cols">
+      <div class="footer__col"><h4>Explore</h4><a href="shop.html">Shop</a><a href="drop.html">Drop</a><a href="about.html">About</a></div>
+      <div class="footer__col"><h4>Connect</h4><a href="#">Instagram</a><a href="#">Notify me</a></div>
+    </div>
+  </div>
+  <div class="footer__bottom"><span>© 2026 Purple Sector</span><span class="footer__drop">First drop coming soon</span></div>
+</footer>
+
+<script src="app.js"></script>
+<script>initReveal();</script>
+</body>
+</html>

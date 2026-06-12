@@ -163,29 +163,35 @@ export default async function RestaurantPage({ params }: PageProps) {
         <div className="bg-background">
           <div className="mx-auto max-w-[1000px] px-4 pb-6 pt-3 sm:px-6 sm:py-8">
 
-            {restaurant.cuisines.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {restaurant.cuisines.map((c) => (
-                  <span
-                    key={c}
-                    className="rounded-pill bg-primary-light px-3 py-1 text-xs font-semibold text-primary-dark"
-                  >
-                    {c}
-                  </span>
-                ))}
-              </div>
-            )}
+            {/* Reserve the cuisine pill row height so it doesn't shift when data arrives. */}
+            <div className="min-h-6">
+              {restaurant.cuisines.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {restaurant.cuisines.map((c) => (
+                    <span
+                      key={c}
+                      className="rounded-pill bg-primary-light px-3 py-1 text-xs font-semibold text-primary-dark"
+                    >
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
 
-            {dishes.length > 0 && (
-              <div className="mt-5 flex gap-3">
-                <ReviewDishPicker
-                  dishes={dishes}
-                  categories={restaurant.categories}
-                  restaurantId={restaurant.id}
-                  restaurantName={restaurant.name}
-                />
-              </div>
-            )}
+            {/* Reserve the "Review a dish" CTA slot so it doesn't shift when data arrives. */}
+            <div className="mt-5 min-h-10">
+              {dishes.length > 0 && (
+                <div className="flex gap-3">
+                  <ReviewDishPicker
+                    dishes={dishes}
+                    categories={restaurant.categories}
+                    restaurantId={restaurant.id}
+                    restaurantName={restaurant.name}
+                  />
+                </div>
+              )}
+            </div>
 
             {/* Stats */}
             <div className="mt-8 flex gap-0 overflow-hidden rounded-lg border border-glass-border bg-glass-surface backdrop-blur-sm">

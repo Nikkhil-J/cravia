@@ -191,19 +191,19 @@ export function ReviewCardV2({
       className="animate-pop-in overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-text-muted"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
     >
-      {/* ── Photo banner ─────────────────────────────── */}
+      <div className="flex gap-3 p-2.5 sm:gap-3.5 sm:p-3">
+      {/* ── Photo thumbnail ──────────────────────────── */}
       {review.photoUrl && (
         <button
           type="button"
           onClick={() => setPhotoExpanded(true)}
-          className="relative w-full overflow-hidden cursor-pointer"
-          style={{ aspectRatio: '4/3' }}
+          className="relative aspect-square w-[104px] shrink-0 cursor-pointer self-start overflow-hidden rounded-lg sm:w-[132px]"
         >
           <Image
-            src={getOptimizedImageUrl(review.photoUrl, 'banner') ?? ''}
+            src={getOptimizedImageUrl(review.photoUrl, 'card') ?? ''}
             alt="Review photo"
             fill
-            sizes="(max-width: 640px) 100vw, 360px"
+            sizes="(max-width: 640px) 104px, 132px"
             className="object-cover transition-transform duration-300 hover:scale-105"
           />
         </button>
@@ -213,7 +213,7 @@ export function ReviewCardV2({
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
           onClick={() => setPhotoExpanded(false)}
         >
-          <div className="relative w-full max-w-2xl mx-4" style={{ aspectRatio: '3/4' }}>
+          <div className="relative mx-4 aspect-square w-full max-w-2xl">
             <Image
               src={getOptimizedImageUrl(review.photoUrl, 'lightbox') ?? ''}
               alt="Review photo"
@@ -233,7 +233,7 @@ export function ReviewCardV2({
       )}
 
       {/* ── Card body ────────────────────────────────── */}
-      <div className="px-3.5 py-3">
+      <div className="min-w-0 flex-1">
         {/* Variant: profile — dish header with score */}
         {variant === 'profile' && dishContext && (
           <div className="flex items-start gap-2.5">
@@ -453,6 +453,7 @@ export function ReviewCardV2({
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   )

@@ -143,7 +143,7 @@ export function PersonalStatsBanner() {
           <div className="h-8 w-px bg-white/20" />
           <div className="text-center">
             <div className="font-display text-xl font-bold text-white">{user.dishPointsBalance ?? 0}</div>
-            <div className="text-xs text-white/60">DishPoints</div>
+            <div className="text-xs text-white/60">Crumbs</div>
           </div>
           {streak > 0 && (
             <>

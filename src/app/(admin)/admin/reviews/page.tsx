@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { ChevronRight } from 'lucide-react'
 import { Dialog } from '@base-ui/react/dialog'
 import { toast } from 'sonner'
 import { getFlaggedReviews, unflagReview } from '@/lib/services/admin'
@@ -11,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { Review } from '@/lib/types'
 import { API_ENDPOINTS } from '@/lib/constants/api'
+import { ROUTES } from '@/lib/constants/routes'
 
 const PRESET_REASONS = [
   'Violates community guidelines',
@@ -182,18 +185,22 @@ export default function AdminReviewsPage() {
           <div className="mt-6 space-y-4">
             {reviews.map((review) => (
               <div key={review.id} className="rounded-xl border border-destructive/20 bg-card p-5 shadow-sm">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
+                <Link
+                  href={ROUTES.adminReview(review.id)}
+                  className="group -m-2 flex items-start justify-between gap-4 rounded-lg p-2 transition-colors hover:bg-bg-cream"
+                >
+                  <div className="min-w-0">
                     <p className="text-sm font-semibold text-heading">{review.userName}</p>
-                    <p className="text-xs text-text-muted">Dish: {review.dishId}</p>
-                    {review.text && <p className="mt-1 text-sm text-text-primary">&ldquo;{review.text}&rdquo;</p>}
+                    <p className="truncate text-xs text-text-muted">Dish: {review.dishName ?? review.dishId}</p>
+                    {review.text && <p className="mt-1 line-clamp-2 text-sm text-text-primary">&ldquo;{review.text}&rdquo;</p>}
                     <div className="mt-1 flex gap-2 text-xs text-text-muted">
                       <span>Taste: {review.tasteRating}</span>
                       <span>Portion: {review.portionRating}</span>
                       <span>Value: {review.valueRating}</span>
                     </div>
                   </div>
-                </div>
+                  <ChevronRight className="mt-0.5 h-5 w-5 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5" />
+                </Link>
                 <div className="mt-3 flex gap-2">
                   <Button
                     onClick={() => handleApprove(review.id)}

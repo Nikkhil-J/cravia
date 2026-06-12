@@ -7,6 +7,7 @@ import {
   computeOverall,
   computeTopTags,
   canEditReview,
+  validateBillFile,
   validatePhotoFile,
 } from '@/lib/utils/index'
 
@@ -308,5 +309,31 @@ describe('validatePhotoFile', () => {
   it('accepts a file exactly at the 5MB size limit', () => {
     const file = makeFile('photo.jpg', 'image/jpeg', 5 * 1024 * 1024)
     expect(validatePhotoFile(file).valid).toBe(true)
+  })
+})
+
+// ── validateBillFile ──────────────────────────────────────
+
+describe('validateBillFile', () => {
+  function makeFile(name: string, type: string, sizeBytes: number): File {
+    const buf = new Uint8Array(sizeBytes)
+    return new File([buf], name, { type })
+  }
+
+  it('accepts a valid PDF bill', () => {
+    const file = makeFile('bill.pdf', 'application/pdf', 100_000)
+    expect(validateBillFile(file).valid).toBe(true)
+  })
+
+  it('accepts image bill uploads', () => {
+    const file = makeFile('bill.jpg', 'image/jpeg', 100_000)
+    expect(validateBillFile(file).valid).toBe(true)
+  })
+
+  it('rejects unsupported bill file types', () => {
+    const file = makeFile('bill.txt', 'text/plain', 100_000)
+    const { valid, error } = validateBillFile(file)
+    expect(valid).toBe(false)
+    expect(error).toContain('PDF')
   })
 })

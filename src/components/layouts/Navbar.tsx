@@ -3,10 +3,10 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
-import { Bell, User, Heart, Settings, LogOut } from 'lucide-react'
+import { Bell, User, Heart, Settings, LogOut, Cookie, Info } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '@/lib/utils'
-import { useAuth, logout } from '@/lib/hooks/useAuth'
+import { useAuth, useLogout } from '@/lib/hooks/useAuth'
 import { UserAvatar } from '@/components/ui/Avatar'
 import { Logo } from '@/components/ui/Logo'
 import { SearchBar } from '@/components/features/SearchBar'
@@ -26,7 +26,9 @@ export function Navbar() {
   const showSearchInNavbar = pathname !== ROUTES.HOME && !pathname.startsWith('/restaurant/')
   const [scrolled, setScrolled] = useState(false)
   const [confirmingLogout, setConfirmingLogout] = useState(false)
+  const [showCrumbsInfo, setShowCrumbsInfo] = useState(false)
   const { user, isAuthenticated, isLoading } = useAuth()
+  const handleLogout = useLogout()
 
   useEffect(() => {
     function onScroll() { setScrolled(window.scrollY > 10) }
@@ -114,7 +116,7 @@ export function Navbar() {
               <NotificationPopover />
 
               <div className="hidden md:block">
-              <DropdownMenu onOpenChange={(open) => { if (!open) setConfirmingLogout(false) }}>
+              <DropdownMenu onOpenChange={(open) => { if (!open) { setConfirmingLogout(false); setShowCrumbsInfo(false) } }}>
                 <DropdownMenuTrigger
                   className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-2 border-background bg-gradient-to-br from-primary to-brand-orange shadow-sm outline-none sm:h-[38px] sm:w-[38px]"
                 >
@@ -128,35 +130,54 @@ export function Navbar() {
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end" sideOffset={8} className="w-48">
-                  <div className="px-3 py-2 border-b border-border">
-                    <p className="text-xs text-text-muted">DishPoints</p>
-                    <p className="text-sm font-bold text-primary">
-                      {user.dishPointsBalance ?? 0} pts
-                    </p>
+                  <div className="-mx-1 -mt-1 mb-1 rounded-t-lg border-b border-border bg-primary/5 px-3 py-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <Cookie className="h-4 w-4 text-brand-gold" aria-hidden />
+                        <span className="text-sm font-semibold text-heading">Crumbs</span>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowCrumbsInfo((v) => !v) }}
+                          aria-label="What are Crumbs?"
+                          aria-expanded={showCrumbsInfo}
+                          className="flex h-4 w-4 items-center justify-center rounded-full text-text-muted transition-colors hover:text-text-secondary"
+                        >
+                          <Info className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      <span className="text-sm font-bold text-primary">
+                        {user.dishPointsBalance ?? 0} pts
+                      </span>
+                    </div>
+                    {showCrumbsInfo && (
+                      <p className="mt-1.5 text-xs leading-snug text-text-secondary">
+                        Crumbs are points you earn for reviewing dishes.
+                      </p>
+                    )}
                   </div>
                   <DropdownMenuItem
-                    className="gap-2 px-3 py-2"
+                    className="gap-2 px-3 py-2 focus:bg-surface-3"
                     render={<Link href={ROUTES.MY_PROFILE} />}
                   >
                     <User className="h-4 w-4" />
                     My Profile
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    className="gap-2 px-3 py-2"
+                    className="gap-2 px-3 py-2 focus:bg-surface-3"
                     render={<Link href={ROUTES.WISHLIST} />}
                   >
                     <Heart className="h-4 w-4" />
                     Wishlist
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    className="gap-2 px-3 py-2"
+                    className="gap-2 px-3 py-2 focus:bg-surface-3"
                     render={<Link href={ROUTES.NOTIFICATIONS} />}
                   >
                     <Bell className="h-4 w-4" />
                     Notifications
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    className="gap-2 px-3 py-2"
+                    className="gap-2 px-3 py-2 focus:bg-surface-3"
                     render={<Link href={ROUTES.SETTINGS} />}
                   >
                     <Settings className="h-4 w-4" />
@@ -177,7 +198,7 @@ export function Navbar() {
                     <DropdownMenuItem
                       variant="destructive"
                       className="justify-center px-3 py-2 font-semibold"
-                      onClick={() => logout()}
+                      onClick={() => handleLogout()}
                     >
                       Confirm logout
                     </DropdownMenuItem>

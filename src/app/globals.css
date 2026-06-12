@@ -249,6 +249,17 @@
   input[type="search"]::-webkit-search-cancel-button {
     cursor: pointer;
   }
+  /* Tailwind v4 Preflight no longer sets cursor:pointer on buttons. Restore it. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  label[for],
+  summary {
+    cursor: pointer;
+  }
+  button:disabled,
+  [role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 /* ── Dark mode image dimming ─────────────────────────────── */

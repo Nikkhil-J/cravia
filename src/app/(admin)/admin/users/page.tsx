@@ -1,12 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { ChevronRight } from 'lucide-react'
 import { getUsers, toggleAdmin, togglePremium } from '@/lib/services/admin'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { User } from '@/lib/types'
+import { ROUTES } from '@/lib/constants/routes'
 
 export default function AdminUsersPage() {
   const { authUser } = useAuth()
@@ -47,16 +50,24 @@ export default function AdminUsersPage() {
       {/* Mobile card list */}
       <div className="mt-6 flex flex-col gap-3 md:hidden">
         {users.map((user) => (
-          <div key={user.id} className="rounded-lg border border-border p-4">
-            <p className="font-medium text-heading">{user.displayName}</p>
-            <p className="mt-0.5 text-xs text-text-muted">{user.email}</p>
-            <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-text-secondary">{user.level}</span>
-              <span className="text-border">·</span>
-              <span className="text-xs text-text-secondary">{user.reviewCount} reviews</span>
-              {user.isAdmin && <Badge className="bg-destructive/15 text-destructive">Admin</Badge>}
-              {user.isPremium && <Badge className="bg-brand-gold-light text-brand-gold">Premium</Badge>}
-            </div>
+          <div key={user.id} className="rounded-lg border border-border bg-card p-4">
+            <Link
+              href={ROUTES.adminUser(user.id)}
+              className="group -m-2 flex items-start justify-between gap-3 rounded-lg p-2 transition-colors hover:bg-bg-cream"
+            >
+              <div className="min-w-0">
+                <p className="font-medium text-heading">{user.displayName}</p>
+                <p className="mt-0.5 truncate text-xs text-text-muted">{user.email}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  <span className="text-xs text-text-secondary">{user.level}</span>
+                  <span className="text-border">·</span>
+                  <span className="text-xs text-text-secondary">{user.reviewCount} reviews</span>
+                  {user.isAdmin && <Badge className="bg-destructive/15 text-destructive">Admin</Badge>}
+                  {user.isPremium && <Badge className="bg-brand-gold-light text-brand-gold">Premium</Badge>}
+                </div>
+              </div>
+              <ChevronRight className="mt-0.5 h-5 w-5 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5" />
+            </Link>
             <div className="mt-3 flex gap-2">
               <Button variant="outline" size="sm" onClick={() => handleToggleAdmin(user)} className="min-h-[44px] flex-1 text-xs">
                 {user.isAdmin ? 'Revoke admin' : 'Make admin'}
@@ -85,8 +96,10 @@ export default function AdminUsersPage() {
             {users.map((user) => (
               <tr key={user.id} className="hover:bg-bg-cream">
                 <td className="px-4 py-3">
-                  <p className="font-medium text-heading">{user.displayName}</p>
-                  <p className="text-xs text-text-muted">{user.email}</p>
+                  <Link href={ROUTES.adminUser(user.id)} className="group inline-block">
+                    <p className="font-medium text-heading group-hover:text-primary group-hover:underline">{user.displayName}</p>
+                    <p className="text-xs text-text-muted">{user.email}</p>
+                  </Link>
                 </td>
                 <td className="px-4 py-3 text-text-secondary">{user.level}</td>
                 <td className="px-4 py-3 text-text-secondary">{user.reviewCount}</td>
@@ -97,7 +110,10 @@ export default function AdminUsersPage() {
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
+                    <Button variant="link" render={<Link href={ROUTES.adminUser(user.id)} />} className="h-auto p-0 text-xs text-text-secondary">
+                      View
+                    </Button>
                     <Button variant="link" onClick={() => handleToggleAdmin(user)} className="h-auto p-0 text-xs text-primary">
                       {user.isAdmin ? 'Revoke admin' : 'Make admin'}
                     </Button>

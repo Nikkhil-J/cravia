@@ -2,6 +2,10 @@ import { test, expect } from '@playwright/test'
 import { loginUser, TEST_USER } from './helpers/auth'
 
 const DISH_ID = process.env.E2E_TEST_DISH_ID ?? ''
+const TEST_IMAGE_BUFFER = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+  'base64',
+)
 
 test.beforeEach(async ({ page }) => {
   test.skip(!TEST_USER.email, 'E2E_TEST_EMAIL not set')
@@ -65,13 +69,29 @@ test.describe('Write review page', () => {
     }
   })
 
-  test('photo upload input accepts image files', async ({ page }) => {
+  test('photo upload opens square cropper and creates a square preview', async ({ page }) => {
     await page.goto(`/write-review?dishId=${DISH_ID}`)
-    // File input for photo upload
-    const fileInput = page.locator('input[type="file"]')
-    if (await fileInput.isVisible({ timeout: 6000 })) {
-      await expect(fileInput).toBeEnabled()
-    }
+    const fileInput = page.locator('input[accept="image/jpeg,image/png,image/webp"]').first()
+
+    await expect(fileInput).toBeAttached({ timeout: 6000 })
+    await fileInput.setInputFiles({
+      name: 'dish-photo.png',
+      mimeType: 'image/png',
+      buffer: TEST_IMAGE_BUFFER,
+    })
+
+    await expect(page.getByRole('heading', { name: /fit your dish photo/i })).toBeVisible()
+    await expect(page.getByText(/square frame/i)).toBeVisible()
+    await page.getByRole('button', { name: /use photo/i }).click()
+
+    const preview = page.getByAltText('Preview')
+    await expect(preview).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText('Photo added')).toBeVisible()
+
+    const previewFrame = preview.locator('..')
+    const box = await previewFrame.boundingBox()
+    expect(box).not.toBeNull()
+    expect(Math.abs((box?.width ?? 0) - (box?.height ?? 0))).toBeLessThanOrEqual(1)
   })
 
   test('redirects to login if not authenticated', async ({ page }) => {

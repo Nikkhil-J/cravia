@@ -13,7 +13,7 @@ import { revalidateDishPage, revalidateRestaurantPage } from '@/lib/actions/reva
 import { getDish } from '@/lib/services/dishes'
 import { getReview } from '@/lib/services/reviews'
 import { uploadDishPhoto, uploadBillPhoto } from '@/lib/services/cloudinary'
-import { validatePhotoFile } from '@/lib/utils/index'
+import { validateBillFile, validatePhotoFile } from '@/lib/utils/index'
 import { cropImageToFile, getOptimizedImageUrl } from '@/lib/utils/image'
 import { getNewlyEarnedBadges } from '@/lib/gamification'
 import { StarRating } from '@/components/ui/StarRating'
@@ -232,12 +232,17 @@ function WriteReviewContent() {
   function handleBillChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    const { valid, error } = validatePhotoFile(file)
-    if (!valid) { setBillError(error); return }
+    const { valid, error } = validateBillFile(file)
+    if (!valid) {
+      setBillError(error)
+      e.target.value = ''
+      return
+    }
     setBillError(null)
     revokeObjectUrl(data.billPreviewUrl)
     updateField('billFile', file)
     updateField('billPreviewUrl', URL.createObjectURL(file))
+    e.target.value = ''
   }
 
   function handleSentenceStarterClick(starter: string) {
@@ -449,7 +454,7 @@ function WriteReviewContent() {
       {/* Dish hero card */}
       <div className="mb-8 flex items-center gap-3 rounded-2xl border border-border bg-card p-4 sm:gap-4 sm:p-7">
         {dish?.coverImage ? (
-          <Image src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''} alt={displayName} width={96} height={72} className="h-14 w-[74px] shrink-0 rounded-xl object-cover sm:h-[72px] sm:w-24" />
+          <Image src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''} alt={displayName} width={72} height={72} className="h-14 w-14 shrink-0 rounded-xl object-cover sm:h-[72px] sm:w-[72px]" />
         ) : displayName ? (
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-2xl sm:h-[72px] sm:w-[72px] sm:text-3xl">🍽️</div>
         ) : (
@@ -488,8 +493,8 @@ function WriteReviewContent() {
       </div>
 
       {isEditMode && existingPhotoUrl && (
-        <div className="mb-8 overflow-hidden rounded-xl">
-          <Image src={existingPhotoUrl} alt="Your review photo" width={600} height={200} className="h-40 w-full object-cover" />
+        <div className="relative mb-8 aspect-square w-full max-w-sm overflow-hidden rounded-xl">
+          <Image src={existingPhotoUrl} alt="Your review photo" fill sizes="384px" className="object-cover" />
         </div>
       )}
 
@@ -638,51 +643,53 @@ function WriteReviewContent() {
             )}
           </section>
 
-          {/* Dish photo — incentivized */}
-          <div className="rounded-2xl border-2 border-dashed border-brand-gold/40 bg-gradient-to-br from-brand-gold-light/30 to-transparent p-5">
-            <div className="flex items-center gap-4">
-              <span className="text-3xl">📸</span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-heading">Add a photo of the dish</p>
-                <p className="text-xs text-text-secondary">Photo reviews earn <strong className="text-brand-gold">20 pts</strong> vs <strong className="text-text-muted">10 pts</strong> without</p>
-                {photoError && <p className="mt-1 text-xs font-medium text-destructive">{photoError}</p>}
-              </div>
-              {data.photoPreviewUrl ? (
-                <span className="shrink-0 rounded-pill border-[1.5px] border-success bg-success/10 px-4 py-2 text-sm font-semibold text-success">
-                  Photo added
-                </span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => photoRef.current?.click()}
-                  className="shrink-0 rounded-pill border-[1.5px] border-border bg-card px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary"
-                >
-                  Add Photo
-                </button>
-              )}
-            </div>
-            {data.photoPreviewUrl && (
-              <div className="mt-3 w-full">
-                <div className="relative w-full overflow-hidden rounded-xl" style={{ aspectRatio: '4/3' }}>
-                  <Image
-                    src={data.photoPreviewUrl}
-                    alt="Preview"
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
+          {!isEditMode && (
+            /* Dish photo — incentivized */
+            <div className="rounded-2xl border-2 border-dashed border-brand-gold/40 bg-gradient-to-br from-brand-gold-light/30 to-transparent p-5">
+              <div className="flex items-center gap-4">
+                <span className="text-3xl">📸</span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-heading">Add a photo of the dish</p>
+                  <p className="text-xs text-text-secondary">Photo reviews earn <strong className="text-brand-gold">20 pts</strong> vs <strong className="text-text-muted">10 pts</strong> without</p>
+                  {photoError && <p className="mt-1 text-xs font-medium text-destructive">{photoError}</p>}
                 </div>
-                <button
-                  type="button"
-                  onClick={handleRemovePhoto}
-                  className="mt-2 block w-full text-right text-xs font-semibold text-destructive"
-                >
-                  Remove photo
-                </button>
+                {data.photoPreviewUrl ? (
+                  <span className="shrink-0 rounded-pill border-[1.5px] border-success bg-success/10 px-4 py-2 text-sm font-semibold text-success">
+                    Photo added
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => photoRef.current?.click()}
+                    className="shrink-0 rounded-pill border-[1.5px] border-border bg-card px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:border-primary hover:text-primary"
+                  >
+                    Add Photo
+                  </button>
+                )}
               </div>
-            )}
-            <input ref={photoRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePhotoChange} />
-          </div>
+              {data.photoPreviewUrl && (
+                <div className="mt-3 w-full">
+                  <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+                    <Image
+                      src={data.photoPreviewUrl}
+                      alt="Preview"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    className="mt-2 block w-full text-right text-xs font-semibold text-destructive"
+                  >
+                    Remove photo
+                  </button>
+                </div>
+              )}
+              <input ref={photoRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePhotoChange} />
+            </div>
+          )}
 
           {/* Verify your visit */}
           <div className="rounded-2xl border-[1.5px] border-brand-gold/30 bg-gradient-to-br from-brand-gold-light/50 to-brand-gold-light/20 p-6 sm:p-7">
@@ -697,7 +704,7 @@ function WriteReviewContent() {
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-text-secondary">
-                  Upload your bill for proof of visit. Your review gets a <strong className="text-heading">Bill attached</strong> badge and you earn <strong className="text-success">+5 DishPoints</strong> on top of your photo bonus.
+                  Upload your bill for proof of visit. Your review gets a <strong className="text-heading">Bill attached</strong> badge and you earn <strong className="text-success">+5 Crumbs</strong> on top of your photo bonus.
                 </p>
               </div>
             </div>
@@ -881,7 +888,7 @@ function PhotoCropModal({
         <div className="border-b border-border px-5 py-4">
           <h2 className="font-display text-lg font-bold text-heading">Fit your dish photo</h2>
           <p className="mt-1 text-sm text-text-secondary">
-            Move and zoom the image into a 4:3 frame. We&apos;ll save it as a consistent 1200x900 photo.
+            Move and zoom the image into a square frame. We&apos;ll save it as a consistent 1200x1200 photo.
           </p>
         </div>
 
@@ -890,7 +897,7 @@ function PhotoCropModal({
             image={imageUrl}
             crop={crop}
             zoom={zoom}
-            aspect={4 / 3}
+            aspect={1}
             minZoom={1}
             maxZoom={3}
             onCropChange={onCropChange}

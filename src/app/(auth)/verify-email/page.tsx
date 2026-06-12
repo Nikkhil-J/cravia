@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AuthShell } from '@/components/layouts/AuthShell'
-import { sendVerificationEmail, reloadAuthUser } from '@/lib/hooks/useAuth'
+import { sendVerificationEmail, reloadAuthUser, useLogout } from '@/lib/hooks/useAuth'
 import { useAuthStore } from '@/lib/store/authStore'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
@@ -17,6 +17,7 @@ function VerifyEmailContent() {
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect') || ROUTES.ONBOARDING
   const authUser = useAuthStore((s) => s.authUser)
+  const handleLogout = useLogout()
 
   const [checking, setChecking] = useState(false)
   const [notVerifiedYet, setNotVerifiedYet] = useState(false)
@@ -132,11 +133,7 @@ function VerifyEmailContent() {
       <p className="mt-6 text-xs text-text-muted">
         Wrong email?{' '}
         <button
-          onClick={async () => {
-            const { logout } = await import('@/lib/hooks/useAuth')
-            await logout()
-            router.replace(ROUTES.SIGNUP)
-          }}
+          onClick={() => handleLogout(ROUTES.SIGNUP)}
           className="font-semibold text-primary hover:underline"
         >
           Sign up again

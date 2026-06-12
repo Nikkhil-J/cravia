@@ -19,7 +19,7 @@ test.describe('Home feed', () => {
     ).toBeVisible({ timeout: 8000 })
   })
 
-  test('navbar dropdown shows DishPoints balance', async ({ page }) => {
+  test('navbar dropdown shows Crumbs balance', async ({ page }) => {
     await page.goto('/home')
     await page.keyboard.press('Escape')
     await page.waitForTimeout(500)
@@ -27,7 +27,7 @@ test.describe('Home feed', () => {
     await expect(trigger).toBeVisible({ timeout: 8000 })
     await trigger.click()
     await expect(
-      page.getByText('DishPoints').or(page.locator('text=pts')).first()
+      page.getByText('Crumbs').or(page.locator('text=pts')).first()
     ).toBeVisible({ timeout: 8000 })
   })
 
@@ -153,7 +153,7 @@ test.describe('Rewards page', () => {
     await page.goto('/rewards')
     await page.waitForTimeout(2000)
     await expect(
-      page.getByText(/dishpoints|points/i).first()
+      page.getByText(/crumbs|points/i).first()
     ).toBeVisible({ timeout: 8000 })
     const tabs = page.getByRole('button').filter({ hasText: /coupon|redeem|history|earn|transaction/i })
     const tabCount = await tabs.count()

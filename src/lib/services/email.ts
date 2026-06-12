@@ -95,7 +95,7 @@ function progressBar(current: number, max: number): string {
 </table>
 </td></tr>
 </table>
-<p style="margin:4px 0 0;font-size:14px;color:#666;">${current} / ${max} DishPoints</p>`
+<p style="margin:4px 0 0;font-size:14px;color:#666;">${current} / ${max} Crumbs</p>`
 }
 
 // ── Public email senders ────────────────────────────────
@@ -107,7 +107,7 @@ export async function sendPointsMilestoneEmail(
 ): Promise<void> {
   const html = wrapHtml(`
 <h1 style="margin:0 0 16px;font-size:24px;">Hey ${user.displayName}!</h1>
-<p>You're <strong>${pointsNeeded} DishPoints</strong> away from redeeming your first free coupon.</p>
+<p>You're <strong>${pointsNeeded} Crumbs</strong> away from redeeming your first free coupon.</p>
 ${progressBar(points, 500)}
 <p>Keep reviewing dishes to earn more points and unlock rewards.</p>
 ${ctaButton('View Rewards', `${SITE_URL}${ROUTES.REWARDS}`)}
@@ -115,7 +115,7 @@ ${ctaButton('View Rewards', `${SITE_URL}${ROUTES.REWARDS}`)}
 
   await sendEmail({
     to: user.email,
-    subject: `You're ${pointsNeeded} DishPoints away from a free coupon`,
+    subject: `You're ${pointsNeeded} Crumbs away from a free coupon`,
     html,
   })
 }
@@ -157,13 +157,13 @@ export async function sendWelcomeEmail(
 <h1 style="margin:0 0 16px;font-size:24px;">Welcome to Cravia!</h1>
 <p>Hi ${user.displayName}, great to have you here.</p>
 <p>Cravia helps you know exactly what to order. Search for any dish at any restaurant and read honest, dish-level reviews from real diners.</p>
-<h2 style="font-size:18px;margin:24px 0 12px;">How to earn your first DishPoints:</h2>
+<h2 style="font-size:18px;margin:24px 0 12px;">How to earn your first Crumbs:</h2>
 <ol style="padding-left:20px;">
 <li style="margin-bottom:8px;">Find a dish you've tried recently</li>
 <li style="margin-bottom:8px;">Write a review with a photo, tags, and a few sentences</li>
-<li style="margin-bottom:8px;">Earn up to 25 DishPoints per review</li>
+<li style="margin-bottom:8px;">Earn up to 25 Crumbs per review</li>
 </ol>
-<p>Collect 500 DishPoints and redeem them for real restaurant coupons.</p>
+<p>Collect 500 Crumbs and redeem them for real restaurant coupons.</p>
 ${ctaButton('Start Exploring', `${SITE_URL}${ROUTES.EXPLORE}`)}
 `, user.email)
 

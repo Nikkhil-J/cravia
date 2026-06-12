@@ -29,14 +29,14 @@ export function TopRatedStrip({ dishes, city }: TopRatedStripProps) {
               href={ROUTES.dish(dish.id)}
               className="group block rounded-xl bg-surface-2 p-3.5 transition-colors hover:bg-surface-3"
             >
-              <div className="mb-2 flex h-10 w-[54px] items-center justify-center overflow-hidden rounded-lg bg-coral-bg">
+              <div className="mb-2 flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-coral-bg">
                 {dish.coverImage ? (
                   <Image
                     src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''}
                     alt={dish.name}
-                    width={54}
+                    width={40}
                     height={40}
-                    sizes="54px"
+                    sizes="40px"
                     className="h-full w-full object-cover"
                   />
                 ) : (

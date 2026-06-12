@@ -2,9 +2,10 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { X, ChevronDown } from 'lucide-react'
-import { useCallback, useState, Suspense, type ReactNode } from 'react'
+import { useCallback, useEffect, useState, useTransition, Suspense, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
+import { setExplorePending } from '@/components/features/ExploreResultsWrapper'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -126,6 +127,11 @@ function FiltersInner({
 }: ExploreFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [isPending, startTransition] = useTransition()
+
+  useEffect(() => {
+    setExplorePending(isPending)
+  }, [isPending])
 
   const [optimisticCuisine, setOptimisticCuisine] = useState<string | null>(null)
   const [optimisticArea, setOptimisticArea] = useState<string | null>(null)
@@ -166,15 +172,21 @@ function FiltersInner({
     [activeTab, searchParams]
   )
 
-  function signalFilterChange() {
-    window.dispatchEvent(new CustomEvent('explore-filter-change'))
-  }
+  // Soft client navigation: updates the URL (so filters stay shareable and
+  // back-navigable) without scrolling to top or unmounting the current results.
+  const navigate = useCallback(
+    (href: string) => {
+      startTransition(() => {
+        router.push(href, { scroll: false })
+      })
+    },
+    [router]
+  )
 
   function handleTabChange(tab: ExploreTab) {
-    signalFilterChange()
     const params = new URLSearchParams()
     if (tab !== 'dishes') params.set('tab', tab)
-    router.push(`${ROUTES.EXPLORE}?${params.toString()}`)
+    navigate(`${ROUTES.EXPLORE}?${params.toString()}`)
   }
 
   function toggleFilter(key: string, value: string | null) {
@@ -186,15 +198,13 @@ function FiltersInner({
     else if (key === 'dietary') setOptimisticDietary(newVal)
     else if (key === 'priceRange') setOptimisticPriceRange(newVal)
 
-    signalFilterChange()
-    router.push(buildUrl({ [key]: newVal }))
+    navigate(buildUrl({ [key]: newVal }))
   }
 
   function handleSort(value: string) {
     setOptimisticSort(value)
-    signalFilterChange()
     const defaultSort = 'highest-rated'
-    router.push(buildUrl({ sortBy: value === defaultSort ? null : value }))
+    navigate(buildUrl({ sortBy: value === defaultSort ? null : value }))
   }
 
   const filterCount = [query, selectedCuisine, selectedArea, selectedDietary, selectedPriceRange].filter(
@@ -214,7 +224,7 @@ function FiltersInner({
             variant="secondary"
             className="cursor-pointer gap-1"
             render={
-              <button type="button" onClick={() => { signalFilterChange(); router.push(buildUrl({})) }} />
+              <button type="button" onClick={() => navigate(buildUrl({}))} />
             }
           >
             &ldquo;{query}&rdquo;
@@ -271,12 +281,9 @@ function FiltersInner({
         <Button
           variant="link"
           size="xs"
-          onClick={() => {
-            signalFilterChange()
-            router.push(
-              buildUrl({ cuisine: null, area: null, dietary: null, priceRange: null })
-            )
-          }}
+          onClick={() =>
+            navigate(buildUrl({ cuisine: null, area: null, dietary: null, priceRange: null }))
+          }
           className="text-xs font-semibold"
         >
           Clear all

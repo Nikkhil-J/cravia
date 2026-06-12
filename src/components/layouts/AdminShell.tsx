@@ -63,22 +63,33 @@ export function AdminShell({ children }: AdminShellProps) {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* Mobile top bar */}
-      <div className="fixed inset-x-0 top-0 z-40 flex h-14 items-center gap-2 border-b border-border bg-background px-4 md:hidden">
-        <Button variant="ghost" size="icon" onClick={() => setMobileOpen(true)} aria-label="Open menu">
-          <Menu className="h-5 w-5" />
-        </Button>
-        <Link href={ROUTES.HOME} className="font-headline font-extrabold uppercase tracking-wide text-primary">
-          <span>🍽️</span> Cravia
-        </Link>
-      </div>
+    <div className="flex min-h-screen bg-surface">
+      {/* Mobile top bar — padded for the device status bar / notch in standalone PWA */}
+      <header
+        className="fixed inset-x-0 top-0 z-40 flex items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur-xl md:hidden"
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      >
+        <div className="flex h-14 w-full items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={() => setMobileOpen(true)} aria-label="Open menu">
+            <Menu className="h-5 w-5" />
+          </Button>
+          <Link href={ROUTES.HOME} className="font-headline text-sm font-extrabold uppercase tracking-wide text-primary">
+            <span>🍽️</span> Cravia
+          </Link>
+          <span className="ml-auto rounded-full bg-primary-light px-2.5 py-1 text-xs font-semibold text-primary-dark">
+            Admin
+          </span>
+        </div>
+      </header>
 
       {/* Mobile drawer overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <aside className="relative flex h-full w-64 flex-col bg-background shadow-xl">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+          <aside
+            className="relative flex h-full w-[min(18rem,85vw)] flex-col bg-background shadow-xl"
+            style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+          >
             <div className="flex items-center justify-between border-b border-border px-5 py-4">
               <Link href={ROUTES.HOME} className="font-headline font-extrabold uppercase tracking-wide text-primary">
                 🍽️ Cravia
@@ -100,7 +111,10 @@ export function AdminShell({ children }: AdminShellProps) {
         </Link>
         <AdminNav pathname={pathname} />
       </aside>
-      <main className="flex-1 overflow-y-auto bg-surface p-4 pt-[calc(3.5rem+1rem)] sm:p-6 md:pt-6">{children}</main>
+
+      <main className="min-w-0 flex-1 overflow-y-auto bg-surface pt-[calc(3.5rem+env(safe-area-inset-top)+1rem)] pb-[calc(env(safe-area-inset-bottom)+1.5rem)] md:pt-6 md:pb-8">
+        <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">{children}</div>
+      </main>
     </div>
   )
 }

@@ -13,7 +13,7 @@ export const API_ERRORS = {
   FAILED_TO_CREATE_REVIEW: 'Failed to create review',
   FAILED_TO_UPDATE_REVIEW: 'Failed to update review or unauthorized',
   FAILED_TO_DELETE_REVIEW: 'Failed to delete review or unauthorized',
-  INSUFFICIENT_POINTS: 'Insufficient DishPoints',
+  INSUFFICIENT_POINTS: 'Insufficient Crumbs',
   COUPON_UNAVAILABLE: 'Coupon no longer available',
   PAYMENT_FAILED: 'Payment verification failed',
   RESTAURANT_ALREADY_OWNED: 'Restaurant already has an owner',

@@ -25,7 +25,7 @@ export function EarlyStageCard({
         Nobody&apos;s reviewed the {dishName} here yet.
       </h3>
       <p className="mt-2 text-sm text-text-secondary">
-        Be the first — earn 25 DishPoints for the first review.
+        Be the first — earn 25 Crumbs for the first review.
       </p>
       <Link
         href={writeUrl}

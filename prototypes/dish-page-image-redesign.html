@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cravia — Dish Page Image Redesign (Before / After)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Live dark-theme tokens (mirrors src/app/globals.css :root) ── */
+    :root {
+      --background: #121009;
+      --card: #252018;
+      --foreground: #f5f0eb;
+      --primary: #e8571a;
+      --primary-dark: #c94e14;
+      --brand-orange: #FF6B35;
+      --brand-gold: #FFB800;
+      --success: #4ADE80;
+      --surface-2: #1e1a17;
+      --surface-3: #302820;
+      --bg-cream: #1e1a17;
+      --heading: #f5f0eb;
+      --text-primary: #f5f0eb;
+      --text-secondary: #9a9080;
+      --text-muted: #5a5248;
+      --border: #302820;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 999px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-glow: 0 4px 20px rgba(232,87,26,0.25);
+      --font-display: 'Fredoka', ui-sans-serif, system-ui, sans-serif;
+      --font-body: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--background);
+      color: var(--text-primary);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      padding: 0 0 120px;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; border: none; background: none; cursor: pointer; color: inherit; }
+
+    /* ── Page chrome ── */
+    .page-header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(18,16,9,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+    }
+    .page-header h1 { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--heading); }
+    .page-header p { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+    .legend { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--text-secondary); }
+    .dot { width: 10px; height: 10px; border-radius: 3px; }
+    .dot-before { background: var(--destructive, #F87171); }
+    .dot-after { background: var(--success); }
+
+    .wrap { max-width: 1264px; margin: 0 auto; padding: 0 32px; }
+
+    .case { margin-top: 56px; }
+    .case-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--heading); margin-bottom: 4px; }
+    .case-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; max-width: 760px; }
+
+    /* A "device" frame simulating a 1200px desktop viewport */
+    .frame {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--background);
+      padding: 28px;
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+    .tag {
+      position: absolute; top: 0; left: 0;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+      padding: 5px 12px; border-bottom-right-radius: var(--radius-md);
+      text-transform: uppercase; color: #fff; z-index: 5;
+    }
+    .tag-before { background: #F87171; }
+    .tag-after { background: var(--success); color: #06210f; }
+    .frame.before { border-color: rgba(248,113,113,0.4); }
+    .frame.after { border-color: rgba(74,222,128,0.4); }
+
+    .annot {
+      margin-top: 14px; font-size: 12px; line-height: 1.5;
+      padding: 10px 14px; border-radius: var(--radius-md);
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .annot.bad { border-color: rgba(248,113,113,0.3); }
+    .annot.good { border-color: rgba(74,222,128,0.3); }
+    .annot b { color: var(--text-primary); }
+
+    /* ── Reusable dish-page primitives ── */
+    .pill { display: inline-flex; align-items: center; border-radius: var(--radius-pill); padding: 4px 12px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); }
+    .pill-veg { color: #fca5a5; border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.08); }
+    .pill-cat { color: var(--text-secondary); background: var(--bg-cream); }
+    .dish-title { font-family: var(--font-display); font-weight: 700; color: var(--heading); font-size: 34px; line-height: 1.1; margin-top: 12px; }
+    .meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 10px; font-size: 14px; }
+    .meta-rest { color: var(--primary); font-weight: 600; }
+    .meta-gold { color: var(--brand-gold); font-weight: 700; display: inline-flex; gap: 4px; align-items: center; }
+    .meta-muted { color: var(--text-muted); }
+    .meta-price { color: var(--heading); font-weight: 700; }
+    .dish-desc { margin-top: 16px; color: var(--text-secondary); line-height: 1.6; }
+    .tagcloud { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .tagcloud .pill { font-weight: 500; color: var(--text-muted); }
+    .cta-row { display: flex; gap: 12px; margin-top: 28px; }
+    .btn-primary {
+      flex: 1; display: inline-flex; align-items: center; justify-content: center;
+      background: var(--primary); color: #fff; font-weight: 600; font-size: 14px;
+      border-radius: var(--radius-pill); padding: 13px 24px; transition: all 0.2s;
+    }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+    .btn-save {
+      display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+      border: 1px solid var(--border); border-radius: var(--radius-pill);
+      padding: 13px 22px; font-weight: 600; font-size: 14px; color: var(--text-primary);
+    }
+    .hint { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
+
+    .sidebar-card { border: 1px solid var(--border); background: var(--card); border-radius: var(--radius-lg); padding: 24px; }
+    .score-big { font-family: var(--font-display); font-weight: 700; font-size: 44px; color: var(--heading); text-align: center; }
+    .score-sub { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+    .subrating { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 13px; }
+    .subrating .lbl { width: 64px; color: var(--text-secondary); }
+    .bar { flex: 1; height: 7px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+    .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--primary), var(--brand-orange)); }
+
+    .rest-card { display: block; border: 1px solid var(--border); background: var(--card); border-radius: var(--radius-lg); padding: 16px; margin-top: 22px; }
+    .rest-card .k { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    .rest-card .v { font-family: var(--font-display); font-weight: 600; color: var(--heading); margin-top: 4px; }
+    .rest-card .lnk { font-size: 12px; color: var(--primary); margin-top: 2px; }
+
+    /* photo helpers */
+    .sq { position: relative; overflow: hidden; background: var(--surface-2); }
+    .sq img { width: 100%; height: 100%; object-fit: cover; }
+    .aspect-square { aspect-ratio: 1 / 1; }
+    .more-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; }
+
+    /* ── Empty state ── */
+    .empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; width: 100%; border-radius: var(--radius-lg); text-align: center;
+    }
+    .empty .emoji { font-size: 44px; opacity: 0.4; }
+    .empty .t { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+    .empty .s { font-size: 12px; color: var(--text-muted); }
+    .empty-before { background: var(--surface-2); padding: 64px 0; }
+    .empty-after  { background: var(--surface-2); padding: 28px 16px; }
+
+    /* ── Review card ── */
+    .rc { border: 1px solid var(--border); background: var(--card); border-radius: var(--radius-lg); overflow: hidden; }
+    .rc-body { padding: 14px; }
+    .rc-head { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; }
+    .avatar { width: 28px; height: 28px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; background: rgba(232,87,26,0.18); color: var(--brand-orange); }
+    .rc-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .lvl { font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: rgba(232,87,26,0.15); color: var(--brand-orange); }
+    .score-badge { margin-left: auto; display: inline-flex; align-items: baseline; gap: 2px; background: linear-gradient(135deg, var(--primary), var(--brand-orange)); color: #fff; font-weight: 800; font-size: 13px; padding: 4px 9px; border-radius: 8px; }
+    .score-badge small { font-size: 9px; opacity: 0.7; font-weight: 500; }
+    .rc-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .rc-pill { display: inline-flex; gap: 4px; align-items: baseline; border: 1px solid var(--border); background: var(--surface-2); border-radius: 6px; padding: 2px 8px; font-size: 11px; color: var(--text-muted); }
+    .rc-pill b { color: var(--brand-orange); }
+    .rc-text { font-size: 12.5px; color: var(--text-secondary); margin-top: 10px; line-height: 1.55; }
+    .rc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .rc-tag { font-size: 10px; color: var(--text-muted); border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px; }
+    .rc-meta { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 11px; color: var(--text-muted); }
+    .rc-helpful { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; font-weight: 600; color: var(--text-muted); }
+
+    .h2 { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--heading); margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1>Dish Page · Image Redesign</h1>
+    <p>Pixel-perfect before / after using the live dark theme tokens. Desktop view (~1200px content width).</p>
+    <div class="legend">
+      <span><i class="dot dot-before"></i> Before — current production</span>
+      <span><i class="dot dot-after"></i> After — proposed fix</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <!-- ════════════════════ CASE A ════════════════════ -->
+    <section class="case">
+      <div class="case-title">Case A · Dish page gallery (desktop)</div>
+      <div class="case-sub">The gallery sits in a <code>max-w-3xl</code> (768px) centered wrapper above full-width content, so a single square photo becomes a giant slab that doesn't align with anything below it.</div>
+
+      <!-- A — BEFORE -->
+      <div class="frame before">
+        <span class="tag tag-before">Before</span>
+        <div style="max-width: 768px; margin: 24px auto 0;">
+          <div class="sq aspect-square" style="border-radius: var(--radius-lg);">
+            <img src="https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=900&q=80" alt="dish">
+          </div>
+        </div>
+        <div style="margin-top: 24px;">
+          <span class="pill pill-veg">🔴 Non-vegetarian</span>
+          <span class="pill pill-cat" style="margin-left:8px;">Starter &amp; Appetiser</span>
+          <h2 class="dish-title">Wings Platter</h2>
+          <div class="meta-row">
+            <span class="meta-rest">IFC Social</span>
+            <span class="meta-gold">★ 4.5</span>
+            <span class="meta-muted">12 reviews · Last reviewed 2d ago</span>
+            <span class="meta-price">₹600</span>
+          </div>
+        </div>
+        <div class="annot bad"><b>Problem:</b> 768×768 photo dominates the fold; gallery is centered &amp; narrower than the 1200px content, so the left edges don't line up. No use of horizontal desktop space.</div>
+      </div>
+
+      <!-- A — AFTER -->
+      <div class="frame after">
+        <span class="tag tag-after">After</span>
+        <div style="display: grid; grid-template-columns: 460px 1fr; gap: 40px; margin-top: 24px; align-items: start;">
+          <!-- gallery column -->
+          <div>
+            <div class="sq aspect-square" style="border-radius: var(--radius-lg);">
+              <img src="https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=900&q=80" alt="main dish">
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px;">
+              <div class="sq aspect-square" style="border-radius: 10px;"><img src="https://images.unsplash.com/photo-1608039755401-742074f0548d?w=300&q=80" alt=""></div>
+              <div class="sq aspect-square" style="border-radius: 10px;"><img src="https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=300&q=80" alt=""></div>
+              <div class="sq aspect-square" style="border-radius: 10px;"><img src="https://images.unsplash.com/photo-1626082927389-6cd097cee6a6?w=300&q=80" alt=""></div>
+              <button class="sq aspect-square" style="border-radius: 10px;">
+                <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&q=80" alt="">
+                <span class="more-overlay">+5</span>
+              </button>
+            </div>
+          </div>
+          <!-- info column -->
+          <div>
+            <span class="pill pill-veg">🔴 Non-vegetarian</span>
+            <span class="pill pill-cat" style="margin-left:8px;">Starter &amp; Appetiser</span>
+            <h2 class="dish-title">Wings Platter</h2>
+            <div class="meta-row">
+              <span class="meta-rest">IFC Social</span>
+              <span class="meta-gold">★ 4.5</span>
+              <span class="meta-muted">12 reviews · 2d ago</span>
+              <span class="meta-price">₹600</span>
+            </div>
+            <p class="dish-desc">Wings with multiple personalities: Tennessee (sweet), Tandoori (spicy), BBQ (smokey), Death (RIP your taste buds).</p>
+            <div class="tagcloud">
+              <span class="pill">spicy</span><span class="pill">worth it</span><span class="pill">generous portion</span><span class="pill">crispy</span>
+            </div>
+            <div class="cta-row">
+              <a class="btn-primary">Earn 25 pts — Review this dish</a>
+              <button class="btn-save">♡ Save</button>
+            </div>
+            <p class="hint">Photo + detailed review = 25 pts | Quick review = 10 pts</p>
+          </div>
+        </div>
+        <div class="annot good"><b>Fix:</b> Two-column hero — gallery capped at 460px with a thumbnail strip on the left, dish info on the right. Photo no longer overwhelms, and desktop width is actually used.</div>
+      </div>
+
+      <!-- A — empty state before/after -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px;">
+        <div class="frame before" style="margin-bottom:0;">
+          <span class="tag tag-before">Before · 0 reviews</span>
+          <div style="max-width: 768px; margin: 28px auto 0;">
+            <div class="empty empty-before">
+              <span class="emoji">📷</span>
+              <span class="t">No photos yet</span>
+              <span class="s">Be the first to review this dish</span>
+            </div>
+          </div>
+          <div class="annot bad"><b>Problem:</b> Huge <code>py-16</code> void at 768px wide — the giant empty box in your screenshot.</div>
+        </div>
+        <div class="frame after" style="margin-bottom:0;">
+          <span class="tag tag-after">After · 0 reviews</span>
+          <div style="display:grid; grid-template-columns: 460px 1fr; gap: 40px; margin-top: 28px; align-items:start;">
+            <div class="empty empty-after" style="border-radius: var(--radius-lg);">
+              <span class="emoji" style="font-size:34px;">📷</span>
+              <span class="t">No photos yet</span>
+              <span class="s">Be the first to review this dish</span>
+            </div>
+            <div>
+              <span class="pill pill-veg">🔴 Non-vegetarian</span>
+              <h2 class="dish-title" style="font-size:28px;">Wings Platter</h2>
+              <div class="meta-row"><span class="meta-rest">IFC Social</span><span class="meta-muted">★ — · 0 reviews</span><span class="meta-price">₹600</span></div>
+              <div class="cta-row"><a class="btn-primary">Write the first review — Earn 25 pts</a></div>
+            </div>
+          </div>
+          <div class="annot good"><b>Fix:</b> Compact <code>py-8</code> placeholder sits inside the hero column next to the title — no dead space.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════ CASE B ════════════════════ -->
+    <section class="case">
+      <div class="case-title">Case B · Review card photo</div>
+      <div class="case-sub">A full-width <code>aspect-square</code> banner on top of each card makes the photo as wide as the card — enormous in a wide column.</div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <!-- B — BEFORE -->
+        <div class="frame before" style="margin-bottom:0;">
+          <span class="tag tag-before">Before</span>
+          <div style="max-width: 560px; margin: 28px auto 0;">
+            <div class="rc">
+              <button class="sq aspect-square" style="width:100%;">
+                <img src="https://images.unsplash.com/photo-1608039755401-742074f0548d?w=900&q=80" alt="review">
+              </button>
+              <div class="rc-body">
+                <div class="rc-head">
+                  <span class="avatar">NK</span>
+                  <span class="rc-name">Nikhil K.</span>
+                  <span class="lvl">Connoisseur</span>
+                  <span class="score-badge">4.5<small>/5</small></span>
+                </div>
+                <div class="rc-pills">
+                  <span class="rc-pill">Taste <b>4.0</b></span>
+                  <span class="rc-pill">Portion <b>5.0</b></span>
+                  <span class="rc-pill">Value <b>4.0</b></span>
+                </div>
+                <p class="rc-text">Great wings, loved the spicy tandoori ones. Portion was generous for the price.</p>
+                <div class="rc-meta"><span>2d ago</span><span class="rc-helpful">♥ Helpful · 12</span><span>Report</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="annot bad"><b>Problem:</b> Square photo = full card width tall. In the full-width single-column list (Case C) this becomes a ~1200px-tall image.</div>
+        </div>
+
+        <!-- B — AFTER -->
+        <div class="frame after" style="margin-bottom:0;">
+          <span class="tag tag-after">After</span>
+          <div style="max-width: 560px; margin: 28px auto 0;">
+            <div class="rc">
+              <div class="rc-body" style="display:flex; gap:14px;">
+                <button class="sq aspect-square" style="width:140px; flex-shrink:0; border-radius: var(--radius-md);">
+                  <img src="https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400&q=80" alt="review">
+                </button>
+                <div style="min-width:0; flex:1;">
+                  <div class="rc-head" style="padding-bottom:8px;">
+                    <span class="avatar">NK</span>
+                    <span class="rc-name">Nikhil K.</span>
+                    <span class="lvl">Connoisseur</span>
+                    <span class="score-badge">4.5<small>/5</small></span>
+                  </div>
+                  <div class="rc-pills">
+                    <span class="rc-pill">Taste <b>4.0</b></span>
+                    <span class="rc-pill">Portion <b>5.0</b></span>
+                    <span class="rc-pill">Value <b>4.0</b></span>
+                  </div>
+                  <p class="rc-text">Great wings, loved the spicy tandoori ones. Portion was generous for the price.</p>
+                  <div class="rc-tags"><span class="rc-tag">spicy</span><span class="rc-tag">worth it</span></div>
+                  <div class="rc-meta"><span>2d ago</span><span class="rc-helpful">♥ Helpful · 12</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="annot good"><b>Fix:</b> Thumbnail-left (~140px square) / content-right. Photo stays consistent &amp; tappable but never dominates; card height is driven by content.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════ CASE C ════════════════════ -->
+    <section class="case">
+      <div class="case-title">Case C · Reviews list layout (desktop)</div>
+      <div class="case-sub">The list renders a single full-width column (<code>flex flex-col</code>) although the code comment says “full width for 2-up grid”. Each card stretches to ~1200px.</div>
+
+      <!-- C — BEFORE -->
+      <div class="frame before">
+        <span class="tag tag-before">Before — single column, full width</span>
+        <div style="margin-top: 20px;">
+          <div class="h2">Reviews (12)</div>
+          <div style="display:flex; flex-direction:column; gap:16px; margin-top:16px;">
+            <!-- one big card with giant square -->
+            <div class="rc">
+              <button class="sq aspect-square" style="width:100%;">
+                <img src="https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=1400&q=80" alt="review">
+              </button>
+              <div class="rc-body">
+                <div class="rc-head"><span class="avatar">AR</span><span class="rc-name">Aarav R.</span><span class="lvl">Foodie</span><span class="score-badge">4.0<small>/5</small></span></div>
+                <p class="rc-text">The BBQ wings were smokey and tender. A bit pricey but worth it for a treat.</p>
+                <div class="rc-meta"><span>5d ago</span><span class="rc-helpful">♥ Helpful · 8</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="annot bad"><b>Problem:</b> One card spans the full 1200px, so its square photo is ~1200px tall. You scroll forever past one review.</div>
+      </div>
+
+      <!-- C — AFTER -->
+      <div class="frame after">
+        <span class="tag tag-after">After — 2-up grid + compact cards</span>
+        <div style="margin-top: 20px;">
+          <div class="h2">Reviews (12)</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:16px;">
+            <!-- 4 compact thumbnail-left cards -->
+            <div class="rc"><div class="rc-body" style="display:flex; gap:14px;">
+              <button class="sq aspect-square" style="width:120px; flex-shrink:0; border-radius:var(--radius-md);"><img src="https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=300&q=80" alt=""></button>
+              <div style="flex:1; min-width:0;">
+                <div class="rc-head" style="padding-bottom:8px;"><span class="avatar">AR</span><span class="rc-name">Aarav R.</span><span class="score-badge">4.0<small>/5</small></span></div>
+                <div class="rc-pills"><span class="rc-pill">Taste <b>4</b></span><span class="rc-pill">Value <b>4</b></span></div>
+                <p class="rc-text">The BBQ wings were smokey and tender. A bit pricey but worth it.</p>
+                <div class="rc-meta"><span>5d ago</span><span class="rc-helpful">♥ 8</span></div>
+              </div>
+            </div></div>
+
+            <div class="rc"><div class="rc-body" style="display:flex; gap:14px;">
+              <button class="sq aspect-square" style="width:120px; flex-shrink:0; border-radius:var(--radius-md);"><img src="https://images.unsplash.com/photo-1626082927389-6cd097cee6a6?w=300&q=80" alt=""></button>
+              <div style="flex:1; min-width:0;">
+                <div class="rc-head" style="padding-bottom:8px;"><span class="avatar">SP</span><span class="rc-name">Sara P.</span><span class="score-badge">5.0<small>/5</small></span></div>
+                <div class="rc-pills"><span class="rc-pill">Taste <b>5</b></span><span class="rc-pill">Portion <b>5</b></span></div>
+                <p class="rc-text">Death wings are no joke. Loved every spicy bite, huge portion.</p>
+                <div class="rc-meta"><span>1w ago</span><span class="rc-helpful">♥ 21</span></div>
+              </div>
+            </div></div>
+
+            <div class="rc"><div class="rc-body" style="display:flex; gap:14px;">
+              <button class="sq aspect-square" style="width:120px; flex-shrink:0; border-radius:var(--radius-md);"><img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&q=80" alt=""></button>
+              <div style="flex:1; min-width:0;">
+                <div class="rc-head" style="padding-bottom:8px;"><span class="avatar">MJ</span><span class="rc-name">Maya J.</span><span class="score-badge">4.5<small>/5</small></span></div>
+                <div class="rc-pills"><span class="rc-pill">Taste <b>5</b></span><span class="rc-pill">Value <b>4</b></span></div>
+                <p class="rc-text">Tennessee sweet ones are my favourite. Came fresh and hot.</p>
+                <div class="rc-meta"><span>2w ago</span><span class="rc-helpful">♥ 6</span></div>
+              </div>
+            </div></div>
+
+            <div class="rc"><div class="rc-body" style="display:flex; gap:14px;">
+              <button class="sq aspect-square" style="width:120px; flex-shrink:0; border-radius:var(--radius-md);"><img src="https://images.unsplash.com/photo-1608039755401-742074f0548d?w=300&q=80" alt=""></button>
+              <div style="flex:1; min-width:0;">
+                <div class="rc-head" style="padding-bottom:8px;"><span class="avatar">RK</span><span class="rc-name">Rohan K.</span><span class="score-badge">3.5<small>/5</small></span></div>
+                <div class="rc-pills"><span class="rc-pill">Taste <b>4</b></span><span class="rc-pill">Value <b>3</b></span></div>
+                <p class="rc-text">Good flavour but a little oily for me. Still would order again.</p>
+                <div class="rc-meta"><span>3w ago</span><span class="rc-helpful">♥ 3</span></div>
+              </div>
+            </div></div>
+          </div>
+        </div>
+        <div class="annot good"><b>Fix:</b> <code>grid sm:grid-cols-2</code> + thumbnail-left cards = four reviews visible in the space one used to take. Matches the original code intent.</div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

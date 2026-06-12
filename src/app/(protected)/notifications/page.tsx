@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { getNotifications } from '@/lib/services/notifications'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { formatRelativeTime } from '@/lib/utils/index'
 import type { Notification } from '@/lib/types'
@@ -71,7 +70,7 @@ export default function NotificationsPage() {
           <MobileBackButton parentHref={ROUTES.MY_PROFILE} />
           <h1 className="font-display text-2xl font-bold text-heading">Notifications</h1>
         </div>
-        {unreadCount > 0 && (
+        {unreadCount > 0 ? (
           <Button
             variant="link"
             onClick={handleMarkAllRead}
@@ -79,13 +78,25 @@ export default function NotificationsPage() {
           >
             Mark all read
           </Button>
+        ) : (
+          <div aria-hidden className="invisible min-h-[44px] px-3 text-xs font-medium">
+            Mark all read
+          </div>
         )}
       </div>
 
       {loading ? (
-        <div className="mt-10 flex justify-center"><LoadingSpinner /></div>
+        <div className="mt-6 space-y-2">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card px-4 py-3">
+              <div className="h-4 w-3/4 animate-pulse rounded bg-border" />
+              <div className="mt-1.5 h-3.5 w-full animate-pulse rounded bg-border" />
+              <div className="mt-1.5 h-3 w-20 animate-pulse rounded bg-border" />
+            </div>
+          ))}
+        </div>
       ) : error ? (
-        <div className="mt-10 flex flex-col items-center gap-4 text-center">
+        <div className="mt-6 flex flex-col items-center gap-4 text-center">
           <p className="text-text-secondary">Couldn&apos;t load your notifications. Try again.</p>
           <Button
             onClick={() => {
@@ -99,7 +110,7 @@ export default function NotificationsPage() {
           </Button>
         </div>
       ) : notifications.length === 0 ? (
-        <div className="mt-8">
+        <div className="mt-6">
           <EmptyState icon="🔔" title="No notifications yet" description="You'll be notified about helpful votes and new badges here." />
         </div>
       ) : (

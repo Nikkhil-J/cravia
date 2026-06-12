@@ -33,7 +33,7 @@ export async function cropImageToFile(
   cropPixels: PixelCrop,
   fileName: string,
   outputWidth = 1200,
-  outputHeight = 900,
+  outputHeight = 1200,
 ): Promise<File> {
   const image = await loadImage(imageSrc)
   const canvas = document.createElement('canvas')

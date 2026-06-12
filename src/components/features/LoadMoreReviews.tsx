@@ -120,7 +120,7 @@ export function LoadMoreReviews({
           </p>
         </div>
       ) : visibleReviews.length > 0 ? (
-        <div className="mt-5 flex flex-col gap-4">
+        <div className="mt-5 grid items-start gap-4 sm:grid-cols-2">
           {visibleReviews.map((review, i) => (
             <ReviewCardV2 key={review.id} review={review} variant="dish" currentUserId={currentUserId} index={i} />
           ))}

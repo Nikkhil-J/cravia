@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { ChevronRight } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -9,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import type { RestaurantRequest } from '@/lib/types'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { HTTP_HEADERS } from '@/lib/constants'
+import { ROUTES } from '@/lib/constants/routes'
 
 export default function AdminRequestsPage() {
   const { user, authUser } = useAuth()
@@ -61,14 +64,18 @@ export default function AdminRequestsPage() {
         <div className="mt-6 space-y-4">
           {requests.map((req) => (
             <div key={req.id} className="rounded-xl border border-border bg-card p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
+              <Link
+                href={ROUTES.adminRequest(req.id)}
+                className="group -m-2 flex items-start justify-between gap-4 rounded-lg p-2 transition-colors hover:bg-bg-cream"
+              >
+                <div className="min-w-0">
                   <p className="font-semibold text-heading">{req.restaurantName}</p>
                   {req.location && <p className="text-sm text-text-secondary">{req.location}</p>}
-                  {req.note && <p className="mt-1 text-xs text-text-muted">{req.note}</p>}
+                  {req.note && <p className="mt-1 line-clamp-2 text-xs text-text-muted">{req.note}</p>}
                   <p className="mt-1 text-xs text-text-muted">Requested by {req.requestedByName}</p>
                 </div>
-              </div>
+                <ChevronRight className="mt-0.5 h-5 w-5 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5" />
+              </Link>
               <div className="mt-3">
                 <Input
                   placeholder="Admin note (optional)..."

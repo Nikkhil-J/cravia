@@ -4,6 +4,7 @@ import {
   REVIEW_EDIT_WINDOW_MS,
   REVIEW_PHOTO_MAX_MB,
   REVIEW_PHOTO_ALLOWED_TYPES,
+  REVIEW_BILL_ALLOWED_TYPES,
   RECOMMENDED_DISH_CATEGORIES,
 } from '../constants'
 import type { Dish, DishCategory } from '../types'
@@ -62,6 +63,20 @@ export function validatePhotoFile(file: File): { valid: boolean; error: string |
   const maxBytes = REVIEW_PHOTO_MAX_MB * 1024 * 1024
   if (file.size > maxBytes) {
     return { valid: false, error: `Image must be smaller than ${REVIEW_PHOTO_MAX_MB}MB` }
+  }
+  return { valid: true, error: null }
+}
+
+/**
+ * Validates proof-of-visit uploads. Bills can be images or PDFs.
+ */
+export function validateBillFile(file: File): { valid: boolean; error: string | null } {
+  if (!(REVIEW_BILL_ALLOWED_TYPES as readonly string[]).includes(file.type)) {
+    return { valid: false, error: 'Only JPEG, PNG, WebP, and PDF files are allowed' }
+  }
+  const maxBytes = REVIEW_PHOTO_MAX_MB * 1024 * 1024
+  if (file.size > maxBytes) {
+    return { valid: false, error: `File must be smaller than ${REVIEW_PHOTO_MAX_MB}MB` }
   }
   return { valid: true, error: null }
 }

@@ -36,7 +36,7 @@ export default function UpgradePage() {
   return (
     <div className="mx-auto max-w-md px-6 py-10">
       <div className="text-center">
-        <div className="text-4xl">🚀</div>
+        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl text-4xl">🚀</div>
         <h1 className="mt-3 font-display text-2xl font-bold text-heading">Upgrade to Premium</h1>
         <p className="mt-2 text-text-secondary">Unlock powerful features for food enthusiasts.</p>
       </div>
@@ -44,8 +44,8 @@ export default function UpgradePage() {
       <div className="mt-8 space-y-3">
         {FEATURES.map((f) => (
           <div key={f.label} className="flex gap-3 rounded-xl border border-border bg-card p-4">
-            <span className="text-2xl">{f.icon}</span>
-            <div>
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-2xl">{f.icon}</span>
+            <div className="flex-1 space-y-1.5">
               <p className="font-medium text-heading">{f.label}</p>
               <p className="text-sm text-text-secondary">{f.description}</p>
             </div>

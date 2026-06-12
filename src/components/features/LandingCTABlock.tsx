@@ -14,7 +14,7 @@ export function LandingCTABlock() {
       </Reveal>
       <Reveal delay={0.08}>
         <p className="mb-6 text-sm leading-[1.6] text-text-secondary">
-          Join Gurgaon&rsquo;s first dish-level review community. Earn DishPoints for every
+          Join Gurgaon&rsquo;s first dish-level review community. Earn Crumbs for every
           review — redeem for real restaurant coupons.
         </p>
       </Reveal>

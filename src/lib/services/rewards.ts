@@ -201,7 +201,7 @@ export async function rewardPointsForReview(
       userId,
       'system',
       'Halfway to your coupon!',
-      `You've earned ${MILESTONE_250} DishPoints — keep reviewing to unlock coupons!`,
+      `You've earned ${MILESTONE_250} Crumbs — keep reviewing to unlock coupons!`,
       ROUTES.REWARDS
     ).catch((e) => captureError(e, { route: 'rewards/rewardPointsForReview', extra: { context: 'notification' } }))
   }
@@ -211,7 +211,7 @@ export async function rewardPointsForReview(
       userId,
       'system',
       '50 points to go!',
-      `You're at ${newTotal} DishPoints — just ${500 - newTotal} more to redeem your first coupon!`,
+      `You're at ${newTotal} Crumbs — just ${500 - newTotal} more to redeem your first coupon!`,
       ROUTES.REWARDS
     ).catch((e) => captureError(e, { route: 'rewards/rewardPointsForReview', extra: { context: 'notification' } }))
 

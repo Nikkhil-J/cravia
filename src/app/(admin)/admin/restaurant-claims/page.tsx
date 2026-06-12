@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { ChevronRight } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -10,6 +12,7 @@ import { formatRelativeTime } from '@/lib/utils/index'
 import type { RestaurantClaim } from '@/lib/types'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { HTTP_HEADERS } from '@/lib/constants'
+import { ROUTES } from '@/lib/constants/routes'
 
 export default function AdminRestaurantClaimsPage() {
   const { authUser } = useAuth()
@@ -68,10 +71,13 @@ export default function AdminRestaurantClaimsPage() {
         <div className="mt-6 space-y-4">
           {claims.map((claim) => (
             <div key={claim.id} className="rounded-xl border border-border bg-card p-5">
-              <div className="flex items-start justify-between gap-4">
+              <Link
+                href={ROUTES.adminClaim(claim.id)}
+                className="group -m-2 flex items-start justify-between gap-4 rounded-lg p-2 transition-colors hover:bg-bg-cream"
+              >
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-heading">{claim.restaurantName}</p>
-                  <p className="mt-0.5 text-sm text-text-secondary">
+                  <p className="mt-0.5 truncate text-sm text-text-secondary">
                     Claimed by <strong>{claim.userName}</strong> ({claim.userEmail})
                   </p>
                   <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-muted">
@@ -79,18 +85,9 @@ export default function AdminRestaurantClaimsPage() {
                     <span>Phone: <strong className="text-text-primary">{claim.phone}</strong></span>
                     <span>{formatRelativeTime(claim.createdAt)}</span>
                   </div>
-                  {claim.proofDocumentUrl && (
-                    <a
-                      href={claim.proofDocumentUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-2 inline-block text-xs font-medium text-primary hover:underline"
-                    >
-                      View proof document &rarr;
-                    </a>
-                  )}
                 </div>
-              </div>
+                <ChevronRight className="mt-0.5 h-5 w-5 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5" />
+              </Link>
 
               <div className="mt-3">
                 <Input

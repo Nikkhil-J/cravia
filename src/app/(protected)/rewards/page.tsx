@@ -107,8 +107,61 @@ export default function RewardsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <LoadingSpinner />
+      <div className="mx-auto max-w-2xl px-6 py-8 animate-fade-in">
+        {/* Title */}
+        <div className="h-7 w-56 animate-pulse rounded-lg bg-border" />
+
+        {/* Balance card */}
+        <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+          <div className="flex items-baseline gap-2">
+            <div className="h-10 w-20 animate-pulse rounded-lg bg-border" />
+            <div className="h-4 w-20 animate-pulse rounded bg-border" />
+          </div>
+          <div className="mt-4">
+            <div className="flex items-center justify-between">
+              <div className="h-3 w-16 animate-pulse rounded bg-border" />
+              <div className="h-3 w-20 animate-pulse rounded bg-border" />
+            </div>
+            <div className="mt-1.5 h-3 w-full overflow-hidden rounded-full bg-surface-3">
+              <div className="h-full w-1/3 animate-pulse rounded-full bg-border" />
+            </div>
+          </div>
+          <div className="mt-4 flex gap-6">
+            <div className="h-4 w-24 animate-pulse rounded bg-border" />
+            <div className="h-4 w-28 animate-pulse rounded bg-border" />
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="mt-8 flex gap-1 rounded-xl bg-surface-2 p-1">
+          <div className="h-10 flex-1 animate-pulse rounded-lg bg-border" />
+          <div className="h-10 flex-1 animate-pulse rounded-lg bg-surface-3" />
+        </div>
+
+        {/* Coupon cards */}
+        <div className="mt-6 space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="h-5 w-44 animate-pulse rounded bg-border" />
+                  <div className="mt-2 h-3.5 w-32 animate-pulse rounded bg-border" />
+                </div>
+                <div className="text-right">
+                  <div className="h-5 w-12 animate-pulse rounded bg-border" />
+                  <div className="mt-1 h-3 w-6 animate-pulse rounded bg-border" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between">
+                <div className="flex gap-4">
+                  <div className="h-3 w-14 animate-pulse rounded bg-border" />
+                  <div className="h-3 w-14 animate-pulse rounded bg-border" />
+                </div>
+                <div className="h-9 w-24 animate-pulse rounded-pill bg-border" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
@@ -129,15 +182,15 @@ export default function RewardsPage() {
     : 0
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
-      <h1 className="font-display text-xl font-bold text-heading sm:text-2xl">DishPoints & Rewards</h1>
+    <div className="mx-auto max-w-2xl px-6 py-8">
+      <h1 className="font-display text-xl font-bold text-heading sm:text-2xl">Crumbs & Rewards</h1>
 
       {/* Balance card */}
       {balance && (
-        <div className="mt-4 rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:mt-6 sm:p-6">
+        <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/5 p-6">
           <div className="flex items-baseline gap-2">
             <span className="font-display text-3xl font-bold text-primary sm:text-4xl">{balance.balance}</span>
-            <span className="text-sm text-text-secondary">DishPoints</span>
+            <span className="text-sm text-text-secondary">Crumbs</span>
           </div>
 
           <div className="mt-4">
@@ -145,7 +198,7 @@ export default function RewardsPage() {
               <span>{balance.balance} / {DEFAULT_COUPON_POINTS_COST}</span>
               <span>Next coupon</span>
             </div>
-            <div className="mt-1.5 h-3 overflow-hidden rounded-full bg-border">
+            <div className="mt-1.5 h-3 overflow-hidden rounded-full bg-surface-3">
               <div
                 className="h-full rounded-full bg-primary transition-all"
                 style={{ width: `${progressPercent}%` }}
@@ -167,13 +220,13 @@ export default function RewardsPage() {
       )}
 
       {/* Tabs */}
-      <div className="mt-8 flex gap-1 rounded-xl bg-bg-cream p-1">
+      <div className="mt-8 flex gap-1 rounded-xl bg-surface-2 p-1">
         {(['coupons', 'claims'] as const).map((t) => (
           <Button
             key={t}
             variant="ghost"
             onClick={() => setTab(t)}
-            className={`flex-1 h-auto rounded-lg py-2.5 text-sm font-semibold ${
+            className={`flex-1 h-10 rounded-lg py-2.5 text-sm font-semibold ${
               tab === t
                 ? 'bg-card text-primary shadow-sm hover:bg-card'
                 : 'text-text-muted hover:text-text-primary'
@@ -184,17 +237,19 @@ export default function RewardsPage() {
         ))}
       </div>
 
-      {/* Alerts */}
-      {redeemError && (
-        <div className="mt-4 rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-          {redeemError}
-        </div>
-      )}
-      {redeemSuccess && (
-        <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">
-          {redeemSuccess}
-        </div>
-      )}
+      {/* Alerts — reserve a stable slot so the list below doesn't jump */}
+      <div className="mt-4 min-h-[2.75rem]">
+        {redeemError && (
+          <div className="rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+            {redeemError}
+          </div>
+        )}
+        {redeemSuccess && (
+          <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">
+            {redeemSuccess}
+          </div>
+        )}
+      </div>
 
       {/* Coupons catalogue */}
       {tab === 'coupons' && (
@@ -264,7 +319,7 @@ export default function RewardsPage() {
             <EmptyState
               icon="🎫"
               title="No claimed coupons yet"
-              description="Redeem your DishPoints for coupons from your favorite restaurants."
+              description="Redeem your Crumbs for coupons from your favorite restaurants."
             />
           ) : (
             claims.map((claim) => (

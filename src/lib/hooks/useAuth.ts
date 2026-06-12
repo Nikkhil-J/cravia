@@ -1,12 +1,15 @@
 'use client'
 
-import { useEffect, type ReactNode } from 'react'
+import { useCallback, useEffect, type ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { getRedirectResult } from 'firebase/auth'
 import { FirebaseClientAuthProvider } from '@/lib/auth/firebase-provider'
 import { auth } from '@/lib/firebase/config'
 import { userRepository } from '@/lib/repositories'
 import { useAuthStore } from '@/lib/store/authStore'
 import { CONFIG } from '@/lib/constants'
+import { ROUTES } from '@/lib/constants/routes'
 import { captureError } from '@/lib/monitoring/sentry'
 
 const authProvider = new FirebaseClientAuthProvider()
@@ -145,4 +148,26 @@ export async function logout() {
   } catch (err) {
     console.error('[logout] Sign-out failed:', err)
   }
+}
+
+/**
+ * Logout that fully resets client state. Beyond signing out, it drops the
+ * TanStack Query cache (so the previous user's notifications/wishlist/rewards
+ * can't leak to the next view or next user on a shared device) and refreshes
+ * the route to discard any logged-in Server Component payloads held in the
+ * Next.js Router Cache.
+ */
+export function useLogout() {
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
+  return useCallback(
+    async (redirectTo: string = ROUTES.HOME) => {
+      await logout()
+      queryClient.clear()
+      router.replace(redirectTo)
+      router.refresh()
+    },
+    [router, queryClient],
+  )
 }

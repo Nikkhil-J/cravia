@@ -11,8 +11,8 @@ import { useMyReviews } from '@/lib/hooks/useMyReviews'
 import { BADGE_DEFINITIONS, LEVEL_THRESHOLDS, CITY_DISPLAY_NAME } from '@/lib/constants'
 import type { City } from '@/lib/constants'
 import { ReviewCardV2 } from '@/components/features/ReviewCardV2'
+import { ReviewCardSkeleton } from '@/components/ui/ReviewCardSkeleton'
 import { useReviewDishContexts } from '@/lib/hooks/useReviewDishContexts'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
@@ -25,10 +25,20 @@ import { toast } from 'sonner'
 
 const QUICK_LINKS = [
   { label: 'Wishlist', desc: 'Saved dishes', icon: Star, href: ROUTES.WISHLIST },
-  { label: 'Rewards', desc: 'DishPoints available', icon: Gift, href: ROUTES.REWARDS },
+  { label: 'Rewards', desc: 'Crumbs available', icon: Gift, href: ROUTES.REWARDS },
   { label: 'Request Restaurant', desc: 'Suggest a place to add', icon: Store, href: ROUTES.REQUEST_RESTAURANT },
   { label: 'Settings', desc: 'Profile, preferences', icon: Settings, href: ROUTES.SETTINGS },
 ] as const
+
+function ReviewListSkeleton() {
+  return (
+    <div className="mt-4 flex flex-col gap-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <ReviewCardSkeleton key={i} />
+      ))}
+    </div>
+  )
+}
 
 export default function MyProfilePage() {
   const { user, authUser } = useAuth()
@@ -188,7 +198,7 @@ export default function MyProfilePage() {
           </div>
 
           {loading ? (
-            <div className="mt-8 flex justify-center"><LoadingSpinner /></div>
+            <ReviewListSkeleton />
           ) : reviews.length === 0 ? (
             <div className="mt-4">
               <EmptyState

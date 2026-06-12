@@ -9,7 +9,6 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { captureError } from '@/lib/monitoring/sentry'
 import { useWishlist } from '@/lib/hooks/useWishlist'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import { formatRating } from '@/lib/utils/index'
 import { getOptimizedImageUrl } from '@/lib/utils/image'
@@ -46,13 +45,26 @@ export default function WishlistPage() {
       <div className="text-center">
         <h1 className="font-display text-xl font-bold text-heading sm:text-2xl">Your Wishlist</h1>
         <p className="mt-1 text-sm text-text-secondary">Dishes you want to try next</p>
-        {items.length > 0 && (
-          <p className="mt-2 text-xs text-text-muted">{items.length} dishes saved</p>
-        )}
+        <p className="mt-2 text-xs text-text-muted">
+          {items.length > 0 ? `${items.length} dishes saved` : '\u00A0'}
+        </p>
       </div>
 
       {loading ? (
-        <div className="mt-10 flex justify-center"><LoadingSpinner /></div>
+        <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="overflow-hidden rounded-lg border border-border bg-card">
+              <div className="relative aspect-[4/3] animate-pulse bg-surface-3">
+                <div className="absolute right-2.5 top-2.5 h-11 w-11 animate-pulse rounded-full bg-border" />
+              </div>
+              <div className="p-3.5">
+                <div className="h-4 w-3/4 animate-pulse rounded bg-border" />
+                <div className="mt-0.5 h-3 w-1/2 animate-pulse rounded bg-border" />
+                <div className="mt-2 h-3 w-16 animate-pulse rounded bg-border" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : items.length === 0 ? (
         <div className="mt-8">
           <EmptyState
@@ -64,7 +76,7 @@ export default function WishlistPage() {
           />
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:mt-8 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
+        <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {items.map((item) => (
             <div key={item.dishId} className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:-translate-y-0.5 active:translate-y-0 hover:border-transparent hover:shadow-md active:shadow-sm">
               <div className="relative aspect-[4/3] bg-bg-cream">

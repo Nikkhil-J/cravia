@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { ChevronRight } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -10,6 +12,7 @@ import { Label } from '@/components/ui/label'
 import type { Coupon } from '@/lib/types/rewards'
 import { API_ENDPOINTS } from '@/lib/constants/api'
 import { HTTP_HEADERS } from '@/lib/constants'
+import { ROUTES } from '@/lib/constants/routes'
 
 interface CouponFormData {
   title: string
@@ -272,12 +275,18 @@ export default function AdminCouponsPage() {
         ) : (
           coupons.map((coupon) => (
             <div key={coupon.id} className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0">
-                <h3 className="truncate font-display font-bold text-heading">{coupon.title}</h3>
-                <p className="text-xs text-text-muted">
-                  {coupon.restaurantName} · {coupon.claimedCount}/{coupon.totalStock} claimed · {coupon.pointsCost} pts
-                </p>
-              </div>
+              <Link
+                href={ROUTES.adminCoupon(coupon.id)}
+                className="group -m-2 flex min-w-0 flex-1 items-center justify-between gap-3 rounded-lg p-2 transition-colors hover:bg-bg-cream"
+              >
+                <div className="min-w-0">
+                  <h3 className="truncate font-display font-bold text-heading">{coupon.title}</h3>
+                  <p className="truncate text-xs text-text-muted">
+                    {coupon.restaurantName} · {coupon.claimedCount}/{coupon.totalStock} claimed · {coupon.pointsCost} pts
+                  </p>
+                </div>
+                <ChevronRight className="h-5 w-5 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5 sm:hidden" />
+              </Link>
               <Button
                 variant="destructive"
                 onClick={() => handleDeactivate(coupon.id)}

@@ -11,7 +11,7 @@ export function RewardsPreview({ currentBalance = 0 }: RewardsPreviewProps) {
     <div className="rounded-2xl border border-brand-gold/30 bg-gradient-to-br from-brand-gold-light/30 to-transparent p-5 sm:p-6">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-base font-bold text-heading">
-          Earn up to {POINTS_WITH_BILL} DishPoints
+          Earn up to {POINTS_WITH_BILL} Crumbs
         </h3>
         <span className="text-xs font-semibold text-brand-gold">{POINTS_WITH_BILL} max</span>
       </div>

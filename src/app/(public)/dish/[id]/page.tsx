@@ -13,7 +13,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { formatRating, formatRelativeTime } from '@/lib/utils/index'
 import { DIETARY_BADGE, PRICE_LABEL, CONFIG, SUB_RATING_LABELS } from '@/lib/constants'
 import { WishlistButton } from '@/components/features/WishlistButton'
-import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { ReviewCardSkeleton } from '@/components/ui/ReviewCardSkeleton'
 import type { DishPhoto } from '@/lib/types'
 import { MobileBackButton } from '@/components/ui/MobileBackButton'
 import { ROUTES } from '@/lib/constants/routes'
@@ -102,21 +102,24 @@ export default async function DishPage({ params }: PageProps) {
         </div>
       </nav>
 
-      {/* Photo grid */}
-      <div className="w-full max-w-3xl mx-auto">
-        <DishPhotoGrid
-          photos={dishPhotos}
-          dishName={dish.name}
-          dishId={dish.id}
-          restaurantId={dish.restaurantId}
-          restaurantName={dish.restaurantName}
-          reviewCount={dish.reviewCount}
-        />
-      </div>
-
-      <div className="mt-6 grid gap-6 sm:mt-8 sm:gap-8 lg:grid-cols-3">
+      <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
         {/* Main */}
         <div className="lg:col-span-2">
+          <div className="grid gap-5 md:grid-cols-[minmax(0,360px)_1fr] md:gap-6">
+          {/* Photo gallery */}
+          <div className="md:max-w-[360px]">
+            <DishPhotoGrid
+              photos={dishPhotos}
+              dishName={dish.name}
+              dishId={dish.id}
+              restaurantId={dish.restaurantId}
+              restaurantName={dish.restaurantName}
+              reviewCount={dish.reviewCount}
+            />
+          </div>
+
+          {/* Header */}
+          <div className="min-w-0">
           <div className="flex flex-wrap items-start gap-3">
             {dietaryInfo && (
               <span className={`rounded-pill border px-3 py-1 text-xs font-semibold ${dietaryInfo.className}`}>
@@ -179,7 +182,7 @@ export default async function DishPage({ params }: PageProps) {
               </p>
               {dish.reviewCount >= 1 && dish.reviewCount <= 2 && (
                 <p className="mt-2 text-xs font-semibold text-primary">
-                  Add your review — Earn up to 25 DishPoints
+                  Add your review — Earn up to 25 Crumbs
                 </p>
               )}
               {dish.reviewCount >= 3 && dish.reviewCount <= 4 && (
@@ -196,6 +199,8 @@ export default async function DishPage({ params }: PageProps) {
             </div>
           )}
 
+          </div>
+          </div>
         </div>
 
         {/* Sidebar */}
@@ -257,7 +262,7 @@ export default async function DishPage({ params }: PageProps) {
         <h2 className="font-display text-xl font-bold text-heading">
           Reviews ({dish.reviewCount})
         </h2>
-        <Suspense fallback={<div className="mt-4 flex flex-col gap-2">{Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}</div>}>
+        <Suspense fallback={<div className="mt-5 grid items-start gap-4 sm:grid-cols-2">{Array.from({ length: 4 }).map((_, i) => <ReviewCardSkeleton key={i} />)}</div>}>
           <DishReviewsSection dishId={dish.id} initialReviews={reviews} />
         </Suspense>
       </Reveal>

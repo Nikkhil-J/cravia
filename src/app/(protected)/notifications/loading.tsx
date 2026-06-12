@@ -7,7 +7,7 @@ export default function NotificationsLoading() {
           <div className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-border md:hidden" />
           <div className="h-7 w-36 animate-pulse rounded-lg bg-border" />
         </div>
-        <div className="h-4 w-20 animate-pulse rounded bg-border" />
+        <div className="h-9 w-24 animate-pulse rounded bg-border" />
       </div>
 
       {/* Notification items */}

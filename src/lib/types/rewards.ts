@@ -1,4 +1,4 @@
-// ── DishPoints transaction types ─────────────────────────
+// ── Crumbs transaction types ─────────────────────────
 
 export type PointTransactionType =
   | 'REVIEW_BASIC'

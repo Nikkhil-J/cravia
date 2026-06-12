@@ -33,7 +33,7 @@ export function DishCard({
 
   return (
     <div
-      className="group relative flex w-full animate-pop-in border-b-[0.5px] border-border-tertiary bg-transparent py-4 md:overflow-hidden md:rounded-lg md:border-[0.5px] md:bg-background-elevated md:p-0 md:shadow-sm"
+      className="group relative flex w-full animate-pop-in border-b-[0.5px] border-border-tertiary bg-transparent py-4 md:h-full md:overflow-hidden md:rounded-lg md:border-[0.5px] md:bg-background-elevated md:p-0 md:shadow-sm"
       style={{
         animationDelay: `${Math.min(index, 8) * 60}ms`,
         animationFillMode: "both",
@@ -45,7 +45,7 @@ export function DishCard({
         className="absolute inset-0 z-0"
         aria-label={`View ${dish.name}`}
       />
-      <div className="pointer-events-none relative z-10 flex min-w-0 flex-1 items-start gap-4 md:flex-col-reverse md:gap-0">
+      <div className="pointer-events-none relative z-10 flex min-w-0 flex-1 items-start gap-4 md:h-full md:flex-col-reverse md:gap-0">
         <div className="min-w-0 flex-1 pt-3 md:w-full md:p-4">
           {dietaryTone && <DietaryIndicator tone={dietaryTone} />}
           <h3 className="mt-2 line-clamp-2 text-[17px] font-semibold leading-snug text-text-primary">
@@ -61,21 +61,28 @@ export function DishCard({
               ₹{price} (approx)
             </p>
           )}
-          {totalReviews > 0 && (
-            <div className="mt-2 flex items-center gap-2">
-              <span className="h-1.5 w-10 rounded-pill bg-success" />
-              <span className="text-[13px] text-text-secondary">
-                Reviewed by diners
-              </span>
-            </div>
-          )}
+          <div
+            className={cn(
+              "flex items-center gap-2 md:mt-2 md:min-h-5",
+              totalReviews > 0 && "mt-2 min-h-5",
+            )}
+          >
+            {totalReviews > 0 && (
+              <>
+                <span className="h-1.5 w-10 rounded-pill bg-success" />
+                <span className="text-[13px] text-text-secondary">
+                  Reviewed by diners
+                </span>
+              </>
+            )}
+          </div>
           <p className="mt-2 text-[13px] text-text-tertiary">
             {totalReviews > 0 ? `${totalReviews} reviews` : "No reviews yet"}
           </p>
         </div>
 
         <div className="relative w-[120px] shrink-0 sm:w-[128px] md:w-full">
-          <div className="relative aspect-[4/3] w-[120px] overflow-hidden rounded-lg bg-background-tertiary sm:w-[128px] md:w-full md:rounded-none">
+          <div className="relative aspect-square w-[120px] overflow-hidden rounded-lg bg-background-tertiary sm:w-[128px] md:aspect-[4/3] md:w-full md:rounded-none">
             {dish.coverImage ? (
               <Image
                 src={getOptimizedImageUrl(dish.coverImage, 'card') ?? ''}

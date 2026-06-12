@@ -14,6 +14,14 @@ export function getUsers(limit?: number) {
   return userRepository.list(limit)
 }
 
+export function getUser(userId: string) {
+  return userRepository.getById(userId)
+}
+
+export function getReview(reviewId: string) {
+  return reviewRepository.getById(reviewId)
+}
+
 async function adminPatch(url: string, token: string, body: Record<string, unknown>): Promise<boolean> {
   const response = await fetch(url, {
     method: 'PATCH',

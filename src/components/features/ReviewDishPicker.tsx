@@ -190,14 +190,16 @@ export function ReviewDishPicker({ dishes, categories, restaurantId, restaurantN
               <div className={cn('space-y-1', getPickerTransitionClass())}>
                 {pickerView === 'dishes' && selectedCategory ? (
                   <>
-                    <Button
-                      variant="ghost"
-                      onClick={handleBackToCategories}
-                      className="mb-2 min-h-11 w-full justify-start gap-2 rounded-xl px-3 py-2 text-left text-[15px] font-medium text-text-primary hover:bg-surface-2"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      <span className="truncate">{selectedCategory}</span>
-                    </Button>
+                    <div className="sticky top-0 z-10 -mx-1 bg-popover px-1 pb-2">
+                      <Button
+                        variant="ghost"
+                        onClick={handleBackToCategories}
+                        className="min-h-11 w-full justify-start gap-2 rounded-xl px-3 py-2 text-left text-[15px] font-semibold text-primary hover:bg-surface-2 hover:text-primary"
+                      >
+                        <ChevronLeft className="h-4 w-4 shrink-0" />
+                        <span className="truncate">{selectedCategory}</span>
+                      </Button>
+                    </div>
 
                     {selectedCategoryDishes.map((dish) => (
                       <CategoryDishRow
@@ -267,9 +269,9 @@ function CategoryDishRow({ dish, onSelect }: { dish: Dish; onSelect: (dish: Dish
         <Image
           src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''}
           alt={dish.name}
-          width={54}
+          width={40}
           height={40}
-          className="h-10 w-[54px] shrink-0 rounded-lg object-cover"
+          className="h-10 w-10 shrink-0 rounded-lg object-cover"
         />
       )}
     </Button>
@@ -283,12 +285,12 @@ function SearchDishRow({ dish, onSelect }: { dish: Dish; onSelect: (dish: Dish) 
       onClick={() => onSelect(dish)}
       className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-surface-2"
     >
-      <div className="h-10 w-[54px] shrink-0 overflow-hidden rounded-lg bg-bg-cream">
+      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-bg-cream">
         {dish.coverImage ? (
           <Image
             src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''}
             alt={dish.name}
-            width={54}
+            width={40}
             height={40}
             className="h-full w-full object-cover"
           />

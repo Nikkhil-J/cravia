@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purple Sector — Drop 01 / RAIN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* full-screen cultural event hero */
+  .drop-hero {
+    min-height: 100vh; position: relative; z-index: 2;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(120px,16vh,180px) clamp(20px,5vw,80px) 80px;
+    overflow: hidden;
+  }
+  /* rain texture as background atmosphere */
+  .rain-bg { position: absolute; inset: 0; z-index: 0; opacity: 0.5; background:
+    repeating-linear-gradient(105deg, transparent 0 22px, rgba(58,143,214,0.05) 22px 23px); }
+  .rain-bg::after { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 70% 0%, rgba(58,143,214,0.12), transparent 55%); }
+
+  .drop-tag { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--rain); position: relative; }
+  .drop-name { font-size: var(--step-hero); font-weight: 700; letter-spacing: -0.04em; line-height: 0.84; margin: 22px 0 8px; position: relative; }
+  .drop-name .o { color: var(--rain); }
+  .drop-theme { font-size: var(--step-md); color: var(--grey); max-width: 36ch; position: relative; line-height: 1.6; }
+
+  /* countdown */
+  .count { display: flex; gap: clamp(16px,3vw,46px); margin-top: clamp(46px,7vh,80px); position: relative; }
+  .count__unit { text-align: center; }
+  .count__n { font-family: var(--mono); font-weight: 700; font-size: clamp(2.4rem,7vw,5rem); letter-spacing: -0.02em; line-height: 1; }
+  .count__l { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--grey-dim); margin-top: 12px; }
+
+  .drop-meta { display:flex; gap: 40px; margin-top: clamp(40px,6vh,70px); flex-wrap: wrap; position: relative; }
+  .drop-meta div .l { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--grey-dim); }
+  .drop-meta div .v { font-size: 1.1rem; font-weight: 600; margin-top: 6px; }
+
+  /* obscured previews — tension */
+  .previews { position: relative; z-index: 2; }
+  .previews h2 { font-size: var(--step-lg); font-weight:700; letter-spacing:-0.02em; margin-bottom: 12px; }
+  .previews .note { color: var(--grey-dim); font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 50px; }
+  .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px,2vw,26px); }
+  @media (max-width: 820px){ .pgrid { grid-template-columns: 1fr; } }
+  .preview { position: relative; aspect-ratio: 4/5; background: var(--asphalt-2); border: 1px solid var(--line-soft); overflow: hidden; display:flex; align-items:center; justify-content:center; }
+  .preview svg { width: 65%; filter: blur(14px); opacity: 0.5; transition: filter .6s, opacity .6s; }
+  .preview:hover svg { filter: blur(7px); opacity: 0.7; }
+  .preview__lock { position: absolute; inset: 0; display:flex; flex-direction: column; align-items:center; justify-content:center; gap: 10px; background: rgba(5,5,6,0.35); }
+  .preview__lock .pn { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--grey); }
+  .preview__lock .pt { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+  .preview__scan { position:absolute; top:0; left:0; right:0; height: 2px; background: linear-gradient(90deg,transparent,var(--rain),transparent); animation: scan 3.5s linear infinite; opacity:.6; }
+  @keyframes scan { 0%{transform:translateY(0);} 100%{transform:translateY(600px);} }
+
+  /* notify */
+  .notify { text-align: center; position: relative; z-index: 2; }
+  .notify h2 { font-size: var(--step-xl); font-weight: 700; letter-spacing: -0.03em; }
+  .notify h2 .em { color: var(--rain); }
+  .notify p { color: var(--grey); margin: 18px auto 40px; max-width: 38ch; }
+  .notify form { display: flex; gap: 0; max-width: 520px; margin: 0 auto; border: 1px solid var(--line); }
+  .notify input { flex:1; background: var(--asphalt-2); border:none; outline:none; color: var(--white); font-family: var(--mono); font-size: 0.85rem; padding: 18px 20px; letter-spacing: 0.05em; }
+  .notify input::placeholder { color: var(--grey-dim); }
+  .notify button { background: var(--white); color: var(--black); font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0 26px; transition: background .25s,color .25s; }
+  .notify button:hover { background: var(--rain); color: var(--white); }
+  .notify .edition { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--grey-dim); margin-top: 26px; }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="vignette"></div>
+
+<nav class="nav solid">
+  <a class="nav__brand" href="index.html"><span class="sectorline"></span> PURPLE SECTOR</a>
+  <div class="nav__links">
+    <a href="shop.html">Shop</a>
+    <a href="drop.html" aria-current="page">Drop</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="f1car" viewBox="0 0 800 200">
+    <path fill="currentColor" d="M40 132c40-4 70-6 120-6l40-34c10-8 22-12 36-12h150c14 0 26 5 34 16l18 24 150 6c22 1 40 4 60 12l60 24c8 3 6 14-3 14H470c-8 0-12-4-14-11-7-22-27-37-52-37s-45 15-52 37c-2 7-6 11-14 11H214c-8 0-12-4-14-11-7-22-27-37-52-37s-45 15-52 37c-2 7-6 11-14 11H44c-9 0-12-9-6-14l8-7-6-8c-6-8-4-22 0-25z"/>
+    <circle cx="148" cy="150" r="30" fill="#0a0b0d" stroke="currentColor" stroke-width="8"/>
+    <circle cx="404" cy="150" r="30" fill="#0a0b0d" stroke="currentColor" stroke-width="8"/>
+    <path fill="currentColor" d="M250 92h150l14 18H236z"/>
+  </symbol>
+</defs></svg>
+
+<!-- ░ HERO — the event ░ -->
+<header class="drop-hero">
+  <div class="rain-bg"></div>
+  <span class="drop-tag reveal in">Drop 01 — Upcoming</span>
+  <h1 class="drop-name reveal in">RAIN</h1>
+  <p class="drop-theme reveal in">The moments the weather decided. Donington. Fuji. The wet laps that became legend.</p>
+
+  <div class="count reveal in" id="count">
+    <div class="count__unit"><div class="count__n" id="cd">07</div><div class="count__l">Days</div></div>
+    <div class="count__unit"><div class="count__n" id="ch">14</div><div class="count__l">Hours</div></div>
+    <div class="count__unit"><div class="count__n" id="cm">22</div><div class="count__l">Mins</div></div>
+    <div class="count__unit"><div class="count__n" id="cs">09</div><div class="count__l">Secs</div></div>
+  </div>
+
+  <div class="drop-meta reveal in">
+    <div><div class="l">Edition</div><div class="v">93 pieces total</div></div>
+    <div><div class="l">Theme</div><div class="v">Rain</div></div>
+    <div><div class="l">Release</div><div class="v">12:00 GMT</div></div>
+  </div>
+</header>
+
+<!-- ░ OBSCURED PREVIEWS ░ -->
+<section class="section previews">
+  <div class="wrap">
+    <h2 class="reveal">What's coming.</h2>
+    <p class="note reveal">Obscured until lights out.</p>
+    <div class="pgrid">
+      <article class="preview reveal">
+        <div class="preview__scan"></div>
+        <svg viewBox="0 0 800 200"><use href="#f1car" style="color:var(--rain)"/></svg>
+        <div class="preview__lock"><span class="pn">Piece 01</span><span class="pt">██████ '93</span></div>
+      </article>
+      <article class="preview reveal">
+        <div class="preview__scan"></div>
+        <svg viewBox="0 0 200 200"><path d="M40 170 C60 90 90 50 100 40 C110 50 140 90 160 170" fill="none" stroke="var(--rain)" stroke-width="6"/></svg>
+        <div class="preview__lock"><span class="pn">Piece 02</span><span class="pt">Out-of-████</span></div>
+      </article>
+      <article class="preview reveal">
+        <div class="preview__scan"></div>
+        <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="60" fill="none" stroke="var(--rain)" stroke-width="6"/></svg>
+        <div class="preview__lock"><span class="pn">Piece 03</span><span class="pt">████ — Fuji</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ░ NOTIFY ░ -->
+<section class="section notify">
+  <div class="wrap">
+    <h2 class="reveal">Be on the <span class="em">grid.</span></h2>
+    <p class="reveal">No marketing. One message when the lights go out. Nothing else.</p>
+    <form class="reveal" onsubmit="return false">
+      <input type="email" placeholder="you@email.com" aria-label="Email" required>
+      <button type="submit">Notify me</button>
+    </form>
+    <p class="edition reveal">Edition of 93 · No restocks</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">PURPLE<br><span class="accent">SECTOR</span></div>
+    <div class="footer__cols">
+      <div class="footer__col"><h4>Explore</h4><a href="shop.html">Shop</a><a href="drop.html">Drop</a><a href="about.html">About</a></div>
+      <div class="footer__col"><h4>Connect</h4><a href="#">Instagram</a><a href="#">Notify me</a></div>
+    </div>
+  </div>
+  <div class="footer__bottom"><span>© 2026 Purple Sector</span><span class="footer__drop">Drop 01 / RAIN — coming soon</span></div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+  initReveal();
+  // live countdown to 7d 14h 22m 9s out
+  let target = Date.now() + ((7*24*60*60) + (14*60*60) + (22*60) + 9) * 1000;
+  const pad = n => String(n).padStart(2,'0');
+  function tick(){
+    let s = Math.max(0, Math.floor((target - Date.now())/1000));
+    document.getElementById('cd').textContent = pad(Math.floor(s/86400));
+    document.getElementById('ch').textContent = pad(Math.floor(s%86400/3600));
+    document.getElementById('cm').textContent = pad(Math.floor(s%3600/60));
+    document.getElementById('cs').textContent = pad(s%60);
+  }
+  tick(); setInterval(tick, 1000);
+
+  // form confirmation
+  document.querySelector('.notify form').addEventListener('submit', e => {
+    const btn = e.target.querySelector('button');
+    btn.textContent = "You're on the grid ✓";
+    btn.style.background = 'var(--rain)'; btn.style.color = 'var(--white)';
+  });
+</script>
+</body>
+</html>

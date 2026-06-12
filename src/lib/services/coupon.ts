@@ -24,7 +24,7 @@ const ERROR_MAP: Record<string, { status: number; message: string }> = {
   COUPON_NOT_FOUND: { status: 404, message: 'Coupon not found' },
   COUPON_INACTIVE: { status: 409, message: 'Coupon is no longer available' },
   COUPON_EXHAUSTED: { status: 409, message: 'Coupon stock exhausted' },
-  INSUFFICIENT_BALANCE: { status: 400, message: 'Insufficient DishPoints' },
+  INSUFFICIENT_BALANCE: { status: 400, message: 'Insufficient Crumbs' },
   USER_NOT_FOUND: { status: 404, message: 'User not found' },
 }
 

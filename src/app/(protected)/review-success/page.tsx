@@ -108,7 +108,7 @@ export default function ReviewSuccessPage() {
           {data.pointsAwarded > 0 && (
             <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
               <p className="font-display text-2xl font-bold text-primary">
-                +{data.pointsAwarded} DishPoints
+                +{data.pointsAwarded} Crumbs
               </p>
               <p className="mt-1 text-xs text-text-secondary">
                 {data.hadBill
@@ -255,12 +255,12 @@ export default function ReviewSuccessPage() {
                     <Image
                       src={getOptimizedImageUrl(dish.coverImage, 'thumbnail') ?? ''}
                       alt={dish.name}
-                      width={54}
+                      width={40}
                       height={40}
-                      className="h-10 w-[54px] rounded-lg object-cover"
+                      className="h-10 w-10 rounded-lg object-cover"
                     />
                   ) : (
-                    <div className="flex h-10 w-[54px] shrink-0 items-center justify-center rounded-lg bg-surface-2 text-xl">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-xl">
                       {getCuisineEmoji(dish.cuisines?.[0])}
                     </div>
                   )}

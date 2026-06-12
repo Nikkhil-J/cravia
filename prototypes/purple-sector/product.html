@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purple Sector — Donington '93</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .split { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; position: relative; z-index: 2; }
+  @media (max-width: 900px){ .split { grid-template-columns: 1fr; } }
+
+  /* LEFT — the object, dark & minimal */
+  .object-pane {
+    position: sticky; top: 0; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at 50% 40%, var(--asphalt-2), var(--black) 75%);
+    border-right: 1px solid var(--line-soft);
+  }
+  @media (max-width: 900px){ .object-pane { position: relative; height: 78vh; border-right:none; border-bottom: 1px solid var(--line-soft); } }
+  .object-pane svg { width: 60%; max-width: 460px; filter: drop-shadow(0 0 50px rgba(58,143,214,0.18)); }
+  .object-pane .thumbs { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; }
+  .object-pane .thumbs button { width: 52px; height: 52px; border: 1px solid var(--line); background: var(--asphalt-2); display:flex;align-items:center;justify-content:center; transition: border-color .25s; }
+  .object-pane .thumbs button[aria-pressed="true"] { border-color: var(--rain); }
+  .object-pane .thumbs svg { width: 60%; filter:none; }
+
+  /* RIGHT — context: not a description, a moment */
+  .context-pane { padding: clamp(110px,16vh,170px) clamp(28px,5vw,80px) 80px; }
+  .crumbs { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey-dim); margin-bottom: 40px; }
+  .crumbs a:hover { color: var(--white); }
+  .ctx-meta { display:flex; gap: 30px; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--rain); margin-bottom: 24px; }
+  .ctx-title { font-size: var(--step-xl); font-weight: 700; letter-spacing: -0.03em; line-height: 0.95; }
+  .ctx-frag { margin-top: 38px; font-size: var(--step-md); color: var(--grey); max-width: 38ch; line-height: 1.65; }
+  .ctx-frag .em { color: var(--white); }
+
+  /* radio / telemetry context block */
+  .radio { margin-top: 44px; border-left: 2px solid var(--rain); padding: 4px 0 4px 22px; }
+  .radio .label { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--grey-dim); margin-bottom: 10px; }
+  .radio p { font-family: var(--mono); font-size: 0.95rem; color: var(--white); line-height: 1.7; }
+  .laptime { margin-top: 30px; display: flex; align-items: baseline; gap: 14px; }
+  .laptime .t { font-family: var(--mono); font-size: clamp(2rem,5vw,3.4rem); font-weight: 700; color: var(--sector); letter-spacing: -0.01em; }
+  .laptime .l { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--grey-dim); }
+
+  /* purchase block — quiet, intentional */
+  .buy { margin-top: clamp(50px,8vh,80px); padding-top: 40px; border-top: 1px solid var(--line-soft); }
+  .buy__row { display:flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px; }
+  .buy__name { font-size: 1.4rem; font-weight: 600; }
+  .buy__price { font-family: var(--mono); font-size: 1.4rem; }
+  .buy__detail { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.1em; color: var(--grey); text-transform: uppercase; line-height: 2; }
+  .sizes { display:flex; gap: 10px; margin: 26px 0; flex-wrap: wrap; }
+  .sizes button { width: 50px; height: 50px; border: 1px solid var(--line); font-family: var(--mono); font-size: 0.8rem; color: var(--grey); transition: all .2s; }
+  .sizes button:hover { border-color: var(--grey); color: var(--white); }
+  .sizes button[aria-pressed="true"] { border-color: var(--white); color: var(--black); background: var(--white); }
+  .buy .btn { width: 100%; justify-content: center; }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<nav class="nav solid">
+  <a class="nav__brand" href="index.html"><span class="sectorline"></span> PURPLE SECTOR</a>
+  <div class="nav__links">
+    <a href="shop.html" aria-current="page">Shop</a>
+    <a href="drop.html">Drop</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="f1car" viewBox="0 0 800 200">
+    <path fill="currentColor" d="M40 132c40-4 70-6 120-6l40-34c10-8 22-12 36-12h150c14 0 26 5 34 16l18 24 150 6c22 1 40 4 60 12l60 24c8 3 6 14-3 14H470c-8 0-12-4-14-11-7-22-27-37-52-37s-45 15-52 37c-2 7-6 11-14 11H214c-8 0-12-4-14-11-7-22-27-37-52-37s-45 15-52 37c-2 7-6 11-14 11H44c-9 0-12-9-6-14l8-7-6-8c-6-8-4-22 0-25z"/>
+    <circle cx="148" cy="150" r="30" fill="#0a0b0d" stroke="currentColor" stroke-width="8"/>
+    <circle cx="404" cy="150" r="30" fill="#0a0b0d" stroke="currentColor" stroke-width="8"/>
+    <path fill="currentColor" d="M250 92h150l14 18H236z"/>
+  </symbol>
+</defs></svg>
+
+<main class="split">
+  <!-- LEFT: object -->
+  <div class="object-pane">
+    <svg viewBox="0 0 800 200" id="hero"><use href="#f1car" style="color:var(--grey-faint)"/></svg>
+    <div class="thumbs">
+      <button aria-pressed="true"><svg viewBox="0 0 800 200"><use href="#f1car" style="color:var(--grey-dim)"/></svg></button>
+      <button aria-pressed="false"><svg viewBox="0 0 200 200"><path d="M40 160 C60 80 90 50 100 40 C110 50 140 80 160 160" fill="none" stroke="var(--grey-dim)" stroke-width="6"/></svg></button>
+      <button aria-pressed="false"><svg viewBox="0 0 200 200"><rect x="50" y="50" width="100" height="100" fill="none" stroke="var(--grey-dim)" stroke-width="6"/></svg></button>
+    </div>
+  </div>
+
+  <!-- RIGHT: the moment it references -->
+  <div class="context-pane">
+    <div class="crumbs"><a href="shop.html">Shop</a> / Donington '93</div>
+    <div class="ctx-meta reveal in"><span>Donington Park</span><span>11 · 04 · 1993</span><span>European GP</span></div>
+    <h1 class="ctx-title reveal in">The lap they<br>still talk about.</h1>
+    <p class="ctx-frag reveal in">Pole to first by the end of lap one. Five cars passed in the wet before the first sector was done. <span class="em">An out-of-body experience</span> — his words, not ours.</p>
+
+    <div class="radio reveal in">
+      <div class="label">◢ Trackside — opening lap</div>
+      <p>"...Senna goes around the outside — and another — that is simply not possible in these conditions..."</p>
+    </div>
+
+    <div class="laptime reveal in">
+      <span class="t">1:18.029</span>
+      <span class="l">fastest lap · wet</span>
+    </div>
+
+    <!-- purchase: quiet -->
+    <div class="buy reveal in">
+      <div class="buy__row"><span class="buy__name">Donington '93</span><span class="buy__price">£68</span></div>
+      <div class="buy__detail">Rain blue · 320gsm heavyweight cotton · Boxy fit<br>Edition of 250 · Sequentially numbered</div>
+      <div class="sizes">
+        <button>S</button><button aria-pressed="true">M</button><button>L</button><button>XL</button><button>XXL</button>
+      </div>
+      <button class="btn btn--filled">Add to cart — £68</button>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">PURPLE<br><span class="accent">SECTOR</span></div>
+    <div class="footer__cols">
+      <div class="footer__col"><h4>Explore</h4><a href="shop.html">Shop</a><a href="drop.html">Drop</a><a href="about.html">About</a></div>
+      <div class="footer__col"><h4>Connect</h4><a href="#">Instagram</a><a href="#">Notify me</a></div>
+    </div>
+  </div>
+  <div class="footer__bottom"><span>© 2026 Purple Sector</span><span class="footer__drop">First drop coming soon</span></div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+  initReveal();
+  const thumbs = document.querySelectorAll('.thumbs button');
+  const hero = document.getElementById('hero');
+  thumbs.forEach(b => b.addEventListener('click', () => {
+    thumbs.forEach(t => t.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+    hero.innerHTML = b.querySelector('svg').innerHTML;
+  }));
+  const sizes = document.querySelectorAll('.sizes button');
+  sizes.forEach(b => b.addEventListener('click', () => {
+    sizes.forEach(s => s.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+  }));
+</script>
+</body>
+</html>

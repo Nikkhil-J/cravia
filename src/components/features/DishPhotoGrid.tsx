@@ -28,8 +28,10 @@ export function DishPhotoGrid({
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )
 
-  const gridPhotos = sortedPhotos.slice(0, 3)
   const totalPhotoCount = sortedPhotos.length
+  const mainPhoto = sortedPhotos[0]
+  const thumbnailPhotos = sortedPhotos.slice(1, 5)
+  const extraPhotoCount = totalPhotoCount - thumbnailPhotos.length - 1
 
   const openLightbox = useCallback((index: number) => {
     setLightboxIndex(index)
@@ -64,119 +66,58 @@ export function DishPhotoGrid({
   return (
     <>
       {totalPhotoCount === 0 && (
-        <div className="flex flex-col items-center justify-center w-full rounded-xl bg-background-tertiary py-16 gap-3">
-          <span className="text-5xl opacity-40">📷</span>
-          <p className="text-text-secondary text-sm font-medium">No photos yet</p>
-          <p className="text-text-muted text-xs">Be the first to review this dish</p>
+        <div className="flex w-full flex-col items-center justify-center gap-2 rounded-xl bg-surface-2 py-8">
+          <span className="text-3xl opacity-40">📷</span>
+          <p className="text-sm font-medium text-text-secondary">No photos yet</p>
+          <p className="text-xs text-text-muted">Be the first to review this dish</p>
         </div>
       )}
 
-      {totalPhotoCount === 1 && (
-        <div
-          className="relative w-full overflow-hidden rounded-xl max-h-[360px] sm:max-h-[420px] md:max-h-[480px]"
-          style={{ aspectRatio: '4/3' }}
-        >
-          <Image
-            src={getOptimizedImageUrl(photos[0].url, 'grid') ?? ''}
-            alt={photos[0].alt ?? 'Dish photo'}
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-          />
-        </div>
-      )}
-
-      {totalPhotoCount === 2 && (
-        <div className="flex w-full gap-[4px] overflow-hidden rounded-[12px] border border-border">
+      {totalPhotoCount > 0 && (
+        <div className="flex flex-col gap-2">
           <button
             type="button"
-            className="relative flex-[6] cursor-pointer overflow-hidden"
-            style={{ aspectRatio: '3/4' }}
+            className="relative aspect-square w-full cursor-pointer overflow-hidden rounded-xl"
             onClick={() => openLightbox(0)}
           >
             <Image
-              src={getOptimizedImageUrl(gridPhotos[0].url, 'grid') ?? ''}
-              alt={gridPhotos[0].alt ?? `${dishName} photo 1`}
+              src={getOptimizedImageUrl(mainPhoto.url, 'grid') ?? ''}
+              alt={mainPhoto.alt ?? `${dishName} photo 1`}
               fill
-              sizes="60vw"
-              className="object-cover"
-              priority
-            />
-          </button>
-          <button
-            type="button"
-            className="relative flex-[4] cursor-pointer overflow-hidden"
-            style={{ aspectRatio: '3/4' }}
-            onClick={() => openLightbox(1)}
-          >
-            <Image
-              src={getOptimizedImageUrl(gridPhotos[1].url, 'grid') ?? ''}
-              alt={gridPhotos[1].alt ?? `${dishName} photo 2`}
-              fill
-              sizes="40vw"
-              className="object-cover"
-            />
-          </button>
-        </div>
-      )}
-
-      {totalPhotoCount >= 3 && (
-        <div
-          className="grid h-[260px] grid-cols-1 grid-rows-[1fr] gap-[4px] overflow-hidden rounded-[12px] border border-border sm:h-[320px] sm:grid-cols-[60%_40%] sm:grid-rows-[1fr_1fr] md:h-[400px]"
-        >
-          {/* Left panel — spans both rows */}
-          <button
-            type="button"
-            className="relative sm:row-span-2 cursor-pointer overflow-hidden"
-            onClick={() => openLightbox(0)}
-          >
-            <Image
-              src={getOptimizedImageUrl(gridPhotos[0].url, 'grid') ?? ''}
-              alt={gridPhotos[0].alt ?? `${dishName} photo 1`}
-              fill
-              sizes="60vw"
-              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 460px"
+              className="object-cover transition-transform duration-300 hover:scale-105"
               priority
             />
           </button>
 
-          {/* Top-right slot */}
-          <button
-            type="button"
-            className="relative hidden cursor-pointer overflow-hidden sm:block"
-            onClick={() => openLightbox(1)}
-          >
-            <Image
-              src={getOptimizedImageUrl(gridPhotos[1].url, 'grid') ?? ''}
-              alt={gridPhotos[1].alt ?? `${dishName} photo 2`}
-              fill
-              sizes="40vw"
-              className="object-cover"
-            />
-          </button>
-
-          {/* Bottom-right slot */}
-          <button
-            type="button"
-            className="relative hidden cursor-pointer overflow-hidden sm:block"
-            onClick={() => openLightbox(2)}
-          >
-            <div className="relative w-full h-full">
-              <Image
-                src={getOptimizedImageUrl(gridPhotos[2].url, 'grid') ?? ''}
-                alt={gridPhotos[2].alt ?? `${dishName} photo 3`}
-                fill
-                sizes="40vw"
-                className="object-cover"
-              />
-              {totalPhotoCount > 3 && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none">
-                  <span className="text-white text-sm font-bold">+{totalPhotoCount - 3} more</span>
-                </div>
-              )}
+          {thumbnailPhotos.length > 0 && (
+            <div className="grid grid-cols-4 gap-2">
+              {thumbnailPhotos.map((photo, i) => {
+                const isLastThumb = i === thumbnailPhotos.length - 1
+                return (
+                  <button
+                    key={photo.url}
+                    type="button"
+                    className="relative aspect-square cursor-pointer overflow-hidden rounded-lg"
+                    onClick={() => openLightbox(i + 1)}
+                  >
+                    <Image
+                      src={getOptimizedImageUrl(photo.url, 'card') ?? ''}
+                      alt={photo.alt ?? `${dishName} photo ${i + 2}`}
+                      fill
+                      sizes="(max-width: 768px) 25vw, 110px"
+                      className="object-cover"
+                    />
+                    {isLastThumb && extraPhotoCount > 0 && (
+                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60">
+                        <span className="text-sm font-bold text-white">+{extraPhotoCount}</span>
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
             </div>
-          </button>
+          )}
         </div>
       )}
 

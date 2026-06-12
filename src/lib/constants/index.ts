@@ -117,6 +117,7 @@ export const DISHES_PER_PAGE           = 20
 export const REVIEW_TEXT_MIN_CHARS     = 30
 export const REVIEW_PHOTO_MAX_MB       = 5
 export const REVIEW_PHOTO_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const
+export const REVIEW_BILL_ALLOWED_TYPES = [...REVIEW_PHOTO_ALLOWED_TYPES, 'application/pdf'] as const
 export const FIRESTORE_BATCH_LIMIT     = 500
 
 // ── Dish categories ──────────────────────────────────────

@@ -73,7 +73,7 @@ export async function uploadBillPhoto(file: File, dishId: string): Promise<strin
   const timeout = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS)
 
   try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, {
       method: 'POST',
       body: formData,
       signal: controller.signal,

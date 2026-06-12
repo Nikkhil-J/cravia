@@ -86,7 +86,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-xl px-4 py-10">
+    <div className="mx-auto max-w-xl px-4 py-10 animate-fade-in">
       <div className="flex items-center gap-2">
         <MobileBackButton parentHref={ROUTES.MY_PROFILE} />
         <div>
@@ -135,8 +135,11 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {error && <p className="text-xs font-medium text-destructive">{error}</p>}
-        {saved && <p className="text-xs font-medium text-success">Profile saved!</p>}
+        {/* Fixed-height slot reserves space so toggling messages never shifts the Save button */}
+        <div className="min-h-5">
+          {error && <p className="text-xs font-medium text-destructive">{error}</p>}
+          {saved && <p className="text-xs font-medium text-success">Profile saved!</p>}
+        </div>
 
         <Button
           type="submit"
@@ -155,7 +158,7 @@ export default function SettingsPage() {
             className="relative cursor-pointer"
             onClick={() => avatarInputRef.current?.click()}
           >
-            <UserAvatar src={avatarPreview ?? user.avatarUrl} name={user.displayName} size="lg" />
+            <UserAvatar src={avatarPreview ?? user.avatarUrl} name={user.displayName} className="size-14" />
             <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 hover:opacity-100 transition-opacity">
               <Camera size={16} className="text-white" />
             </div>

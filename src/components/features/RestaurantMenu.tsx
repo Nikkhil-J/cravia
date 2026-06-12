@@ -346,7 +346,7 @@ export function RestaurantMenu({ dishes, categories }: RestaurantMenuProps) {
                     <div className="mb-3" />
                   </div>
                 )}
-                <div key={dish.id} className="min-w-0">
+                <div key={dish.id} className="min-w-0 md:h-full">
                   <DishCard dish={dish} index={i} />
                 </div>
               </Fragment>
@@ -444,7 +444,7 @@ export function RecommendedDishesRow({ dishes }: { dishes: Dish[] }) {
             href={ROUTES.dish(dish.id)}
             className="w-[140px] shrink-0 overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/30 hover:shadow-sm"
           >
-            <div className="relative aspect-[4/3] w-full overflow-hidden bg-bg-cream">
+            <div className="relative aspect-square w-full overflow-hidden bg-bg-cream">
               {dish.coverImage ? (
                 <Image
                   src={getOptimizedImageUrl(dish.coverImage, 'card') ?? ''}

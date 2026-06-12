@@ -208,9 +208,9 @@ function OnboardingContent() {
             </p>
 
             <div className="mx-auto mt-6 max-w-xs rounded-xl border border-brand-gold/30 bg-bg-cream p-4 text-left">
-              <p className="text-sm font-semibold text-heading">🏆 Earn DishPoints</p>
+              <p className="text-sm font-semibold text-heading">🏆 Earn Crumbs</p>
               <p className="mt-1 text-xs text-text-secondary">
-                Every review you write earns DishPoints. Earn 500 points to unlock real restaurant coupons.
+                Every review you write earns Crumbs. Earn 500 points to unlock real restaurant coupons.
               </p>
             </div>
 

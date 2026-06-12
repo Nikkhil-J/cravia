@@ -162,7 +162,7 @@ describe('claimCoupon', () => {
     })
     mockTx.get.mockResolvedValue(mockUserSnap(200))
 
-    await expect(claimCoupon('user-1', 'coupon-1')).rejects.toThrow('Insufficient DishPoints')
+    await expect(claimCoupon('user-1', 'coupon-1')).rejects.toThrow('Insufficient Crumbs')
   })
 
   it('claims coupon and deducts points on success', async () => {

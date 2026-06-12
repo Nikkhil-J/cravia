@@ -41,18 +41,46 @@ interface ExplorePageProps {
   }>
 }
 
+// Mirrors DishCard geometry exactly: a horizontal row with a 120/128px square
+// thumbnail on mobile, flipping to a vertical card with a 4:3 image on desktop.
+function DishCardSkeleton() {
+  return (
+    <div className="flex w-full border-b-[0.5px] border-border py-4 md:h-full md:overflow-hidden md:rounded-lg md:border-[0.5px] md:bg-card md:py-0 md:shadow-sm">
+      <div className="flex min-w-0 flex-1 items-start gap-4 md:h-full md:flex-col-reverse md:gap-0">
+        <div className="min-w-0 flex-1 pt-3 md:w-full md:p-4">
+          <div className="mt-2 h-4 w-3/4 animate-pulse rounded bg-surface-3" />
+          <div className="mt-2 h-3 w-1/2 animate-pulse rounded bg-surface-3" />
+          <div className="mt-3 h-4 w-16 animate-pulse rounded bg-surface-3" />
+          <div className="mt-3 h-3 w-24 animate-pulse rounded bg-surface-3" />
+        </div>
+        <div className="w-[120px] shrink-0 sm:w-[128px] md:w-full">
+          <div className="aspect-square w-[120px] animate-pulse overflow-hidden rounded-lg bg-surface-3 sm:w-[128px] md:aspect-[4/3] md:w-full md:rounded-none" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ResultsSkeleton({ tab = 'dishes' }: { tab?: ExploreTab }) {
-  const gridClass =
-    tab === 'restaurants'
-      ? 'grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-      : 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3'
+  if (tab === 'restaurants') {
+    return (
+      <div className="mt-6">
+        <div className="mb-4 h-4 w-32 animate-pulse rounded bg-border" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <SkeletonCard key={i} variant="restaurant" />
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="mt-6">
       <div className="mb-4 h-4 w-32 animate-pulse rounded bg-border" />
-      <div className={gridClass}>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
         {Array.from({ length: 8 }).map((_, i) => (
-          <SkeletonCard key={i} variant={tab === 'restaurants' ? 'restaurant' : 'dish'} />
+          <DishCardSkeleton key={i} />
         ))}
       </div>
     </div>
@@ -74,6 +102,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
     return (
       <div className="mt-6">
         <LoadMoreDishes
+          key={`curated-all-${city}-${sortBy}`}
           initialDishes={allResult.items}
           initialHasMore={allResult.hasMore}
           initialCursorId={allResult.lastDoc}
@@ -140,6 +169,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
           All dishes{city ? ` in ${city}` : ''}
         </h3>
         <LoadMoreDishes
+          key={`curated-all-${city}-${sortBy}`}
           initialDishes={allResult.items}
           initialHasMore={allResult.hasMore}
           initialCursorId={allResult.lastDoc}
@@ -203,6 +233,7 @@ async function DishExploreResults({
         <DishEmptyFallback query={query} city={city} />
       ) : (
         <LoadMoreDishes
+          key={`dishes-${query}-${city}-${area}-${cuisine}-${dietary}-${priceRange}-${sortBy}`}
           initialDishes={dishes}
           initialHasMore={result.hasMore}
           initialCursorId={result.lastDoc}
@@ -327,6 +358,7 @@ async function RestaurantExploreResults({
         </div>
       ) : (
         <LoadMoreRestaurants
+          key={`restaurants-${query}-${city}-${area}-${cuisine}`}
           initialRestaurants={restaurants}
           initialHasMore={result.hasMore}
           filters={filterPayload}
@@ -353,7 +385,6 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
     : SORT_OPTIONS.HIGHEST_RATED) as DishSortOption
 
   const areas = listCityAreas(GURUGRAM)
-  const paramsKey = JSON.stringify(params)
 
   return (
     <ExploreEntranceWrapper>
@@ -387,7 +418,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
         </Suspense>
 
         <ExploreDefaultContent>
-          <Suspense key={paramsKey} fallback={<ResultsSkeleton tab={tab} />}>
+          <Suspense fallback={<ResultsSkeleton tab={tab} />}>
             <ExploreResultsWrapper>
               {tab === 'dishes' && !cuisine && !area && !dietary && !priceRange ? (
                 <CuratedDishExplore city={city} sortBy={dishSortBy} />
