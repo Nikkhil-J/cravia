@@ -95,38 +95,40 @@ export default async function RestaurantPage({ params }: PageProps) {
               className="object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+          {/* Cinematic dark scrim — fixed strength so the title stays legible on
+              both bright and dark cover photos. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-surface-dark/95 via-surface-dark/45 via-[42%] to-transparent to-[80%]" />
           <div className="absolute inset-x-0 bottom-0">
             <div className="mx-auto max-w-[1000px] px-4 pb-3 pt-24 sm:px-6 sm:pb-10">
-              <nav className="mb-3 hidden min-w-0 items-center gap-1.5 text-xs text-text-muted sm:gap-2 sm:text-sm md:flex">
+              <nav className="mb-3 hidden min-w-0 items-center gap-1.5 text-xs text-white/70 sm:gap-2 sm:text-sm md:flex">
                 <Link
                   href={ROUTES.EXPLORE}
-                  className="shrink-0 transition-colors hover:text-primary"
+                  className="shrink-0 transition-colors hover:text-white"
                 >
                   Restaurants
                 </Link>
                 <span className="shrink-0">/</span>
-                <span className="min-w-0 truncate text-text-primary">
+                <span className="min-w-0 truncate text-white">
                   {restaurant.name}
                 </span>
               </nav>
 
-              <h1 className="font-display text-3xl font-bold text-heading sm:text-4xl">
+              <h1 className="font-display text-3xl font-bold text-white drop-shadow-sm sm:text-4xl">
                 {restaurant.name}
               </h1>
-              <p className="mt-1 text-sm text-text-secondary">
+              <p className="mt-1 text-sm text-white/85">
                 {restaurant.cuisines.join(" · ")}
               </p>
 
               <div className="mt-4 flex flex-wrap gap-3 text-sm">
-                <span className="flex items-center gap-1.5 text-text-secondary">
+                <span className="flex items-center gap-1.5 text-white/85">
                   <MapPin size={14} />
                   {restaurant.area}, {restaurant.city}
                 </span>
                 {restaurant.phoneNumber && (
                   <a
                     href={`tel:${restaurant.phoneNumber}`}
-                    className="flex items-center gap-1.5 text-text-muted transition-colors hover:text-primary"
+                    className="flex items-center gap-1.5 text-white/80 transition-colors hover:text-white"
                   >
                     <Phone size={14} />
                     {restaurant.phoneNumber}
@@ -137,7 +139,7 @@ export default async function RestaurantPage({ params }: PageProps) {
                     href={restaurant.googleMapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-text-muted transition-colors hover:text-primary"
+                    className="flex items-center gap-1.5 text-white/80 transition-colors hover:text-white"
                   >
                     <MapPin size={14} />
                     View map
@@ -148,7 +150,7 @@ export default async function RestaurantPage({ params }: PageProps) {
                     href={restaurant.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-text-muted transition-colors hover:text-primary"
+                    className="flex items-center gap-1.5 text-white/80 transition-colors hover:text-white"
                   >
                     <Globe size={14} />
                     Website

@@ -5,34 +5,45 @@ import { Reveal, RevealGrid, RevealItem } from '@/components/ui/AnimateReveal'
 
 export function BrowseCuisines() {
   return (
-    <section className="mx-auto max-w-[1120px] px-4 pt-10 sm:px-8">
-      <Reveal className="mb-2 text-[11px] font-medium uppercase tracking-[0.1em] text-coral">
-        Browse by cuisine
-      </Reveal>
-      <Reveal>
-        <h2 className="mb-6 text-[22px] font-medium leading-[1.2] text-text-primary">
-          Find your next craving
-        </h2>
-      </Reveal>
+    <section className="mt-20 bg-bg-warm py-20">
+      <div className="mx-auto max-w-[1200px] px-6 sm:px-8">
+        <Reveal className="mb-12 text-center">
+          <div className="mb-3 text-[13px] font-bold uppercase tracking-[0.12em] text-coral">
+            Explore by cuisine
+          </div>
+          <h2 className="mb-3 font-display text-[clamp(28px,3.5vw,42px)] font-bold leading-tight text-heading">
+            What are you craving?
+          </h2>
+          <p className="mx-auto max-w-[560px] text-base leading-relaxed text-text-secondary">
+            From street-side chaat to fine-dining Italian — find the best of
+            every cuisine in your city.
+          </p>
+        </Reveal>
 
-      <RevealGrid
-        className="-mx-4 flex gap-2 overflow-x-auto scroll-smooth px-4 pb-2 sm:-mx-8 sm:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        stagger={0.05}
-      >
-        {FEATURED_CUISINES.map((cuisine) => (
-          <RevealItem key={cuisine} from="left">
-            <Link
-              href={`${ROUTES.EXPLORE}?cuisine=${encodeURIComponent(cuisine)}`}
-              className="group inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border-[0.5px] border-border bg-surface-2 px-4 py-2 text-[13px] font-medium text-text-primary transition-colors hover:border-coral hover:bg-coral-bg hover:text-coral-deep"
-            >
-              <span className="text-base" aria-hidden="true">
-                {CUISINE_EMOJI[cuisine] ?? '🍴'}
-              </span>
-              <span>{cuisine}</span>
-            </Link>
-          </RevealItem>
-        ))}
-      </RevealGrid>
+        <RevealGrid
+          className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
+          stagger={0.05}
+        >
+          {FEATURED_CUISINES.map((cuisine) => (
+            <RevealItem key={cuisine}>
+              <Link
+                href={`${ROUTES.EXPLORE}?cuisine=${encodeURIComponent(cuisine)}`}
+                className="group flex flex-col items-center rounded-2xl border-[0.5px] border-border bg-card px-5 py-7 text-center transition-all hover:-translate-y-1 hover:border-coral hover:shadow-lg"
+              >
+                <span
+                  className="mb-3 block text-[42px] leading-none transition-transform duration-300 group-hover:scale-110"
+                  aria-hidden="true"
+                >
+                  {CUISINE_EMOJI[cuisine] ?? '🍴'}
+                </span>
+                <span className="font-display text-base font-semibold text-text-primary">
+                  {cuisine}
+                </span>
+              </Link>
+            </RevealItem>
+          ))}
+        </RevealGrid>
+      </div>
     </section>
   )
 }

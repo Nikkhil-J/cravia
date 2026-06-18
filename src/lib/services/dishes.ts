@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import { dishRepository } from '@/lib/repositories'
-import { getRelatedDishes as getRelatedDishesFirebase, getAllActiveDishes as getAllActiveDishesFirebase } from '@/lib/firebase/dishes'
+import { getAllActiveDishes as getAllActiveDishesFirebase } from '@/lib/firebase/dishes'
 import type { SearchFilters } from '@/lib/types'
 import { SORT_OPTIONS } from '@/lib/constants'
 
@@ -35,6 +35,7 @@ export function searchDishes(
     area: filters?.area ?? null,
     dietary: filters?.dietary ?? null,
     priceRange: filters?.priceRange ?? null,
+    minRating: filters?.minRating ?? null,
     sortBy: filters?.sortBy ?? SORT_OPTIONS.HIGHEST_RATED,
     cursor: cursor ?? undefined,
   }).then((result) => ({
@@ -45,7 +46,7 @@ export function searchDishes(
 }
 
 export function getRelatedDishes(restaurantId: string, excludeId: string, limit?: number) {
-  return getRelatedDishesFirebase(restaurantId, excludeId, limit)
+  return dishRepository.getRelated(restaurantId, excludeId, limit)
 }
 
 export function getAllActiveDishes() {

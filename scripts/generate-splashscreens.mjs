@@ -4,7 +4,7 @@
  * Run manually:  node scripts/generate-splashscreens.mjs
  * Force regen:   node scripts/generate-splashscreens.mjs --force
  *
- * Background #121009 matches app-loader-bg so the iOS splash → AppLoader
+ * Background #FFFAF5 matches app-loader-bg so the iOS splash → AppLoader
  * transition is visually seamless.
  *
  * To add a new iPhone model: append one line to SPECS below with the
@@ -36,7 +36,7 @@ const SPECS = [
 ]
 
 // Must match app-loader-bg in globals.css and the inline body style in layout.tsx.
-const BG = '#121009'
+const BG = '#FFFAF5'
 
 function buildSvg(width, height) {
   const iconSize   = Math.round(Math.min(width, height) * 0.13)
@@ -74,7 +74,7 @@ function buildSvg(width, height) {
     font-size="${fontSize}"
     font-weight="800"
     letter-spacing="${Math.round(fontSize * 0.14)}"
-    fill="#F0997B"
+    fill="#D85A30"
     text-anchor="middle"
   >CRAVIA</text>
 </svg>`

@@ -94,10 +94,11 @@ export const metadata: Metadata = {
 };
 
 // APPROVED HARDCODED COLORS — HTML meta viewport requires hex; colorScheme
-// eliminates the white flash before CSS loads on PWA cold start.
+// pins the light scheme so the OS does not flash a dark UI before CSS loads
+// on PWA cold start. Value matches body bg + app-loader-bg + splash chrome.
 export const viewport: Viewport = {
-  themeColor: '#121009',
-  colorScheme: 'dark',
+  themeColor: '#FFFAF5',
+  colorScheme: 'light',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -113,10 +114,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${fredoka.variable} ${dmSans.variable} ${barlowCondensed.variable} h-full`}
+      className={`${fredoka.variable} ${dmSans.variable} ${barlowCondensed.variable} h-full`}
       data-scroll-behavior="smooth"
     >
-      <body className="min-h-full flex flex-col" style={{ backgroundColor: '#121009' }}>
+      <body className="min-h-full flex flex-col" style={{ backgroundColor: '#FFFAF5' }}>
         <Providers>{children}</Providers>
         {/* Generates apple-touch-startup-image meta tags dynamically from manifest.json
             for any iOS device, eliminating the need for per-device splash screen PNGs. */}

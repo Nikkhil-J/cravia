@@ -10,19 +10,19 @@ export default function RestaurantLoading() {
       {/* Cover hero — mirrors page.tsx */}
       <div className="relative min-h-[320px] w-full overflow-hidden bg-surface-2 sm:min-h-[380px]">
         <div className="absolute inset-0 animate-pulse bg-surface-2" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-surface-dark/95 via-surface-dark/45 via-[42%] to-transparent to-[80%]" />
         <div className="absolute inset-x-0 bottom-0">
           <div className="mx-auto max-w-[1000px] px-4 pb-3 pt-24 sm:px-6 sm:pb-10">
             <div className="mb-3 hidden items-center gap-2 md:flex">
-              <div className="h-3.5 w-20 animate-pulse rounded bg-border" />
-              <span className="text-text-muted">/</span>
-              <div className="h-3.5 w-36 animate-pulse rounded bg-border" />
+              <div className="h-3.5 w-20 animate-pulse rounded bg-white/20" />
+              <span className="text-white/40">/</span>
+              <div className="h-3.5 w-36 animate-pulse rounded bg-white/20" />
             </div>
-            <div className="h-9 w-2/3 animate-pulse rounded-lg bg-border sm:h-10" />
-            <div className="mt-2 h-4 w-1/3 animate-pulse rounded bg-border" />
+            <div className="h-9 w-2/3 animate-pulse rounded-lg bg-white/25 sm:h-10" />
+            <div className="mt-2 h-4 w-1/3 animate-pulse rounded bg-white/20" />
             <div className="mt-4 flex flex-wrap gap-3">
-              <div className="h-4 w-40 animate-pulse rounded bg-border" />
-              <div className="h-4 w-28 animate-pulse rounded bg-border" />
+              <div className="h-4 w-40 animate-pulse rounded bg-white/20" />
+              <div className="h-4 w-28 animate-pulse rounded bg-white/20" />
             </div>
           </div>
         </div>
@@ -63,15 +63,15 @@ export default function RestaurantLoading() {
 
           {/* Recommended carousel — mirrors RecommendedDishesRow (mt-6) */}
           <section className="mt-6">
-            <div className="h-5 w-44 animate-pulse rounded bg-border" />
-            <div className="scrollbar-hide -mx-4 mt-3 flex gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
+            <div className="mb-3 h-5 w-44 animate-pulse rounded bg-border" />
+            <div className="scrollbar-hide -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="w-[140px] shrink-0 overflow-hidden rounded-lg border border-border bg-card"
+                  className="w-[200px] shrink-0 overflow-hidden rounded-2xl border-[0.5px] border-border bg-card"
                 >
-                  <div className="aspect-square w-full animate-pulse bg-surface-2" />
-                  <div className="p-2.5">
+                  <div className="aspect-[4/3] w-full animate-pulse bg-surface-2" />
+                  <div className="p-3">
                     <div className="h-3.5 w-full animate-pulse rounded bg-border" />
                     <div className="mt-1.5 h-3 w-2/3 animate-pulse rounded bg-border" />
                   </div>

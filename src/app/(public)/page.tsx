@@ -1,10 +1,11 @@
 import { LandingHero } from "@/components/features/LandingHero";
-import { TopRatedStrip } from "@/components/features/TopRatedStrip";
-import { WhyCravia } from "@/components/features/WhyCravia";
 import { LandingStatsRow } from "@/components/features/LandingStatsRow";
+import { WhyCravia } from "@/components/features/WhyCravia";
+import { TopRatedStrip } from "@/components/features/TopRatedStrip";
 import { BrowseCuisines } from "@/components/features/BrowseCuisines";
-import { NearbyRestaurants } from "@/components/features/NearbyRestaurants";
 import { LandingHowItWorks } from "@/components/features/LandingHowItWorks";
+import { NearbyRestaurants } from "@/components/features/NearbyRestaurants";
+import { Testimonials } from "@/components/features/Testimonials";
 import { LandingCTABlock } from "@/components/features/LandingCTABlock";
 import { PersonalStatsBanner } from "@/components/features/PersonalStatsBanner";
 import { PWAInstallBanner } from "@/components/features/PWAInstallBanner";
@@ -44,23 +45,14 @@ export default async function LandingPage() {
   }
 
   const heroDishes = topDishes.slice(0, 5);
-  const stripDishes = topDishes.slice(5, 8);
+  const trendingDishes = topDishes.slice(0, 8);
+  const featuredRestaurants = restaurants.slice(0, 3);
 
   return (
     <>
-      <LandingHero
-        topDishes={heroDishes}
-        city={city}
-        dishCount={dishCount}
-      />
+      <LandingHero topDishes={heroDishes} city={city} dishCount={dishCount} />
 
-      <div className="mt-8">
-        <PersonalStatsBanner />
-      </div>
-
-      {stripDishes.length > 0 && (
-        <TopRatedStrip dishes={stripDishes} city={city} />
-      )}
+      <PersonalStatsBanner />
 
       <LandingStatsRow
         dishCount={dishCount}
@@ -70,11 +62,17 @@ export default async function LandingPage() {
 
       <WhyCravia />
 
+      {trendingDishes.length > 0 && (
+        <TopRatedStrip dishes={trendingDishes} city={city} />
+      )}
+
       <BrowseCuisines />
 
       <LandingHowItWorks />
 
-      <NearbyRestaurants restaurants={restaurants} city={city} />
+      <NearbyRestaurants restaurants={featuredRestaurants} city={city} />
+
+      <Testimonials />
 
       <LandingCTABlock />
       <PWAInstallBanner />

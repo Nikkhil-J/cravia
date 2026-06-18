@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useStreak } from '@/lib/hooks/useStreak'
 import { LEVEL_THRESHOLDS } from '@/lib/constants'
 import type { UserLevel } from '@/lib/types'
 import { ROUTES } from '@/lib/constants/routes'
+import { Reveal } from '@/components/ui/AnimateReveal'
 
 const NEXT_LEVEL: Record<UserLevel, UserLevel | null> = {
   Newbie: 'Foodie',
@@ -15,16 +15,14 @@ const NEXT_LEVEL: Record<UserLevel, UserLevel | null> = {
   Legend: null,
 }
 
+interface BannerStat {
+  num: string | number
+  label: string
+}
+
 export function PersonalStatsBanner() {
   const { user, isLoading } = useAuth()
   const { currentStreak: streak } = useStreak()
-  const [animate, setAnimate] = useState(false)
-
-  useEffect(() => {
-    if (!user || user.reviewCount < 1) return
-    const id = requestAnimationFrame(() => setAnimate(true))
-    return () => cancelAnimationFrame(id)
-  }, [user])
 
   // AppLoader keeps the screen hidden while auth resolves, so no space
   // reservation is needed — return null and let the banner appear naturally.
@@ -34,152 +32,55 @@ export function PersonalStatsBanner() {
   if (!user || user.reviewCount < 1) return null
 
   const nextLevel = NEXT_LEVEL[user.level]
-  const threshold = LEVEL_THRESHOLDS[user.level]
   const nextThreshold = nextLevel ? LEVEL_THRESHOLDS[nextLevel].min : null
-  const progress = nextThreshold
-    ? Math.min(100, ((user.reviewCount - threshold.min) / (nextThreshold - threshold.min)) * 100)
-    : 100
   const reviewsRemaining = nextThreshold ? nextThreshold - user.reviewCount : 0
   const isLegend = user.level === 'Legend'
 
+  const title = isLegend ? "You've reached the top. 👑" : "You're on a roll! 🔥"
+  const sub = isLegend
+    ? "You're a Legend — keep the reviews coming."
+    : `${reviewsRemaining} review${reviewsRemaining !== 1 ? 's' : ''} to reach ${nextLevel}. Keep going!`
+
+  const stats: BannerStat[] = [
+    { num: user.reviewCount, label: 'Reviews' },
+    { num: user.helpfulVotesReceived, label: 'Helpful' },
+    { num: user.badges.length, label: 'Badges' },
+    { num: user.dishPointsBalance ?? 0, label: 'Crumbs' },
+  ]
+  if (streak > 0) stats.push({ num: `🔥 ${streak}`, label: 'Streak' })
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-primary to-brand-orange px-4 py-3 sm:px-6 sm:py-4">
-      {/* Depth overlay */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: [
-            'radial-gradient(ellipse 50% 120% at 0% 50%, rgba(0,0,0,0.15), transparent)',
-            'radial-gradient(ellipse 50% 120% at 100% 50%, rgba(255,255,255,0.06), transparent)',
-          ].join(', '),
-        }}
-      />
+    <section className="mx-auto mt-8 max-w-[1200px] px-6 sm:px-8">
+      <Reveal from="scale">
+        <div className="flex flex-wrap items-center gap-5 rounded-3xl bg-gradient-to-br from-primary to-brand-orange p-7 text-white shadow-lg">
+          <div className="min-w-[200px] flex-1">
+            <p className="font-display text-xl font-bold leading-tight">
+              {title}
+            </p>
+            <p className="mt-1 text-sm text-white/80">{sub}</p>
+          </div>
 
-      {/* Single shimmer gleam on entrance */}
-      {animate && (
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%)',
-            animation: 'banner-gleam 0.8s 0.3s ease-out both',
-          }}
-        />
-      )}
-
-      <div
-        className="relative mx-auto flex max-w-[1200px] flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6"
-        style={{
-          opacity: animate ? 1 : 0,
-          transform: animate ? 'translateY(0)' : 'translateY(8px)',
-          transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
-        }}
-      >
-        {/* Top row: progress (left) + View profile (right on mobile, hidden on sm+) */}
-        <div
-          className="flex w-full items-start justify-between gap-4 sm:flex-1 sm:min-w-[220px]"
-          style={{
-            opacity: animate ? 1 : 0,
-            transform: animate ? 'translateY(0)' : 'translateY(6px)',
-            transition: 'opacity 0.5s ease-out 0.1s, transform 0.5s ease-out 0.1s',
-          }}
-        >
-          <div className="flex-1">
-            {isLegend ? (
-              <p className="font-display text-base font-bold text-white">
-                You&apos;ve reached the top. You&apos;re a Legend. 👑
-              </p>
-            ) : (
-              <div className="space-y-1.5">
-                <p className="text-xs text-white/60">Your progress</p>
-                <p className="flex items-center gap-1.5 text-[15px] font-semibold text-white">
-                  <span>{reviewsRemaining} review{reviewsRemaining !== 1 ? 's' : ''} to reach</span>
-                  <span className="inline-flex rounded-full border border-white/25 bg-black/20 px-2.5 py-0.5 text-xs font-bold leading-none text-white">
-                    {nextLevel}
-                  </span>
-                </p>
-                <div className="h-1.5 max-w-[60%] overflow-hidden rounded-full bg-black/20 sm:max-w-[40%]">
-                  <div
-                    className="h-full rounded-full bg-white"
-                    style={{
-                      width: animate ? `${progress}%` : '0%',
-                      transition: 'width 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s',
-                    }}
-                  />
+          <div className="flex flex-wrap gap-6">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="font-display text-2xl font-bold leading-none">
+                  {stat.num}
                 </div>
-                <p className="text-xs text-white/50">
-                  currently {user.level} · {user.reviewCount} review{user.reviewCount !== 1 ? 's' : ''}
-                </p>
+                <div className="mt-1 text-[11px] text-white/70">
+                  {stat.label}
+                </div>
               </div>
-            )}
+            ))}
           </div>
 
-          {/* View profile — top-right on mobile only */}
           <Link
             href={ROUTES.MY_PROFILE}
-            className="inline-flex shrink-0 min-h-[44px] items-center rounded-pill border border-white/30 bg-white/15 px-4 py-1.5 text-sm font-bold text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/25 sm:hidden"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-pill bg-white px-6 py-2.5 text-sm font-bold text-primary transition-transform hover:-translate-y-0.5"
           >
             View profile
           </Link>
         </div>
-
-        {/* Bottom row: stats (full width on mobile, inline on sm+) + View profile (sm+ only) */}
-        <div
-          className="flex w-full items-center justify-between sm:w-auto sm:justify-end sm:gap-5"
-          style={{
-            opacity: animate ? 1 : 0,
-            transform: animate ? 'translateY(0)' : 'translateY(6px)',
-            transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
-          }}
-        >
-          <div className="text-center">
-            <div className="font-display text-xl font-bold text-white">{user.reviewCount}</div>
-            <div className="text-xs text-white/60">Reviews</div>
-          </div>
-          <div className="h-8 w-px bg-white/20" />
-          <div className="text-center">
-            <div className="font-display text-xl font-bold text-white">{user.badges.length}</div>
-            <div className="text-xs text-white/60">Badges</div>
-          </div>
-          <div className="h-8 w-px bg-white/20" />
-          <div className="text-center">
-            <div className="font-display text-xl font-bold text-white">{user.dishPointsBalance ?? 0}</div>
-            <div className="text-xs text-white/60">Crumbs</div>
-          </div>
-          {streak > 0 && (
-            <>
-              <div className="h-8 w-px bg-white/20" />
-              <div className="text-center">
-                <div className="font-display text-xl font-bold text-white">🔥 {streak}</div>
-                <div className="text-xs text-white/60">Streak</div>
-              </div>
-            </>
-          )}
-          {user.helpfulVotesReceived > 0 && (
-            <>
-              <div className="h-8 w-px bg-white/20" />
-              <div className="text-center">
-                <div className="font-display text-xl font-bold text-white">{user.helpfulVotesReceived}</div>
-                <div className="text-xs text-white/60">Helpful</div>
-              </div>
-            </>
-          )}
-          {/* View profile — inline with stats on sm+ */}
-          <div className="hidden h-8 w-px bg-white/20 sm:block" />
-          <Link
-            href={ROUTES.MY_PROFILE}
-            className="hidden sm:inline-flex min-h-[44px] items-center rounded-pill border border-white/30 bg-white/15 px-4 py-1.5 text-sm font-bold text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/25"
-          >
-            View profile
-          </Link>
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes banner-gleam {
-          from { transform: translateX(-100%); }
-          to { transform: translateX(100%); }
-        }
-      `}</style>
+      </Reveal>
     </section>
   )
 }

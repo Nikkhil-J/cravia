@@ -12,6 +12,7 @@ export const dishSearchParamsSchema = z.object({
   cuisine: z.string().nullable().default(null),
   dietary: z.enum(dietaryValues).nullable().default(null),
   priceRange: z.enum(priceRangeValues).nullable().default(null),
+  minRating: z.coerce.number().min(0).max(5).nullable().default(null),
   sortBy: z.enum(sortByValues).default(SORT_OPTIONS.HIGHEST_RATED),
   maxReviewCount: z.coerce.number().int().min(0).nullable().default(null),
   cursor: z.string().nullable().default(null),

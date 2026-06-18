@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 import {
   cn,
   formatRating,
@@ -21,6 +21,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetClose,
 } from '@/components/ui/sheet'
 
 type PickerView = 'categories' | 'dishes'
@@ -147,8 +148,14 @@ export function ReviewDishPicker({ dishes, categories, restaurantId, restaurantN
         Review a Dish
       </SheetTrigger>
 
-      <SheetContent side="bottom" className="max-h-[85dvh] rounded-t-2xl pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <SheetHeader>
+      <SheetContent side="bottom" showCloseButton={false} className="max-h-[85dvh] rounded-t-2xl pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <SheetClose
+          aria-label="Close"
+          className="absolute right-4 top-5 inline-flex h-8 w-8 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-surface-3 hover:text-text-primary"
+        >
+          <X className="h-5 w-5" />
+        </SheetClose>
+        <SheetHeader className="pt-7">
           <SheetTitle className="font-display text-lg font-bold text-heading">
             Which dish did you try?
           </SheetTitle>

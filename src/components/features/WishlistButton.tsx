@@ -16,9 +16,15 @@ import { CLIENT_ERRORS } from '@/lib/constants/errors'
 interface WishlistButtonProps {
   dishId: string
   className?: string
+  /** "button" = full pill with label (default); "icon" = compact circular heart for cards. */
+  variant?: 'button' | 'icon'
 }
 
-export function WishlistButton({ dishId, className = '' }: WishlistButtonProps) {
+export function WishlistButton({
+  dishId,
+  className = '',
+  variant = 'button',
+}: WishlistButtonProps) {
   const router = useRouter()
   const pathname = usePathname()
   const queryClient = useQueryClient()
@@ -37,7 +43,10 @@ export function WishlistButton({ dishId, className = '' }: WishlistButtonProps) 
   const isSaved = optimistic ?? serverSaved
 
   async function handleToggle() {
-    if (!user || !isAuthenticated) return
+    if (!user || !isAuthenticated) {
+      router.push(ROUTES.loginWithRedirect(encodeURIComponent(pathname)))
+      return
+    }
     const token = authUser ? await authUser.getIdToken() : null
     if (!token) return
 
@@ -55,6 +64,29 @@ export function WishlistButton({ dishId, className = '' }: WishlistButtonProps) 
     } else {
       queryClient.invalidateQueries({ queryKey: ['wishlist'] })
     }
+  }
+
+  if (variant === 'icon') {
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleToggle}
+        aria-label={isSaved ? 'Remove from wishlist' : 'Save to wishlist'}
+        className={cn(
+          'h-9 w-9 rounded-full bg-card/90 shadow-md backdrop-blur-sm transition-transform hover:scale-110 hover:bg-card',
+          isSaved ? 'text-primary' : 'text-text-muted hover:text-primary',
+          className
+        )}
+      >
+        <span
+          className={cn('inline-flex', isAnimating && 'animate-heart-bounce')}
+          onAnimationEnd={() => setIsAnimating(false)}
+        >
+          <Heart className="h-[18px] w-[18px]" fill={isSaved ? 'currentColor' : 'none'} />
+        </span>
+      </Button>
+    )
   }
 
   if (!isAuthenticated) {

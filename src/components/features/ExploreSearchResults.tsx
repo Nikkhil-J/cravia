@@ -46,7 +46,9 @@ export function ExploreSearchResults() {
   const area = searchParams.get('area') ?? null
   const dietary = searchParams.get('dietary') ?? null
   const priceRange = searchParams.get('priceRange') ?? null
+  const minRating = searchParams.get('minRating') ?? null
   const sortBy = searchParams.get('sortBy') ?? null
+  const layout = searchParams.get('view') === 'list' ? 'list' : 'grid'
 
   const [dishes, setDishes] = useState<Dish[]>([])
   const [restaurants, setRestaurants] = useState<Restaurant[]>([])
@@ -74,6 +76,7 @@ export function ExploreSearchResults() {
       if (area) params.set('area', area)
       if (dietary) params.set('dietary', dietary)
       if (priceRange) params.set('priceRange', priceRange)
+      if (tab === 'dishes' && minRating) params.set('minRating', minRating)
       if (tab === 'dishes' && sortBy) params.set('sortBy', sortBy)
 
       const token = authUser ? await authUser.getIdToken() : null
@@ -113,7 +116,7 @@ export function ExploreSearchResults() {
 
     fetchResults()
     return () => { cancelled = true }
-  }, [query, tab, cuisine, area, dietary, priceRange, sortBy, authUser])
+  }, [query, tab, cuisine, area, dietary, priceRange, minRating, sortBy, authUser])
 
   if (!query || query.length < 2) return null
 
@@ -131,6 +134,7 @@ export function ExploreSearchResults() {
     area,
     dietary: dietary as 'veg' | 'non-veg' | 'egg' | null,
     priceRange: priceRange as 'under-100' | '100-200' | '200-400' | '400-600' | 'above-600' | null,
+    minRating: minRating ? Number(minRating) : null,
     sortBy: sortBy as SortOrder | undefined,
   }
   const dishResultsKey = [
@@ -140,6 +144,7 @@ export function ExploreSearchResults() {
     area,
     dietary,
     priceRange,
+    minRating,
     sortBy,
     cursorId,
     hasMore,
@@ -181,6 +186,7 @@ export function ExploreSearchResults() {
             initialCursorId={cursorId}
             filters={filterPayload}
             query={query}
+            layout={layout}
           />
         )}
       </div>

@@ -11,7 +11,9 @@ import { LoadMoreDishes } from '@/components/features/LoadMoreDishes'
 import { ExploreResultsWrapper } from '@/components/features/ExploreResultsWrapper'
 import { ExploreEntranceWrapper } from '@/components/features/ExploreEntranceWrapper'
 import { ExploreSearchResults, ExploreDefaultContent } from '@/components/features/ExploreSearchResults'
-import { FEATURED_CUISINES, SORT_OPTIONS, HERO_TAGS, GURUGRAM } from '@/lib/constants'
+import { ExploreSidebar } from '@/components/features/ExploreSidebar'
+import { ExploreResultsHeader } from '@/components/features/ExploreResultsHeader'
+import { FEATURED_CUISINES, SORT_OPTIONS, HERO_TAGS, GURUGRAM, CITY_DISPLAY_NAME } from '@/lib/constants'
 import { listCityAreas } from '@/lib/services/city'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { SearchBar } from '@/components/features/SearchBar'
@@ -25,8 +27,15 @@ export const metadata: Metadata = {
 
 type ExploreTab = 'dishes' | 'restaurants'
 type DishSortOption = 'highest-rated' | 'newest' | 'most-helpful'
+type DishLayout = 'grid' | 'list'
 
 const VALID_DISH_SORT: DishSortOption[] = ['highest-rated', 'newest', 'most-helpful']
+
+function dishGridClass(layout: DishLayout) {
+  return layout === 'list'
+    ? 'flex flex-col gap-3'
+    : 'grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3'
+}
 
 interface ExplorePageProps {
   searchParams: Promise<{
@@ -36,25 +45,26 @@ interface ExplorePageProps {
     area?: string
     dietary?: string
     priceRange?: string
+    minRating?: string
     sortBy?: string
     focus?: string
+    view?: string
   }>
 }
 
-// Mirrors DishCard geometry exactly: a horizontal row with a 120/128px square
-// thumbnail on mobile, flipping to a vertical card with a 4:3 image on desktop.
+// Mirrors the DishCard grid geometry: an image-header card with a 4:3 cover and
+// a body of text rows.
 function DishCardSkeleton() {
   return (
-    <div className="flex w-full border-b-[0.5px] border-border py-4 md:h-full md:overflow-hidden md:rounded-lg md:border-[0.5px] md:bg-card md:py-0 md:shadow-sm">
-      <div className="flex min-w-0 flex-1 items-start gap-4 md:h-full md:flex-col-reverse md:gap-0">
-        <div className="min-w-0 flex-1 pt-3 md:w-full md:p-4">
-          <div className="mt-2 h-4 w-3/4 animate-pulse rounded bg-surface-3" />
-          <div className="mt-2 h-3 w-1/2 animate-pulse rounded bg-surface-3" />
-          <div className="mt-3 h-4 w-16 animate-pulse rounded bg-surface-3" />
-          <div className="mt-3 h-3 w-24 animate-pulse rounded bg-surface-3" />
-        </div>
-        <div className="w-[120px] shrink-0 sm:w-[128px] md:w-full">
-          <div className="aspect-square w-[120px] animate-pulse overflow-hidden rounded-lg bg-surface-3 sm:w-[128px] md:aspect-[4/3] md:w-full md:rounded-none" />
+    <div className="flex h-full flex-col overflow-hidden rounded-lg border-[0.5px] border-border bg-card shadow-sm">
+      <div className="aspect-[4/3] w-full animate-pulse bg-surface-3" />
+      <div className="flex flex-1 flex-col p-4">
+        <div className="h-4 w-3/4 animate-pulse rounded bg-surface-3" />
+        <div className="mt-2 h-3 w-1/2 animate-pulse rounded bg-surface-3" />
+        <div className="mt-3 h-3 w-2/3 animate-pulse rounded bg-surface-3" />
+        <div className="mt-auto flex items-center justify-between border-t border-border pt-3">
+          <div className="h-3 w-16 animate-pulse rounded bg-surface-3" />
+          <div className="h-3 w-10 animate-pulse rounded bg-surface-3" />
         </div>
       </div>
     </div>
@@ -66,8 +76,8 @@ function ResultsSkeleton({ tab = 'dishes' }: { tab?: ExploreTab }) {
     return (
       <div className="mt-6">
         <div className="mb-4 h-4 w-32 animate-pulse rounded bg-border" />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonCard key={i} variant="restaurant" />
           ))}
         </div>
@@ -79,7 +89,7 @@ function ResultsSkeleton({ tab = 'dishes' }: { tab?: ExploreTab }) {
     <div className="mt-6">
       <div className="mb-4 h-4 w-32 animate-pulse rounded bg-border" />
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
-        {Array.from({ length: 8 }).map((_, i) => (
+        {Array.from({ length: 6 }).map((_, i) => (
           <DishCardSkeleton key={i} />
         ))}
       </div>
@@ -87,7 +97,15 @@ function ResultsSkeleton({ tab = 'dishes' }: { tab?: ExploreTab }) {
   )
 }
 
-async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortBy: DishSortOption }) {
+async function CuratedDishExplore({
+  city,
+  sortBy,
+  layout,
+}: {
+  city: string | null
+  sortBy: DishSortOption
+  layout: DishLayout
+}) {
   const isSeedingComplete = process.env.NEXT_PUBLIC_SEEDING_COMPLETE === 'true'
 
   const [highlyRated, newest, allResult] = await Promise.all([
@@ -108,6 +126,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
           initialCursorId={allResult.lastDoc}
           filters={filterPayload}
           query=""
+          layout={layout}
         />
       </div>
     )
@@ -131,9 +150,9 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
       {highlyRatedFiltered.length >= 3 && (
         <section>
           <h3 className="mb-4 font-display text-lg font-bold text-heading">Highly rated dishes</h3>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
+          <div className={dishGridClass(layout)}>
             {highlyRatedFiltered.slice(0, 6).map((d, i) => (
-              <DishCard key={d.id} dish={d} index={i} showRestaurantContext />
+              <DishCard key={d.id} dish={d} index={i} showRestaurantContext layout={layout} />
             ))}
           </div>
         </section>
@@ -142,9 +161,9 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
       {newestItems.length >= 3 && (
         <section>
           <h3 className="mb-4 font-display text-lg font-bold text-heading">{newestLabel}</h3>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
+          <div className={dishGridClass(layout)}>
             {newestItems.map((d, i) => (
-              <DishCard key={d.id} dish={d} index={i} showRestaurantContext />
+              <DishCard key={d.id} dish={d} index={i} showRestaurantContext layout={layout} />
             ))}
           </div>
         </section>
@@ -156,9 +175,9 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
           <p className="mb-4 -mt-2 text-sm text-text-secondary">
             These dishes have few reviews — your rating helps others decide.
           </p>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
+          <div className={dishGridClass(layout)}>
             {needsReview.map((d, i) => (
-              <DishCard key={d.id} dish={d} index={i} showRestaurantContext />
+              <DishCard key={d.id} dish={d} index={i} showRestaurantContext layout={layout} />
             ))}
           </div>
         </section>
@@ -175,6 +194,7 @@ async function CuratedDishExplore({ city, sortBy }: { city: string | null; sortB
           initialCursorId={allResult.lastDoc}
           filters={filterPayload}
           query=""
+          layout={layout}
         />
       </section>
     </div>
@@ -188,7 +208,9 @@ async function DishExploreResults({
   cuisine,
   dietary,
   priceRange,
+  minRating,
   sortBy,
+  layout,
 }: {
   query: string
   city: string | null
@@ -196,12 +218,14 @@ async function DishExploreResults({
   cuisine: string | null
   dietary: string | null
   priceRange: string | null
+  minRating: number | null
   sortBy: DishSortOption
+  layout: DishLayout
 }) {
-  const isCurated = !query && !cuisine && !area && !dietary && !priceRange
+  const isCurated = !query && !cuisine && !area && !dietary && !priceRange && !minRating
 
   if (isCurated) {
-    return <CuratedDishExplore city={city} sortBy={sortBy} />
+    return <CuratedDishExplore city={city} sortBy={sortBy} layout={layout} />
   }
 
   const result = await searchDishes(query, {
@@ -210,6 +234,7 @@ async function DishExploreResults({
     cuisine,
     dietary: dietary as 'veg' | 'non-veg' | 'egg' | null,
     priceRange: priceRange as 'under-100' | '100-200' | '200-400' | '400-600' | 'above-600' | null,
+    minRating,
     sortBy,
   })
 
@@ -220,6 +245,7 @@ async function DishExploreResults({
     area,
     dietary: dietary as 'veg' | 'non-veg' | 'egg' | null,
     priceRange: priceRange as 'under-100' | '100-200' | '200-400' | '400-600' | 'above-600' | null,
+    minRating,
     sortBy,
   }
 
@@ -233,12 +259,13 @@ async function DishExploreResults({
         <DishEmptyFallback query={query} city={city} />
       ) : (
         <LoadMoreDishes
-          key={`dishes-${query}-${city}-${area}-${cuisine}-${dietary}-${priceRange}-${sortBy}`}
+          key={`dishes-${query}-${city}-${area}-${cuisine}-${dietary}-${priceRange}-${minRating}-${sortBy}`}
           initialDishes={dishes}
           initialHasMore={result.hasMore}
           initialCursorId={result.lastDoc}
           filters={filterPayload}
           query={query}
+          layout={layout}
         />
       )}
     </div>
@@ -378,29 +405,40 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const area = params.area ?? null
   const dietary = params.dietary ?? null
   const priceRange = params.priceRange ?? null
+  const minRatingParam = params.minRating ? Number(params.minRating) : null
+  const minRating = minRatingParam && minRatingParam > 0 ? minRatingParam : null
   const shouldFocusSearch = params.focus === '1'
+  const layout: DishLayout = params.view === 'list' ? 'list' : 'grid'
 
   const dishSortBy = (VALID_DISH_SORT.includes(params.sortBy as DishSortOption)
     ? params.sortBy as DishSortOption
     : SORT_OPTIONS.HIGHEST_RATED) as DishSortOption
 
   const areas = listCityAreas(GURUGRAM)
+  const cityLabel = CITY_DISPLAY_NAME[GURUGRAM] ?? 'your city'
 
   return (
     <ExploreEntranceWrapper>
-      <div className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
-        <div className="mb-4 md:hidden">
-          <Suspense fallback={<div className="h-[44px] animate-pulse rounded-pill bg-border" />}>
-            <SearchBar
-              variant="navbar"
-              initialQuery=""
-              autoFocus={shouldFocusSearch}
-              className="block w-full max-w-none"
-              showBackArrow
-            />
-          </Suspense>
+      {/* Search hero */}
+      <section className="bg-gradient-to-b from-bg-cream to-background">
+        <div className="mx-auto max-w-[1200px] px-4 pb-2 pt-6 sm:px-6 sm:pt-8">
+          <h1 className="font-display text-2xl font-bold text-heading sm:text-[32px]">
+            Explore dishes in {cityLabel}
+          </h1>
+          <div className="mt-4 w-full">
+            <Suspense fallback={<div className="h-[44px] animate-pulse rounded-pill bg-border" />}>
+              <SearchBar
+                variant="navbar"
+                initialQuery=""
+                autoFocus={shouldFocusSearch}
+                className="block w-full max-w-none"
+              />
+            </Suspense>
+          </div>
         </div>
+      </section>
 
+      <div className="mx-auto max-w-[1200px] px-4 pb-10 sm:px-6">
         <ExploreFilters
           query={params.q ?? ''}
           activeTab={tab}
@@ -408,41 +446,56 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           selectedArea={area}
           selectedDietary={dietary}
           selectedPriceRange={priceRange}
+          selectedMinRating={minRating ? String(minRating) : null}
           selectedSortBy={dishSortBy}
           cuisines={[...FEATURED_CUISINES]}
           areas={[...areas]}
         />
 
-        <Suspense fallback={<ResultsSkeleton tab={tab} />}>
-          <ExploreSearchResults />
-        </Suspense>
+        <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr]">
+          <aside className="hidden lg:block">
+            <div className="sticky top-[88px]">
+              <ExploreSidebar activeTab={tab} areas={[...areas]} />
+            </div>
+          </aside>
 
-        <ExploreDefaultContent>
-          <Suspense fallback={<ResultsSkeleton tab={tab} />}>
-            <ExploreResultsWrapper>
-              {tab === 'dishes' && !cuisine && !area && !dietary && !priceRange ? (
-                <CuratedDishExplore city={city} sortBy={dishSortBy} />
-              ) : tab === 'dishes' ? (
-                <DishExploreResults
-                  query=""
-                  city={city}
-                  area={area}
-                  cuisine={cuisine}
-                  dietary={dietary}
-                  priceRange={priceRange}
-                  sortBy={dishSortBy}
-                />
-              ) : (
-                <RestaurantExploreResults
-                  query=""
-                  city={city}
-                  area={area}
-                  cuisine={cuisine}
-                />
-              )}
-            </ExploreResultsWrapper>
-          </Suspense>
-        </ExploreDefaultContent>
+          <div className="min-w-0">
+            <ExploreResultsHeader />
+
+            <Suspense fallback={<ResultsSkeleton tab={tab} />}>
+              <ExploreSearchResults />
+            </Suspense>
+
+            <ExploreDefaultContent>
+              <Suspense fallback={<ResultsSkeleton tab={tab} />}>
+                <ExploreResultsWrapper>
+                  {tab === 'dishes' && !cuisine && !area && !dietary && !priceRange && !minRating ? (
+                    <CuratedDishExplore city={city} sortBy={dishSortBy} layout={layout} />
+                  ) : tab === 'dishes' ? (
+                    <DishExploreResults
+                      query=""
+                      city={city}
+                      area={area}
+                      cuisine={cuisine}
+                      dietary={dietary}
+                      priceRange={priceRange}
+                      minRating={minRating}
+                      sortBy={dishSortBy}
+                      layout={layout}
+                    />
+                  ) : (
+                    <RestaurantExploreResults
+                      query=""
+                      city={city}
+                      area={area}
+                      cuisine={cuisine}
+                    />
+                  )}
+                </ExploreResultsWrapper>
+              </Suspense>
+            </ExploreDefaultContent>
+          </div>
+        </div>
       </div>
       <PWAInstallBanner />
     </ExploreEntranceWrapper>

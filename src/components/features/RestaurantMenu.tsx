@@ -4,7 +4,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import Link from 'next/link'
-import { LayoutList, Search, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutList, Search, X } from 'lucide-react'
 import { DishCard } from '@/components/features/DishCard'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -432,38 +432,80 @@ function DietaryMark({ tone }: { tone: MenuDietaryFilter }) {
 
 export function RecommendedDishesRow({ dishes }: { dishes: Dish[] }) {
   const recommendedDishes = getRecommendedDishes(dishes)
+  const scrollerRef = useRef<HTMLDivElement>(null)
+
   if (recommendedDishes.length === 0) return null
+
+  function scrollByCards(direction: 1 | -1) {
+    const el = scrollerRef.current
+    if (!el) return
+    // ~2 cards per click (card width + gap)
+    el.scrollBy({ left: direction * 432, behavior: 'smooth' })
+  }
 
   return (
     <section className="mt-6">
-      <h2 className="text-base font-semibold text-text-primary">Recommended Dishes</h2>
-      <div className="scrollbar-hide -mx-4 mt-3 flex gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
+      <div className="mb-3 flex items-center justify-between gap-4">
+        <h2 className="text-base font-semibold text-text-primary">Recommended Dishes</h2>
+        <div className="hidden gap-2 sm:flex">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            className="rounded-full"
+            aria-label="Scroll left"
+            onClick={() => scrollByCards(-1)}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            className="rounded-full"
+            aria-label="Scroll right"
+            onClick={() => scrollByCards(1)}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      <div
+        ref={scrollerRef}
+        className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0"
+      >
         {recommendedDishes.map((dish) => (
           <Link
             key={dish.id}
             href={ROUTES.dish(dish.id)}
-            className="w-[140px] shrink-0 overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/30 hover:shadow-sm"
+            prefetch
+            className="group flex w-[200px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border-[0.5px] border-border bg-card transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-md"
           >
-            <div className="relative aspect-square w-full overflow-hidden bg-bg-cream">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-bg-cream">
               {dish.coverImage ? (
                 <Image
                   src={getOptimizedImageUrl(dish.coverImage, 'card') ?? ''}
                   alt={dish.name}
                   fill
-                  sizes="140px"
-                  className="object-cover"
+                  sizes="200px"
+                  className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-3xl">
-                  {getCuisineEmoji(dish.cuisines?.[0])}
+                <div className="flex h-full w-full items-center justify-center text-4xl">
+                  <span aria-hidden="true">{getCuisineEmoji(dish.cuisines?.[0])}</span>
                 </div>
               )}
+              {dish.avgOverall > 0 && (
+                <span className="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-md bg-success px-2 py-0.5 text-xs font-bold text-white">
+                  ★ {dish.avgOverall.toFixed(1)}
+                </span>
+              )}
             </div>
-            <div className="p-2.5">
-              <p className="line-clamp-2 text-[13px] font-semibold leading-snug text-text-primary">
+            <div className="p-3">
+              <p className="line-clamp-1 text-sm font-semibold leading-snug text-text-primary">
                 {dish.name}
               </p>
-              <p className="mt-1 line-clamp-1 text-[11px] text-text-secondary">
+              <p className="mt-0.5 line-clamp-1 text-xs text-text-secondary">
                 {dish.category}
               </p>
             </div>

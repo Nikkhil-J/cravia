@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ImageIcon, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { DishPhoto } from '@/lib/types'
 import { getOptimizedImageUrl } from '@/lib/utils/image'
@@ -65,16 +65,9 @@ export function DishPhotoGrid({
 
   return (
     <>
-      {totalPhotoCount === 0 && (
-        <div className="flex w-full flex-col items-center justify-center gap-2 rounded-xl bg-surface-2 py-8">
-          <span className="text-3xl opacity-40">📷</span>
-          <p className="text-sm font-medium text-text-secondary">No photos yet</p>
-          <p className="text-xs text-text-muted">Be the first to review this dish</p>
-        </div>
-      )}
-
-      {totalPhotoCount > 0 && (
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
+        {/* Main slot: cover photo, or an empty-state placeholder */}
+        {mainPhoto ? (
           <button
             type="button"
             className="relative aspect-square w-full cursor-pointer overflow-hidden rounded-xl"
@@ -89,37 +82,58 @@ export function DishPhotoGrid({
               priority
             />
           </button>
+        ) : (
+          <div className="flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-xl bg-surface-2">
+            <span className="text-3xl opacity-40">📷</span>
+            <p className="text-sm font-medium text-text-secondary">No photos yet</p>
+            <p className="text-xs text-text-muted">Be the first to review this dish</p>
+          </div>
+        )}
 
-          {thumbnailPhotos.length > 0 && (
-            <div className="grid grid-cols-4 gap-2">
-              {thumbnailPhotos.map((photo, i) => {
-                const isLastThumb = i === thumbnailPhotos.length - 1
-                return (
-                  <button
-                    key={photo.url}
-                    type="button"
-                    className="relative aspect-square cursor-pointer overflow-hidden rounded-lg"
-                    onClick={() => openLightbox(i + 1)}
-                  >
-                    <Image
-                      src={getOptimizedImageUrl(photo.url, 'card') ?? ''}
-                      alt={photo.alt ?? `${dishName} photo ${i + 2}`}
-                      fill
-                      sizes="(max-width: 768px) 25vw, 110px"
-                      className="object-cover"
-                    />
-                    {isLastThumb && extraPhotoCount > 0 && (
-                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60">
-                        <span className="text-sm font-bold text-white">+{extraPhotoCount}</span>
-                      </div>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          )}
+        {/* Thumbnail strip: always 4 slots — filled slots are interactive,
+            remaining slots render as subtle empty placeholders so the layout
+            stays consistent (and matches the loading skeleton). */}
+        <div className="grid grid-cols-4 gap-2">
+          {Array.from({ length: 4 }).map((_, i) => {
+            const photo = thumbnailPhotos[i]
+
+            if (!photo) {
+              return (
+                <div
+                  key={`empty-${i}`}
+                  aria-hidden="true"
+                  className="flex aspect-square items-center justify-center rounded-lg border border-dashed border-border bg-surface-2/50"
+                >
+                  <ImageIcon className="h-4 w-4 text-text-muted/50" />
+                </div>
+              )
+            }
+
+            const isLastThumb = i === thumbnailPhotos.length - 1
+            return (
+              <button
+                key={photo.url}
+                type="button"
+                className="relative aspect-square cursor-pointer overflow-hidden rounded-lg"
+                onClick={() => openLightbox(i + 1)}
+              >
+                <Image
+                  src={getOptimizedImageUrl(photo.url, 'card') ?? ''}
+                  alt={photo.alt ?? `${dishName} photo ${i + 2}`}
+                  fill
+                  sizes="(max-width: 768px) 25vw, 110px"
+                  className="object-cover"
+                />
+                {isLastThumb && extraPhotoCount > 0 && (
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60">
+                    <span className="text-sm font-bold text-white">+{extraPhotoCount}</span>
+                  </div>
+                )}
+              </button>
+            )
+          })}
         </div>
-      )}
+      </div>
 
       {lightboxOpen && totalPhotoCount > 0 && (
         <PhotoLightbox

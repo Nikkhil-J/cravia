@@ -7,6 +7,7 @@ export interface GetDishesParams {
   area?: string | null
   dietary?: DietaryType | null
   priceRange?: PriceRange | null
+  minRating?: number | null
   sortBy?: 'newest' | 'highest-rated' | 'most-helpful'
   maxReviewCount?: number
   limit?: number
@@ -27,6 +28,11 @@ export interface DishRepository {
   getById(id: string): Promise<Dish | null>
   getCount(city?: string | null): Promise<number>
   getByRestaurant(restaurantId: string): Promise<Dish[]>
+  getRelated(
+    restaurantId: string,
+    excludeId: string,
+    limit?: number,
+  ): Promise<Dish[]>
   search(params: GetDishesParams): Promise<PaginatedData<Dish>>
   getTop(
     limit?: number,

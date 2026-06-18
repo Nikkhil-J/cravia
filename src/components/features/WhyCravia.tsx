@@ -18,16 +18,16 @@ const AFTER_ITEMS = [
 function CrossIcon() {
   return (
     <svg
-      width="8"
-      height="8"
+      width="10"
+      height="10"
       viewBox="0 0 8 8"
       aria-hidden="true"
-      className="text-destructive"
+      className="text-text-muted"
     >
       <path
         d="M1.5 1.5l5 5M6.5 1.5l-5 5"
         stroke="currentColor"
-        strokeWidth="1.3"
+        strokeWidth="1.5"
         strokeLinecap="round"
       />
     </svg>
@@ -37,8 +37,8 @@ function CrossIcon() {
 function CheckIcon() {
   return (
     <svg
-      width="8"
-      height="8"
+      width="10"
+      height="10"
       viewBox="0 0 8 8"
       aria-hidden="true"
       className="text-white"
@@ -46,7 +46,7 @@ function CheckIcon() {
       <path
         d="M1.5 4l2 2L6.5 2"
         stroke="currentColor"
-        strokeWidth="1.3"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -56,45 +56,61 @@ function CheckIcon() {
 
 interface ColumnProps {
   variant: "before" | "after";
-  label: string;
+  icon: string;
+  title: string;
+  subtitle: string;
   items: readonly string[];
 }
 
-function Column({ variant, label, items }: ColumnProps) {
+function Column({ variant, icon, title, subtitle, items }: ColumnProps) {
   const isAfter = variant === "after";
   return (
     <div
       className={cn(
-        "h-full rounded-2xl p-[22px]",
+        "h-full rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
         isAfter
-          ? "border border-coral-mid bg-coral-bg"
-          : "border-[0.5px] border-border bg-surface-2",
+          ? "border border-coral bg-coral-bg"
+          : "border-[0.5px] border-border bg-card",
       )}
     >
-      <span
-        className={cn(
-          "mb-3.5 inline-block rounded-full px-2.5 py-[3px] text-[11px] font-medium uppercase tracking-[0.08em]",
-          isAfter
-            ? "bg-coral text-white"
-            : "border-[0.5px] border-border bg-card text-text-secondary",
-        )}
-      >
-        {label}
-      </span>
-      <ul className="space-y-2.5">
+      {/* Friendly header — pastel icon circle + Fredoka title (prototype motif) */}
+      <div className="mb-6 flex items-center gap-3.5">
+        <span
+          className={cn(
+            "flex h-14 w-14 items-center justify-center rounded-full text-[28px]",
+            isAfter ? "bg-coral/15" : "bg-surface-3",
+          )}
+          aria-hidden="true"
+        >
+          {icon}
+        </span>
+        <div>
+          <h3
+            className={cn(
+              "font-display text-xl font-semibold leading-tight",
+              isAfter ? "text-coral-deep" : "text-heading",
+            )}
+          >
+            {title}
+          </h3>
+          <p className="text-[13px] text-text-secondary">{subtitle}</p>
+        </div>
+      </div>
+
+      <ul className="space-y-3.5">
         {items.map((item) => (
-          <li key={item} className="flex items-start gap-2.5">
+          <li key={item} className="flex items-start gap-3">
             <span
               className={cn(
-                "mt-[1px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full",
-                isAfter ? "bg-coral" : "bg-destructive/10",
+                "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+                isAfter ? "bg-coral" : "bg-surface-3",
               )}
             >
               {isAfter ? <CheckIcon /> : <CrossIcon />}
             </span>
             <span
               className={cn(
-                "text-[13px] leading-[1.55]",
+                "text-sm leading-[1.55]",
                 isAfter
                   ? "font-medium text-coral-deeper"
                   : "text-text-secondary",
@@ -111,27 +127,38 @@ function Column({ variant, label, items }: ColumnProps) {
 
 export function WhyCravia() {
   return (
-    <section className="mx-auto max-w-[1120px] px-4 pt-10 sm:px-8">
-      <Reveal className="mb-2 text-[11px] font-medium uppercase tracking-[0.1em] text-coral">
-        Why Cravia
-      </Reveal>
-      <Reveal>
-        <h2 className="mb-1.5 text-2xl font-medium leading-[1.2] text-text-primary">
-          Every other app rates the restaurant. We rate the dish.
+    <section className="mx-auto max-w-[1200px] px-6 pt-20 sm:px-8">
+      <Reveal className="mb-12 text-center">
+        <div className="mb-3 text-[13px] font-bold uppercase tracking-[0.12em] text-coral">
+          Why Cravia
+        </div>
+        <h2 className="mb-3 font-display text-[clamp(28px,3.5vw,42px)] font-bold leading-tight text-heading">
+          Every other app rates the restaurant.
+          <br className="hidden sm:block" /> We rate the dish.
         </h2>
-      </Reveal>
-      <Reveal delay={0.05}>
-        <p className="mb-6 text-sm leading-[1.6] text-text-secondary">
+        <p className="mx-auto max-w-[560px] text-base leading-relaxed text-text-secondary">
           A restaurant with 4.2 stars could have a legendary biryani and a
           terrible dessert. You&rsquo;d never know. Until now.
         </p>
       </Reveal>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <Reveal from="left" className="flex flex-col">
-          <Column variant="before" label="Every platforms" items={BEFORE_ITEMS} />
+          <Column
+            variant="before"
+            icon="🏪"
+            title="Restaurant ratings"
+            subtitle="What every other app shows you"
+            items={BEFORE_ITEMS}
+          />
         </Reveal>
         <Reveal from="right" delay={0.12} className="flex flex-col">
-          <Column variant="after" label="Cravia" items={AFTER_ITEMS} />
+          <Column
+            variant="after"
+            icon="🍽️"
+            title="Dish ratings"
+            subtitle="What Cravia shows you"
+            items={AFTER_ITEMS}
+          />
         </Reveal>
       </div>
     </section>

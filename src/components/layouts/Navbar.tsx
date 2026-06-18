@@ -23,12 +23,19 @@ import {
 
 export function Navbar() {
   const pathname = usePathname()
-  const showSearchInNavbar = pathname !== ROUTES.HOME && !pathname.startsWith('/restaurant/')
+  const showSearchInNavbar =
+    pathname !== ROUTES.HOME &&
+    pathname !== ROUTES.EXPLORE &&
+    !pathname.startsWith('/restaurant/')
   const [scrolled, setScrolled] = useState(false)
   const [confirmingLogout, setConfirmingLogout] = useState(false)
   const [showCrumbsInfo, setShowCrumbsInfo] = useState(false)
   const { user, isAuthenticated, isLoading } = useAuth()
   const handleLogout = useLogout()
+
+  // On the landing page the hero starts with a cream background, so blend the
+  // navbar into it (no border, matching colour) until the user scrolls.
+  const blendWithHero = pathname === ROUTES.HOME && !scrolled
 
   useEffect(() => {
     function onScroll() { setScrolled(window.scrollY > 10) }
@@ -39,8 +46,13 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 border-b bg-background/92 backdrop-blur-xl transition-all duration-200',
-        scrolled ? 'border-border shadow-sm' : 'border-border'
+        'sticky top-0 z-50 transition-colors duration-200',
+        blendWithHero
+          ? // Fully transparent over the hero: the shared HeroBackdrop gradient
+            // shows through, so navbar and hero read as one continuous surface.
+            'border-0 bg-transparent shadow-none'
+          : 'border-b border-border bg-background/92 backdrop-blur-xl',
+        scrolled && !blendWithHero && 'shadow-sm'
       )}
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >

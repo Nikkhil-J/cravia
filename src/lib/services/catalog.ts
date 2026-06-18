@@ -88,6 +88,7 @@ export interface SearchDishesParams {
   cuisine?: string | null
   dietary?: DietaryType | null
   priceRange?: PriceRange | null
+  minRating?: number | null
   sortBy?: SearchFilters['sortBy'] | 'needs-review'
   maxReviewCount?: number | null
   cursorId?: string | null
@@ -113,6 +114,7 @@ export async function listDishes(params?: SearchDishesParams): Promise<SearchDis
     area,
     dietary: params?.dietary ?? null,
     priceRange: params?.priceRange ?? null,
+    minRating: params?.minRating ?? null,
     sortBy,
     maxReviewCount: params?.maxReviewCount ?? undefined,
     cursor: params?.cursorId ?? undefined,

@@ -4,6 +4,7 @@ import {
   getDishCount,
   getDishSnapshot,
   getDishesByRestaurant,
+  getRelatedDishes,
   getTopDishes,
   searchDishes,
 } from '@/lib/firebase/dishes'
@@ -42,6 +43,15 @@ export class FirebaseDishRepository implements DishRepository {
     return dishes.map(mapDish)
   }
 
+  async getRelated(
+    restaurantId: string,
+    excludeId: string,
+    limit?: number,
+  ): Promise<Dish[]> {
+    const dishes = await getRelatedDishes(restaurantId, excludeId, limit)
+    return dishes.map(mapDish)
+  }
+
   async search(params: GetDishesParams): Promise<PaginatedData<Dish>> {
     const cursorSnap = params.cursor ? await getDishSnapshot(params.cursor) : null
     const result = await searchDishes(
@@ -53,7 +63,7 @@ export class FirebaseDishRepository implements DishRepository {
         area: params.area ?? null,
         dietary: params.dietary ?? null,
         priceRange: params.priceRange ?? null,
-        minRating: null,
+        minRating: params.minRating ?? null,
         sortBy: params.sortBy ?? SORT_OPTIONS.HIGHEST_RATED,
       },
       cursorSnap

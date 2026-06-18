@@ -13,6 +13,7 @@ interface LoadMoreDishesProps {
   initialCursorId?: string | null
   filters: Partial<SearchFilters> & { city?: string | null }
   query: string
+  layout?: 'grid' | 'list'
 }
 
 interface DishesApiResult {
@@ -27,6 +28,7 @@ export function LoadMoreDishes({
   initialCursorId = null,
   filters,
   query,
+  layout = 'grid',
 }: LoadMoreDishesProps) {
   const { authUser } = useAuth()
   const [dishes, setDishes] = useState<Dish[]>(initialDishes)
@@ -52,6 +54,7 @@ export function LoadMoreDishes({
       if (filters.area) params.set('area', filters.area)
       if (filters.dietary) params.set('dietary', filters.dietary)
       if (filters.priceRange) params.set('priceRange', filters.priceRange)
+      if (filters.minRating) params.set('minRating', String(filters.minRating))
       if (filters.sortBy) params.set('sortBy', filters.sortBy)
       if (nextCursorId) params.set('cursor', nextCursorId)
 
@@ -93,9 +96,21 @@ export function LoadMoreDishes({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div
+        className={
+          layout === 'list'
+            ? 'flex flex-col gap-3'
+            : 'grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'
+        }
+      >
         {dishes.map((dish, i) => (
-          <DishCard key={dish.id} dish={dish} index={i} showRestaurantContext />
+          <DishCard
+            key={dish.id}
+            dish={dish}
+            index={i}
+            showRestaurantContext
+            layout={layout}
+          />
         ))}
       </div>
 

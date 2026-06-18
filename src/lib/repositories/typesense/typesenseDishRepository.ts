@@ -96,6 +96,9 @@ function buildFilterBy(params: GetDishesParams): string {
   if (params.priceRange) {
     filters.push(`priceRange:=${params.priceRange}`)
   }
+  if (params.minRating !== undefined && params.minRating !== null) {
+    filters.push(`avgOverall:>=${params.minRating}`)
+  }
   if (params.maxReviewCount !== undefined && params.maxReviewCount !== null) {
     filters.push(`reviewCount:<=${params.maxReviewCount}`)
   }
@@ -132,6 +135,10 @@ export class TypesenseDishRepository implements DishRepository {
 
   getByRestaurant(restaurantId: string) {
     return this.fallback.getByRestaurant(restaurantId)
+  }
+
+  getRelated(restaurantId: string, excludeId: string, limit?: number) {
+    return this.fallback.getRelated(restaurantId, excludeId, limit)
   }
 
   getTop(limit?: number, city?: string | null, options?: GetTopDishesOptions) {

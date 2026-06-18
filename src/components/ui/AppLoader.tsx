@@ -13,7 +13,7 @@ const MIN_DISPLAY_MS = 900
  * Full-screen splash overlay that covers the app during the initial auth check.
  *
  * Lifecycle:
- *   1. Mounts immediately (SSR + client) as an opaque dark overlay — prevents
+ *   1. Mounts immediately (SSR + client) as an opaque warm overlay — prevents
  *      any content flash before auth state is known.
  *   2. The Cravia logo animates in on mount (scale + fade via animate-pop-in).
  *   3. Fade-out starts only when BOTH conditions are met:
